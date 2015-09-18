@@ -20,6 +20,12 @@ rewrote the scripts in Python and added a few more.
 Requests for new scripts will be taken into consideration, depending on the effort and general
 usability of the script.
 
+Citation
+------------
+There is no publication (yet?) for pdb-tools, but there is a citable DOI item. Please consider citing it in your publication if these tools were in anyway helpful.
+
+[![DOI](https://zenodo.org/badge/18453/haddocking/pdb-tools.svg)](https://zenodo.org/badge/latestdoi/18453/haddocking/pdb-tools)
+
 Features
 ------------
 * Simple: one script, one job.
