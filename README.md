@@ -22,7 +22,7 @@ usability of the script.
 
 Citation
 ------------
-There is no publication (yet?) for pdb-tools, but there is a citable DOI item. Please consider citing it in your publication if these tools were in anyway helpful.
+There is no publication (yet?) for pdb-tools, but there is a citable [DOI](http://dx.doi.org/10.5281/zenodo.31158) item. Please consider citing it in your publication if these tools were in anyway helpful.
 
 [![DOI](https://zenodo.org/badge/18453/haddocking/pdb-tools.svg)](https://zenodo.org/badge/latestdoi/18453/haddocking/pdb-tools)
 
