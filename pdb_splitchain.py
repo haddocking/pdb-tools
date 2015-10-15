@@ -52,30 +52,29 @@ def _extract_chains(fhandle):
 
     coord_re = re.compile('^(ATOM|HETATM)')
     fname_root = fhandle.name[:-4] if fhandle.name != '<stdin>' else 'output'
-    prev_chain, chain_atoms = None, []
+    prev_chain, chain_ids, chain_atoms = None, [], {}
 
     for line in fhandle:
         if coord_re.match(line):
             line = line.strip()
             # ATOM/HETATM line
             if prev_chain != line[21]:
-                if chain_atoms:
-                    # Write chain to file
-                    output_handle = open(fname_root + '_' + prev_chain + '.pdb', 'w')
-                    output_handle.write(''.join(chain_atoms))
-                    output_handle.write('END\n')
-                    output_handle.close()
-                    chain_atoms = []
-                chain_atoms.append(line + '\n')
+                if not line[21] in chain_atoms:
+                    cur_chain = chain_atoms[line[21]] = []
+                else:
+                    cur_chain = chain_atoms[line[21]]
+                cur_chain.append(line + '\n')
                 prev_chain = line[21]
+                chain_ids.append(line[21])
             else:
-                chain_atoms.append(line + '\n')
+                cur_chain.append(line + '\n')
 
-    # Output last chain to file
-    output_handle = open(fname_root + '_' + chain_atoms[-1][21] + '.pdb', 'w')
-    output_handle.write(''.join(chain_atoms))
-    output_handle.write('END\n')
-    output_handle.close()
+    # Output chains to files
+    for c_id in chain_ids:
+        output_handle = open(fname_root + '_' + c_id + '.pdb', 'w')
+        output_handle.write(''.join(chain_atoms[c_id]))
+        output_handle.write('END\n')
+        output_handle.close()
 
 if __name__ == '__main__':
     # Check Input
