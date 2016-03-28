@@ -77,7 +77,7 @@ def _summarize(fhandle, option):
 
     option = option
 
-    n_models = 1
+    n_models = 0
     has_hetero, has_gaps, has_double, has_insert = "No", "No", "No", "No"
     at_list, res_list, chain_list = [], [], []
     prev_resuid, prev_chainid = None, None
@@ -98,6 +98,8 @@ def _summarize(fhandle, option):
             n_models += 1
 
         if record == 'ATOM  ':
+            if not n_models:
+                n_models += 1
 
             res_uid = (line[17:20], line[21], int(line[22:26]))
             at_uid = (line[12:16], line[16], line[17:20], line[21], line[22:26])
