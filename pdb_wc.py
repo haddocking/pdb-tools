@@ -17,7 +17,6 @@ FORTRAN77 code that was taking too much effort to compile. RIP.
 
 from __future__ import print_function, division
 
-import math
 import os
 import re
 import sys

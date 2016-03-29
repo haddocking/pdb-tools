@@ -82,7 +82,7 @@ def _check_structure_gaps(fhandle):
                 if d > _distance_threshold:
                     print("{0[1]}:{0[3]}{0[2]} < {2:7.2f}A > {1[1]}:{1[3]}{1[2]}".format(prev_at, at_uid, d))
                 elif prev_at[2] + 1 != at_uid[2]:
-                    print("{0[1]}:{0[3]}{0[2]} < Seq. Gap > {1[1]}:{1[3]}{1[2]}".format(prev_at, at_uid, d))
+                    print("{0[1]}:{0[3]}{0[2]} < Seq. Gap > {1[1]}:{1[3]}{1[2]}".format(prev_at, at_uid))
 
             prev_at = at_uid
 

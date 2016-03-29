@@ -18,7 +18,6 @@ FORTRAN77 code that was taking too much effort to compile. RIP.
 from __future__ import print_function
 
 import gzip
-import os
 import re
 import sys
 import cStringIO
