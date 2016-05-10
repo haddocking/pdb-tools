@@ -78,11 +78,10 @@ def _alter_chain(fhandle, chain_id):
     chain_id = chain_id
 
     for line in fhandle:
-        line = line.strip()
         if coord_re.match(line):
-            yield line[:21] + chain_id[0] + line[22:] + '\n'
+            yield line[:21] + chain_id[0] + line[22:]
         else:
-            yield line + '\n'
+            yield line
 
 if __name__ == '__main__':
     # Check Input

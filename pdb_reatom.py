@@ -76,12 +76,11 @@ def _renumber_pdb_atoms(fhandle, satomi):
     satomi = satomi
 
     for line in fhandle:
-        line = line.strip()
         if coord_re.match(line):
-            yield line[:6] + str(satomi).rjust(5) + line[11:] + '\n'
+            yield line[:6] + str(satomi).rjust(5) + line[11:]
             satomi += 1
         else:
-            yield line + '\n'
+            yield line
 
 if __name__ == '__main__':
 

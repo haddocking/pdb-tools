@@ -76,11 +76,10 @@ def _alter_bfactor(fhandle, bfactor):
     #bfactor = str(round(bfactor, 2)).rjust(6)
     bfactor = "{0:>6.2f}".format(bfactor)
     for line in fhandle:
-        line = line.strip()
         if coord_re.match(line):
-            yield line[:60] + bfactor + line[66:] + '\n'
+            yield line[:60] + bfactor + line[66:]
         else:
-            yield line + '\n'
+            yield line
 
 if __name__ == '__main__':
 

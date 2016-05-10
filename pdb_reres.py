@@ -75,15 +75,14 @@ def _renumber_pdb_residue(fhandle, sresid):
     resi = sresid - 1
     prev_resi = None
     for line in fhandle:
-        line = line.strip()
         if line.startswith(('ATOM', 'HETATM', 'TER')):
             if line[22:26] != prev_resi:
                 prev_resi = line[22:26]
                 resi += 1
 
-            yield line[:22] + str(resi).rjust(4) + line[26:] + '\n'
+            yield line[:22] + str(resi).rjust(4) + line[26:]
         else:
-            yield line + '\n'
+            yield line
 
 if __name__ == '__main__':
 

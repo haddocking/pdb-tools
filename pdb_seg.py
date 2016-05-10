@@ -77,11 +77,10 @@ def _alter_segid(fhandle, seg_id):
     seg_id = seg_id[0:4].ljust(4)
 
     for line in fhandle:
-        line = line.strip()
         if coord_re.match(line):
-            yield line[:72] + seg_id + line[76:] + '\n'
+            yield line[:72] + seg_id + line[76:]
         else:
-            yield line + '\n'
+            yield line
 
 if __name__ == '__main__':
     # Check Input

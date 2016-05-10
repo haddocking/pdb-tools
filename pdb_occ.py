@@ -75,11 +75,10 @@ def _alter_occupancy(fhandle, occup):
     coord_re = re.compile('^(ATOM|HETATM)')
     occup = str(round(occup, 2)).rjust(6)
     for line in fhandle:
-        line = line.strip()
         if coord_re.match(line):
-            yield line[:54] + occup + line[60:] + '\n'
+            yield line[:54] + occup + line[60:]
         else:
-            yield line + '\n'
+            yield line
 
 if __name__ == '__main__':
 

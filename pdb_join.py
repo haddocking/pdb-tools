@@ -60,7 +60,7 @@ def _join_pdb(pdb_list):
         pdb_data.append('MODEL     {0:>4d}'.format(i_model))
         with open(pdb_f, 'r') as handle:
             for line in handle:
-                line = line.strip()
+                line = line.strip('\n')
                 if coord_re.match(line):
                     pdb_data.append(line)
                     model_auids.add(auid(line))

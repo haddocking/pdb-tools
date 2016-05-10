@@ -54,10 +54,9 @@ def _extract_models(fhandle):
     output_handle = None
 
     for line in fhandle:
-        line = line.strip()
         if coord_re.match(line):
             # ATOM/HETATM line
-            output_handle.write(line + '\n')
+            output_handle.write(line)
         elif line.startswith('MODEL'):
             model_no = line.split()[-1]
             output_handle = open(fname_root + '_' + model_no + '.pdb', 'w')

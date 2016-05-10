@@ -77,9 +77,8 @@ def _select_chain(fhandle, chain_id):
     chain_id = chain_id
 
     for line in fhandle:
-        line = line.strip()
         if coord_re.match(line) and line[21] == chain_id:
-            yield line + '\n'
+            yield line
 
 if __name__ == '__main__':
     # Check Input

@@ -55,7 +55,6 @@ def _extract_segments(fhandle):
     prev_segment, segment_atoms = None, []
 
     for line in fhandle:
-        line = line.strip()
         if coord_re.match(line):
             # ATOM/HETATM line
             if prev_segment != line[72:76]:
@@ -66,10 +65,10 @@ def _extract_segments(fhandle):
                     output_handle.write('END\n')
                     output_handle.close()
                     segment_atoms = []
-                segment_atoms.append(line + '\n')
+                segment_atoms.append(line)
                 prev_segment = line[72:76]
             else:
-                segment_atoms.append(line + '\n')
+                segment_atoms.append(line)
 
     # Output last chain to file
     output_handle = open(fname_root + '_' + segment_atoms[-1][72:76].strip() + '.pdb', 'w')

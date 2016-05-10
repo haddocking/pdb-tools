@@ -52,9 +52,8 @@ def _remove_hetatm(fhandle):
 
     coord_re = re.compile('^ATOM')
     for line in fhandle:
-        line = line.strip()
         if coord_re.match(line):
-            yield line + '\n'   
+            yield line
 
 if __name__ == '__main__':
 

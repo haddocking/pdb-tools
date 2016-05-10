@@ -56,7 +56,6 @@ def _extract_chains(fhandle):
 
     for line in fhandle:
         if coord_re.match(line):
-            line = line.strip()
             # ATOM/HETATM line
             if prev_chain != line[21]:
                 if not line[21] in chain_atoms:
@@ -67,7 +66,7 @@ def _extract_chains(fhandle):
                 prev_chain = line[21]
                 chain_ids.append(line[21])
             else:
-                cur_chain.append(line + '\n')
+                cur_chain.append(line)
 
     # Output chains to files
     for c_id in chain_ids:

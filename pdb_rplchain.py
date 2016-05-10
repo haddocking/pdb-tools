@@ -76,11 +76,10 @@ def _alter_chain(fhandle, ori_chain, new_chain):
         new_chain = ' '
 
     for line in fhandle:
-        line = line.strip()
         if coord_re.match(line) and line[21] == ori_chain:
-            yield line[:21] + new_chain + line[22:] + '\n'
+            yield line[:21] + new_chain + line[22:]
         else:
-            yield line + '\n'
+            yield line
 
 if __name__ == '__main__':
     # Check Input
