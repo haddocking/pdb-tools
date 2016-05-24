@@ -62,7 +62,7 @@ def _extract_chains(fhandle):
                     cur_chain = chain_atoms[line[21]] = []
                 else:
                     cur_chain = chain_atoms[line[21]]
-                cur_chain.append(line + '\n')
+                cur_chain.append(line)
                 prev_chain = line[21]
                 chain_ids.append(line[21])
             else:
