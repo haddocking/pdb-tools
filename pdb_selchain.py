@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Extracts a chain from a PDB file.
+Extracts one or more chains from a PDB file.
 
 usage: python pdb_selchain.py -<chain> <pdb file>
 example: python pdb_selchain.py -A 1CTF.pdb
@@ -37,7 +37,7 @@ def check_input(args):
             sys.exit(1)
     elif len(args) == 1:
         # Chain & Pipe _or_ file & no chain
-        if re.match('\-[A-Za-z0-9]', args[0]):
+        if re.match('\-[A-Za-z0-9]+', args[0]):
             chain = args[0][1:]
             if not sys.stdin.isatty():
                 pdbfh = sys.stdin
@@ -53,7 +53,7 @@ def check_input(args):
             chain = ' '
     elif len(args) == 2:
         # Chain & File
-        if not re.match('\-[A-Za-z0-9]', args[0]):
+        if not re.match('\-[A-Za-z0-9]+', args[0]):
             sys.stderr.write('Invalid chain ID: ' + args[0] + '\n')
             sys.stderr.write(USAGE)
             sys.exit(1)
@@ -74,10 +74,10 @@ def _select_chain(fhandle, chain_id):
 
     coord_re = re.compile('^(ATOM|HETATM)')
     fhandle = fhandle
-    chain_id = chain_id
+    chain_id = set(chain_id)
 
     for line in fhandle:
-        if coord_re.match(line) and line[21] == chain_id:
+        if coord_re.match(line) and line[21] in chain_id:
             yield line
 
 if __name__ == '__main__':

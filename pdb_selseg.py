@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Extracts a segment from a PDB file.
+Extracts one or more segments from a PDB file.
 
 usage: python pdb_selseg.py -<segid> <pdb file>
 example: python pdb_selseg.py -A 1CTF.pdb
@@ -37,7 +37,7 @@ def check_input(args):
             sys.exit(1)
     elif len(args) == 1:
         # Segid & Pipe _or_ file & no Segid
-        if re.match('\-[A-Za-z0-9]', args[0]):
+        if re.match('\-[A-Za-z0-9]+', args[0]):
             seg = args[0][1:]
             if not sys.stdin.isatty():
                 pdbfh = sys.stdin
@@ -53,7 +53,7 @@ def check_input(args):
             seg = ' '
     elif len(args) == 2:
         # Segid & File
-        if not re.match('\-[A-Za-z0-9]', args[0]):
+        if not re.match('\-[A-Za-z0-9]+', args[0]):
             sys.stderr.write('Invalid segment ID: ' + args[0] + '\n')
             sys.stderr.write(USAGE)
             sys.exit(1)
@@ -74,10 +74,10 @@ def _select_seg(fhandle, seg_id):
 
     coord_re = re.compile('^(ATOM|HETATM)')
     fhandle = fhandle
-    seg_id = seg_id
+    seg_id = set(seg_id)
 
     for line in fhandle:
-        if coord_re.match(line) and line[72:76].strip() == seg_id:
+        if coord_re.match(line) and line[72:76].strip() in seg_id:
             yield line
 
 if __name__ == '__main__':
