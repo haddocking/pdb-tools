@@ -58,8 +58,8 @@ def _swap_chainxseg(fhandle):
             size_of_line = len(line)
             # Pad short lines
             if size_of_line < 80:
-                padding = 80 - size_of_line
-                line = line + ' '*padding
+                padding = 80 - size_of_line + 1
+                line = line.strip('\n') + ' '*padding + '\n'
             yield line[:72] + line[21].ljust(4) + line[76:]
         else:
             yield line
