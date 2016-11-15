@@ -50,7 +50,7 @@ def check_input(args):
 def _get_sequence(fhandle):
     """Enclosing logic in a function to simplify code"""
 
-    aa_codes = [
+    res_codes = [
                 # 20 canonical amino acids
                 ('CYS', 'C'), ('ASP', 'D'), ('SER', 'S'), ('GLN', 'Q'),
                	('LYS', 'K'), ('ILE', 'I'), ('PRO', 'P'), ('THR', 'T'),
@@ -59,9 +59,12 @@ def _get_sequence(fhandle):
                	('VAL', 'V'), ('GLU', 'E'), ('TYR', 'Y'), ('MET', 'M'),
                 # Non-canonical amino acids
                	#('MSE', 'M'), ('SOC', 'C'),
+                # Canonical xNA
+                ('  U', 'U'), ('  A', 'A'), ('  G', 'G'), ('  C', 'C'),
+                ('  T', 'T'),
                ]
 
-    three_to_one = dict(aa_codes)
+    three_to_one = dict(res_codes)
     _records = set(['ATOM  ', 'HETATM'])
 
     fhandle = fhandle
