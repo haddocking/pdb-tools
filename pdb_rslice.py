@@ -90,6 +90,8 @@ def _slice_pdb(fhandle, rslice):
         if line.startswith(('ATOM', 'HETATM', 'TER')):
             if st_slice <= int(line[22:26]) <= en_slice:
                 yield line
+        else:
+            yield line
 
 
 if __name__ == '__main__':
