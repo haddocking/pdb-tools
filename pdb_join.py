@@ -24,8 +24,11 @@ __email__ = "j.p.g.l.m.rodrigues@gmail.com"
 
 USAGE = __doc__.format(__author__, __email__)
 
+
 def check_input(args):
-    """Checks whether to read from stdin/file and validates user input/options."""
+    """
+    Checks whether to read from stdin/file and validates user input/options.
+    """
 
     if len(args) < 2:
         sys.stderr.write(USAGE)
@@ -38,12 +41,20 @@ def check_input(args):
 
     return args
 
+
 def _build_atom_unique_id(atom_line):
     """Returns a unique identifying tuple from an ATOM line"""
 
     # unique_id: (name, altloc, resi, insert, chain, segid)
-    unique_id = (atom_line[12:16], atom_line[16], int(atom_line[22:26]), atom_line[26], atom_line[21], atom_line[72:76].strip())
+    unique_id = (atom_line[12:16],
+                 atom_line[16],
+                 int(atom_line[22:26]),
+                 atom_line[26],
+                 atom_line[21],
+                 atom_line[72:76].strip())
+
     return unique_id
+
 
 def _join_pdb(pdb_list):
     """Enclosing logic in a function"""
@@ -78,6 +89,7 @@ def _join_pdb(pdb_list):
     pdb_data.append('END')
     pdb_data = remarks + pdb_data
     return pdb_data
+
 
 if __name__ == '__main__':
     # Check Input

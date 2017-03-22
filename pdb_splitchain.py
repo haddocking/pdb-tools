@@ -24,8 +24,11 @@ __email__ = "j.p.g.l.m.rodrigues@gmail.com"
 
 USAGE = __doc__.format(__author__, __email__)
 
+
 def check_input(args):
-    """Checks whether to read from stdin/file and validates user input/options."""
+    """
+    Checks whether to read from stdin/file and validates user input/options.
+    """
 
     if not len(args):
         # Read from pipe
@@ -46,6 +49,7 @@ def check_input(args):
         sys.exit(1)
 
     return pdbfh
+
 
 def _extract_chains(fhandle):
     """"""
@@ -74,6 +78,7 @@ def _extract_chains(fhandle):
         output_handle.write(''.join(chain_atoms[c_id]))
         output_handle.write('END\n')
         output_handle.close()
+
 
 if __name__ == '__main__':
     # Check Input

@@ -24,8 +24,11 @@ __email__ = "j.p.g.l.m.rodrigues@gmail.com"
 
 USAGE = __doc__.format(__author__, __email__)
 
+
 def check_input(args):
-    """Checks whether to read from stdin/file and validates user input/options."""
+    """
+    Checks whether to read from stdin/file and validates user input/options.
+    """
 
     if not len(args):
         # No reatom, from pipe
@@ -69,6 +72,7 @@ def check_input(args):
 
     return (reatom, pdbfh)
 
+
 def _renumber_pdb_atoms(fhandle, satomi):
     """Enclosing logic in a function to speed up a bit"""
 
@@ -81,6 +85,7 @@ def _renumber_pdb_atoms(fhandle, satomi):
             satomi += 1
         else:
             yield line
+
 
 if __name__ == '__main__':
 

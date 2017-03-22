@@ -23,8 +23,11 @@ __email__ = "j.p.g.l.m.rodrigues@gmail.com"
 
 USAGE = __doc__.format(__author__, __email__)
 
+
 def check_input(args):
-    """Checks whether to read from stdin/file and validates user input/options."""
+    """
+    Checks whether to read from stdin/file and validates user input/options.
+    """
 
     if not len(args):
         # Read from pipe
@@ -46,6 +49,7 @@ def check_input(args):
 
     return pdbfh
 
+
 def _remove_header(fhandle):
     """Enclosing logic in a function to speed up a bit"""
 
@@ -55,6 +59,7 @@ def _remove_header(fhandle):
     for line in fhandle:
         if line[0:6] in coord_recnames:
             yield line
+
 
 if __name__ == '__main__':
 

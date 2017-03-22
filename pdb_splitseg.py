@@ -24,8 +24,11 @@ __email__ = "j.p.g.l.m.rodrigues@gmail.com"
 
 USAGE = __doc__.format(__author__, __email__)
 
+
 def check_input(args):
-    """Checks whether to read from stdin/file and validates user input/options."""
+    """
+    Checks whether to read from stdin/file and validates user input/options.
+    """
 
     if not len(args):
         # Read from pipe
@@ -47,6 +50,7 @@ def check_input(args):
 
     return pdbfh
 
+
 def _extract_segments(fhandle):
     """"""
 
@@ -60,10 +64,10 @@ def _extract_segments(fhandle):
             if prev_segment != line[72:76]:
                 if segment_atoms:
                     # Write chain to file
-                    output_handle = open(fname_root + '_' + prev_segment.strip() + '.pdb', 'w')
-                    output_handle.write(''.join(segment_atoms))
-                    output_handle.write('END\n')
-                    output_handle.close()
+                    fname = fname_root + '_' + prev_segment.strip() + '.pdb'
+                    with open(fname, 'w') as out_handle:
+                        out_handle.write(''.join(segment_atoms))
+                        out_handle.write('END\n')
                     segment_atoms = []
                 segment_atoms.append(line)
                 prev_segment = line[72:76]
@@ -71,10 +75,11 @@ def _extract_segments(fhandle):
                 segment_atoms.append(line)
 
     # Output last chain to file
-    output_handle = open(fname_root + '_' + segment_atoms[-1][72:76].strip() + '.pdb', 'w')
-    output_handle.write(''.join(segment_atoms))
-    output_handle.write('END\n')
-    output_handle.close()
+    fname = fname_root + '_' + segment_atoms[-1][72:76].strip() + '.pdb'
+    with open(fname, 'w') as out_handle:
+        out_handle.write(''.join(segment_atoms))
+        out_handle.write('END\n')
+
 
 if __name__ == '__main__':
     # Check Input

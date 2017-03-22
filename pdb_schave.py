@@ -30,8 +30,7 @@ USAGE = __doc__.format(__author__, __email__)
 
 def check_input(args):
     """
-    Checks whether to read from stdin/file
-    and validates user input/options.
+    Checks whether to read from stdin/file and validates user input/options.
     """
 
     if not len(args):
@@ -102,6 +101,7 @@ def _shave_pdb(fhandle, set_of_residues):
                 line[12:16].strip() not in backbone):
 
             yield line
+
 
 if __name__ == '__main__':
 

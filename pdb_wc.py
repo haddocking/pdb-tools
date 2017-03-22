@@ -26,8 +26,11 @@ __email__ = "j.p.g.l.m.rodrigues@gmail.com"
 
 USAGE = __doc__.format(__author__, __email__)
 
+
 def check_input(args):
-    """Checks whether to read from stdin/file and validates user input/options."""
+    """
+    Checks whether to read from stdin/file and validates user input/options.
+    """
 
     if not len(args):
         # No option, from pipe
@@ -71,6 +74,7 @@ def check_input(args):
 
     return (option, pdbfh)
 
+
 def _summarize(fhandle, option):
     """Enclosing logic in a function"""
 
@@ -101,11 +105,18 @@ def _summarize(fhandle, option):
                 n_models += 1
 
             res_uid = (line[17:20], line[21], int(line[22:26]))
-            at_uid = (line[12:16], line[16], line[17:20], line[21], line[22:26])
+            at_uid = (line[12:16],
+                      line[16],
+                      line[17:20],
+                      line[21],
+                      line[22:26])
             chain_uid = line[21]
 
             if res_uid != prev_resuid:
-                if prev_chainid == line[21] and prev_resuid and res_uid[2] - 1 != prev_resuid[2]:
+                if prev_chainid == line[21] and \
+                   prev_resuid and \
+                   res_uid[2] - 1 != prev_resuid[2]:
+
                     if gap_check:
                         has_gaps = "Yes"
                     else:
@@ -128,16 +139,16 @@ def _summarize(fhandle, option):
 
             at_list.append(at_uid)
 
-    n_atoms, n_u_atoms = len(at_list), len(set(at_list))
-    n_residues, n_u_residues = len(res_list), len(set(res_list))
-    n_chains, n_u_chains = len(chain_list), len(set(chain_list))
+    n_atm, nu_atm = len(at_list), len(set(at_list))
+    n_res, nu_res = len(res_list), len(set(res_list))
+    n_chn, nu_chn = len(chain_list), len(set(chain_list))
 
     if option == 'a':
-        print(n_atoms, n_u_atoms)
+        print(n_atm, nu_atm)
     elif option == 'r':
-        print(n_residues, n_u_residues)
+        print(n_res, nu_res)
     elif option == 'c':
-        print(n_chains, n_u_chains)
+        print(n_chn, nu_chn)
     elif option == 'm':
         print(n_models)
     elif option == 'H':
@@ -149,14 +160,15 @@ def _summarize(fhandle, option):
     elif option == 'i':
         print(has_insert)
     elif option == 'A':
-        print('No. atoms:\t{0}\t({1:4.1f} per model)'.format(n_atoms, n_u_atoms))
-        print('No. residues:\t{0}\t({1:4.1f} per model)'.format(n_residues, n_u_residues))
-        print('No. chains:\t{0}\t({1:4.1f} per model)'.format(n_chains, n_u_chains))
+        print('No. atoms:\t{0}\t({1:4.1f}/model)'.format(n_atm, nu_atm))
+        print('No. residues:\t{0}\t({1:4.1f}/model)'.format(n_res, nu_res))
+        print('No. chains:\t{0}\t({1:4.1f}/model)'.format(n_chn, nu_chn))
         print('No. models:\t{0}'.format(n_models))
         print('Hetero Atoms:\t{0}'.format(has_hetero))
         print('Has seq. gaps:\t{0}'.format(has_gaps))
         print('Double Occ.:\t{0}'.format(has_double))
         print('Insertions:\t{0}'.format(has_insert))
+
 
 if __name__ == '__main__':
 

@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 
 """
-Extracts a portion of the PDB file, from residue i (to residue j). Slices are inclusive.
+Extracts a portion of the PDB file, from residue i (to residue j).
+Slices are inclusive.
 
 usage: python pdb_rslice.py <i>:<j> <pdb file>
 examples: python pdb_rslice.py 1:10 1CTF.pdb # Extracts residues 1 to 10
           python pdb_rslice.py 1: 1CTF.pdb # Extracts residues 1 to END
-          python pdb_rslice.py :10 1CTF.pdb # Extracts residues from START to 10.
+          python pdb_rslice.py :5 1CTF.pdb # Extracts residues from START to 5.
 
 Author: {0} ({1})
 
@@ -26,8 +27,11 @@ __email__ = "j.p.g.l.m.rodrigues@gmail.com"
 
 USAGE = __doc__.format(__author__, __email__)
 
+
 def check_input(args):
-    """Checks whether to read from stdin/file and validates user input/options."""
+    """
+    Checks whether to read from stdin/file and validates user input/options.
+    """
 
     if not len(args):
         sys.stderr.write(USAGE)
@@ -76,16 +80,17 @@ def check_input(args):
 
     return ((st_slice, en_slice), pdbfh)
 
+
 def _slice_pdb(fhandle, rslice):
     """Enclosing logic in a function to speed up a bit"""
 
     st_slice, en_slice = rslice
 
-    prev_resi = None
     for line in fhandle:
         if line.startswith(('ATOM', 'HETATM', 'TER')):
             if st_slice <= int(line[22:26]) <= en_slice:
                 yield line
+
 
 if __name__ == '__main__':
 

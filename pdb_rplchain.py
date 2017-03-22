@@ -25,8 +25,11 @@ __email__ = "j.p.g.l.m.rodrigues@gmail.com"
 USAGE = __doc__.format(__author__, __email__)
 USAGE = "usage: " + sys.argv[0] + " -<chain> -<chain> <pdb file>\n"
 
+
 def check_input(args):
-    """Checks whether to read from stdin/file and validates user input/options."""
+    """
+    Checks whether to read from stdin/file and validates user input/options.
+    """
 
     if not len(args):
         sys.stderr.write(USAGE)
@@ -42,8 +45,11 @@ def check_input(args):
 
         ori_chain = args[0]
         new_chain = args[1]
-        assert re.match('\-[A-Za-z0-9 ]', ori_chain), 'Invalid chain ID: ' + ori_chain
-        assert re.match('\-[A-Za-z0-9 ]', ori_chain), 'Invalid chain ID: ' + new_chain
+
+        if not re.match('\-[A-Za-z0-9 ]', ori_chain):
+            sys.stderr.write('Invalid chain ID: ' + ori_chain + '\n')
+        if not re.match('\-[A-Za-z0-9 ]', new_chain):
+            sys.stderr.write('Invalid chain ID: ' + new_chain + '\n')
 
     elif len(args) == 3:
         if not os.path.isfile(args[2]):
@@ -53,14 +59,18 @@ def check_input(args):
         pdbfh = open(args[2], 'r')
         ori_chain = args[0]
         new_chain = args[1]
-        assert re.match('\-[A-Za-z0-9 ]', ori_chain), 'Invalid chain ID: ' + ori_chain
-        assert re.match('\-[A-Za-z0-9 ]', ori_chain), 'Invalid chain ID: ' + new_chain
+
+        if not re.match('\-[A-Za-z0-9 ]', ori_chain):
+            sys.stderr.write('Invalid chain ID: ' + ori_chain + '\n')
+        if not re.match('\-[A-Za-z0-9 ]', new_chain):
+            sys.stderr.write('Invalid chain ID: ' + new_chain + '\n')
 
     else:
         sys.stderr.write(USAGE)
         sys.exit(1)
 
     return (pdbfh, ori_chain, new_chain)
+
 
 def _alter_chain(fhandle, ori_chain, new_chain):
     """Enclosing logic in a function to speed up a bit"""
@@ -80,6 +90,7 @@ def _alter_chain(fhandle, ori_chain, new_chain):
             yield line[:21] + new_chain + line[22:]
         else:
             yield line
+
 
 if __name__ == '__main__':
     # Check Input

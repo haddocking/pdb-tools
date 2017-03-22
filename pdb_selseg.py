@@ -24,8 +24,11 @@ __email__ = "j.p.g.l.m.rodrigues@gmail.com"
 
 USAGE = __doc__.format(__author__, __email__)
 
+
 def check_input(args):
-    """Checks whether to read from stdin/file and validates user input/options."""
+    """
+    Checks whether to read from stdin/file and validates user input/options.
+    """
 
     if not len(args):
         # No Segid, from pipe
@@ -69,6 +72,7 @@ def check_input(args):
 
     return (seg, pdbfh)
 
+
 def _select_seg(fhandle, seg_id):
     """Enclosing logic in a function to speed up a bit"""
 
@@ -79,6 +83,7 @@ def _select_seg(fhandle, seg_id):
     for line in fhandle:
         if coord_re.match(line) and line[72:76].strip() in seg_id:
             yield line
+
 
 if __name__ == '__main__':
     # Check Input

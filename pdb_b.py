@@ -24,8 +24,13 @@ __email__ = "j.p.g.l.m.rodrigues@gmail.com"
 
 USAGE = __doc__.format(__author__, __email__)
 
+
+
 def check_input(args):
-    """Checks whether to read from stdin/file and validates user input/options."""
+    """
+    
+    Checks whether to read from stdin/file and validates user input/options.
+    """
 
     if not len(args):
         # No bfactor, from pipe
@@ -69,17 +74,18 @@ def check_input(args):
 
     return (bfactor, pdbfh)
 
+
 def _alter_bfactor(fhandle, bfactor):
     """Enclosing logic in a function to speed up a bit"""
 
     coord_re = re.compile('^(ATOM|HETATM)')
-    #bfactor = str(round(bfactor, 2)).rjust(6)
     bfactor = "{0:>6.2f}".format(bfactor)
     for line in fhandle:
         if coord_re.match(line):
             yield line[:60] + bfactor + line[66:]
         else:
             yield line
+
 
 if __name__ == '__main__':
 
