@@ -125,4 +125,4 @@ Examples
 
 License
 ---------
-MIT. See LICENSE file.
+Apache2. See LICENSE file.
