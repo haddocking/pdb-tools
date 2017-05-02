@@ -17,6 +17,7 @@ FORTRAN77 code that was taking too much effort to compile. RIP.
 
 from __future__ import print_function
 
+import math
 import os
 import sys
 
@@ -25,8 +26,11 @@ __email__ = "j.p.g.l.m.rodrigues@gmail.com"
 
 USAGE = __doc__.format(__author__, __email__)
 
+
 def check_input(args):
-    """Checks whether to read from stdin/file and validates user input/options."""
+    """
+    Checks whether to read from stdin/file and validates user input/options.
+    """
 
     if not len(args):
         # Read from pipe
@@ -48,14 +52,21 @@ def check_input(args):
 
     return pdbfh
 
+
 def _check_structure_gaps(fhandle):
     """Enclosing logic in a function"""
 
-    _centroid = ' CA ' # respect spacing. 'CA  ' != ' CA '
+    _GAP_OSTR = "{0[1]}:{0[3]}{0[2]} < {2:7.2f}A > {1[1]}:{1[3]}{1[2]}"
+    _SGAP_OSTR = "{0[1]}:{0[3]}{0[2]} < Seq. Gap > {1[1]}:{1[3]}{1[2]}"
+
+    _centroid = ' CA '  # respect spacing. 'CA  ' != ' CA '
     _distance_threshold = 4.0
 
-    def _calc_distance(i, j):
-        return ( (j[0]-i[0])**2 + (j[1]-i[1])**2 + (j[2]-i[2])**2 )**0.5
+    def _calculate_atom_distance(i, j):
+        """Euclidean distance between two 3d points"""
+        return math.sqrt((i[0] - j[0])*(i[0] - j[0]) +
+                         (i[1] - j[1])*(i[1] - j[1]) +
+                         (i[2] - j[2])*(i[2] - j[2]))
 
     prev_at = (None, None, None, None, (None, None, None))
     model = 0
@@ -72,19 +83,20 @@ def _check_structure_gaps(fhandle):
             resn = line[17:20]
             resi = int(line[22:26])
             chain = line[21]
-            x, y, z = float(line[30:38]), \
-                      float(line[38:46]), \
-                      float(line[46:54])
+            x = float(line[30:38])
+            y = float(line[38:46])
+            z = float(line[46:54])
 
-            at_uid = (model, chain, resi, resn, aname, (x,y,z))
+            at_uid = (model, chain, resi, resn, aname, (x, y, z))
             if prev_at[0] == at_uid[0] and prev_at[1] == at_uid[1]:
-                d = _calc_distance(at_uid[5], prev_at[5])
+                d = _calculate_atom_distance(at_uid[5], prev_at[5])
                 if d > _distance_threshold:
-                    print("{0[1]}:{0[3]}{0[2]} < {2:7.2f}A > {1[1]}:{1[3]}{1[2]}".format(prev_at, at_uid, d))
+                    print(_GAP_OSTR.format(prev_at, at_uid, d))
                 elif prev_at[2] + 1 != at_uid[2]:
-                    print("{0[1]}:{0[3]}{0[2]} < Seq. Gap > {1[1]}:{1[3]}{1[2]}".format(prev_at, at_uid))
+                    print(_SGAP_OSTR.format(prev_at, at_uid))
 
             prev_at = at_uid
+
 
 if __name__ == '__main__':
 

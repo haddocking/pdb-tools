@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 
 """
-Extracts one or more segments from a PDB file.
+Removes all but MODEL/ATOM/HETATM/TER/ENDMDL/END/MASTER/CONECT/ANISOU lines.
 
-usage: python pdb_selseg.py -<segid> <pdb file>
-example: python pdb_selseg.py -A 1CTF.pdb
+usage: python pdb_stripheader.py <pdb file>
+example: python pdb_stripheader.py 1CTF.pdb
 
 Author: {0} ({1})
 
@@ -16,7 +16,6 @@ FORTRAN77 code that was taking too much effort to compile. RIP.
 """
 
 import os
-import re
 import sys
 
 __author__ = "Joao Rodrigues"
@@ -31,66 +30,44 @@ def check_input(args):
     """
 
     if not len(args):
-        # No Segid, from pipe
+        # Read from pipe
         if not sys.stdin.isatty():
             pdbfh = sys.stdin
-            seg = ' '
         else:
             sys.stderr.write(USAGE)
             sys.exit(1)
     elif len(args) == 1:
-        # Segid & Pipe _or_ file & no Segid
-        if re.match('\-[A-Za-z0-9]+', args[0]):
-            seg = args[0][1:]
-            if not sys.stdin.isatty():
-                pdbfh = sys.stdin
-            else:
-                sys.stderr.write(USAGE)
-                sys.exit(1)
-        else:
-            if not os.path.isfile(args[0]):
-                sys.stderr.write('File not found: ' + args[0] + '\n')
-                sys.stderr.write(USAGE)
-                sys.exit(1)
-            pdbfh = open(args[0], 'r')
-            seg = ' '
-    elif len(args) == 2:
-        # Segid & File
-        if not re.match('\-[A-Za-z0-9]+', args[0]):
-            sys.stderr.write('Invalid segment ID: ' + args[0] + '\n')
+        # File
+        if not os.path.isfile(args[0]):
+            sys.stderr.write('File not found: ' + args[0] + '\n')
             sys.stderr.write(USAGE)
             sys.exit(1)
-        if not os.path.isfile(args[1]):
-            sys.stderr.write('File not found: ' + args[1] + '\n')
-            sys.stderr.write(USAGE)
-            sys.exit(1)
-        seg = args[0][1:]
-        pdbfh = open(args[1], 'r')
+        pdbfh = open(args[0], 'r')
     else:
         sys.stderr.write(USAGE)
         sys.exit(1)
 
-    return (seg, pdbfh)
+    return pdbfh
 
 
-def _select_seg(fhandle, seg_id):
+def _remove_header(fhandle):
     """Enclosing logic in a function to speed up a bit"""
 
-    coord_re = re.compile('^(ATOM|HETATM)')
-    fhandle = fhandle
-    seg_id = set(seg_id)
-
+    coord_recnames = set(['MODEL ', 'ATOM  ', 'HETATM',
+                          'ANISOU', 'ENDMDL', 'END   ',
+                          'TER   ', 'CONECT', 'MASTER'])
     for line in fhandle:
-        if coord_re.match(line) and line[72:76].strip() in seg_id:
+        if line[0:6] in coord_recnames:
             yield line
 
 
 if __name__ == '__main__':
+
     # Check Input
-    seg, pdbfh = check_input(sys.argv[1:])
+    pdbfh = check_input(sys.argv[1:])
 
     # Do the job
-    new_pdb = _select_seg(pdbfh, seg)
+    new_pdb = _remove_header(pdbfh)
 
     try:
         sys.stdout.write(''.join(new_pdb))

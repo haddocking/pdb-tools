@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-shifts residues in a PDB file adding a given number.
+Shifts residues in a PDB file adding a given number.
 
 usage: python pdb_shiftres.py -<shift> <pdb file>
 example: python pdb_shiftres.py -1000 1CTF.pdb
@@ -24,8 +24,11 @@ __email__ = "j.p.g.l.m.rodrigues@gmail.com"
 
 USAGE = __doc__.format(__author__, __email__)
 
+
 def check_input(args):
-    """Checks whether to read from stdin/file and validates user input/options."""
+    """
+    Checks whether to read from stdin/file and validates user input/options.
+    """
 
     if not len(args):
         # No reres, from pipe
@@ -69,6 +72,7 @@ def check_input(args):
 
     return (reres, pdbfh)
 
+
 def _shift_pdb_residue(fhandle, sresid):
     """Enclosing logic in a function to speed up a bit"""
 
@@ -78,6 +82,7 @@ def _shift_pdb_residue(fhandle, sresid):
             yield line[:22] + str(resi).rjust(4) + line[26:]
         else:
             yield line
+
 
 if __name__ == '__main__':
 

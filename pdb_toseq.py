@@ -23,8 +23,11 @@ __email__ = "j.p.g.l.m.rodrigues@gmail.com"
 
 USAGE = __doc__.format(__author__, __email__)
 
+
 def check_input(args):
-    """Checks whether to read from stdin/file and validates user input/options."""
+    """
+    Checks whether to read from stdin/file and validates user input/options.
+    """
 
     if not len(args):
         # No chain, from pipe
@@ -47,21 +50,25 @@ def check_input(args):
 
     return (pdbfn, pdbfh)
 
+
 def _get_sequence(fhandle):
     """Enclosing logic in a function to simplify code"""
 
-    aa_codes = [
+    res_codes = [
                 # 20 canonical amino acids
                 ('CYS', 'C'), ('ASP', 'D'), ('SER', 'S'), ('GLN', 'Q'),
-               	('LYS', 'K'), ('ILE', 'I'), ('PRO', 'P'), ('THR', 'T'),
+                ('LYS', 'K'), ('ILE', 'I'), ('PRO', 'P'), ('THR', 'T'),
                 ('PHE', 'F'), ('ASN', 'N'), ('GLY', 'G'), ('HIS', 'H'),
-               	('LEU', 'L'), ('ARG', 'R'), ('TRP', 'W'), ('ALA', 'A'),
-               	('VAL', 'V'), ('GLU', 'E'), ('TYR', 'Y'), ('MET', 'M'),
+                ('LEU', 'L'), ('ARG', 'R'), ('TRP', 'W'), ('ALA', 'A'),
+                ('VAL', 'V'), ('GLU', 'E'), ('TYR', 'Y'), ('MET', 'M'),
                 # Non-canonical amino acids
-               	#('MSE', 'M'), ('SOC', 'C'),
+                # ('MSE', 'M'), ('SOC', 'C'),
+                # Canonical xNA
+                ('  U', 'U'), ('  A', 'A'), ('  G', 'G'), ('  C', 'C'),
+                ('  T', 'T'),
                ]
 
-    three_to_one = dict(aa_codes)
+    three_to_one = dict(res_codes)
     _records = set(['ATOM  ', 'HETATM'])
 
     fhandle = fhandle
@@ -88,6 +95,7 @@ def _get_sequence(fhandle):
             sequence[chain].append(aa_resn)
 
     return sequence
+
 
 if __name__ == '__main__':
     # Check Input

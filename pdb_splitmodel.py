@@ -24,8 +24,11 @@ __email__ = "j.p.g.l.m.rodrigues@gmail.com"
 
 USAGE = __doc__.format(__author__, __email__)
 
+
 def check_input(args):
-    """Checks whether to read from stdin/file and validates user input/options."""
+    """
+    Checks whether to read from stdin/file and validates user input/options.
+    """
 
     if not len(args):
         # Read from pipe
@@ -47,6 +50,7 @@ def check_input(args):
 
     return pdbfh
 
+
 def _extract_models(fhandle):
 
     coord_re = re.compile('^(ATOM|HETATM)')
@@ -63,6 +67,7 @@ def _extract_models(fhandle):
         elif line.startswith('ENDMDL'):
             output_handle.write('END\n')
             output_handle.close()
+
 
 if __name__ == '__main__':
     # Check Input

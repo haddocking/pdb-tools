@@ -24,8 +24,11 @@ __email__ = "j.p.g.l.m.rodrigues@gmail.com"
 
 USAGE = __doc__.format(__author__, __email__)
 
+
 def check_input(args):
-    """Checks whether to read from stdin/file and validates user input/options."""
+    """
+    Checks whether to read from stdin/file and validates user input/options.
+    """
 
     if not len(args):
         # Read from pipe
@@ -47,6 +50,7 @@ def check_input(args):
 
     return pdbfh
 
+
 def _remove_double_occupancies(fhandle):
     """Enclosing logic in a function to speed up a bit"""
 
@@ -63,11 +67,12 @@ def _remove_double_occupancies(fhandle):
 
             if atom_uid not in read_atoms:
                 read_atoms.add(atom_uid)
-                yield line[:16] + ' ' + line[17:]  + '\n' # Blank altloc field
+                yield line[:16] + ' ' + line[17:] + '\n'  # Blank altloc field
             else:
                 continue
         else:
             yield line + '\n'
+
 
 if __name__ == '__main__':
 

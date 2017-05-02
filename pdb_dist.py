@@ -3,7 +3,8 @@
 """
 Calculates distances between all atoms in a structure.
 Filters the distances if a cutoff value is given (default 5.0A).
-If the cutoff is preceeded by a '+' sign, only inter-chain distances are calculated.
+If the cutoff is preceeded by a '+' sign, then
+only inter-chain distances are calculated.
 
 usage: python pdb_dist.py [[-+]cutoff] <pdb file>
 example: python pdb_dist.py -5.0 1CTF.pdb
@@ -20,6 +21,7 @@ FORTRAN77 code that was taking too much effort to compile. RIP.
 
 from __future__ import print_function
 
+import math
 import os
 import re
 import sys
@@ -31,10 +33,16 @@ USAGE = __doc__.format(__author__, __email__)
 
 CUTOFF_DEFAULT = 5.0
 # Atom name, residue number, chain ID, same, same, same, d_ij
-_OUTPUT_FORMAT = "{0[0]:<4s} {0[1]:>3s} {0[2]:>4s} {0[3]:1s} : {1[0]:<4s} {1[1]:>4s} {1[2]:>4s} {1[3]:1s} | {2:5.2f}"
+_OUTPUT_FORMAT_STR = "{0[0]:<4s} {0[1]:>3s} {0[2]:>4s} {0[3]:1s}"
+_OUTPUT_FORMAT_STR += " : "
+_OUTPUT_FORMAT_STR += "{1[0]:<4s} {1[1]:>4s} {1[2]:>4s}"
+_OUTPUT_FORMAT_STR += " {1[3]:1s} | {2:5.2f}"
+
 
 def check_input(args):
-    """Checks whether to read from stdin/file and validates user input/options."""
+    """
+    Checks whether to read from stdin/file and validates user input/options.
+    """
 
     if not len(args):
         # From pipe
@@ -84,9 +92,13 @@ def check_input(args):
 
     return (inter, cutoff, pdbfh)
 
+
 def _calculate_atom_distance(i, j):
     """Euclidean distance between two 3d points"""
-    return ((i[0] - j[0])**2 + (i[1] - j[1])**2 + (i[2] - j[2])**2) ** 0.5
+    return math.sqrt((i[0] - j[0])*(i[0] - j[0]) +
+                     (i[1] - j[1])*(i[1] - j[1]) +
+                     (i[2] - j[2])*(i[2] - j[2]))
+
 
 def calculate_distances(fhandle, cutoff, inter):
     """Enclosing logic in a function to speed up a bit"""
@@ -101,19 +113,24 @@ def calculate_distances(fhandle, cutoff, inter):
         line = line.strip()
         if coord_re.match(line):
             # atom name, altloc, res number, chain name
-            atom_uid = (line[12:16].strip(), line[17:20].strip(), line[22:26].strip(), line[21])
+            atom_uid = (line[12:16].strip(),
+                        line[17:20].strip(),
+                        line[22:26].strip(),
+                        line[21])
+
             x, y, z = line[30:38], line[38:46], line[46:54]
             x, y, z = float(x), float(y), float(z)
 
             atoms.append((atom_uid, (x, y, z)))
 
-    for i, atom_i in enumerate(atoms):
-        for atom_j in atoms[i+1:]:
+    for i, at_i in enumerate(atoms):
+        r_i = at_i[0][1:]
+        for at_j in atoms[i+1:]:
             # Avoid intra-residue calculations & intra chain if requested
-            if not ((atom_i[0][1:] == atom_j[0][1:]) or (inter and atom_i[0][3] == atom_j[0][3])):
-                d_ij = _calculate_atom_distance(atom_i[1], atom_j[1])
+            if not ((r_i == at_j[0][1:]) or (inter and r_i[2] == at_j[0][3])):
+                d_ij = _calculate_atom_distance(at_i[1], at_j[1])
                 if d_ij <= cutoff:
-                    print(_OUTPUT_FORMAT.format(atom_i[0], atom_j[0], d_ij))
+                    print(_OUTPUT_FORMAT_STR.format(at_i[0], at_j[0], d_ij))
 
 
 if __name__ == '__main__':
@@ -127,5 +144,3 @@ if __name__ == '__main__':
     # We can close it even if it is sys.stdin
     pdbfh.close()
     sys.exit(0)
-
-

@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 
 """
-Sets the width of all 'ATOM/HETATM' lines in the PDB to 80 characters (pads/trims whitespace).
+Sets the width of all 'ATOM/HETATM' lines in the PDB to 80 characters by
+paddding or trimming whitespace.
 
 usage: python pdb_linewidth.py <pdb file>
 example: python pdb_linewidth.py 1CTF.pdb
@@ -24,8 +25,11 @@ __email__ = "j.p.g.l.m.rodrigues@gmail.com"
 
 USAGE = __doc__.format(__author__, __email__)
 
+
 def check_input(args):
-    """Checks whether to read from stdin/file and validates user input/options."""
+    """
+    Checks whether to read from stdin/file and validates user input/options.
+    """
 
     if not len(args):
         # Read from pipe
@@ -47,6 +51,7 @@ def check_input(args):
 
     return pdbfh
 
+
 def _fix_lines(fhandle):
     """Enclosing logic in a function to speed up a bit"""
 
@@ -63,6 +68,7 @@ def _fix_lines(fhandle):
                 line = line + ' '*padding
 
             yield line[:80] + '\n'
+
 
 if __name__ == '__main__':
     # Check Input

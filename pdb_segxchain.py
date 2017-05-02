@@ -24,8 +24,11 @@ import sys
 
 USAGE = __doc__.format(__author__, __email__)
 
+
 def check_input(args):
-    """Checks whether to read from stdin/file and validates user input/options."""
+    """
+    Checks whether to read from stdin/file and validates user input/options.
+    """
 
     if not len(args):
         # Read from pipe
@@ -60,6 +63,7 @@ def _swap_segxchain(fhandle):
             yield line[:21] + line[72:76][0] + line[22:] + '\n'
         else:
             yield line + '\n'
+
 
 if __name__ == '__main__':
     # Check Input

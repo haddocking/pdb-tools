@@ -24,8 +24,12 @@ __email__ = "j.p.g.l.m.rodrigues@gmail.com"
 
 USAGE = __doc__.format(__author__, __email__)
 
+
 def check_input(args):
-    """Checks whether to read from stdin/file and validates user input/options."""
+    """
+    
+    Checks whether to read from stdin/file and validates user input/options.
+    """
 
     if not len(args):
         # No chain, from pipe
@@ -70,6 +74,7 @@ def check_input(args):
 
     return (chain, pdbfh)
 
+
 def _alter_chain(fhandle, chain_id):
     """Enclosing logic in a function to speed up a bit"""
 
@@ -82,6 +87,7 @@ def _alter_chain(fhandle, chain_id):
             yield line[:21] + chain_id[0] + line[22:]
         else:
             yield line
+
 
 if __name__ == '__main__':
     # Check Input

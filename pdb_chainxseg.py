@@ -24,8 +24,11 @@ __email__ = "j.p.g.l.m.rodrigues@gmail.com"
 
 USAGE = __doc__.format(__author__, __email__)
 
+
 def check_input(args):
-    """Checks whether to read from stdin/file and validates user input/options."""
+    """
+    Checks whether to read from stdin/file and validates user input/options.
+    """
 
     if not len(args):
         # Read from pipe
@@ -47,6 +50,7 @@ def check_input(args):
 
     return pdbfh
 
+
 def _swap_chainxseg(fhandle):
     """Enclosing logic in a function to speed up a bit"""
 
@@ -58,11 +62,12 @@ def _swap_chainxseg(fhandle):
             size_of_line = len(line)
             # Pad short lines
             if size_of_line < 80:
-                padding = 80 - size_of_line
-                line = line + ' '*padding
+                padding = 80 - size_of_line + 1
+                line = line.strip('\n') + ' '*padding + '\n'
             yield line[:72] + line[21].ljust(4) + line[76:]
         else:
             yield line
+
 
 if __name__ == '__main__':
     # Check Input

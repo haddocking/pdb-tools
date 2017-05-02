@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 
 """
-Extracts a portion of the PDB file, from residue i (to residue j).
-Slices are inclusive.
+Deletes side-chain atoms of specific residue selections.
 
-usage: python pdb_rslice.py <i>:<j> <pdb file>
-examples: python pdb_rslice.py 1:10 1CTF.pdb # Extracts residues 1 to 10
-          python pdb_rslice.py 1: 1CTF.pdb # Extracts residues 1 to END
-          python pdb_rslice.py :5 1CTF.pdb # Extracts residues from START to 5.
+usage: python pdb_schave.py <i>[,:<j>] <pdb file>
+examples:
+    python pdb_rslice.py 1:10 1CTF.pdb # Shaves residues 1 to 10
+    python pdb_rslice.py 1: 1CTF.pdb # Shaves residues 1 to END
+    python pdb_rslice.py 1:10,20:25 1CTF.pdb # Shaves residues 1-10 and 20-25
 
 Author: {0} ({1})
 
@@ -38,7 +38,7 @@ def check_input(args):
         sys.exit(1)
     elif len(args) == 1:
         # Resi & Pipe _or_ file & no rslice
-        if re.match('[\-0-9]*:[\-0-9]*', args[0]):
+        if re.match('[\-0-9,:]+', args[0]):
             rslice = args[0]
             if not sys.stdin.isatty():
                 pdbfh = sys.stdin
@@ -50,7 +50,7 @@ def check_input(args):
             sys.exit(1)
     elif len(args) == 2:
         # Option & File
-        if not re.match('[\-0-9]*:[\-0-9]*', args[0]):
+        if not re.match('[\-0-9,:]+', args[0]):
             sys.stderr.write('Invalid slice: ' + args[0] + '\n')
             sys.stderr.write(USAGE)
             sys.exit(1)
@@ -64,33 +64,42 @@ def check_input(args):
         sys.stderr.write(USAGE)
         sys.exit(1)
 
-    # Parse st and end of slice
-    bits = [b for b in rslice.split(':') if b.strip()]
-    if len(bits) == 2:
-        st_slice, en_slice = map(int, bits)
-    elif len(bits) == 1 and rslice[0] == ':':
-        st_slice = -9999
-        en_slice = int(bits[0])
-    elif len(bits) == 1 and rslice[-1] == ':':
-        st_slice = int(bits[0])
-        en_slice = 999999
-    else:
-        sys.stderr.write(USAGE)
-        sys.exit(1)
+    # Parse selection
+    # Return set of integers to be mapped to residue numbers
+    resi_set = set()
+    groups = [g for g in rslice.split(',') if g.strip()]
+    for g in groups:
+        bits = [b for b in g.split(':') if b.strip()]
+        if len(bits) == 2:
+            st_slice, en_slice = map(int, bits)
+            resi_set = resi_set.union(range(st_slice, en_slice + 1))
+        elif len(bits) == 1 and rslice[0] == ':':
+            st_slice = -99
+            en_slice = int(bits[0])
+            resi_set = resi_set.union(range(st_slice, en_slice + 1))
+        elif len(bits) == 1 and rslice[-1] == ':':
+            st_slice = int(bits[0])
+            en_slice = 99999
+            resi_set = resi_set.union(range(st_slice, en_slice + 1))
+        elif len(bits) == 1 and bits[0].find(':') == -1:
+            resi_set = resi_set.union(map(int, bits))
+        else:
+            sys.stderr.write(USAGE)
+            sys.exit(1)
 
-    return ((st_slice, en_slice), pdbfh)
+    return (resi_set, pdbfh)
 
 
-def _slice_pdb(fhandle, rslice):
+def _shave_pdb(fhandle, set_of_residues):
     """Enclosing logic in a function to speed up a bit"""
 
-    st_slice, en_slice = rslice
-
+    resset = set_of_residues
+    backbone = set(('CA', 'N', 'O', 'C'))
     for line in fhandle:
-        if line.startswith(('ATOM', 'HETATM', 'TER')):
-            if st_slice <= int(line[22:26]) <= en_slice:
-                yield line
-        else:
+        if not (line.startswith(('ATOM', 'HETATM')) and
+                int(line[22:26]) in resset and
+                line[12:16].strip() not in backbone):
+
             yield line
 
 
@@ -100,7 +109,7 @@ if __name__ == '__main__':
     rslice, pdbfh = check_input(sys.argv[1:])
 
     # Do the job
-    new_pdb = _slice_pdb(pdbfh, rslice)
+    new_pdb = _shave_pdb(pdbfh, rslice)
 
     try:
         sys.stdout.write(''.join(new_pdb))

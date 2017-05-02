@@ -20,16 +20,27 @@ from __future__ import print_function
 import gzip
 import re
 import sys
-import cStringIO
-import urllib2
+
+# Python 3 vs Python 2
+if sys.version_info[0] < 3:
+    from cStringIO import StringIO as IO
+    from urllib2 import Request, build_opener
+    from urllib2 import HTTPError
+else:
+    from io import BytesIO as IO
+    from urllib.request import Request, build_opener
+    from urllib.error import HTTPError
 
 __author__ = "Joao Rodrigues"
 __email__ = "j.p.g.l.m.rodrigues@gmail.com"
 
 USAGE = __doc__.format(__author__, __email__)
 
+
 def check_input(args):
-    """Checks whether to read from stdin/file and validates user input/options."""
+    """
+    Checks whether to read from stdin/file and validates user input/options.
+    """
 
     if len(args) == 1:
         if not re.match('[0-9a-zA-Z]{4}$', args[0]):
@@ -56,6 +67,7 @@ def check_input(args):
 
     return (pdb_id, biounit)
 
+
 def _fetch_structure(pdbid, biounit=False):
     """Enclosing logic in a function"""
 
@@ -64,23 +76,26 @@ def _fetch_structure(pdbid, biounit=False):
     pdb_url = base_url + pdbid.lower() + pdb_type + '.gz'
 
     try:
-        request = urllib2.Request(pdb_url)
-        opener = urllib2.build_opener()
+        request = Request(pdb_url)
+        opener = build_opener()
         url_data = opener.open(request).read()
-    except urllib2.HTTPError as e:
-        print('[!] Error fetching structure: ({0}) {1}'.format(e.code, e.msg), file=sys.stderr)
+    except HTTPError as e:
+        print('[!] Error fetching structure: ({0}) {1}'.format(e.code, e.msg),
+              file=sys.stderr)
         return
     else:
         try:
-            buf = cStringIO.StringIO(url_data)
+            buf = IO(url_data)
             gz_handle = gzip.GzipFile(fileobj=buf, mode='rb')
             for line in gz_handle:
-                yield line
+                yield line.decode('utf-8')
         except IOError as e:
-            print('[!] Error fetching structure: {0}'.format(e.msg), file=sys.stderr)
+            print('[!] Error fetching structure: {0}'.format(e.msg),
+                  file=sys.stderr)
             return
         finally:
             gz_handle.close()
+
 
 if __name__ == '__main__':
 
