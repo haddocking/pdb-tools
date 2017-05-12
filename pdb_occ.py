@@ -77,7 +77,7 @@ def _alter_occupancy(fhandle, occup):
     """Enclosing logic in a function to speed up a bit"""
 
     coord_re = re.compile('^(ATOM|HETATM)')
-    occup = str(round(occup, 2)).rjust(6)
+    occup = "{0:>6.2f}".format(occup)
     for line in fhandle:
         if coord_re.match(line):
             yield line[:54] + occup + line[60:]
