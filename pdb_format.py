@@ -117,6 +117,15 @@ def _check_pdb_format(fhandle):
 
                     has_error = True
                     break
+        else:
+            # Do basic line length check
+            linelen = len(line)
+            if linelen < 80:
+                print('[!] Line {0} is short: {1} < 80'.format(iline, linelen))
+                has_error = True
+            elif linelen > 80:
+                print('[!] Line {0} is long: {1} > 80'.format(iline, linelen))
+                has_error = True
 
     if has_error:
         print('\nTo understand your errors, read the format specification:')
