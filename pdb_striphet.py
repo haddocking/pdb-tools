@@ -16,7 +16,6 @@ FORTRAN77 code that was taking too much effort to compile. RIP.
 """
 
 import os
-import re
 import sys
 
 __author__ = "Joao Rodrigues"
@@ -54,10 +53,12 @@ def check_input(args):
 def _remove_hetatm(fhandle):
     """Enclosing logic in a function to speed up a bit"""
 
-    coord_re = re.compile('^ATOM')
-    for line in fhandle:
-        if coord_re.match(line):
-            yield line
+    coord_recnames = set(['MODEL ', 'ATOM  ',
+                          'ANISOU', 'ENDMDL', 'END   ',
+                          'TER   ', 'CONECT', 'MASTER'])
+        for line in fhandle:
+            if line[0:6] in coord_recnames:
+                yield line
 
 
 if __name__ == '__main__':
