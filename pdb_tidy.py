@@ -66,16 +66,16 @@ def _tidy_structure(fhandle):
     pdb_data = []
 
     # Read first ATOM/HETATM line to initialize prev_line and store it already
+    line = None
     for line in fhandle:
         if coord_re.match(line):
             pdb_data.append(line)
             break
-    prev_line = line
 
+    prev_line = line
     for line in fhandle:
         if coord_re.match(line):
             resid_gap = int(line[22:26]) - int(prev_line[22:26])
-
             if prev_line[21] != line[21] or resid_gap > 1:
                 serial = int(prev_line[6:11]) + 1
                 resnam = prev_line[17:20]
@@ -90,6 +90,9 @@ def _tidy_structure(fhandle):
             prev_line = line
 
     # Add last TER statement and END
+    if not coord_re.match(line):
+        line = prev_line
+
     serial = int(prev_line[6:11]) + 1
     resnam = line[17:20]
     chain  = line[21]
