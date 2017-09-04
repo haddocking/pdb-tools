@@ -56,9 +56,10 @@ def _remove_hetatm(fhandle):
     coord_recnames = set(['MODEL ', 'ATOM  ',
                           'ANISOU', 'ENDMDL', 'END   ',
                           'TER   ', 'CONECT', 'MASTER'])
-        for line in fhandle:
-            if line[0:6] in coord_recnames:
-                yield line
+    
+    for line in fhandle:
+        if line[0:6] in coord_recnames:
+            yield line
 
 
 if __name__ == '__main__':
