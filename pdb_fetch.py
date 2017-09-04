@@ -71,7 +71,7 @@ def check_input(args):
 def _fetch_structure(pdbid, biounit=False):
     """Enclosing logic in a function"""
 
-    base_url = 'http://www.rcsb.org/pdb/files/'
+    base_url = 'https://files.rcsb.org/download/'
     pdb_type = '.pdb1' if biounit else '.pdb'
     pdb_url = base_url + pdbid.lower() + pdb_type + '.gz'
 
