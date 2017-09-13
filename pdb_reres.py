@@ -1,10 +1,13 @@
 #!/usr/bin/env python
 
 """
-Renumbers residues in a PDB file starting from a given number.
+Renumbers residues in a PDB file.
 
-usage: python pdb_reres.py -<resi> <pdb file>
-example: python pdb_reres.py -1 1CTF.pdb
+usage: python pdb_reres.py <pdb file> [-chain <ids>][-resid <int>]
+example:
+    python pdb_reres.py 1CTF.pdb -resid 1 # renumbers from 1, sequentially
+    python pdb_reres.py 1CTF.pdb -chain -resid 1 # renumbers each chain from 1
+    python pdb_reres.py 1CTF.pdb -chain A -resid 1 # renumbers chain A from 1
 
 Author: {0} ({1})
 
@@ -25,77 +28,115 @@ __email__ = "j.p.g.l.m.rodrigues@gmail.com"
 USAGE = __doc__.format(__author__, __email__)
 
 
-def check_input(args):
+def check_input(arg_list):
     """
     Checks whether to read from stdin/file and validates user input/options.
     """
+    # Dictionary to define options and default values,
+    # rules to validate input values, and handlers to parse them if needed.
+    # @joaomcteixeira
+    user_opts = {'resid': 1, 'chain': None}  # defaults if no opt is called
 
-    if not len(args):
-        # No reres, from pipe
+    opts_defaults = {'resid': 1, 'chain': {}}  # default if opt *is* called
+
+    rules = {'resid': re.compile('[\-0-9]+'),  # option with numeric value
+             'chain': re.compile('[A-Za-z0-9,]+'),  # options with alpha value
+             }
+
+    handlers = {'resid': lambda x: int(x),
+                'chain': lambda x: set(x.split(','))}
+
+    pdbfh = None
+
+    # First argument is always file name
+    # If it is an option (or no args), assume reading from input stream
+    if not arg_list or arg_list[0][0] == '-':
         if not sys.stdin.isatty():
             pdbfh = sys.stdin
-            reres = 1
         else:
             sys.stderr.write(USAGE)
             sys.exit(1)
-    elif len(args) == 1:
-        # Resi & Pipe _or_ file & no reres
-        if re.match('\-[\-0-9]+', args[0]):
-            reres = int(args[0][1:])
-            if not sys.stdin.isatty():
-                pdbfh = sys.stdin
-            else:
-                sys.stderr.write(USAGE)
-                sys.exit(1)
-        else:
-            if not os.path.isfile(args[0]):
-                sys.stderr.write('File not found: ' + args[0] + '\n')
-                sys.stderr.write(USAGE)
-                sys.exit(1)
-            pdbfh = open(args[0], 'r')
-            reres = 1
-    elif len(args) == 2:
-        # Chain & File
-        if not re.match('\-[\-0-9]+', args[0]):
-            sys.stderr.write('Invalid residue number: ' + args[0] + '\n')
-            sys.stderr.write(USAGE)
-            sys.exit(1)
-        if not os.path.isfile(args[1]):
-            sys.stderr.write('File not found: ' + args[1] + '\n')
-            sys.stderr.write(USAGE)
-            sys.exit(1)
-        reres = int(args[0][1:])
-        pdbfh = open(args[1], 'r')
     else:
-        sys.stderr.write(USAGE)
-        sys.exit(1)
+        if not sys.stdin.isatty():
+            sys.stderr.write('Error: multiple sources of input' + '\n')
+            sys.exit(1)
+        pdbfh = open(arg_list[0])
+        arg_list = arg_list[1:]
 
-    return (reres, pdbfh)
+    # Check for any combination of arguments
+    n_args, skip = len(arg_list), False
+    for idx, arg in enumerate(arg_list):
+        if skip:
+            skip = False
+            continue
+
+        # Option
+        if re.match('\-', arg):
+            name = arg[1:]
+            # Validate option name
+            if name not in rules:
+                sys.stderr.write('Unrecognized option: ' + arg + '\n')
+                sys.exit(1)
+
+            rule = rules[name]
+
+            # Validate option value (if any)
+            if idx + 1 < n_args and arg_list[idx + 1][0] != '-':
+                raw_val = arg_list[idx + 1]
+                val = rule.match(raw_val)
+                if val:
+                    user_opts[name] = handlers[name](val.group(0))
+                    skip = True
+                else:
+                    sys.stderr.write('Bad value for \'' + arg + '\': '
+                                     + raw_val +'\n')
+                    sys.exit(1)
+            else:  # no-value option or last option
+                user_opts[name] = opts_defaults[name]
+        else:
+            sys.stderr.write('Unrecognized option: ' + arg + '\n')
+            sys.exit(1)
+
+    return (pdbfh, user_opts)
 
 
-def _renumber_pdb_residue(fhandle, sresid):
-    """Enclosing logic in a function to speed up a bit"""
+def _renumber_pdb_residue(fhandle, opt_dict):
+    """Keeping code organized ..."""
 
-    resi = sresid - 1
-    prev_resi = None
+    opts = opt_dict
+    resi = opts['resid'] - 1
+
+    # if chain is none, renumber everyone
+    # if chain is not none but empty, restart at each chain
+    # otherwise, renumber only chain
+    on_chain = opts.get('chain') is not None
+
+    prev_chain, prev_resi = None, None
     for line in fhandle:
         if line.startswith(('ATOM', 'HETATM', 'TER')):
+            if line[21] != prev_chain:
+                if on_chain:
+                    resi = opts['resid'] - 1
+                prev_chain = line[21]
+
             if line[22:26] != prev_resi:
                 prev_resi = line[22:26]
                 resi += 1
 
-            yield line[:22] + str(resi).rjust(4) + line[26:]
-        else:
-            yield line
+            if not opts.get('chain') or line[21] in opts['chain']:
+                yield line[:22] + str(resi).rjust(4) + line[26:]
+                continue
+
+        yield line
 
 
 if __name__ == '__main__':
 
     # Check Input
-    reres, pdbfh = check_input(sys.argv[1:])
+    pdbfh, options = check_input(sys.argv[1:])
 
     # Do the job
-    new_pdb = _renumber_pdb_residue(pdbfh, reres)
+    new_pdb = _renumber_pdb_residue(pdbfh, options)
 
     try:
         sys.stdout.write(''.join(new_pdb))
