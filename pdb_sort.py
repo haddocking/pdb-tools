@@ -55,13 +55,12 @@ def check_input(args):
 
 def _sort_chains(fhandle):
     """Enclosing logic in a function"""
-
-    # TER     606      LEU A  75
     
     coord_re = re.compile('^(ATOM|HETATM)')
     chain_dump = dict()
-    
     prev_chain = None
+    
+    # stores chain info in dictionary where keys are chain ids
     for line in fhandle:
         if not coord_re.match(line):
             continue
@@ -69,61 +68,12 @@ def _sort_chains(fhandle):
         chain_id = line[21]
         
         if chain_id != prev_chain:
-            chain_dump.setdefult(chain_id, "")
+            chain_dump.setdefault(chain_id, "")
         
         chain_dump[chain_id] += line
         
     for chain in sorted(chain_dump.keys()):
-        yield chain
-        
-        
-    # _TER = "TER   {:>5d}      {:3s} {:1s}{:>4s}{:1s}" + " " * 53 + "\n"
-
-    # 
-    # fhandle = fhandle
-
-    # pdb_data = []
-
-    # # Read first ATOM/HETATM line to initialize prev_line and store it already
-    # line = None
-    # for line in fhandle:
-        # if coord_re.match(line):
-            # pdb_data.append(line)
-            # break
-
-    # prev_line = line
-    # for line in fhandle:
-        # if coord_re.match(line):
-            # resid_gap = int(line[22:26]) - int(prev_line[22:26])
-            # if prev_line[21] != line[21] or resid_gap > 1:
-                # serial = int(prev_line[6:11]) + 1
-                # resnam = prev_line[17:20]
-                # chain  = prev_line[21]
-                # resid  = prev_line[22:26]
-                # icode  = prev_line[26]
-
-                # ter_line = _TER.format(serial, resnam, chain, resid, icode)
-                # pdb_data.append(ter_line)
-
-            # pdb_data.append(line)
-            # prev_line = line
-
-    # # Add last TER statement and END
-    # if not coord_re.match(line):
-        # line = prev_line
-
-    # serial = int(prev_line[6:11]) + 1
-    # resnam = line[17:20]
-    # chain  = line[21]
-    # resid  = line[22:26]
-    # icode  = line[26]
-
-    # ter_line = _TER.format(serial, resnam, chain, resid, icode)
-    # pdb_data.append(ter_line)
-    # pdb_data.append('END' + ' '*77 + '\n')
-
-    return pdb_data
-
+        yield chain_dump[chain]
 
 if __name__ == '__main__':
 
