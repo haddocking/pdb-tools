@@ -3,7 +3,7 @@
 """
 Concatenates chains from multiple PDB files.
 
-usage: python pdb_concat.py <pdb files> 
+usage: python pdb_merge.py <pdb files> 
 example:
     python pdb_merge.py 1.pdb 2.pdb 3.pdb > new.pdb
     python pdb_merge.py *.pdb > new.pdb
