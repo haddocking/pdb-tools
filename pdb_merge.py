@@ -5,8 +5,8 @@ Concatenates chains from multiple PDB files.
 
 usage: python pdb_concat.py <pdb files> 
 example:
-    python pdb_concat.py 1.pdb 2.pdb 3.pdb > new.pdb
-    python pdb_concat *.pdb > new.pdb
+    python pdb_merge.py 1.pdb 2.pdb 3.pdb > new.pdb
+    python pdb_merge.py *.pdb > new.pdb
 
 Author: {0} ({1})
 
@@ -52,7 +52,7 @@ def _concatenate_pdbs(pdbfnlh):
         - pdbfnlh (list of str): list of file names to process.
     """
     # reads only ATOM, HETATOM and TER lines
-    coord_re = re.compile('^(ATOM|HETATM|TER)')
+    coord_re = re.compile('^(ATOM|HETATM)')
     
     # for each filr in the PDB file name list
     for file_name in pdbfnlh:
