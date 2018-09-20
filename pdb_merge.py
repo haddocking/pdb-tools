@@ -1,10 +1,7 @@
 #!/usr/bin/env python
 
 """
-Concatenates PDB files ordering chains according to input.
-
-Residue names are maintained and HETATMS are written at the end
-keeping information on the chain they belong.
+Concatenates chains from multiple PDB files.
 
 usage: python pdb_concat.py <pdb files> 
 example:
@@ -23,8 +20,6 @@ FORTRAN77 code that was taking too much effort to compile. RIP.
 import os
 import sys
 import re
-import string
-import itertools as it
 
 __author__ = "Joao M.C. Teixeira"
 __email__ = "joaomcteixeira@gmail.com"
@@ -32,9 +27,7 @@ __email__ = "joaomcteixeira@gmail.com"
 USAGE = __doc__.format(__author__, __email__)
 
 def check_input(args):
-    """
-    Checks whether to read from stdin/file and validates user input/options.
-    """
+    """Validates user input/options."""
     
     if not len(args):
         sys.stderr.write(USAGE)
@@ -53,16 +46,15 @@ def check_input(args):
 
 def _concatenate_pdbs(pdbfnlh):
     """
-    Concatenates PDBs in a single PDB file.
-    
-    PDBs with multiple chains are also read.
+    Concatenates ATOM, HETATM and TER lines from multiple PDBs.
     
     Parameters:
         - pdbfnlh (list of str): list of file names to process.
     """
-    # reads only ATOM and HETATOM lines
-    coord_re = re.compile('^(ATOM|HETATM)')
+    # reads only ATOM, HETATOM and TER lines
+    coord_re = re.compile('^(ATOM|HETATM|TER)')
     
+    # for each filr in the PDB file name list
     for file_name in pdbfnlh:
         
         with open(file_name, 'rU') as handle:
