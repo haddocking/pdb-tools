@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Concatenates chains from multiple PDB files.
+Merges chains from multiple PDB files to a single file.
 
 usage: python pdb_merge.py <pdb files> 
 example:
@@ -29,10 +29,7 @@ USAGE = __doc__.format(__author__, __email__)
 def check_input(args):
     """Validates user input/options."""
     
-    if not len(args):
-        sys.stderr.write(USAGE)
-        sys.exit(1)
-    elif len(args) >= 1:
+    if len(args) >= 1:
         for file_name in args:
             if not os.path.isfile(file_name):
                 sys.stderr.write('File not found: ' + file_name + '\n')
@@ -42,19 +39,20 @@ def check_input(args):
         sys.stderr.write(USAGE)
         sys.exit(1)
     
+    # args is the list of file names to merge
     return args
 
 def _concatenate_pdbs(pdbfnlh):
     """
-    Concatenates ATOM, HETATM and TER lines from multiple PDBs.
+    Concatenates ATOM, HETATM lines from multiple PDBs.
     
     Parameters:
         - pdbfnlh (list of str): list of file names to process.
     """
-    # reads only ATOM, HETATOM and TER lines
+    # reads only ATOM and HETATOM lines
     coord_re = re.compile('^(ATOM|HETATM)')
     
-    # for each filr in the PDB file name list
+    # for each file in the PDB file name list
     for file_name in pdbfnlh:
         
         with open(file_name, 'rU') as handle:
