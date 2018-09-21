@@ -11,7 +11,10 @@ example:
 
 OPTIONS:
 
-    : if no option if given sort applies to chains -> residues -> atoms.
+    Options can be given combined in any order.
+
+    : if no option if given -cra is considered,
+        sort applies to chains -> residues -> atoms.
     : -c, sorts only chains,
     : -r, sorts only residues, chain order is not altered,
     : -a, sorts only atoms, chain and residues are not altered.
@@ -30,6 +33,7 @@ from __future__ import print_function
 import os
 import re
 import sys
+from collections import OrderedDict as od
 
 __author__ = "Joao M.C. Teixeira"
 __email__ = "joaomcteixeira@gmail.com"
@@ -86,35 +90,60 @@ def check_input(args):
 
     return (option, pdbfh)
 
-
 def _sort_chains(fhandle, options):
     """Enclosing logic in a function"""
+    coord_re = re.compile('^(ATOM|HETATM)')
+    pdb_dict = od()
+    prev_chain = None
+    prev_res = None
     
-    # atom_line = df.loc[:,]
-    
-    # for option in options:
+    # stores chain info in dictionary where keys are chain ids
+    for line in fhandle:
+        if not coord_re.match(line):
+            continue
         
-    
-    
-    
-    # coord_re = re.compile('^(ATOM|HETATM)')
-    # chain_dump = dict()
-    # prev_chain = None
-    
-    # # stores chain info in dictionary where keys are chain ids
-    # for line in fhandle:
-        # if not coord_re.match(line):
-            # continue
+        chain_id = line[21]
+        res_id = line[17:20]
         
-        # chain_id = line[21]
+        if chain_id != prev_chain:
+            pdb_dict.setdefault(chain_id, od())
+        if res_id != prev_res:
+            pdb_dict[chain_id].setdefault(res_id, list())
         
-        # if chain_id != prev_chain:
-            # chain_dump.setdefault(chain_id, "")
+        pdb_dict[chain_id][res_id].append(line)
         
-        # chain_dump[chain_id] += line
+        prev_chain = chain_id
+        prev_res = res_id
+    
+    if "a" in options:
+        for chain in pdb_dict.keys():
+            for res in pdb_dict[chain].keys():
+                pdb_dict[chain][res].sort(key=lambda x: x[12:16])
+    
+    if "r" in options and "c" in options:
+        for chain in sorted(pdb_dict.keys()):
+            for res in sorted(pdb_dict[chain].keys()):
+                for line in pdb_dict[chain][res]:
+                    yield line
+    
+    elif "r" in options and not("c" in options):
+        for chain in pdb_dict.keys():
+            for res in sorted(pdb_dict[chain].keys()):
+                for line in pdb_dict[chain][res]:
+                    yield line
         
-    # for chain in sorted(chain_dump.keys()):
-        # yield chain_dump[chain]
+    elif not("r" in options) and "c" in options:
+        for chain in sorted(pdb_dict.keys()):
+            for res in pdb_dict[chain].keys():
+                for line in pdb_dict[chain][res]:
+                    yield line
+    
+    else:
+        for chain in pdb_dict.keys():
+            for res in pdb_dict[chain].keys():
+                for line in pdb_dict[chain][res]:
+                    print(chain, res)
+                    yield line
 
 if __name__ == '__main__':
     
