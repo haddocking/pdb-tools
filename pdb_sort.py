@@ -16,8 +16,11 @@ OPTIONS:
     : if no option if given -cra is considered,
         sort applies to chains -> residues -> atoms.
     : -c, sorts only chains,
-    : -r, sorts only residues, chain order is not altered,
-    : -a, sorts only atoms, chain and residues are not altered.
+        order of residues and atoms within chains is not altered,
+    : -r, sorts only residues,
+        order of chains and atoms within chains is not altered,
+    : -a, sorts only atoms,
+        order chains and residues within chains are not altered.
 
 Author: {0} ({1})
 
@@ -97,7 +100,7 @@ def _sort_chains(fhandle, options):
     prev_chain = None
     prev_res = None
     
-    # stores chain info in dictionary where keys are chain ids
+    # stores PDB into nested OrderedDict()
     for line in fhandle:
         if not coord_re.match(line):
             continue
@@ -115,6 +118,7 @@ def _sort_chains(fhandle, options):
         prev_chain = chain_id
         prev_res = res_id
     
+    # Performs sorting according to options
     if "a" in options:
         for chain in pdb_dict.keys():
             for res in pdb_dict[chain].keys():
