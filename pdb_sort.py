@@ -1,10 +1,20 @@
 #!/usr/bin/env python
 
 """
-Sorts chains in PDB file.
+Sorts the whole PDB file: chains -> residues -> atoms.
 
-usage: python pdb_sort.py <pdb file>
-example: python pdb_sort.py 1CTF.pdb
+usage: python pdb_sort.py -[cra] <pdb file>
+example:
+    python pdb_sort.py 1CTF.pdb
+    python pdb_sort.py -c 1CTF.pdb
+    python pdb_sort.py -cr 1CTF.pdb
+
+OPTIONS:
+
+    : if no option if given sort applies to chains -> residues -> atoms.
+    : -c, sorts only chains,
+    : -r, sorts only residues, chain order is not altered,
+    : -a, sorts only atoms, chain and residues are not altered.
 
 Author: {0} ({1})
 
@@ -36,52 +46,83 @@ def check_input(args):
         # Read from pipe
         if not sys.stdin.isatty():
             pdbfh = sys.stdin
+            option = "cra"
         else:
             sys.stderr.write(USAGE)
             sys.exit(1)
     elif len(args) == 1:
-        # File
-        if not os.path.isfile(args[0]):
-            sys.stderr.write('File not found: ' + args[0] + '\n')
+        # option & Pipe _or_ file
+        if args[0].startswith('-') \
+                and all(re.match('[cra]', c) for c in args[0][1:]):
+            option = args[0][1:]
+            if not sys.stdin.isatty():
+                pdbfh = sys.stdin
+            else:
+                sys.stderr.write(USAGE)
+                sys.exit(1)
+        else:
+            if not os.path.isfile(args[0]):
+                sys.stderr.write('File not found: ' + args[0] + '\n')
+                sys.stderr.write(USAGE)
+                sys.exit(1)
+            pdbfh = open(args[0], 'r')
+            option = 'cra'
+    elif len(args) == 2:
+        # option & File
+        if not (args[0].startswith('-') \
+                and all(re.match('[cra]', c) for c in args[0][1:])):
+            sys.stderr.write('Invalid option: ' + args[0] + '\n')
             sys.stderr.write(USAGE)
             sys.exit(1)
-        pdbfh = open(args[0], 'r')
+        if not os.path.isfile(args[1]):
+            sys.stderr.write('File not found: ' + args[1] + '\n')
+            sys.stderr.write(USAGE)
+            sys.exit(1)
+        option = args[0][1:]
+        pdbfh = open(args[1])
     else:
         sys.stderr.write(USAGE)
         sys.exit(1)
 
-    return pdbfh
+    return (option, pdbfh)
 
 
-def _sort_chains(fhandle):
+def _sort_chains(fhandle, options):
     """Enclosing logic in a function"""
     
-    coord_re = re.compile('^(ATOM|HETATM)')
-    chain_dump = dict()
-    prev_chain = None
+    # atom_line = df.loc[:,]
     
-    # stores chain info in dictionary where keys are chain ids
-    for line in fhandle:
-        if not coord_re.match(line):
-            continue
+    # for option in options:
         
-        chain_id = line[21]
+    
+    
+    
+    # coord_re = re.compile('^(ATOM|HETATM)')
+    # chain_dump = dict()
+    # prev_chain = None
+    
+    # # stores chain info in dictionary where keys are chain ids
+    # for line in fhandle:
+        # if not coord_re.match(line):
+            # continue
         
-        if chain_id != prev_chain:
-            chain_dump.setdefault(chain_id, "")
+        # chain_id = line[21]
         
-        chain_dump[chain_id] += line
+        # if chain_id != prev_chain:
+            # chain_dump.setdefault(chain_id, "")
         
-    for chain in sorted(chain_dump.keys()):
-        yield chain_dump[chain]
+        # chain_dump[chain_id] += line
+        
+    # for chain in sorted(chain_dump.keys()):
+        # yield chain_dump[chain]
 
 if __name__ == '__main__':
-
+    
     # Check Input
-    pdbfh = check_input(sys.argv[1:])
-
+    option, pdbfh = check_input(sys.argv[1:])
+    
     # Do the job
-    new_pdb = _sort_chains(pdbfh)
+    new_pdb = _sort_chains(pdbfh, option)
 
     try:
         sys.stdout.write(''.join(new_pdb))
