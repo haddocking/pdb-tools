@@ -80,7 +80,7 @@ def _join_pdb(pdb_list):
         if atom_set:
             diff = atom_set - model_auids
             if diff:
-                emsg = 'Different atoms in model {0}\n'.format(i_model)
+                emsg = 'Different atoms in model {0}\nDifferences: {1}\n'.format(i_model, diff)
                 sys.stderr.write(emsg)
                 sys.exit(1)
         else:
