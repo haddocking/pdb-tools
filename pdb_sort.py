@@ -106,7 +106,7 @@ def _sort_chains(fhandle, options):
             continue
         
         chain_id = line[21]
-        res_id = line[17:20]
+        res_id = line[22:26].strip()
         
         if chain_id != prev_chain:
             pdb_dict.setdefault(chain_id, od())
@@ -126,14 +126,14 @@ def _sort_chains(fhandle, options):
     
     if "r" in options and "c" in options:
         for chain in sorted(pdb_dict.keys()):
-            for res in sorted(pdb_dict[chain].keys()):
-                for line in pdb_dict[chain][res]:
+            for res in sorted([int(a) for a in pdb_dict[chain].keys()]):
+                for line in pdb_dict[chain][str(res)]:
                     yield line
     
     elif "r" in options and not("c" in options):
         for chain in pdb_dict.keys():
-            for res in sorted(pdb_dict[chain].keys()):
-                for line in pdb_dict[chain][res]:
+            for res in sorted([int(a) for a in pdb_dict[chain].keys()]):
+                for line in pdb_dict[chain][str(res)]:
                     yield line
         
     elif not("r" in options) and "c" in options:
@@ -156,7 +156,7 @@ if __name__ == '__main__':
     
     # Do the job
     new_pdb = _sort_chains(pdbfh, option)
-
+    
     try:
         sys.stdout.write(''.join(new_pdb))
         sys.stdout.flush()
