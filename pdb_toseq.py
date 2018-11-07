@@ -104,10 +104,11 @@ if __name__ == '__main__':
     # Do the job
     pdb_seq = _get_sequence(pdbfh)
 
+    _olw = 50  # output linewidth
     try:
         for chain in pdb_seq:
             seq = ''.join(pdb_seq[chain])
-            fmt_seq = [seq[i:i+80]+'\n' for i in range(0, len(seq), 80)]
+            fmt_seq = [seq[i:i+_olw]+'\n' for i in range(0, len(seq), _olw)]
             msg = ">{0}_{1}\n{2}".format(pdbfn, chain, ''.join(fmt_seq))
             sys.stdout.write(msg)
         sys.stdout.flush()
