@@ -15,13 +15,14 @@
 # limitations under the License.
 
 """
-Deletes all hydrogen atoms in the PDB file, judged by the element column.
+Deletes all atoms matching the given element in the PDB file. Elements are
+read from the element column.
 
 Usage:
-    python pdb_delhydro.py <pdb file>
+    python pdb_delatom.py <pdb file>
 
 Example:
-    python pdb_delhydro.py 1CTF.pdb
+    python pdb_delatom.py 1CTF.pdb
 
 This program is part of the `pdb-tools` suite of utilities and should not be
 distributed isolatedly. The `pdb-tools` were created to quickly manipulate PDB
@@ -42,6 +43,7 @@ def check_input(args):
     """
 
     # Defaults
+    option = ''
     fh = sys.stdin  # file handle
 
     if not len(args):
@@ -51,39 +53,69 @@ def check_input(args):
             sys.exit(1)
 
     elif len(args) == 1:
-        if not os.path.isfile(args[0]):
-            emsg = 'ERROR!! File not found or not readable: \'{}\'\n'
+        # One of two options: option & Pipe OR file & default option
+        if args[0].startswith('-'):
+            option = args[0][1:]
+            if sys.stdin.isatty():  # ensure the PDB data is streamed in
+                emsg = 'ERROR!! No data to process!\n'
+                sys.stderr.write(emsg)
+                sys.stderr.write(__doc__)
+                sys.exit(1)
+
+        else:
+            if not os.path.isfile(args[0]):
+                emsg = 'ERROR!! File not found or not readable: \'{}\'\n'
+                sys.stderr.write(emsg.format(args[0]))
+                sys.stderr.write(__doc__)
+                sys.exit(1)
+
+            fh = open(args[0], 'r')
+
+    elif len(args) == 2:
+        # Two options: option & File
+        if not args[0].startswith('-'):
+            emsg = 'ERROR! First argument is not an option: \'{}\'\n'
             sys.stderr.write(emsg.format(args[0]))
             sys.stderr.write(__doc__)
             sys.exit(1)
 
-        fh = open(args[0], 'r')
+        if not os.path.isfile(args[1]):
+            emsg = 'ERROR!! File not found or not readable: \'{}\'\n'
+            sys.stderr.write(emsg.format(args[1]))
+            sys.stderr.write(__doc__)
+            sys.exit(1)
+
+        option = args[0][1:]
+        fh = open(args[1], 'r')
 
     else:  # Whatever ...
         sys.stderr.write(__doc__)
         sys.exit(1)
 
-    return fh
+    # Validate option
+    option = option.upper()
+
+    return (option, fh)
 
 
-def delete_hydrogens(fhandle):
-    """Removes hydrogen atoms from the structure.
+def delete_atoms(fhandle, element):
+    """Removes specific atoms from the structure, matching a given element.
     """
 
     records = ('ATOM', 'HETATM')
     for line in fhandle:
         if line.startswith(records):
-            if line[76:78].strip() == 'H':
+            if line[76:78].strip() == element:
                 continue
         yield line
 
 
 if __name__ == '__main__':
     # Check Input
-    pdbfh = check_input(sys.argv[1:])
+    element, pdbfh = check_input(sys.argv[1:])
 
     # Do the job
-    new_pdb = delete_hydrogens(pdbfh)
+    new_pdb = delete_atoms(pdbfh, element)
 
     try:
         sys.stdout.write(''.join(new_pdb))
