@@ -92,8 +92,8 @@ def check_input(args):
         sys.exit(1)
 
     # Validate option
-    if len(option) != 1:
-        emsg = 'ERROR!! You must provide at least ONE chain identifier.'
+    if len(option) < 1:
+        emsg = 'ERROR!! You must provide at least ONE chain identifier.\n'
         sys.stderr.write(emsg.format(option))
         sys.exit(1)
 
