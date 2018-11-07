@@ -34,8 +34,8 @@ effort to maintain and compile. RIP.
 import os
 import sys
 
-__author__ = "Joao Rodrigues"
-__email__ = "j.p.g.l.m.rodrigues@gmail.com"
+__author__ = ["Joao Rodrigues", "Joao M.C. Teixeira"]
+__email__ = ["j.p.g.l.m.rodrigues@gmail.com", "joaomcteixeira@gmail.com"]
 
 
 def check_input(args):
