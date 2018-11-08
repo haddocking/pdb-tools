@@ -1,0 +1,4 @@
+# Python setuptools 
+build/
+dist/
+*.egg-info/
