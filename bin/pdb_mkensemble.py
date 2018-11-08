@@ -67,9 +67,9 @@ def make_ensemble(flist):
     """
 
     # MODEL        1
-    fmt_MODEL = "MODEL {:>5s}\n"
+    fmt_MODEL = "MODEL {:>5d}\n"
 
-    for fileno, fhandle in enumerate(flist):
+    for fileno, fhandle in enumerate(flist, start=1):
 
         yield fmt_MODEL.format(fileno)
 
