@@ -34,20 +34,24 @@ setup(
     url='https://github.com/joaorodrigues/pdb-tools',  # Optional
     author='Joao Rodrigues',  # Optional
     author_email='j.p.g.l.m.rodrigues@gmail.com',  # Optional
-
+    license='Apache Software License, version 2',
     classifiers=[  # Optional
         # How mature is this project? Common values are
         #   3 - Alpha
         #   4 - Beta
         #   5 - Production/Stable
-        'Development Status :: 5 - Production/Stable',
+        # 'Development Status :: 5 - Production/Stable',
+        'Development Status :: 4 - Beta',
 
         # Indicate who your project is intended for
         'Intended Audience :: Science/Research',
         'Topic :: Scientific/Engineering',
+        'Topic :: Scientific/Engineering :: Chemistry',
+        'Topic :: Scientific/Engineering :: Bio-Informatics',
+
 
         # Pick your license as you wish
-        'License :: OSI Approved :: Apache License',
+        'License :: OSI Approved :: Apache Software License',
 
         # Specify the Python versions you support here. In particular, ensure
         # that you indicate whether you support Python 2, Python 3 or both.
