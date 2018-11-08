@@ -132,12 +132,18 @@ def summarize_file(fhandle, option):
             n_models += 1
 
         elif line.startswith('ATOM'):
+
             res_uid = line[17:26]
+            chain_uid = line[21]
+
+            if prev_res and (int(line[22:26]) - int(prev_res[5:])) > 1:
+                if prev_chain == chain_uid:
+                    n_rgaps += 1
+
             if res_uid != prev_res:
                 n_residues += 1
                 prev_res = res_uid
 
-            chain_uid = line[21]
             if chain_uid != prev_chain:
                 n_chains += 1
                 prev_chain = chain_uid
@@ -147,9 +153,6 @@ def summarize_file(fhandle, option):
 
             if line[26] != ' ':
                 n_inscodes += 1
-
-            if (int(line[22:26]) - int(prev_res[5:])) > 1:
-                n_rgaps += 1
 
             n_atoms += 1
 
