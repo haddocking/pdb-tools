@@ -15,13 +15,14 @@
 # limitations under the License.
 
 """
-Changes residue names in the PDB file, replacing one name by another.
+Performs in-place replacement of a residue name by another. Affects all residues
+with that name.
 
 Usage:
-    python pdb_resrename.py -<from> -<to> <pdb file>
+    python pdb_rplres.py -<from>:<to> <pdb file>
 
 Example:
-    python pdb_resrename.py -HIP -HIS 1CTF.pdb  # changes all HIP residues to HIS
+    python pdb_rplres.py -HIP -HIS 1CTF.pdb  # changes all HIP residues to HIS
 
 This program is part of the `pdb-tools` suite of utilities and should not be
 distributed isolatedly. The `pdb-tools` were created to quickly manipulate PDB
@@ -42,71 +43,59 @@ def check_input(args):
     """
 
     # Defaults
-    name_to, name_from = None, None
+    option = ''
     fh = sys.stdin  # file handle
 
-    if len(args) == 2:
-        # -to and -from and read file from stdin
+    if len(args) == 1:
+        # option & Pipe
         if args[0].startswith('-'):
-            name_to = args[0][1:]
+            option = args[0][1:]
+            if sys.stdin.isatty():  # ensure the PDB data is streamed in
+                emsg = 'ERROR!! No data to process!\n'
+                sys.stderr.write(emsg)
+                sys.stderr.write(__doc__)
+                sys.exit(1)
         else:
+            emsg = 'ERROR!! Option not valid: \'{}\'\n'
+            sys.stderr.write(emsg.format(args[0]))
+            sys.stderr.write(__doc__)
+            sys.exit(1)
+
+    elif len(args) == 2:
+        # Two options: option & File
+        if not args[0].startswith('-'):
             emsg = 'ERROR! First argument is not an option: \'{}\'\n'
             sys.stderr.write(emsg.format(args[0]))
             sys.stderr.write(__doc__)
             sys.exit(1)
 
-        if args[1].startswith('-'):
-            name_from = args[1][1:]
-        else:
-            emsg = 'ERROR! Second argument is not an option: \'{}\'\n'
+        if not os.path.isfile(args[1]):
+            emsg = 'ERROR!! File not found or not readable: \'{}\'\n'
             sys.stderr.write(emsg.format(args[1]))
             sys.stderr.write(__doc__)
             sys.exit(1)
 
-        if sys.stdin.isatty():  # ensure the PDB data is streamed in
-            emsg = 'ERROR!! No data to process!\n'
-            sys.stderr.write(emsg)
-            sys.stderr.write(__doc__)
-            sys.exit(1)
-
-    elif len(args) == 3:
-        # -to and -from and filename
-        if args[0].startswith('-'):
-            name_from = args[0][1:]
-        else:
-            emsg = 'ERROR! First argument is not an option: \'{}\'\n'
-            sys.stderr.write(emsg.format(args[0]))
-            sys.stderr.write(__doc__)
-            sys.exit(1)
-
-        if args[1].startswith('-'):
-            name_to = args[1][1:]
-        else:
-            emsg = 'ERROR! Second argument is not an option: \'{}\'\n'
-            sys.stderr.write(emsg.format(args[0]))
-            sys.stderr.write(__doc__)
-            sys.exit(1)
-
-        if not os.path.isfile(args[2]):
-            emsg = 'ERROR!! File not found or not readable: \'{}\'\n'
-            sys.stderr.write(emsg.format(args[0]))
-            sys.stderr.write(__doc__)
-            sys.exit(1)
-
-        fh = open(args[2], 'r')
+        option = args[0][1:]
+        fh = open(args[1], 'r')
 
     else:  # Whatever ...
         sys.stderr.write(__doc__)
         sys.exit(1)
 
-    # Validate options
-    if len(name_from) > 3:
-        emsg = 'ERROR!! Residue name must be at most three characters: \'{}\'\n'
+    # Validate option
+    if option.count(':') != 1 and len(option.split(':')) != 2:
+        emsg = 'ERROR!! Invalid option value: \'{}\'\n'
+        sys.stderr.write(emsg.format(option))
+        sys.exit(1)
+
+    name_from, name_to = option.split(':')
+    if not (1 <= len(name_from) <= 3):
+        emsg = 'ERROR!! Residue names must have one to three characters: \'{}\''
         sys.stderr.write(emsg.format(name_from))
         sys.exit(1)
 
-    if len(name_to) > 3:
-        emsg = 'ERROR!! Residue name must be at most three characters: \'{}\'\n'
+    if not (1 <= len(name_from) <= 3):
+        emsg = 'ERROR!! Residue names must have one to three characters: \'{}\''
         sys.stderr.write(emsg.format(name_to))
         sys.exit(1)
 

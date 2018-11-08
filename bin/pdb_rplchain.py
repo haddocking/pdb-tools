@@ -18,10 +18,10 @@
 Performs in-place replacement of a chain identifier by another.
 
 Usage:
-    python pdb_rplchain.py -chain_id_1:chain_id_2 <pdb file>
+    python pdb_rplchain.py -<from>:<to> <pdb file>
 
 Example:
-    python pdb_selres.py -A:B 1CTF.pdb # Replaces chain A for chain B
+    python pdb_rplchain.py -A:B 1CTF.pdb # Replaces chain A for chain B
 
 This program is part of the `pdb-tools` suite of utilities and should not be
 distributed isolatedly. The `pdb-tools` were created to quickly manipulate PDB
