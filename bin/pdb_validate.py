@@ -38,8 +38,6 @@ import sys
 __author__ = "Joao Rodrigues"
 __email__ = "j.p.g.l.m.rodrigues@gmail.com"
 
-USAGE = __doc__.format(__author__, __email__)
-
 
 def check_input(args):
     """Checks whether to read from stdin/file and validates user input/options.

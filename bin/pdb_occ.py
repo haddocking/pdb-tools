@@ -95,7 +95,7 @@ def check_input(args):
     try:
         option = float(option)
     except ValueError as e:
-        emsg = 'ERROR!! You provided an invalid occupancy value: \'{}\''
+        emsg = 'ERROR!! You provided an invalid occupancy value: \'{}\'\n'
         sys.stderr.write(emsg.format(option))
         sys.exit(1)
 
