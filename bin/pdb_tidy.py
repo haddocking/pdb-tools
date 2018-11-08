@@ -86,7 +86,6 @@ def tidy_pdbfile(fhandle):
 
     records = ('ATOM', 'HETATM')
     ignored = ('TER', 'END')
-    conect = ('CONECT',)
     # Iterate up to the first ATOM/HETATM line
     prev_line = None
     for line in fhandle:
@@ -142,7 +141,7 @@ def tidy_pdbfile(fhandle):
             serial = prev_line[6:11]
             line = line[:6] + str(serial).rjust(5) + line[11:]
 
-        elif line.startswith(conect):
+        elif line.startswith('CONECT'):
             # 6:11, 11:16, 16:21, 21:26, 26:31
             serials = [line[cr] for cr in char_ranges]
             # If not found, return default
