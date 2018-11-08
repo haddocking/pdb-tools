@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Copyright 2018 João M. C. Teixeira
+# Copyright 2018 João Pedro Rodrigues & João M. C. Teixeira
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,19 +15,33 @@
 # limitations under the License.
 
 """
-Sorts the ATOM/HETATM/ANISOU records in a PDB file. Additionally, sorting can be
-done by chain or residue or any combination of the two. Sort is conserved within
-each hierarchy. For instance, if sorting by residues, residues are sorted inside
-each chain. The relative order of chains remains unchanged. ANISOUs are placed
-after ATOMs and HETATM are placed at the end, after all the ATOM lines.
+Sorts the ATOM/HETATM/ANISOU/CONECT records in a PDB file.
+
+Atoms are always sorted by their serial number, meaning the original ordering
+of the atoms within each residue are not changed. Alternate locations are sorted
+by default.
+
+Residues are sorted according to their residue sequence number and then by their
+insertion code (if any).
+
+Chains are sorted by their chain identifier.
+
+Finally, the file is sorted by all keys, and the records are placed in the
+following order:
+    - ATOM/ANISOU, intercalated if the latter exist
+    - HETATM
+    - CONECT, sorted by the serial number of the central (first) atom
+
+MASTER, TER, END statements are removed. Headers (HEADER, REMARK) are kept and
+placed first.
 
 Usage:
     python pdb_sort.py -<option> <pdb file>
 
 Example:
-    python pdb_sort.py 1CTF.pdb  # sorts only records (HETATM after ATOM, etc)
-    python pdb_sort.py -C 1CTF.pdb  # sorts also chains (A, B, C ...)
-    python pdb_sort.py -CR 1CTF.pdb  # sorts also chains and residues within chains
+    python pdb_sort.py 1CTF.pdb  # sorts by chain and residues
+    python pdb_sort.py -C 1CTF.pdb  # sorts by chain (A, B, C ...) only
+    python pdb_sort.py -R 1CTF.pdb  # sorts by residue number/icode only
 
 This program is part of the `pdb-tools` suite of utilities and should not be
 distributed isolatedly. The `pdb-tools` were created to quickly manipulate PDB
@@ -48,7 +62,7 @@ def check_input(args):
     """
 
     # Defaults
-    option = 'RC'
+    option = 'CR'
     fh = sys.stdin  # file handle
 
     if not len(args):
@@ -118,14 +132,18 @@ def sort_file(fhandle, sorting_keys):
     chain_key = lambda x: x[21]  # chain id
     resid_key = lambda x: (int(x[22:26]), x[26])  # resid, icode
     atoms_key = lambda x: int(x[6:11])  # atom serial
+    altloc_key = lambda x: x[16]
 
     # First, separate records
+    header_data = []
     atomic_data = []
     hetatm_data = []
     anisou_data = {}  # Matches a unique atom uid
     conect_data = []
     for line in fhandle:
-        if line.startswith('ATOM'):
+        if line.startswith(('HEADER', 'REMARK')):
+            header_data.append(line)
+        elif line.startswith('ATOM'):
             atomic_data.append(line)
         elif line.startswith('HETATM'):
             hetatm_data.append(line)
@@ -139,7 +157,9 @@ def sort_file(fhandle, sorting_keys):
 
     # Sort if requested
     if 'C' in sorting_keys or 'R' in sorting_keys:
+        atomic_data.sort(key=altloc_key)
         atomic_data.sort(key=atoms_key)
+        hetatm_data.sort(key=altloc_key)
         hetatm_data.sort(key=atoms_key)
 
     if 'R' in sorting_keys:
@@ -158,7 +178,7 @@ def sort_file(fhandle, sorting_keys):
     #  - ATOMs intercalated with ANISOU
     #  - HETATM
     #  - CONECT
-    sorted_data = atomic_data + hetatm_data + conect_data
+    sorted_data = header_data + atomic_data + hetatm_data + conect_data
     for line in sorted_data:
 
         yield line
