@@ -95,8 +95,7 @@ def split_chain(fhandle):
             fh.write(''.join(lines))
 
 
-if __name__ == '__main__':
-
+def main():
     # Check Input
     pdbfh = check_input(sys.argv[1:])
 
@@ -107,3 +106,7 @@ if __name__ == '__main__':
     # We can close it even if it is sys.stdin
     pdbfh.close()
     sys.exit(0)
+
+
+if __name__ == '__main__':
+    main()

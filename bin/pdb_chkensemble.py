@@ -140,11 +140,15 @@ def check_ensemble(fhandle):
         sys.stdout.write(msg.format(n_models))
 
 
-if __name__ == '__main__':
+def main():
     # Check Input
     pdbfh = check_input(sys.argv[1:])
 
     # Do the job
-    new_pdb = check_ensemble(pdbfh)
+    check_ensemble(pdbfh)
 
     sys.exit(0)
+
+
+if __name__ == '__main__':
+    main()

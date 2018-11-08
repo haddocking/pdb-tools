@@ -115,8 +115,7 @@ def alter_occupancy(fhandle, occupancy):
             yield line
 
 
-if __name__ == '__main__':
-
+def main():
     # Check Input
     occupancy, pdbfh = check_input(sys.argv[1:])
 
@@ -137,3 +136,7 @@ if __name__ == '__main__':
     # Close file handle even if it is sys.stdin, no problem here.
     pdbfh.close()
     sys.exit(0)
+
+
+if __name__ == '__main__':
+    main()

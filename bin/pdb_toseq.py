@@ -168,8 +168,7 @@ def pdb_to_fasta(fhandle, multi):
         yield ''.join(fmt_seq)
 
 
-if __name__ == '__main__':
-
+def main():
     # Check Input
     multi, pdbfh = check_input(sys.argv[1:])
 
@@ -190,3 +189,7 @@ if __name__ == '__main__':
     # Close file handle even if it is sys.stdin, no problem here.
     pdbfh.close()
     sys.exit(0)
+
+
+if __name__ == '__main__':
+    main()

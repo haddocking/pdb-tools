@@ -116,8 +116,7 @@ def rename_residues(fhandle, name_from, name_to):
         yield line
 
 
-if __name__ == '__main__':
-
+def main():
     # Check Input
     name_from, name_to, pdbfh = check_input(sys.argv[1:])
 
@@ -138,3 +137,7 @@ if __name__ == '__main__':
     # Close file handle even if it is sys.stdin, no problem here.
     pdbfh.close()
     sys.exit(0)
+
+
+if __name__ == '__main__':
+    main()

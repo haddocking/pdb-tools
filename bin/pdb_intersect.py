@@ -99,7 +99,7 @@ def intersect_pdb_files(flist):
             yield atom_data[atom]
 
 
-if __name__ == '__main__':
+def main():
     # Check Input
     pdbflist = check_input(sys.argv[1:])
 
@@ -116,3 +116,7 @@ if __name__ == '__main__':
         pass
 
     sys.exit(0)
+
+
+if __name__ == '__main__':
+    main()

@@ -125,7 +125,7 @@ def fetch_structure(pdbid, biounit=False):
             gz_handle.close()
 
 
-if __name__ == '__main__':
+def main():
     # Check Input
     pdb_code, biounit = check_input(sys.argv[1:])
 
@@ -142,3 +142,7 @@ if __name__ == '__main__':
         pass
 
     sys.exit(0)
+
+
+if __name__ == '__main__':
+    main()

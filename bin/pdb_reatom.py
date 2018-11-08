@@ -142,8 +142,7 @@ def renumber_atom_serials(fhandle, starting_value):
             yield line
 
 
-if __name__ == '__main__':
-
+def main():
     # Check Input
     starting_resid, pdbfh = check_input(sys.argv[1:])
 
@@ -164,3 +163,7 @@ if __name__ == '__main__':
     # Close file handle even if it is sys.stdin, no problem here.
     pdbfh.close()
     sys.exit(0)
+
+
+if __name__ == '__main__':
+    main()
