@@ -33,7 +33,6 @@ effort to maintain and compile. RIP.
 
 import itertools
 import os
-import re
 import sys
 
 __author__ = "Joao Rodrigues"
