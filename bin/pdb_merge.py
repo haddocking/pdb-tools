@@ -71,6 +71,7 @@ def concatenate_files(flist):
     for fhandle in flist:
         for line in fhandle:
             yield line
+        fhandle.close()
 
 
 if __name__ == '__main__':
@@ -89,7 +90,4 @@ if __name__ == '__main__':
         # the error message showing up
         pass
 
-    # last line of the script
-    # We can close it even if it is sys.stdin
-    pdbfh.close()
     sys.exit(0)
