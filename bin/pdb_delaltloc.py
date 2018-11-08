@@ -137,7 +137,7 @@ def select_occupancy(fhandle, option):
     atom_data = []
 
     # Iterate over file and store lines per atom_uid
-    records = ('ATOM', 'HETATM')
+    records = ('ATOM', 'HETATM', 'ANISOU')
     for lineno, line in enumerate(fhandle):
 
         atom_data.append(line)

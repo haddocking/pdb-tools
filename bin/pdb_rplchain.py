@@ -122,7 +122,7 @@ def replace_chain_identifiers(fhandle, chain_ids):
 
     chain_from, chain_to = chain_ids
 
-    records = ('ATOM', 'HETATM', 'TER')
+    records = ('ATOM', 'HETATM', 'TER', 'ANISOU')
     for line in fhandle:
         if line.startswith(records):
             if line[21] == chain_from:

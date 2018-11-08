@@ -137,6 +137,11 @@ def tidy_pdbfile(fhandle):
             prev_line = line
             serial_offset = 1  # reset otherwise we have +2 ex.
 
+        elif line.startswith('ANISOU'):
+            # Fix serial based on previous atom
+            serial = prev_line[6:11]
+            line = line[:6] + str(serial).rjust(5) + line[11:]
+
         elif line.startswith(conect):
             # 6:11, 11:16, 16:21, 21:26, 26:31
             serials = [line[cr] for cr in char_ranges]

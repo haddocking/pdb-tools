@@ -67,15 +67,26 @@ def check_input(args):
 
 
 def remove_hetatm(fhandle):
-    """Keeps only ATOM coordinate records in the PDB file.
+    """Removes all HETATM and associated records from the PDB file.
     """
 
-    records = ('MODEL ', 'ATOM  ',
-               'ANISOU', 'ENDMDL', 'END   ',
-               'TER   ', 'MASTER')
+    # CONECT 1179  746 1184 1195 1203
+    char_ranges = (slice(6, 11), slice(11, 16),
+                   slice(16, 21), slice(21, 26), slice(26, 31))
+
+    het_serials = set()
     for line in fhandle:
-        if line.startswith(records):
-            yield line
+        if line.startswith('HETATM'):
+            het_serials.add(line[6:11])
+            continue
+        elif line.startswith('ANISOU'):
+            if line[6:11] in het_serials:
+                continue
+        elif line.startswith('CONECT'):
+            if any(line[cr] in het_serials for cr in char_ranges):
+                continue
+
+        yield line
 
 
 if __name__ == '__main__':

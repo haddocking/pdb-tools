@@ -88,7 +88,7 @@ def assign_element(fhandle):
                     'PA', 'U', 'NP', 'PU', 'AM', 'CM', 'BK', 'CF', 'ES', 'FM',
                     'MD', 'NO', 'LR', 'RF', 'DB', 'SG', 'BH', 'HS', 'MT'))
 
-    records = ('ATOM', 'HETATM')
+    records = ('ATOM', 'HETATM', 'ANISOU')
     for line in fhandle:
         if line.startswith(records):
             atom_name = line[12:16]

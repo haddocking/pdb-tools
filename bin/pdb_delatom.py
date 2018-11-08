@@ -102,7 +102,7 @@ def delete_atoms(fhandle, element):
     """Removes specific atoms from the structure, matching a given element.
     """
 
-    records = ('ATOM', 'HETATM')
+    records = ('ATOM', 'HETATM', 'ANISOU')
     for line in fhandle:
         if line.startswith(records):
             if line[76:78].strip() == element:

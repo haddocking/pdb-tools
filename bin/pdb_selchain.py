@@ -105,7 +105,7 @@ def select_chain(fhandle, chain_id):
     """
 
     chain_set = set(chain_id)
-    records = ('ATOM', 'HETATM', 'TER')
+    records = ('ATOM', 'HETATM', 'TER', 'ANISOU')
     for line in fhandle:
         if line.startswith(records):
             if line[21] not in chain_set:

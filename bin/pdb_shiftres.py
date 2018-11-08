@@ -109,7 +109,7 @@ def renumber_residues(fhandle, shifting_factor):
     numbering.
     """
 
-    records = ('ATOM', 'HETATM', 'TER')
+    records = ('ATOM', 'HETATM', 'TER', 'ANISOU')
     for line in fhandle:
         if line.startswith(records):
             shifted_resid = int(line[22:26]) + shifting_factor

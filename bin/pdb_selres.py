@@ -141,7 +141,7 @@ def select_residues(fhandle, residue_range):
     """Outputs residues within a certain numbering range.
     """
 
-    records = ('ATOM', 'HETATM', 'TER')
+    records = ('ATOM', 'HETATM', 'TER', 'ANISOU')
     for line in fhandle:
         if line.startswith(records):
             if int(line[22:26]) not in residue_range:

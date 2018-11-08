@@ -109,7 +109,7 @@ def renumber_residues(fhandle, starting_resid):
 
     prev_resid = None
     resid = starting_resid - 1  # account for first residue
-    records = ('ATOM', 'HETATM', 'TER')
+    records = ('ATOM', 'HETATM', 'TER', 'ANISOU')
     for line in fhandle:
         if line.startswith(records):
             line_resid = line[22:26]

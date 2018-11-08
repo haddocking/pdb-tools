@@ -104,7 +104,7 @@ def alter_chain(fhandle, chain_id):
     """Sets the chain identifier column in all ATOM/HETATM records to a value.
     """
 
-    records = ('ATOM', 'HETATM', 'TER')
+    records = ('ATOM', 'HETATM', 'TER', 'ANISOU')
     for line in fhandle:
         if line.startswith(records):
             yield line[:21] + chain_id + line[22:]
