@@ -93,7 +93,7 @@ def check_input(args):
 
     # Validate option
     if len(option) > 4:
-        emsg = 'ERROR!! Segment identifiers must be max. four characters: \'{}\''
+        emsg = 'ERROR!! Segment id must be max. four characters: \'{}\'\n'
         sys.stderr.write(emsg.format(option))
         sys.exit(1)
 

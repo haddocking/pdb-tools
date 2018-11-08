@@ -93,7 +93,7 @@ def check_input(args):
 
     # Validate option
     if len(option) != 1:
-        emsg = 'ERROR!! Chain identifiers must be a single character: \'{}\''
+        emsg = 'ERROR!! Chain identifiers must be a single character: \'{}\'\n'
         sys.stderr.write(emsg.format(option))
         sys.exit(1)
 
