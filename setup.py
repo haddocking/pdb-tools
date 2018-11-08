@@ -31,7 +31,7 @@ setup(
     description='A swiss-knife for PDB files.',  # Optional
     long_description=long_description,  # Optional
     long_description_content_type='text/markdown',  # Optional (see note above)
-    url='https://github.com/haddocking/pdb-tools',  # Optional
+    url='https://github.com/joaorodrigues/pdb-tools',  # Optional
     author='Joao Rodrigues',  # Optional
     author_email='j.p.g.l.m.rodrigues@gmail.com',  # Optional
 
@@ -94,7 +94,7 @@ setup(
     # maintainers, and where to support the project financially. The key is
     # what's used to render the link text on PyPI.
     project_urls={  # Optional
-        'Bug Reports': 'https://github.com/haddocking/pdb-tools/issues',
-        'Source': 'https://github.com/haddocking/issues/',
+        'Bug Reports': 'https://github.com/joaorodrigues/pdb-tools/issues',
+        'Source': 'https://github.com/joaorodrigues/pdb-tools',
     },
 )
