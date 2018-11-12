@@ -60,7 +60,7 @@ def check_input(args):
 
     if len(args) == 1:
         # pdb code only
-        if not re.match('[0-9a-zA-Z]{4}$', args[0]):
+        if not re.match(r'[0-9a-zA-Z]{4}$', args[0]):
             emsg = 'ERROR!! Invalid PDB code: \'{}\'\n'
             sys.stderr.write(emsg.format(args[0]))
             sys.stderr.write(__doc__)
@@ -70,13 +70,13 @@ def check_input(args):
 
     elif len(args) == 2:
         # biounit & pdb code
-        if not re.match('\-biounit$', args[0]):
+        if not re.match(r'\-biounit$', args[0]):
             emsg = 'ERROR!! Invalid option: \'{}\'\n'
             sys.stderr.write(emsg.format(args[0]))
             sys.stderr.write(__doc__)
             sys.exit(1)
 
-        if not re.match('[0-9a-zA-Z]{4}$', args[1]):
+        if not re.match(r'[0-9a-zA-Z]{4}$', args[1]):
             emsg = 'ERROR!! Invalid PDB code: \'{}\'\n'
             sys.stderr.write(emsg.format(args[0]))
             sys.stderr.write(__doc__)

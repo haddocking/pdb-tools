@@ -97,7 +97,7 @@ def check_input(args):
     # Validate option
     try:
         option = int(option)
-    except ValueError as e:
+    except ValueError:
         emsg = 'ERROR!! You provided an invalid atom serial number: \'{}\''
         sys.stderr.write(emsg.format(option))
         sys.exit(1)
