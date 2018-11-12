@@ -94,13 +94,10 @@ def tidy_pdbfile(fhandle):
             continue
 
         # Check line length
-        line_length = len(line)
-        if line_length < 80:
-            num_pads = 80 - line_length + 1
-            line = line + ' ' * num_pads
-
-        yield line[:80]
-
+        line = "{:<80}\n".format(line.strip())
+        
+        yield line
+        
         if line.startswith(records):
             prev_line = line
             break
@@ -122,9 +119,9 @@ def tidy_pdbfile(fhandle):
                 chain = prev_line[21]
                 resid = prev_line[22:26]
                 icode = prev_line[26]
-
+                
                 serial_offset += 1
-
+                
                 ter_line = fmt_TER.format(serial, rname, chain, resid, icode)
                 yield ter_line
 
@@ -163,17 +160,14 @@ def tidy_pdbfile(fhandle):
 
                 ter_line = fmt_TER.format(serial, rname, chain, resid, icode)
                 yield ter_line
-
+        
         # Check line length
-        line_length = len(line)
-        if line_length < 80:
-            num_pads = 80 - line_length + 1
-            line = line + ' ' * num_pads
-
+        line = "{:<80}\n".format(line.strip())
+        
         yield line
-
+    
     # Add END statement
-    yield 'END' + ' ' * 77 + '\n'
+    yield "{:<80}\n".format("END")
 
 
 def main():
