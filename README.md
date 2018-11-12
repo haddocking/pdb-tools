@@ -1,77 +1,19 @@
 pdb-tools
 ================================================
-Set of utility scripts in python to manipulate PDB files as streams. Given the generic name, there
-was already another set of scripts named 'pdb-tools', which perform a very different variety of
-operations on PDB files. You can find them [here](https://github.com/harmslab/pdbtools).
+Set of Python scripts designed to be a dependency-free cross-platform 
+swiss-knife for PDB files.
 
-About
----------
 
-Manipulating PDB files is a pain. Extracting chains, renumbering residues, splitting or merging
-models or chains, modifying b-factors and occupancies, or extracting the sequence of a PDB file, are
-examples of operations that can be done using any decent parsing library but it takes 1) scripting
-knowledge, 2) time, and 3) almost surely a set of external dependencies installed.
+Looking for the _other_ pdb-tools?
+----------------------------------
+Given the very unoriginal name, there was bound to exist another set of scripts
+with the same name. The original `pdb-tools` perform a very different variety of
+operations on PDB files and can be found [here](https://github.com/harmslab/pdbtools).
 
-The scripts in this repository simplify most of these tasks. They are the descendant of a set of old
-FORTRAN77 programs in use in our lab at Utrecht that had the particular advantage of working with
-streams, i.e. the output of one script could be piped into another. Since FORTRAN77 is a pain too, I
-rewrote the scripts in Python and added a few more.
-
-Requests for new scripts will be taken into consideration, depending on the effort and general
-usability of the script.
-
-Citation
-------------
-There is no publication (yet?) for pdb-tools, but there is a citable [DOI](http://dx.doi.org/10.5281/zenodo.31158) item. Please consider citing it in your publication if these tools were in anyway helpful.
-
-[![DOI](https://zenodo.org/badge/18453/haddocking/pdb-tools.svg)](https://zenodo.org/badge/latestdoi/18453/haddocking/pdb-tools)
-
-Features
-------------
-* Simple: one script, one job.
-* Written using Python (stdlib): no compilation, cross-platform, no external dependencies
-* Read data from file, or from the output of another script.
-
-Requirements
-------------
-* Python 2.7 (might work on earlier versions, not really tested.)
-
-Installation
-------------
-Download the zip archive or clone the repository with git. This last is the recommended option as it
-is then extremely simple to get updates.
-
-```bash
-# To download
-git clone https://github.com/JoaoRodrigues/pdb-tools
-
-# To update
-cd pdb-tools && git pull origin master
-```
-
-Usage
-------------
-All the scripts have a short description of their purpose and their usage. Just run them without any
-arguments:
-```bash
-$ ./pdb_selchain.py
-
-Extracts a chain from a PDB file.
-
-usage: python pdb_selchain.py -<chain> <pdb file>
-example: python pdb_selchain.py -A 1CTF.pdb
-
-Author: Joao Rodrigues (j.p.g.l.m.rodrigues@gmail.com)
-
-This program is part of the PDB tools distributed with HADDOCK
-or with the HADDOCK tutorial. The utilities in this package
-can be used to quickly manipulate PDB files, with the benefit
-of 'piping' several different commands. This is a rewrite of old
-FORTRAN77 code that was taking too much effort to compile. RIP.
-```
-
-Examples
-------------
+What can I do with them?
+------------------------
+The names of the tools should be self-explanatory. Their usage is also pretty
+consistent. Therefore, here is a couple of examples to get you started:
 
 * Downloading a structure
    ```bash
@@ -94,35 +36,60 @@ Examples
   ./pdb_fetch.py 1brs | ./pdb_selchain.py -A | ./pdb_toseq.py > 1brs_A.fasta
   ```
 
-* Getting general information on a PDB file
-   ```bash
-   $ ./pdb_fetch.py 1brs | ./pdb_wc.py
-   No. atoms:	4640	(4640.0 per model)
-   No. residues:	588	(588.0 per model)
-   No. chains:	6	( 6.0 per model)
-   No. models:	1
-   Hetero Atoms:	Yes
-   Has seq. gaps:	Yes
-   Double Occ.:	Yes
-   Insertions:	No
+What _can't_ I do with them?
+------------------------
+mmCIF files are not supported. There might be a sister repository `mmcif-tools`
+one day. Also, operations that involve coordinates or numerical calculations are
+usually not in the scope of `pdb-tools`. Use a proper library for that, it will
+be much faster and scalable.
 
-   $ ./pdb_fetch.py -biounit 1brs | ./pdb_wc.py
-   No. atoms:	1559	(1559.0 per model)
-   No. residues:	195	(195.0 per model)
-   No. chains:	2	( 2.0 per model)
-   No. models:	2
-   Hetero Atoms:	Yes
-   Has seq. gaps:	Yes
-   Double Occ.:	Yes
-   Insertions:	No
-   ```
+About
+---------
+Manipulating PDB files is often painful. Extracting a particular chain or set of
+residues, renumbering residues, splitting or merging models and chains, or just
+ensuring the file is conforming to the PDB specifications are examples of tasks
+that can be done using any decent parsing library or graphical interface. These,
+however, almost always require 1) scripting knowledge, 2) time, and 3) installing
+one or more programs.
 
-* Finding gaps in a PDB file
-   ```bash
-   $ ./pdb_fetch.py -biounit 1brs | ./pdb_gap.py
-   D:THR63 <    4.88A > D:GLY66
-   ```
+`pdb-tools` were designed to be a swiss-knife for the PDB format. They have no
+external dependencies, besides obviously the [Python programming language](http://www.python.org).
+They are the descendant of a set of old FORTRAN77 programs that had the 
+particular advantage of working with streams, i.e. the output of one script 
+could be piped into another. Since FORTRAN77 is a pain too, I rewrote them in
+Python and added a few more utilities. 
+
+The philosophy of the scripts is simple: one script, one task. If you want to 
+do two things, pipe the scripts together. Requests for new scripts will be taken
+into consideration - use the Issues button or write them yourself and create a
+Pull Request.
+
+Citation
+------------
+There is no publication (yet!) for pdb-tools, but if you use them and want to
+cite them use this [DOI](http://dx.doi.org/10.5281/zenodo.31158) item.
+
+[![DOI](https://zenodo.org/badge/18453/haddocking/pdb-tools.svg)](https://zenodo.org/badge/latestdoi/18453/haddocking/pdb-tools)
+
+
+Requirements
+------------
+* Python 2.7+ and 3.x
+
+Installation
+------------
+Download the zip archive or clone the repository with git. We recommend the `git`
+approach since it makes updating the tools extremely simple.
+
+```bash
+# To download
+git clone https://github.com/JoaoRodrigues/pdb-tools
+
+# To update
+cd pdb-tools && git pull origin master
+```
 
 License
 ---------
-Apache2. See LICENSE file.
+`pdb-tools` are open-source and licensed under the Apache License, version 2.0.
+For details, see the LICENSE file.
