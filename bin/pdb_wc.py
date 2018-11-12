@@ -41,8 +41,6 @@ data to another. They are based on old FORTRAN77 code that was taking too much
 effort to maintain and compile. RIP.
 """
 
-from __future__ import division
-
 import os
 import sys
 
@@ -78,7 +76,7 @@ def check_input(args):
 
         else:
             if not os.path.isfile(args[0]):
-                emsg = 'ERROR!! File not found or not readable: \'{}\'\n'
+                emsg = 'ERROR!! File not found or not readable: \'{0}\'\n'
                 sys.stderr.write(emsg.format(args[0]))
                 sys.stderr.write(__doc__)
                 sys.exit(1)
@@ -88,13 +86,13 @@ def check_input(args):
     elif len(args) == 2:
         # Two options: option & File
         if not args[0].startswith('-'):
-            emsg = 'ERROR! First argument is not an option: \'{}\'\n'
+            emsg = 'ERROR! First argument is not an option: \'{0}\'\n'
             sys.stderr.write(emsg.format(args[0]))
             sys.stderr.write(__doc__)
             sys.exit(1)
 
         if not os.path.isfile(args[1]):
-            emsg = 'ERROR!! File not found or not readable: \'{}\'\n'
+            emsg = 'ERROR!! File not found or not readable: \'{0}\'\n'
             sys.stderr.write(emsg.format(args[1]))
             sys.stderr.write(__doc__)
             sys.exit(1)
@@ -113,7 +111,7 @@ def check_input(args):
     valid = set('mcrahoig')
     if set(option) - valid:
         diff = ''.join(set(option) - valid)
-        emsg = 'ERROR!! The following options are not valid: \'{}\'\n'
+        emsg = 'ERROR!! The following options are not valid: \'{0}\'\n'
         sys.stderr.write(emsg.format(diff))
         sys.exit(1)
 
@@ -164,9 +162,9 @@ def summarize_file(fhandle, option):
         n_models = 1
 
     # Per-model
-    n_atom_pm = '{0:>6.1f}'.format(n_atoms / n_models)
-    n_resi_pm = '{0:>6.1f}'.format(n_residues / n_models)
-    n_chain_pm = '{0:>6.1f}'.format(n_chains / n_models)
+    n_atom_pm = '{0:>6.1f}'.format(n_atoms / float(n_models))
+    n_resi_pm = '{0:>6.1f}'.format(n_residues / float(n_models))
+    n_chain_pm = '{0:>6.1f}'.format(n_chains / float(n_models))
 
     # Booleans
     has_gaps = bool(n_rgaps)
@@ -174,21 +172,21 @@ def summarize_file(fhandle, option):
     has_icode = bool(n_inscodes)
 
     if 'm' in option:
-        print('No. models:\t{0}'.format(n_models))
+        sys.stdout.write('No. models:\t{0}\n'.format(n_models))
     if 'c' in option:
-        print('No. chains:\t{0}\t({1}/model)'.format(n_chains, n_chain_pm))
+        sys.stdout.write('No. chains:\t{0}\t({1}/model)\n'.format(n_chains, n_chain_pm))
     if 'r' in option:
-        print('No. residues:\t{0}\t({1}/model)'.format(n_residues, n_resi_pm))
+        sys.stdout.write('No. residues:\t{0}\t({1}/model)\n'.format(n_residues, n_resi_pm))
     if 'a' in option:
-        print('No. atoms:\t{0}\t({1}/model)'.format(n_atoms, n_atom_pm))
+        sys.stdout.write('No. atoms:\t{0}\t({1}/model)\n'.format(n_atoms, n_atom_pm))
     if 'h' in option:
-        print('No. HETATM:\t{0}'.format(n_hetatm))
+        sys.stdout.write('No. HETATM:\t{0}\n'.format(n_hetatm))
     if 'o' in option:
-        print('Multiple Occ.:\t{0}'.format(has_altloc))
+        sys.stdout.write('Multiple Occ.:\t{0}\n'.format(has_altloc))
     if 'i' in option:
-        print('Res. Inserts:\t{0}'.format(has_icode))
+        sys.stdout.write('Res. Inserts:\t{0}\n'.format(has_icode))
     if 'g' in option:
-        print('Has seq. gaps:\t{0}'.format(has_gaps))
+        sys.stdout.write('Has seq. gaps:\t{0}\n'.format(has_gaps))
 
 
 def main():

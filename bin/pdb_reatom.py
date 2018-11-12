@@ -97,7 +97,7 @@ def check_input(args):
     # Validate option
     try:
         option = int(option)
-    except ValueError as e:
+    except ValueError:
         emsg = 'ERROR!! You provided an invalid atom serial number: \'{}\''
         sys.stderr.write(emsg.format(option))
         sys.exit(1)
@@ -110,7 +110,7 @@ def renumber_atom_serials(fhandle, starting_value):
     """
 
     # CONECT 1179  746 1184 1195 1203
-    fmt_CONECT = "CONECT{:>5d}{:>5d}{:>5d}{:>5d}{:>5d}" + " " * 49 + "\n"
+    fmt_CONECT = "CONECT{:>5s}{:>5s}{:>5s}{:>5s}{:>5s}" + " " * 49 + "\n"
     char_ranges = (slice(6, 11), slice(11, 16),
                    slice(16, 21), slice(21, 26), slice(26, 31))
 
@@ -133,7 +133,7 @@ def renumber_atom_serials(fhandle, starting_value):
             serials = [line[cr] for cr in char_ranges]
 
             # If not found, return default
-            new_serials = [serial_equiv.get(s, s) for s in serials]
+            new_serials = [str(serial_equiv.get(s, s)) for s in serials]
             conect_line = fmt_CONECT.format(*new_serials)
 
             yield conect_line

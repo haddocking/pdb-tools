@@ -102,7 +102,7 @@ def check_input(args):
         try:
             single = int(option)
             single = set((single,))
-        except ValueError as e:
+        except ValueError:
             emsg = 'ERROR!! Single residue selection must be a number: \'{}\'\n'
             sys.stderr.write(emsg.format(option))
             sys.exit(1)
@@ -132,7 +132,7 @@ def check_input(args):
 
     try:
         start, end = int(start), int(end)
-    except ValueError as e:
+    except ValueError:
         emsg = 'ERROR!! Values must be numerical: \'{}\'\n'
         sys.stderr.write(emsg.format(option))
 

@@ -16,14 +16,16 @@
 # limitations under the License.
 
 """
-Modifies the file to comply (as much as possible) with the format specifications.
+Modifies the file to adhere (as much as possible) to the format specifications.
+Expects a sorted file - REMARK/ATOM/HETATM/END - so use pdb_sort in case you are
+not sure.
 
 This includes:
     - Adding TER statements after chain breaks/changes
     - Truncating/Padding all lines to 80 characters
     - Adds END statement at the end of the file
 
-This will remove all original TER/END statements from the file.
+Will remove all original TER/END statements from the file.
 
 Usage:
     python pdb_tidy.py <pdb file>
@@ -78,10 +80,23 @@ def tidy_pdbfile(fhandle):
     """Adds TER/END statements and pads all lines to 80 characters.
     """
 
+    def make_TER(prev_line):
+        """Creates a TER statement based on the last ATOM/HETATM line.
+        """
+
+        # Add last TER statement
+        serial = int(prev_line[6:11]) + 1
+        rname = prev_line[17:20]
+        chain = prev_line[21]
+        resid = prev_line[22:26]
+        icode = prev_line[26]
+
+        return fmt_TER.format(serial, rname, chain, resid, icode)
+
     # TER     606      LEU A  75
     fmt_TER = "TER   {:>5d}      {:3s} {:1s}{:>4s}{:1s}" + " " * 53 + "\n"
     # CONECT 1179  746 1184 1195 1203
-    fmt_CONECT = "CONECT{:>5d}{:>5d}{:>5d}{:>5d}{:>5d}" + " " * 49 + "\n"
+    fmt_CONECT = "CONECT{:>5s}{:>5s}{:>5s}{:>5s}{:>5s}" + " " * 49 + "\n"
     char_ranges = (slice(6, 11), slice(11, 16),
                    slice(16, 21), slice(21, 26), slice(26, 31))
 
@@ -90,16 +105,16 @@ def tidy_pdbfile(fhandle):
     # Iterate up to the first ATOM/HETATM line
     prev_line = None
     for line in fhandle:
+
+        line = line.strip()  # We will pad/add \n later to make uniform
+
         if line.startswith(ignored):
             continue
 
         # Check line length
-        line_length = len(line)
-        if line_length < 80:
-            num_pads = 80 - line_length + 1
-            line = line + ' ' * num_pads
+        line = "{:<80}\n".format(line)
 
-        yield line[:80]
+        yield line
 
         if line.startswith(records):
             prev_line = line
@@ -107,73 +122,70 @@ def tidy_pdbfile(fhandle):
 
     # Now go through all the remaining lines
     serial_equiv = {}  # store for conect statements
-    coord_section = False
+    atom_section = False
     serial_offset = 0  # To offset after adding TER records
     for line in fhandle:
+
+        line = line.strip()
+
         if line.startswith(ignored):
             continue
 
-        elif line.startswith(records):
-            coord_section = True
+        # Treat ATOM/HETATM differently
+        #   - no TER in HETATM
+        if line.startswith('ATOM'):
+            atom_section = True
             is_gap = (int(line[22:26]) - int(prev_line[22:26])) > 1
             if line[21] != prev_line[21] or is_gap:
-                serial = int(prev_line[6:11]) + 1
-                rname = prev_line[17:20]
-                chain = prev_line[21]
-                resid = prev_line[22:26]
-                icode = prev_line[26]
+                serial_offset += 1  # account for TER statement
+                yield make_TER(prev_line)
 
-                serial_offset += 1
-
-                ter_line = fmt_TER.format(serial, rname, chain, resid, icode)
-                yield ter_line
-
-            ori_serial = int(prev_line[6:11])
-            serial = ori_serial + serial_offset
-
-            serial_equiv[ori_serial] = serial
-
+            serial = int(line[6:11]) + serial_offset
             line = line[:6] + str(serial).rjust(5) + line[11:]
             prev_line = line
-            serial_offset = 1  # reset otherwise we have +2 ex.
+
+        elif line.startswith('HETATM'):
+            if atom_section:
+                atom_section = False
+                serial_offset += 1  # account for TER statement
+                yield make_TER(prev_line)
+
+            serial = int(line[6:11]) + serial_offset
+            line = line[:6] + str(serial).rjust(5) + line[11:]
+            prev_line = line
 
         elif line.startswith('ANISOU'):
             # Fix serial based on previous atom
+            # Avoids doing the offset again
             serial = prev_line[6:11]
             line = line[:6] + str(serial).rjust(5) + line[11:]
 
         elif line.startswith('CONECT'):
+            if atom_section:
+                atom_section = False
+                yield make_TER(prev_line)
+
             # 6:11, 11:16, 16:21, 21:26, 26:31
             serials = [line[cr] for cr in char_ranges]
             # If not found, return default
-            new_serials = [serial_equiv.get(s, s) for s in serials]
+            new_serials = [str(serial_equiv.get(s, s)) for s in serials]
             conect_line = fmt_CONECT.format(*new_serials)
             yield conect_line
             continue
 
         else:
-            if coord_section:
-                coord_section = False
+            if atom_section:
                 # Add last TER statement
-                serial = int(prev_line[6:11]) + 1
-                rname = prev_line[17:20]
-                chain = prev_line[21]
-                resid = prev_line[22:26]
-                icode = prev_line[26]
-
-                ter_line = fmt_TER.format(serial, rname, chain, resid, icode)
-                yield ter_line
+                atom_section = False
+                yield make_TER(prev_line)
 
         # Check line length
-        line_length = len(line)
-        if line_length < 80:
-            num_pads = 80 - line_length + 1
-            line = line + ' ' * num_pads
+        line = "{:<80}\n".format(line)
 
         yield line
 
     # Add END statement
-    yield 'END' + ' ' * 77 + '\n'
+    yield "{:<80}\n".format("END")
 
 
 def main():

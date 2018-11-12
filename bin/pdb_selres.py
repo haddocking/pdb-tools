@@ -126,7 +126,7 @@ def check_input(args):
 
     try:
         start, end, step = int(start), int(end), int(step)
-    except ValueError as e:
+    except ValueError:
         emsg = 'ERROR!! Values must be numerical: \'{}\'\n'
         sys.stderr.write(emsg.format(option))
 
