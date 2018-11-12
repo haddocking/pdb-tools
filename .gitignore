@@ -1,4 +1,5 @@
 # Python setuptools 
 build/
 dist/
-*.egg-info/
+*egg-info/
+*__pycache__
