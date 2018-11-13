@@ -28,7 +28,7 @@ bin_py = [f[:-3] + '=bin.' + f[:-3] + ':main' for f in binfiles]
 setup(
     name='pdb-tools',  # Required
     version='2.0.0b1',  # Required
-    description='A swiss-knife for PDB files.',  # Optional
+    description='A swiss army knife for PDB files.',  # Optional
     long_description=long_description,  # Optional
     long_description_content_type='text/markdown',  # Optional (see note above)
     url='https://github.com/joaorodrigues/pdb-tools',  # Optional
