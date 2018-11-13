@@ -15,10 +15,10 @@ matrix:
   fast_finish: true
 
 install:
-  - "%PYTHON%\\python.exe -m pip install flake8"
+  - "python -m pip install flake8"
 
 build: off
 
 test_script:
   - "flake8"
-  - "%PYTHON%\\python.exe setup.py test"
+  - "python setup.py test"
