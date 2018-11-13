@@ -30,5 +30,6 @@ flake8 --ignore=E501,E731
 python setup.py sdist bdist_wheel
 
 # Upload to PyPI: testing repo for now.
-twine upload --repository-url https://test.pypi.org/legacy/ dist/*
+#twine upload --repository-url https://test.pypi.org/legacy/ dist/*
+twine upload dist/*
 ```
