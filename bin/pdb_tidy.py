@@ -173,16 +173,16 @@ def tidy_pdbfile(fhandle):
             yield conect_line
             continue
 
-        else:
-            if atom_section:
-                # Add last TER statement
-                atom_section = False
-                yield make_TER(prev_line)
-
         # Check line length
         line = "{:<80}\n".format(line)
 
         yield line
+
+    else:
+        if atom_section:
+            # Add last TER statement
+            atom_section = False
+            yield make_TER(prev_line)
 
     # Add END statement
     yield "{:<80}\n".format("END")

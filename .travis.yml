@@ -13,4 +13,6 @@ matrix:
 install:
   - pip install flake8
 
-script: "flake8"
+script: 
+  - "flake8"
+  - "python setup.py test"
