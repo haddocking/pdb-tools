@@ -139,6 +139,10 @@ def renumber_atom_serials(fhandle, starting_value):
             yield conect_line
             continue
 
+        elif line.startswith('MODEL'):
+            serial = starting_value
+            yield line
+
         else:
             yield line
 
