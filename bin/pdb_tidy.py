@@ -101,7 +101,7 @@ def tidy_pdbfile(fhandle):
                    slice(16, 21), slice(21, 26), slice(26, 31))
 
     records = ('ATOM', 'HETATM')
-    ignored = ('TER', 'END')
+    ignored = ('TER', 'END ')
     # Iterate up to the first ATOM/HETATM line
     prev_line = None
     for line in fhandle:
@@ -134,15 +134,16 @@ def tidy_pdbfile(fhandle):
         # Treat ATOM/HETATM differently
         #   - no TER in HETATM
         if line.startswith('ATOM'):
-            atom_section = True
+
             is_gap = (int(line[22:26]) - int(prev_line[22:26])) > 1
-            if line[21] != prev_line[21] or is_gap:
+            if atom_section and (line[21] != prev_line[21] or is_gap):
                 serial_offset += 1  # account for TER statement
                 yield make_TER(prev_line)
 
             serial = int(line[6:11]) + serial_offset
             line = line[:6] + str(serial).rjust(5) + line[11:]
             prev_line = line
+            atom_section = True
 
         elif line.startswith('HETATM'):
             if atom_section:
@@ -172,6 +173,14 @@ def tidy_pdbfile(fhandle):
             conect_line = fmt_CONECT.format(*new_serials)
             yield conect_line
             continue
+
+        else:
+            if atom_section:
+                atom_section = False
+                yield make_TER(prev_line)
+
+            if line.startswith('MODEL'):
+                serial_offset = 0
 
         # Check line length
         line = "{:<80}\n".format(line)
