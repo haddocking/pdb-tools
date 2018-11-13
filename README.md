@@ -1,4 +1,7 @@
-# pdb-tools [![Build Status](https://travis-ci.org/JoaoRodrigues/pdb-tools.svg?branch=version2)](https://travis-ci.org/JoaoRodrigues/pdb-tools)
+# pdb-tools 
+[![Build Status](https://travis-ci.org/JoaoRodrigues/pdb-tools.svg?branch=version2)](https://travis-ci.org/JoaoRodrigues/pdb-tools)
+[![Build status](https://ci.appveyor.com/api/projects/status/vl7cgo6prdda532j/branch/version2?svg=true)](https://ci.appveyor.com/project/JoaoRodrigues/pdb-tools/branch/version2)
+
 Set of Python scripts designed to be a dependency-free cross-platform 
 swiss-knife for PDB files.
 
