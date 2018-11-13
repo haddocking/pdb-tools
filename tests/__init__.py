@@ -22,10 +22,10 @@ import os
 import sys
 import unittest
 
-from config import test_dir
+from .config import test_dir
 
-if __name__ == '__main__':
 
+def test_all():
     mpath = os.path.abspath(os.path.join(test_dir, '..'))
     sys.path.insert(0, mpath)  # so we load dev files before  any installation
 
@@ -34,5 +34,4 @@ if __name__ == '__main__':
     tpath = os.path.join(mpath, 'tests')
     suite = loader.discover(tpath)
 
-    runner = unittest.TextTestRunner(verbosity=2)
-    runner.run(suite)
+    return suite

@@ -101,4 +101,7 @@ setup(
         'Bug Reports': 'https://github.com/joaorodrigues/pdb-tools/issues',
         'Source': 'https://github.com/joaorodrigues/pdb-tools',
     },
+
+    # Test Suite
+    test_suite='tests.test_all',
 )
