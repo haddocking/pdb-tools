@@ -123,17 +123,17 @@ def check_ensemble(fhandle):
             msg = 'Models {} and {} differ:\n'
             sys.stderr.write(msg.format(model_i, model_j))
 
-            if difference_ij:
+            if len(difference_ij):
+                d_ij = sorted(difference_ij)
                 msg = 'Atoms in model {} only:\n'
-                sys.stdout.write(msg.format(model_i))
-                for atom_line in difference_ij:
-                    sys.stderr.write(atom_line + '\n')
+                sys.stderr.write(msg.format(model_i))
+                sys.stderr.write('\n'.join(d_ij))
 
-            if difference_ji:
+            if len(difference_ji):
+                d_ji = sorted(difference_ji)
                 msg = 'Atoms in model {} only:\n'
-                sys.stdout.write(msg.format(model_j))
-                for atom_line in difference_ji:
-                    sys.stderr.write(atom_line + '\n')
+                sys.stderr.write(msg.format(model_j))
+                sys.stderr.write('\n'.join(d_ji))
 
     if not bad_ensemble:
         n_models = len(model_data)
