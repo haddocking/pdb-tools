@@ -16,7 +16,9 @@
 # limitations under the License.
 
 """
-Merges several PDB files into one multi-model (ensemble) file.
+Merges several PDB files into one multi-model (ensemble) file. Strips all
+HEADER information and adds REMARK statements with the provenance of each
+conformer.
 
 Usage:
     python pdb_mkensemble.py <pdb file> <pdb file>
@@ -67,15 +69,27 @@ def make_ensemble(flist):
     """Combines several PDB files into a multi-model ensemble file.
     """
 
+    # REMARK     THIS ENTRY
+    fmt_REMARK = "REMARK     {:<67s}\n"
+
     # MODEL        1
     fmt_MODEL = "MODEL {:>5d}\n"
+
+    records = ('ATOM', 'HETATM', 'CONECT')
+
+    for fileno, fhandle in enumerate(flist, start=1):
+        fpath = os.path.basename(fhandle.name)
+        yield fmt_REMARK.format("MODEL {} FROM {}".format(fileno, fpath))
 
     for fileno, fhandle in enumerate(flist, start=1):
 
         yield fmt_MODEL.format(fileno)
 
+        serial = 1  # Models are renumbered from 1
         for line in fhandle:
-            yield line
+            if line.startswith(records):
+                yield line[:6] + str(serial).rjust(5) + line[11:]
+                serial += 1
 
         yield 'ENDMDL\n'
         fhandle.close()
