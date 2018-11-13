@@ -1,6 +1,9 @@
-# pdb-tools 
-[![Build Status](https://travis-ci.org/JoaoRodrigues/pdb-tools.svg?branch=version2)](https://travis-ci.org/JoaoRodrigues/pdb-tools)
-[![Build status](https://ci.appveyor.com/api/projects/status/vl7cgo6prdda532j/branch/version2?svg=true)](https://ci.appveyor.com/project/JoaoRodrigues/pdb-tools/branch/version2)
+# pdb-tools
+
+[![PyPI version](https://badge.fury.io/py/pdb-tools.svg)](https://badge.fury.io/py/pdb-tools)
+![Travis (.org) branch](https://img.shields.io/travis/JoaoRodrigues/pdb-tools/version2.svg?style=flat&label=TravisCI)
+![AppVeyor branch](https://img.shields.io/appveyor/ci/JoaoRodrigues/pdb-tools.svg?style=flat&label=AppVeyor)
+
 
 Set of Python scripts designed to be a dependency-free cross-platform 
 swiss-knife for PDB files.
