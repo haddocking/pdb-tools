@@ -5,8 +5,7 @@
 ![AppVeyor branch](https://img.shields.io/appveyor/ci/JoaoRodrigues/pdb-tools.svg?style=flat&label=AppVeyor)
 
 
-Set of Python scripts designed to be a dependency-free cross-platform 
-swiss-knife for PDB files.
+A swiss army knife for manipulating and editing PDB files.
 
 
 ## Looking for the _other_ pdb-tools?
