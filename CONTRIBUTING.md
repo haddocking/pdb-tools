@@ -94,7 +94,7 @@ git checkout -b pdb_newtool
 
 # If you are making changes to an existing tool, run the test suite before
 # committing your changes.
-python tests/run_tests.py
+python setup.py test
 
 # When you have committed all your changes, run flake8 to make sure there are
 # no style issues.
