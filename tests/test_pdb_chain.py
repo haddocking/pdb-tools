@@ -77,10 +77,26 @@ class TestTool(unittest.TestCase):
     
     def test_valid_2(self):
         
-        input_file = os.path.join(data_dir, 'input_pdb_chain_2.pdb')
+        input_file = os.path.join(data_dir, 'ABC.pdb')
         output_file = os.path.join(output_dir, 'output_pdb_chain_2.pdb')
         
         sys.argv = ['', '-Z', input_file]  # simulate
+        # Execute the script
+        
+        retcode, stdout, stderr, len_original, output_data = \
+            self.read_prepare(input_file, output_file)
+        
+        self.assertEqual(retcode, 0)  # ensure the program exited gracefully.
+        self.assertEqual(len(stdout), len_original)  # no lines deleted
+        self.assertEqual(len(stderr), 0)  # no errors
+        self.assertEqual(stdout, output_data)
+    
+    def test_valid_3(self):
+        
+        input_file = os.path.join(data_dir, 'nano.pdb')
+        output_file = os.path.join(output_dir, 'output_pdb_chain_3.pdb')
+        
+        sys.argv = ['', input_file]  # simulate
         # Execute the script
         
         retcode, stdout, stderr, len_original, output_data = \
