@@ -45,18 +45,18 @@ class TestTool(unittest.TestCase):
             try:
                 self.module.main()
             except SystemExit as e:
-                retcode = e.code
+                self.retcode = e.code
 
-        stdout = output.stdout
-        stderr = output.stderr
+        self.stdout = output.stdout
+        self.stderr = output.stderr
         
         with open(input_file) as ifile:
-            len_original = len(ifile.readlines())
+            self.len_original = len(ifile.readlines())
         
         with open(output_file) as ofile:
-            output_data = [l.strip("\n") for l in ofile]
+            self.output_data = [l.strip("\n") for l in ofile]
         
-        return retcode, stdout, stderr, len_original, output_data
+        return
     
     def test_valid_1(self):
         """pdb_chain - test single chain"""
@@ -67,15 +67,17 @@ class TestTool(unittest.TestCase):
         sys.argv = ['', '-Z', input_file]  # simulate
         # Execute the script
         
-        retcode, stdout, stderr, len_original, output_data = \
-            self.read_prepare(input_file, output_file)
+        self.read_prepare(input_file, output_file)
         
-        self.assertEqual(retcode, 0)  # ensure the program exited gracefully.
-        self.assertEqual(len(stdout), len_original)  # no lines deleted
-        self.assertEqual(len(stderr), 0)  # no errors
-        self.assertEqual(stdout, output_data)
+        self.assertEqual(self.retcode, 0)  # ensure the program exited gracefully.
+        self.assertEqual(len(self.stdout), self.len_original)  # no lines deleted
+        self.assertEqual(len(self.stderr), 0)  # no errors
+        self.assertEqual(self.stdout, self.output_data)
     
     def test_valid_2(self):
+        """
+        pdb_chain - test 3 chains
+        """
         
         input_file = os.path.join(data_dir, 'ABC.pdb')
         output_file = os.path.join(output_dir, 'output_pdb_chain_2.pdb')
@@ -83,15 +85,17 @@ class TestTool(unittest.TestCase):
         sys.argv = ['', '-Z', input_file]  # simulate
         # Execute the script
         
-        retcode, stdout, stderr, len_original, output_data = \
-            self.read_prepare(input_file, output_file)
+        self.read_prepare(input_file, output_file)
         
-        self.assertEqual(retcode, 0)  # ensure the program exited gracefully.
-        self.assertEqual(len(stdout), len_original)  # no lines deleted
-        self.assertEqual(len(stderr), 0)  # no errors
-        self.assertEqual(stdout, output_data)
+        self.assertEqual(self.retcode, 0)  # ensure the program exited gracefully.
+        self.assertEqual(len(self.stdout), self.len_original)  # no lines deleted
+        self.assertEqual(len(self.stderr), 0)  # no errors
+        self.assertEqual(self.stdout, self.output_data)
     
     def test_valid_3(self):
+        """
+        pdb_chain - test remove chains
+        """
         
         input_file = os.path.join(data_dir, 'nano.pdb')
         output_file = os.path.join(output_dir, 'output_pdb_chain_3.pdb')
@@ -99,13 +103,12 @@ class TestTool(unittest.TestCase):
         sys.argv = ['', input_file]  # simulate
         # Execute the script
         
-        retcode, stdout, stderr, len_original, output_data = \
-            self.read_prepare(input_file, output_file)
+        self.read_prepare(input_file, output_file)
         
-        self.assertEqual(retcode, 0)  # ensure the program exited gracefully.
-        self.assertEqual(len(stdout), len_original)  # no lines deleted
-        self.assertEqual(len(stderr), 0)  # no errors
-        self.assertEqual(stdout, output_data)
+        self.assertEqual(self.retcode, 0)  # ensure the program exited gracefully.
+        self.assertEqual(len(self.stdout), self.len_original)  # no lines deleted
+        self.assertEqual(len(self.stderr), 0)  # no errors
+        self.assertEqual(self.stdout, self.output_data)
     
     def test_FileNotFound(self):
         """pdb_chain - file not found"""
