@@ -147,7 +147,8 @@ def main():
 
     # Do the job
     check_ensemble(pdbfh)
-
+    
+    pdbfh.close()
     sys.exit(0)
 
 
