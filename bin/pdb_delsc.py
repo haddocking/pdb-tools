@@ -139,6 +139,7 @@ def check_input(args):
     if start >= end:
         emsg = 'ERROR!! Start ({}) cannot be larger than End ({})\n'
         sys.stderr.write(emsg.format(start, end))
+        sys.exit(1)
 
     option = set(range(start, end + 1))
     return (option, fh)
