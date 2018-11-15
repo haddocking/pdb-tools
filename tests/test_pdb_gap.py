@@ -55,7 +55,7 @@ class TestTool(unittest.TestCase):
     def test_valid_1(self):
         """pdb_gap - finds gaps"""
         
-        input_file = os.path.join(data_dir, 'ABC_gap.pdb')
+        input_file = os.path.join(data_dir, 'full_example.pdb')
         
         sys.argv = ['', input_file]  # simulate
         # Execute the script
@@ -65,8 +65,8 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.retcode, 0)  # ensure the program exited gracefully.
         self.assertEqual(len(self.stderr), 0)  # no errors
         self.assertEqual(self.stdout,
-                         ["B:GLU3 <   47.90A > B:ARG5",
-                         "C:PHE2 <   47.97A > C:ALA4",
+                         ["B:ALA4 <   41.39A > B:LEU6",
+                         "D:TRP61 <   42.10A > D:LYS63",
                          "Found 2 gap(s) in the structure"])
     
     def test_FileNotFound(self):

@@ -64,7 +64,7 @@ class TestTool(unittest.TestCase):
     def test_valid_1(self):
         """pdb_merge - merge micro and nano"""
         
-        input_file1 = os.path.join(data_dir, 'micro.pdb')
+        input_file1 = os.path.join(data_dir, 'full_example.pdb')
         input_file2 = os.path.join(data_dir, 'nano.pdb')
         output_file = os.path.join(output_dir, 'output_pdb_merge_1.pdb')
         

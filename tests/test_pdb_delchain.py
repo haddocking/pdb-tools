@@ -61,7 +61,7 @@ class TestTool(unittest.TestCase):
     def test_valid_1(self):
         """pdb_delchain - deletes single chain"""
         
-        input_file = os.path.join(data_dir, 'ABC.pdb')
+        input_file = os.path.join(data_dir, 'full_example.pdb')
         output_file = os.path.join(output_dir, 'output_pdb_delchain_1.pdb')
         
         sys.argv = ['', '-A', input_file]  # simulate
@@ -76,13 +76,13 @@ class TestTool(unittest.TestCase):
     
     def test_valid_2(self):
         """
-        pdb_delchain - deletes 2 chains
+        pdb_delchain - deletes A and G chains
         """
         
-        input_file = os.path.join(data_dir, 'ABC.pdb')
+        input_file = os.path.join(data_dir, 'full_example.pdb')
         output_file = os.path.join(output_dir, 'output_pdb_delchain_2.pdb')
         
-        sys.argv = ['', '-AC', input_file]  # simulate
+        sys.argv = ['', '-AG', input_file]  # simulate
         # Execute the script
         
         self.read_prepare(input_file, output_file)
@@ -97,8 +97,8 @@ class TestTool(unittest.TestCase):
         pdb_delchain - deletes chains that do not exist
         """
         
-        input_file = os.path.join(data_dir, 'ABC.pdb')
-        output_file = os.path.join(data_dir, 'ABC.pdb')
+        input_file = os.path.join(data_dir, 'full_example.pdb')
+        output_file = os.path.join(data_dir, 'full_example.pdb')
         
         sys.argv = ['', '-Z', input_file]  # simulate
         # Execute the script

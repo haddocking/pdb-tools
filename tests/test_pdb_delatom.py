@@ -59,12 +59,12 @@ class TestTool(unittest.TestCase):
         return
     
     def test_valid_1(self):
-        """pdb_chain - remove H"""
+        """pdb_chain - removes all atoms"""
         
-        input_file = os.path.join(data_dir, 'ABC.pdb')
+        input_file = os.path.join(data_dir, 'full_example.pdb')
         output_file = os.path.join(output_dir, 'output_pdb_delatom_1.pdb')
         
-        sys.argv = ['', '-H', input_file]  # simulate
+        sys.argv = ['', input_file]  # simulate
         # Execute the script
         
         self.read_prepare(input_file, output_file)
@@ -76,13 +76,13 @@ class TestTool(unittest.TestCase):
     
     def test_valid_2(self):
         """
-        pdb_chain - remove N
+        pdb_chain - remove S
         """
         
-        input_file = os.path.join(data_dir, 'ABC.pdb')
+        input_file = os.path.join(data_dir, 'full_example.pdb')
         output_file = os.path.join(output_dir, 'output_pdb_delatom_2.pdb')
         
-        sys.argv = ['', '-N', input_file]  # simulate
+        sys.argv = ['', '-S', input_file]  # simulate
         # Execute the script
         
         self.read_prepare(input_file, output_file)

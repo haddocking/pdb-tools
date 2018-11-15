@@ -59,28 +59,12 @@ class TestTool(unittest.TestCase):
         return
     
     def test_valid_1(self):
-        """pdb_chainxseg - test single chain"""
+        """
+        pdb_chainxseg - multiple chains
+        """
         
-        input_file = os.path.join(data_dir, 'nano.pdb')
+        input_file = os.path.join(data_dir, 'full_example.pdb')
         output_file = os.path.join(output_dir, 'output_pdb_chainxseg_1.pdb')
-        
-        sys.argv = ['', input_file]  # simulate
-        # Execute the script
-        
-        self.read_prepare(input_file, output_file)
-        
-        self.assertEqual(self.retcode, 0)  # ensure the program exited gracefully.
-        self.assertEqual(len(self.stdout), self.len_original)  # no lines deleted
-        self.assertEqual(len(self.stderr), 0)  # no errors
-        self.assertEqual(self.stdout, self.output_data)
-    
-    def test_valid_2(self):
-        """
-        pdb_chainxseg - test three chains
-        """
-        
-        input_file = os.path.join(data_dir, 'ABC.pdb')
-        output_file = os.path.join(output_dir, 'output_pdb_chainxseg_2.pdb')
         
         sys.argv = ['', input_file]  # simulate
         # Execute the script

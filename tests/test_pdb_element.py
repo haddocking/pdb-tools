@@ -61,8 +61,8 @@ class TestTool(unittest.TestCase):
     def test_valid_1(self):
         """pdb_element - adds elements C,N,H"""
         
-        input_file = os.path.join(data_dir, 'nano_elementless.pdb')
-        output_file = os.path.join(data_dir, 'nano.pdb')
+        input_file = os.path.join(data_dir, 'full_example.pdb')
+        output_file = os.path.join(output_dir, 'output_pdb_element_1.pdb')
         
         sys.argv = ['', input_file]  # simulate
         # Execute the script

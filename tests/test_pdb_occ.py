@@ -61,7 +61,7 @@ class TestTool(unittest.TestCase):
     def test_valid_1(self):
         """pdb_occ - sets occ to 0.5"""
         
-        input_file = os.path.join(data_dir, 'nano.pdb')
+        input_file = os.path.join(data_dir, 'full_example.pdb')
         output_file = os.path.join(output_dir, 'output_pdb_occ_1.pdb')
         
         sys.argv = ['', '-0.5', input_file]  # simulate
@@ -79,7 +79,7 @@ class TestTool(unittest.TestCase):
         pdb_occ - set occ to 2
         """
         
-        input_file = os.path.join(data_dir, 'nano.pdb')
+        input_file = os.path.join(data_dir, 'full_example.pdb')
         output_file = os.path.join(output_dir, 'output_pdb_occ_2.pdb')
         
         sys.argv = ['', '-2', input_file]  # simulate

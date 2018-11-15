@@ -59,12 +59,12 @@ class TestTool(unittest.TestCase):
         return
     
     def test_valid_1(self):
-        """pdb_chain - test single chain"""
+        """pdb_chain - test remove chain"""
         
-        input_file = os.path.join(data_dir, 'nano.pdb')
+        input_file = os.path.join(data_dir, 'full_example.pdb')
         output_file = os.path.join(output_dir, 'output_pdb_chain_1.pdb')
         
-        sys.argv = ['', '-Z', input_file]  # simulate
+        sys.argv = ['', input_file]  # simulate
         # Execute the script
         
         self.read_prepare(input_file, output_file)
@@ -76,31 +76,13 @@ class TestTool(unittest.TestCase):
     
     def test_valid_2(self):
         """
-        pdb_chain - test 3 chains
+        pdb_chain - change multime chains to Z
         """
         
-        input_file = os.path.join(data_dir, 'ABC.pdb')
+        input_file = os.path.join(data_dir, 'full_example.pdb')
         output_file = os.path.join(output_dir, 'output_pdb_chain_2.pdb')
         
         sys.argv = ['', '-Z', input_file]  # simulate
-        # Execute the script
-        
-        self.read_prepare(input_file, output_file)
-        
-        self.assertEqual(self.retcode, 0)  # ensure the program exited gracefully.
-        self.assertEqual(len(self.stdout), self.len_original)  # no lines deleted
-        self.assertEqual(len(self.stderr), 0)  # no errors
-        self.assertEqual(self.stdout, self.output_data)
-    
-    def test_valid_3(self):
-        """
-        pdb_chain - test remove chains
-        """
-        
-        input_file = os.path.join(data_dir, 'nano.pdb')
-        output_file = os.path.join(output_dir, 'output_pdb_chain_3.pdb')
-        
-        sys.argv = ['', input_file]  # simulate
         # Execute the script
         
         self.read_prepare(input_file, output_file)
