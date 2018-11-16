@@ -18,14 +18,14 @@ SEQRES   1 E   20  PRO VAL CYS VAL ARG PRO THR PRO LYS TRP GLN LYS GLY
 SEQRES   1 F   10   DA  DT  DA  DC  DG  DA  DT  DG  DG  DG                      
 SEQRES   1 G   10   DC  DC  DC  DA  DT  DC  DG  DT  DA  DT                      
 FORMUL   8  HOH   *9(H2 O)                                                      
-ATOM   1735  N   PHE B   2      -7.485  -6.367  19.069  0.50 64.74              
-ANISOU 1735  N   PHE B   2     4518  13209   6871     83  -2008  -1212          
-ATOM   1736  CA  PHE B   2      -6.127  -6.372  18.438  0.70 63.43              
-ANISOU 1736  CA  PHE B   2     4520  12868   6710    141  -2021  -1199          
-ATOM   1737  C   PHE B   2      -5.190  -7.299  19.216  0.70 62.31              
-ANISOU 1737  C   PHE B   2     4548  12564   6560     35  -1991  -1248          
-ATOM   1738  O   PHE B   2      -5.086  -7.161  20.414  1.00 61.64              
-ANISOU 1738  O   PHE B   2     4468  12431   6520     17  -1933  -1272          
+ATOM   1735  N   PHE B   2      -7.485  -6.367  19.069  0.50 64.74      Y       
+ANISOU 1735  N   PHE B   2     4518  13209   6871     83  -2008  -1212  Y       
+ATOM   1736  CA  PHE B   2      -6.127  -6.372  18.438  0.70 63.43      Y       
+ANISOU 1736  CA  PHE B   2     4520  12868   6710    141  -2021  -1199  Y       
+ATOM   1737  C   PHE B   2      -5.190  -7.299  19.216  0.70 62.31      Y       
+ANISOU 1737  C   PHE B   2     4548  12564   6560     35  -1991  -1248  Y       
+ATOM   1738  O   PHE B   2      -5.086  -7.161  20.414  1.00 61.64      Y       
+ANISOU 1738  O   PHE B   2     4468  12431   6520     17  -1933  -1272  Y       
 ATOM   1746  N   GLU B   3      -4.514  -8.213  18.499  1.00 62.08              
 ANISOU 1746  N   GLU B   3     4658  12452   6474    -31  -2025  -1257          
 ATOM   1747  CA  GLU B   3      -3.571  -9.179  19.087  1.00 61.60              

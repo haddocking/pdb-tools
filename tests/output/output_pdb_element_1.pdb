@@ -18,28 +18,28 @@ SEQRES   1 E   20  PRO VAL CYS VAL ARG PRO THR PRO LYS TRP GLN LYS GLY
 SEQRES   1 F   10   DA  DT  DA  DC  DG  DA  DT  DG  DG  DG                      
 SEQRES   1 G   10   DC  DC  DC  DA  DT  DC  DG  DT  DA  DT                      
 FORMUL   8  HOH   *9(H2 O)                                                      
-ATOM   1735  N   PHE B   2      -7.485  -6.367  19.069  0.50 64.74           N  
-ANISOU 1735  N   PHE B   2     4518  13209   6871     83  -2008  -1212       N  
-ATOM   1736  CA  PHE B   2      -6.127  -6.372  18.438  0.70 63.43           C  
-ANISOU 1736  CA  PHE B   2     4520  12868   6710    141  -2021  -1199       C  
-ATOM   1737  C   PHE B   2      -5.190  -7.299  19.216  0.70 62.31           C  
-ANISOU 1737  C   PHE B   2     4548  12564   6560     35  -1991  -1248       C  
-ATOM   1738  O   PHE B   2      -5.086  -7.161  20.414  1.00 61.64           O  
-ANISOU 1738  O   PHE B   2     4468  12431   6520     17  -1933  -1272       O  
-ATOM   1739  CB  PHE B   2      -5.550  -4.958  18.379  0.50 62.84           C  
-ANISOU 1739  CB  PHE B   2     4433  12714   6729    343  -1977  -1149       C  
-ATOM   1740  CG  PHE B   2      -4.048  -4.892  18.230  0.50 61.59           C  
-ANISOU 1740  CG  PHE B   2     4444  12363   6593    391  -1963  -1141       C  
-ATOM   1741  CD1 PHE B   2      -3.396  -5.531  17.189  0.70 61.23           C  
-ANISOU 1741  CD1 PHE B   2     4503  12268   6491    362  -2015  -1131       C  
-ATOM   1742  CD2 PHE B   2      -3.283  -4.185  19.143  0.50 60.88           C  
-ANISOU 1742  CD2 PHE B   2     4410  12146   6574    456  -1892  -1140       C  
-ATOM   1743  CE1 PHE B   2      -2.020  -5.467  17.072  0.70 60.41           C  
-ANISOU 1743  CE1 PHE B   2     4537  11999   6414    414  -1993  -1113       C  
-ATOM   1744  CE2 PHE B   2      -1.906  -4.111  19.023  0.70 59.44           C  
-ANISOU 1744  CE2 PHE B   2     4364  11810   6409    492  -1884  -1118       C  
-ATOM   1745  CZ  PHE B   2      -1.277  -4.759  17.994  1.00 59.50           C  
-ANISOU 1745  CZ  PHE B   2     4455  11777   6372    479  -1933  -1101       C  
+ATOM   1735  N   PHE B   2      -7.485  -6.367  19.069  0.50 64.74      Y    N  
+ANISOU 1735  N   PHE B   2     4518  13209   6871     83  -2008  -1212  Y    N  
+ATOM   1736  CA  PHE B   2      -6.127  -6.372  18.438  0.70 63.43      Y    C  
+ANISOU 1736  CA  PHE B   2     4520  12868   6710    141  -2021  -1199  Y    C  
+ATOM   1737  C   PHE B   2      -5.190  -7.299  19.216  0.70 62.31      Y    C  
+ANISOU 1737  C   PHE B   2     4548  12564   6560     35  -1991  -1248  Y    C  
+ATOM   1738  O   PHE B   2      -5.086  -7.161  20.414  1.00 61.64      Y    O  
+ANISOU 1738  O   PHE B   2     4468  12431   6520     17  -1933  -1272  Y    O  
+ATOM   1739  CB  PHE B   2      -5.550  -4.958  18.379  0.50 62.84      Y    C  
+ANISOU 1739  CB  PHE B   2     4433  12714   6729    343  -1977  -1149  Y    C  
+ATOM   1740  CG  PHE B   2      -4.048  -4.892  18.230  0.50 61.59      Y    C  
+ANISOU 1740  CG  PHE B   2     4444  12363   6593    391  -1963  -1141  Y    C  
+ATOM   1741  CD1 PHE B   2      -3.396  -5.531  17.189  0.70 61.23      Y    C  
+ANISOU 1741  CD1 PHE B   2     4503  12268   6491    362  -2015  -1131  Y    C  
+ATOM   1742  CD2 PHE B   2      -3.283  -4.185  19.143  0.50 60.88      Y    C  
+ANISOU 1742  CD2 PHE B   2     4410  12146   6574    456  -1892  -1140  Y    C  
+ATOM   1743  CE1 PHE B   2      -2.020  -5.467  17.072  0.70 60.41      Y    C  
+ANISOU 1743  CE1 PHE B   2     4537  11999   6414    414  -1993  -1113  Y    C  
+ATOM   1744  CE2 PHE B   2      -1.906  -4.111  19.023  0.70 59.44      Y    C  
+ANISOU 1744  CE2 PHE B   2     4364  11810   6409    492  -1884  -1118  Y    C  
+ATOM   1745  CZ  PHE B   2      -1.277  -4.759  17.994  1.00 59.50      Y    C  
+ANISOU 1745  CZ  PHE B   2     4455  11777   6372    479  -1933  -1101  Y    C  
 ATOM   1746  N   GLU B   3      -4.514  -8.213  18.499  1.00 62.08           N  
 ANISOU 1746  N   GLU B   3     4658  12452   6474    -31  -2025  -1257       N  
 ATOM   1747  CA  GLU B   3      -3.571  -9.179  19.087  1.00 61.60           C  
