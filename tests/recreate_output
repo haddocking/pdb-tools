@@ -41,7 +41,7 @@ python ../bin/pdb_splitmodel.py data/nano_2_models.pdb
 mv nano_2_models_* output/
 python ../bin/pdb_splitseg.py data/full_example.pdb
 mv full_example_* output/
-python ../bin/pdb_striphet.py data/full_example.pdb > output/output_pdb_striphet.pdb
+python ../bin/pdb_striphet.py data/full_example.pdb > output/output_pdb_striphet_1.pdb
 python ../bin/pdb_wc.py data/full_example.pdb > output/output_wc_1.txt
 python ../bin/pdb_wc.py -m data/full_example.pdb > output/output_wc_2.txt
 python ../bin/pdb_wc.py -r data/full_example.pdb > output/output_wc_3.txt

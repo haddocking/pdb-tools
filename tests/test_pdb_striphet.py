@@ -16,7 +16,7 @@
 # limitations under the License.
 
 """
-Unit Tests for `pdb_keepcoord`.
+Unit Tests for `pdb_striphet`.
 """
 
 import os
@@ -34,12 +34,12 @@ class TestTool(unittest.TestCase):
 
     def setUp(self):
         # Dynamically import the module
-        name = 'bin.pdb_keepcoord'
+        name = 'bin.pdb_striphet'
         self.module = __import__(name, fromlist=[''])
     
-    def read_prepare(self, input_file, output_file):
+    def exec_module(self):
         """
-        Prepares input and output common to the different tests.
+        Execs module.
         """
         
         with OutputCapture() as output:
@@ -51,6 +51,13 @@ class TestTool(unittest.TestCase):
         self.stdout = output.stdout
         self.stderr = output.stderr
         
+        return
+    
+    def read_prepare(self, input_file, output_file):
+        """
+        Prepares input and output common to the different tests.
+        """
+        
         with open(input_file) as ifile:
             self.len_original = len(ifile.readlines())
         
@@ -61,16 +68,17 @@ class TestTool(unittest.TestCase):
     
     def test_valid_1(self):
         """
-        pdb_keepcoord - test
+        pdb_striphet - test
         """
         
         input_file = os.path.join(data_dir, 'full_example.pdb')
-        output_file = os.path.join(output_dir, 'output_pdb_keepcoord_1.pdb')
+        output_file = os.path.join(output_dir, 'output_pdb_striphet_1.pdb')
         
         sys.argv = ['', input_file]  # simulate
-        # Execute the script
         
+        # Execute the script
         self.read_prepare(input_file, output_file)
+        self.exec_module()
         
         self.assertEqual(self.retcode, 0)  # ensure the program exited gracefully.
         self.assertEqual(len(self.stderr), 0)  # no errors
@@ -79,21 +87,31 @@ class TestTool(unittest.TestCase):
     
     def test_FileNotFound(self):
         """
-        pdb_keepcoord - file not found
+        pdb_striphet - file not found
         """
-
+        
         # Error (file not found)
-        sys.argv = ['', os.path.join(data_dir, 'not_there.pdb')]
+        not_there = os.path.join(data_dir, 'not_there.pdb')
+        sys.argv = ['', not_there]
+        
         # Execute the script
-        with OutputCapture() as output:
-            try:
-                self.module.main()
-            except SystemExit as e:
-                retcode = e.code
+        self.exec_module()
 
-        stdout = output.stdout
-        stderr = output.stderr
-
-        self.assertEqual(retcode, 1)  # ensure the program exited gracefully.
-        self.assertEqual(len(stdout), 0)  # no output
-        self.assertEqual(stderr[0][:39], "ERROR!! File not found or not readable:")
+        self.assertEqual(self.retcode, 1)  # ensure the program exited gracefully.
+        self.assertEqual(len(self.stdout), 0)  # no output
+        self.assertEqual(self.stderr[0],
+                         "ERROR!! File not found or not readable: '{}'".format(not_there))
+    
+    def test_NothingProvided(self):
+        """
+        pdb_striphet - nothing provided
+        """
+        
+        sys.argv = ['']
+        
+        # Execute the script
+        self.exec_module()
+        
+        self.assertEqual(self.retcode, 1)  # ensure the program exited gracefully.
+        self.assertEqual(len(self.stdout), 0)  # no output
+        self.assertEqual(self.stderr, self.module.__doc__.split("\n")[:-1])

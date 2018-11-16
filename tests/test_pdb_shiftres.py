@@ -37,9 +37,9 @@ class TestTool(unittest.TestCase):
         name = 'bin.pdb_shiftres'
         self.module = __import__(name, fromlist=[''])
     
-    def read_prepare(self, input_file, output_file):
+    def exec_module(self):
         """
-        Prepares input and output common to the different tests.
+        Execs module.
         """
         
         with OutputCapture() as output:
@@ -50,6 +50,13 @@ class TestTool(unittest.TestCase):
 
         self.stdout = output.stdout
         self.stderr = output.stderr
+        
+        return
+    
+    def read_prepare(self, input_file, output_file):
+        """
+        Prepares input and output common to the different tests.
+        """
         
         with open(input_file) as ifile:
             self.len_original = len(ifile.readlines())
@@ -68,9 +75,10 @@ class TestTool(unittest.TestCase):
         output_file = os.path.join(output_dir, 'output_pdb_shiftres_1.pdb')
         
         sys.argv = ['', '-50', input_file]  # simulate
-        # Execute the script
         
+        # Execute the script
         self.read_prepare(input_file, output_file)
+        self.exec_module()
         
         self.assertEqual(self.retcode, 0)  # ensure the program exited gracefully.
         self.assertEqual(len(self.stdout), self.len_original)  # lines deleted
@@ -86,9 +94,10 @@ class TestTool(unittest.TestCase):
         output_file = os.path.join(output_dir, 'output_pdb_shiftres_2.pdb')
         
         sys.argv = ['', '--10', input_file]  # simulate
-        # Execute the script
         
+        # Execute the script
         self.read_prepare(input_file, output_file)
+        self.exec_module()
         
         self.assertEqual(self.retcode, 0)  # ensure the program exited gracefully.
         self.assertEqual(len(self.stdout), self.len_original)  # lines deleted
@@ -99,61 +108,73 @@ class TestTool(unittest.TestCase):
         """
         pdb_shiftres - file not found
         """
-
+        
         # Error (file not found)
-        sys.argv = ['', '-1', os.path.join(data_dir, 'not_there.pdb')]
+        not_there = os.path.join(data_dir, 'not_there.pdb')
+        sys.argv = ['', '-10', not_there]
+        
         # Execute the script
-        with OutputCapture() as output:
-            try:
-                self.module.main()
-            except SystemExit as e:
-                retcode = e.code
+        self.exec_module()
 
-        stdout = output.stdout
-        stderr = output.stderr
-
-        self.assertEqual(retcode, 1)  # ensure the program exited gracefully.
-        self.assertEqual(len(stdout), 0)  # no output
-        self.assertEqual(stderr[0][:39], "ERROR!! File not found or not readable:")
+        self.assertEqual(self.retcode, 1)  # ensure the program exited gracefully.
+        self.assertEqual(len(self.stdout), 0)  # no output
+        self.assertEqual(self.stderr[0],
+                         "ERROR!! File not found or not readable: '{}'".format(not_there))
     
-    def test_FileNotGiven(self):
+    def test_FileNotProvided(self):
         """
-        pdb_shiftres - file not found
+        pdb_shiftres - file not provided
         """
-
-        # Error (file not found)
+        
         sys.argv = ['', '-1']
+        
         # Execute the script
-        with OutputCapture() as output:
-            try:
-                self.module.main()
-            except SystemExit as e:
-                retcode = e.code
+        self.exec_module()
 
-        stdout = output.stdout
-        stderr = output.stderr
-
-        self.assertEqual(retcode, 1)  # ensure the program exited gracefully.
-        self.assertEqual(len(stdout), 0)  # no output
-        self.assertEqual(stderr[0][:27], "ERROR!! No data to process!")
-
-    def test_InvalidOptionValue_1(self):
+        self.assertEqual(self.retcode, 1)  # ensure the program exited gracefully.
+        self.assertEqual(len(self.stdout), 0)  # no output
+        self.assertEqual(self.stderr[0],
+                         "ERROR!! No data to process!")
+    
+    def test_NothingProvided(self):
         """
-        pdb_shiftres - argument is not an option
+        pdb_shiftres - nothing provided
+        """
+        
+        sys.argv = ['']
+        
+        # Execute the script
+        self.exec_module()
+    
+        self.assertEqual(self.retcode, 1)  # ensure the program exited gracefully.
+        self.assertEqual(len(self.stdout), 0)  # no output
+        self.assertEqual(self.stderr, self.module.__doc__.split("\n")[:-1])
+    
+    def test_InvalidOptionValue(self):
+        """
+        pdb_shiftres - invalid argument
         """
         
         # Error (file not found)
-        sys.argv = ['', '1', os.path.join(data_dir, 'pico.pdb')]
+        sys.argv = ['', '-A', os.path.join(data_dir, 'pico.pdb')]
+        
         # Execute the script
-        with OutputCapture() as output:
-            try:
-                self.module.main()
-            except SystemExit as e:
-                retcode = e.code
-
-        stdout = output.stdout
-        stderr = output.stderr
-
-        self.assertEqual(retcode, 1)
-        self.assertEqual(len(stdout), 0)  # no output
-        self.assertEqual(stderr[0][:45], "ERROR! First argument is not an option: '1'")
+        self.exec_module()
+        
+        self.assertEqual(self.retcode, 1)
+        self.assertEqual(len(self.stdout), 0)  # no output
+        self.assertEqual(self.stderr[0][:43], "ERROR!! You provided an invalid number: 'A'")
+    
+    def test_NotOptionValue(self):
+        """
+        pdb_shiftres - not an option
+        """
+        
+        sys.argv = ['', '10', os.path.join(data_dir, 'pico.pdb')]
+        
+        # Execute the script
+        self.exec_module()
+        
+        self.assertEqual(self.retcode, 1)
+        self.assertEqual(len(self.stdout), 0)  # no output
+        self.assertEqual(self.stderr[0], "ERROR! First argument is not an option: '10'")

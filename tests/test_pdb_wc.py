@@ -37,9 +37,9 @@ class TestTool(unittest.TestCase):
         name = 'bin.pdb_wc'
         self.module = __import__(name, fromlist=[''])
     
-    def read_prepare(self, input_file, output_file):
+    def exec_module(self):
         """
-        Prepares input and output common to the different tests.
+        Execs module.
         """
         
         with OutputCapture() as output:
@@ -47,9 +47,19 @@ class TestTool(unittest.TestCase):
                 self.module.main()
             except SystemExit as e:
                 self.retcode = e.code
-        
+
         self.stdout = output.stdout
         self.stderr = output.stderr
+        
+        return
+    
+    def read_prepare(self, input_file, output_file):
+        """
+        Prepares input and output common to the different tests.
+        """
+        
+        with open(input_file) as ifile:
+            self.len_original = len(ifile.readlines())
         
         with open(output_file) as ofile:
             self.output_data = [l.strip("\n") for l in ofile]
@@ -65,9 +75,10 @@ class TestTool(unittest.TestCase):
         output_file = os.path.join(output_dir, 'output_wc_1.txt')
         
         sys.argv = ['', input_file]  # simulate
-        # Execute the script
         
+        # Execute the script
         self.read_prepare(input_file, output_file)
+        self.exec_module()
         
         self.assertEqual(self.retcode, 0)  # ensure the program exited gracefully.
         self.assertEqual(len(self.stderr), 0)  # no errors
@@ -82,9 +93,10 @@ class TestTool(unittest.TestCase):
         output_file = os.path.join(output_dir, 'output_wc_2.txt')
         
         sys.argv = ['', '-m', input_file]  # simulate
-        # Execute the script
         
+        # Execute the script
         self.read_prepare(input_file, output_file)
+        self.exec_module()
         
         self.assertEqual(self.retcode, 0)  # ensure the program exited gracefully.
         self.assertEqual(len(self.stderr), 0)  # no errors
@@ -99,9 +111,10 @@ class TestTool(unittest.TestCase):
         output_file = os.path.join(output_dir, 'output_wc_3.txt')
         
         sys.argv = ['', '-r', input_file]  # simulate
-        # Execute the script
         
+        # Execute the script
         self.read_prepare(input_file, output_file)
+        self.exec_module()
         
         self.assertEqual(self.retcode, 0)  # ensure the program exited gracefully.
         self.assertEqual(len(self.stderr), 0)  # no errors
@@ -116,9 +129,10 @@ class TestTool(unittest.TestCase):
         output_file = os.path.join(output_dir, 'output_wc_4.txt')
         
         sys.argv = ['', '-c', input_file]  # simulate
-        # Execute the script
         
+        # Execute the script
         self.read_prepare(input_file, output_file)
+        self.exec_module()
         
         self.assertEqual(self.retcode, 0)  # ensure the program exited gracefully.
         self.assertEqual(len(self.stderr), 0)  # no errors
@@ -133,9 +147,10 @@ class TestTool(unittest.TestCase):
         output_file = os.path.join(output_dir, 'output_wc_5.txt')
         
         sys.argv = ['', '-a', input_file]  # simulate
-        # Execute the script
         
+        # Execute the script
         self.read_prepare(input_file, output_file)
+        self.exec_module()
         
         self.assertEqual(self.retcode, 0)  # ensure the program exited gracefully.
         self.assertEqual(len(self.stderr), 0)  # no errors
@@ -150,9 +165,10 @@ class TestTool(unittest.TestCase):
         output_file = os.path.join(output_dir, 'output_wc_6.txt')
         
         sys.argv = ['', '-h', input_file]  # simulate
-        # Execute the script
         
+        # Execute the script
         self.read_prepare(input_file, output_file)
+        self.exec_module()
         
         self.assertEqual(self.retcode, 0)  # ensure the program exited gracefully.
         self.assertEqual(len(self.stderr), 0)  # no errors
@@ -167,9 +183,10 @@ class TestTool(unittest.TestCase):
         output_file = os.path.join(output_dir, 'output_wc_7.txt')
         
         sys.argv = ['', '-o', input_file]  # simulate
-        # Execute the script
         
+        # Execute the script
         self.read_prepare(input_file, output_file)
+        self.exec_module()
         
         self.assertEqual(self.retcode, 0)  # ensure the program exited gracefully.
         self.assertEqual(len(self.stderr), 0)  # no errors
@@ -184,9 +201,10 @@ class TestTool(unittest.TestCase):
         output_file = os.path.join(output_dir, 'output_wc_8.txt')
         
         sys.argv = ['', '-i', input_file]  # simulate
-        # Execute the script
         
+        # Execute the script
         self.read_prepare(input_file, output_file)
+        self.exec_module()
         
         self.assertEqual(self.retcode, 0)  # ensure the program exited gracefully.
         self.assertEqual(len(self.stderr), 0)  # no errors
@@ -201,9 +219,10 @@ class TestTool(unittest.TestCase):
         output_file = os.path.join(output_dir, 'output_wc_9.txt')
         
         sys.argv = ['', '-g', input_file]  # simulate
-        # Execute the script
         
+        # Execute the script
         self.read_prepare(input_file, output_file)
+        self.exec_module()
         
         self.assertEqual(self.retcode, 0)  # ensure the program exited gracefully.
         self.assertEqual(len(self.stderr), 0)  # no errors
@@ -216,40 +235,41 @@ class TestTool(unittest.TestCase):
         
         # Error (file not found)
         sys.argv = ['', os.path.join(data_dir, 'not_there.pdb')]
+        
         # Execute the script
-        with OutputCapture() as output:
-            try:
-                self.module.main()
-            except SystemExit as e:
-                retcode = e.code
+        self.exec_module()
         
-        stdout = output.stdout
-        stderr = output.stderr
-        
-        self.assertEqual(retcode, 1)  # ensure the program exited gracefully.
-        self.assertEqual(len(stdout), 0)  # no output
-        self.assertEqual(stderr[0][:39], "ERROR!! File not found or not readable:")
+        self.assertEqual(self.retcode, 1)  # ensure the program exited gracefully.
+        self.assertEqual(len(self.stdout), 0)  # no output
+        self.assertEqual(self.stderr[0][:39], "ERROR!! File not found or not readable:")
     
     def test_FileNotGiven(self):
         """
         pdb_wc - file not found
         """
         
-        # Error (file not found)
         sys.argv = ['', '-c']
+        
         # Execute the script
-        with OutputCapture() as output:
-            try:
-                self.module.main()
-            except SystemExit as e:
-                retcode = e.code
+        self.exec_module()
         
-        stdout = output.stdout
-        stderr = output.stderr
+        self.assertEqual(self.retcode, 1)  # ensure the program exited gracefully.
+        self.assertEqual(len(self.stdout), 0)  # no output
+        self.assertEqual(self.stderr[0][:27], "ERROR!! No data to process!")
+    
+    def test_NothingProvided(self):
+        """
+        pdb_wc - nothing provided
+        """
         
-        self.assertEqual(retcode, 1)  # ensure the program exited gracefully.
-        self.assertEqual(len(stdout), 0)  # no output
-        self.assertEqual(stderr[0][:27], "ERROR!! No data to process!")
+        sys.argv = ['']
+        
+        # Execute the script
+        self.exec_module()
+
+        self.assertEqual(self.retcode, 1)  # ensure the program exited gracefully.
+        self.assertEqual(len(self.stdout), 0)  # no output
+        self.assertEqual(self.stderr, self.module.__doc__.split("\n")[:-1])
     
     def test_InvalidOptionValue(self):
         """
@@ -258,16 +278,10 @@ class TestTool(unittest.TestCase):
         
         # Error (file not found)
         sys.argv = ['', 'c', os.path.join(data_dir, 'pico.pdb')]
+        
         # Execute the script
-        with OutputCapture() as output:
-            try:
-                self.module.main()
-            except SystemExit as e:
-                retcode = e.code
+        self.exec_module()
         
-        stdout = output.stdout
-        stderr = output.stderr
-        
-        self.assertEqual(retcode, 1)
-        self.assertEqual(len(stdout), 0)  # no output
-        self.assertEqual(stderr[0][:43], "ERROR! First argument is not an option: 'c'")
+        self.assertEqual(self.retcode, 1)
+        self.assertEqual(len(self.stdout), 0)  # no output
+        self.assertEqual(self.stderr[0][:43], "ERROR! First argument is not an option: 'c'")
