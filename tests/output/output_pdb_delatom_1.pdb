@@ -18,8 +18,8 @@ SEQRES   1 E   20  PRO VAL CYS VAL ARG PRO THR PRO LYS TRP GLN LYS GLY
 SEQRES   1 F   10   DA  DT  DA  DC  DG  DA  DT  DG  DG  DG                      
 SEQRES   1 G   10   DC  DC  DC  DA  DT  DC  DG  DT  DA  DT                      
 FORMUL   8  HOH   *9(H2 O)                                                      
-ATOM      7  SD  MET A   1      56.526  18.619   7.159  0.50 70.63           S  
-ANISOU    7  SD  MET A   1     7656  11671   7510  -2268   -437   1633       S  
+ATOM      7  SD  MET A   1      56.526  18.619   7.159  0.50 70.63      T    S  
+ANISOU    7  SD  MET A   1     7656  11671   7510  -2268   -437   1633  T    S  
 ATOM   3404  SD  MET C   1      45.459 -16.671  67.274  0.70 54.81           S  
 ANISOU 3404  SD  MET C   1     3763   8453   8609    225  -1827   1009       S  
 ATOM   5252  SG  CYS D  54      11.818   2.732  40.975  0.50 94.70           S  

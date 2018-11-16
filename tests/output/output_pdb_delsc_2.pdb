@@ -18,14 +18,14 @@ SEQRES   1 E   20  PRO VAL CYS VAL ARG PRO THR PRO LYS TRP GLN LYS GLY
 SEQRES   1 F   10   DA  DT  DA  DC  DG  DA  DT  DG  DG  DG                      
 SEQRES   1 G   10   DC  DC  DC  DA  DT  DC  DG  DT  DA  DT                      
 FORMUL   8  HOH   *9(H2 O)                                                      
-ATOM      1  N   MET A   1      59.554  21.332   9.553  0.50 71.26              
-ANISOU    1  N   MET A   1     7497  11732   7843  -2470   -450   1813          
-ATOM      2  CA  MET A   1      58.685  20.194   9.124  0.50 70.36              
-ANISOU    2  CA  MET A   1     7389  11637   7707  -2338   -411   1721          
-ATOM      3  C   MET A   1      58.779  19.066  10.161  0.50 68.57              
-ANISOU    3  C   MET A   1     6976  11453   7624  -2169   -334   1613          
-ATOM      4  O   MET A   1      59.759  18.957  10.914  0.50 68.88              
-ANISOU    4  O   MET A   1     6857  11558   7752  -2168   -257   1609          
+ATOM      1  N   MET A   1      59.554  21.332   9.553  0.50 71.26      T       
+ANISOU    1  N   MET A   1     7497  11732   7843  -2470   -450   1813  T       
+ATOM      2  CA  MET A   1      58.685  20.194   9.124  0.50 70.36      T       
+ANISOU    2  CA  MET A   1     7389  11637   7707  -2338   -411   1721  T       
+ATOM      3  C   MET A   1      58.779  19.066  10.161  0.50 68.57      T       
+ANISOU    3  C   MET A   1     6976  11453   7624  -2169   -334   1613  T       
+ATOM      4  O   MET A   1      59.759  18.957  10.914  0.50 68.88      T       
+ANISOU    4  O   MET A   1     6857  11558   7752  -2168   -257   1609  T       
 ATOM      9  N   PHE A   2      57.725  18.252  10.224  0.50 66.81              
 ANISOU    9  N   PHE A   2     6772  11193   7418  -2036   -371   1537          
 ATOM     10  CA  PHE A   2      57.724  17.084  11.066  0.50 65.04              
