@@ -37,9 +37,9 @@ class TestTool(unittest.TestCase):
         name = 'bin.pdb_b'
         self.module = __import__(name, fromlist=[''])
     
-    def read_prepare(self):
+    def exec_module(self):
         """
-        Reads input and prepares output.
+        Execs module.
         """
         
         with OutputCapture() as output:
@@ -47,13 +47,12 @@ class TestTool(unittest.TestCase):
                 self.module.main()
             except SystemExit as e:
                 self.retcode = e.code
-        
+
         self.stdout = output.stdout
         self.stderr = output.stderr
         
         return
         
-    
     def test_valid_1(self):
         """
         pdb_b - valid input
@@ -62,7 +61,7 @@ class TestTool(unittest.TestCase):
         sys.argv = ['', '-20.0', os.path.join(data_dir, 'pico.pdb')]  # simulate
         # Execute the script
         
-        self.read_prepare()
+        self.exec_module()
         
         self.assertEqual(self.retcode, 0)  # ensure the program exited gracefully.
         self.assertEqual(len(self.stdout), 3)  # no lines deleted
@@ -80,7 +79,7 @@ class TestTool(unittest.TestCase):
         sys.argv = ['', '-10.0', not_there]
         
         # Execute the script
-        self.read_prepare()
+        self.exec_module()
 
         self.assertEqual(self.retcode, 1)  # ensure the program exited gracefully.
         self.assertEqual(len(self.stdout), 0)  # no output
@@ -95,7 +94,7 @@ class TestTool(unittest.TestCase):
         sys.argv = ['', '-10.0']
         
         # Execute the script
-        self.read_prepare()
+        self.exec_module()
 
         self.assertEqual(self.retcode, 1)  # ensure the program exited gracefully.
         self.assertEqual(len(self.stdout), 0)  # no output
@@ -111,7 +110,7 @@ class TestTool(unittest.TestCase):
         sys.argv = ['', '-A', os.path.join(data_dir, 'pico.pdb')]
         # Execute the script
         
-        self.read_prepare()
+        self.exec_module()
         
         self.assertEqual(self.retcode, 1)
         self.assertEqual(len(self.stdout), 0)  # no output
@@ -126,7 +125,7 @@ class TestTool(unittest.TestCase):
         sys.argv = ['', '20', os.path.join(data_dir, 'pico.pdb')]
         # Execute the script
         
-        self.read_prepare()
+        self.exec_module()
         
         self.assertEqual(self.retcode, 1)
         self.assertEqual(len(self.stdout), 0)  # no output
