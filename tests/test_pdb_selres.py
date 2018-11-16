@@ -128,7 +128,7 @@ class TestTool(unittest.TestCase):
         self.assertEqual(len(self.stderr), 0)  # no errors
         self.assertEqual(self.stdout, self.output_data)
     
-    def test_valid_4(self):
+    def test_valid_5(self):
         """
         pdb_selres - sels 40:60:5
         """
