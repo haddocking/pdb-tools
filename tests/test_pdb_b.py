@@ -36,67 +36,98 @@ class TestTool(unittest.TestCase):
         # Dynamically import the module
         name = 'bin.pdb_b'
         self.module = __import__(name, fromlist=[''])
-
-    def test_valid(self):
+    
+    def read_prepare(self):
         """
-        pdb_b - valid input
+        Reads input and prepares output.
         """
-
-        sys.argv = ['', '-20.0', os.path.join(data_dir, 'pico.pdb')]  # simulate
-        # Execute the script
+        
         with OutputCapture() as output:
             try:
                 self.module.main()
             except SystemExit as e:
-                retcode = e.code
-
-        stdout = output.stdout
-        stderr = output.stderr
-
-        self.assertEqual(retcode, 0)  # ensure the program exited gracefully.
-        self.assertEqual(len(stdout), 3)  # no lines deleted
-        self.assertEqual(len(stderr), 0)  # no errors
-        self.assertEqual(stdout[1],  # functions properly
+                self.retcode = e.code
+        
+        self.stdout = output.stdout
+        self.stderr = output.stderr
+        
+        return
+        
+    
+    def test_valid_1(self):
+        """
+        pdb_b - valid input
+        """
+        
+        sys.argv = ['', '-20.0', os.path.join(data_dir, 'pico.pdb')]  # simulate
+        # Execute the script
+        
+        self.read_prepare()
+        
+        self.assertEqual(self.retcode, 0)  # ensure the program exited gracefully.
+        self.assertEqual(len(self.stdout), 3)  # no lines deleted
+        self.assertEqual(len(self.stderr), 0)  # no errors
+        self.assertEqual(self.stdout[1],  # functions properly
                          "ATOM      1  N   ASN A   1      22.066  40.557   0.420  1.00 20.00              ")
 
     def test_FileNotFound(self):
         """
         pdb_b - file not found
         """
-
+        
         # Error (file not found)
-        sys.argv = ['', '-10.0', os.path.join(data_dir, 'not_there.pdb')]
+        not_there = os.path.join(data_dir, 'not_there.pdb')
+        sys.argv = ['', '-10.0', not_there]
+        
         # Execute the script
-        with OutputCapture() as output:
-            try:
-                self.module.main()
-            except SystemExit as e:
-                retcode = e.code
+        self.read_prepare()
 
-        stdout = output.stdout
-        stderr = output.stderr
+        self.assertEqual(self.retcode, 1)  # ensure the program exited gracefully.
+        self.assertEqual(len(self.stdout), 0)  # no output
+        self.assertEqual(self.stderr[0],
+                         "ERROR!! File not found or not readable: '{}'".format(not_there))
+    
+    def test_FileNotProvided(self):
+        """
+        pdb_b - file not provided
+        """
+        
+        sys.argv = ['', '-10.0']
+        
+        # Execute the script
+        self.read_prepare()
 
-        self.assertEqual(retcode, 1)  # ensure the program exited gracefully.
-        self.assertEqual(len(stdout), 0)  # no output
-        self.assertEqual(stderr[0][:35], "ERROR!! File not found or not reada")
-
+        self.assertEqual(self.retcode, 1)  # ensure the program exited gracefully.
+        self.assertEqual(len(self.stdout), 0)  # no output
+        self.assertEqual(self.stderr[0],
+                         "ERROR!! No data to process!")
+    
     def test_InvalidOptionValue(self):
         """
-        pdb_b - invalid value
+        pdb_b - invalid argument
         """
-
+        
         # Error (file not found)
         sys.argv = ['', '-A', os.path.join(data_dir, 'pico.pdb')]
         # Execute the script
-        with OutputCapture() as output:
-            try:
-                self.module.main()
-            except SystemExit as e:
-                retcode = e.code
-
-        stdout = output.stdout
-        stderr = output.stderr
-
-        self.assertEqual(retcode, 1)
-        self.assertEqual(len(stdout), 0)  # no output
-        self.assertEqual(stderr[0][:35], "ERROR!! You provided an invalid b-f")
+        
+        self.read_prepare()
+        
+        self.assertEqual(self.retcode, 1)
+        self.assertEqual(len(self.stdout), 0)  # no output
+        self.assertEqual(self.stderr[0][:47], "ERROR!! You provided an invalid b-factor value:")
+    
+    def test_WrongOptionValue(self):
+        """
+        pdb_b - invalid argument
+        """
+        
+        # Error (file not found)
+        sys.argv = ['', '20', os.path.join(data_dir, 'pico.pdb')]
+        # Execute the script
+        
+        self.read_prepare()
+        
+        self.assertEqual(self.retcode, 1)
+        self.assertEqual(len(self.stdout), 0)  # no output
+        self.assertEqual(self.stderr[0], "ERROR! First argument is not an option: '20'")
