@@ -28,7 +28,8 @@ from utils import OutputCapture
 
 
 class TestTool(unittest.TestCase):
-    """Generic class for testing tools.
+    """
+    Generic class for testing tools.
     """
 
     def setUp(self):
@@ -53,7 +54,9 @@ class TestTool(unittest.TestCase):
         return
     
     def test_valid_1(self):
-        """pdb_validate - pdb okay"""
+        """
+        pdb_validate - pdb okay
+        """
         
         input_file = os.path.join(data_dir, 'nano.pdb')
         
@@ -67,7 +70,9 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.stdout[0], "It *seems* everything is OK.")
     
     def test_valid_2(self):
-        """pdb_validate - pdb not okay"""
+        """
+        pdb_validate - pdb not okay
+        """
         
         input_file = os.path.join(data_dir, 'full_example.pdb')
         
@@ -84,7 +89,9 @@ class TestTool(unittest.TestCase):
                          "[!] Line 13 is long: 81 > 80"])
     
     def test_FileNotFound(self):
-        """pdb_validate - file not found"""
+        """
+        pdb_validate - file not found
+        """
 
         # Error (file not found)
         sys.argv = ['', os.path.join(data_dir, 'not_there.pdb')]

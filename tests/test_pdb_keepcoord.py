@@ -28,7 +28,8 @@ from utils import OutputCapture
 
 
 class TestTool(unittest.TestCase):
-    """Generic class for testing tools.
+    """
+    Generic class for testing tools.
     """
 
     def setUp(self):
@@ -59,7 +60,9 @@ class TestTool(unittest.TestCase):
         return
     
     def test_valid_1(self):
-        """pdb_keepcoord - test"""
+        """
+        pdb_keepcoord - test
+        """
         
         input_file = os.path.join(data_dir, 'full_example.pdb')
         output_file = os.path.join(output_dir, 'output_pdb_keepcoord_1.pdb')
@@ -75,7 +78,9 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.stdout, self.output_data)
     
     def test_FileNotFound(self):
-        """pdb_keepcoord - file not found"""
+        """
+        pdb_keepcoord - file not found
+        """
 
         # Error (file not found)
         sys.argv = ['', os.path.join(data_dir, 'not_there.pdb')]

@@ -28,7 +28,8 @@ from utils import OutputCapture
 
 
 class TestTool(unittest.TestCase):
-    """Generic class for testing tools.
+    """
+    Generic class for testing tools.
     """
 
     def setUp(self):
@@ -62,7 +63,9 @@ class TestTool(unittest.TestCase):
         return
     
     def test_valid_1(self):
-        """pdb_merge - merge micro and nano"""
+        """
+        pdb_merge - merge micro and nano
+        """
         
         input_file1 = os.path.join(data_dir, 'full_example.pdb')
         input_file2 = os.path.join(data_dir, 'nano.pdb')
@@ -79,7 +82,9 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.stdout, self.output_data)
     
     def test_FileNotFound(self):
-        """pdb_merge - file not found"""
+        """
+        pdb_merge - file not found
+        """
 
         # Error (file not found)
         sys.argv = ['', os.path.join(data_dir, 'not_there.pdb')]

@@ -28,7 +28,8 @@ from utils import OutputCapture
 
 
 class TestTool(unittest.TestCase):
-    """Generic class for testing tools.
+    """
+    Generic class for testing tools.
     """
 
     def setUp(self):
@@ -59,7 +60,9 @@ class TestTool(unittest.TestCase):
         return
     
     def test_valid_1(self):
-        """pdb_selchain - sels chain A"""
+        """
+        pdb_selchain - sels chain A
+        """
         
         input_file = os.path.join(data_dir, 'full_example.pdb')
         output_file = os.path.join(output_dir, 'output_pdb_selchain_1.pdb')
@@ -93,7 +96,9 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.stdout, self.output_data)
     
     def test_FileNotFound(self):
-        """pdb_selchain - file not found"""
+        """
+        pdb_selchain - file not found
+        """
 
         # Error (file not found)
         sys.argv = ['', '-A', os.path.join(data_dir, 'not_there.pdb')]
@@ -112,7 +117,9 @@ class TestTool(unittest.TestCase):
         self.assertEqual(stderr[0][:39], "ERROR!! File not found or not readable:")
     
     def test_FileNotGiven(self):
-        """pdb_selchain - file not found"""
+        """
+        pdb_selchain - file not found
+        """
 
         # Error (file not found)
         sys.argv = ['', '-A']
@@ -131,7 +138,9 @@ class TestTool(unittest.TestCase):
         self.assertEqual(stderr[0][:27], "ERROR!! No data to process!")
     
     def test_InvalidOptionValue_1(self):
-        """pdb_selchain - no argument"""
+        """
+        pdb_selchain - no argument
+        """
         
         # Error (file not found)
         sys.argv = ['', os.path.join(data_dir, 'pico.pdb')]
@@ -150,7 +159,9 @@ class TestTool(unittest.TestCase):
         self.assertEqual(stderr[0][:55], "ERROR!! You must provide at least ONE chain identifier.")
 
     def test_InvalidOptionValue_2(self):
-        """pdb_selchain - argument is not an option"""
+        """
+        pdb_selchain - argument is not an option
+        """
         
         # Error (file not found)
         sys.argv = ['', '1', os.path.join(data_dir, 'pico.pdb')]

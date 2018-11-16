@@ -28,7 +28,8 @@ from utils import OutputCapture
 
 
 class TestTool(unittest.TestCase):
-    """Generic class for testing tools.
+    """
+    Generic class for testing tools.
     """
 
     def setUp(self):
@@ -59,7 +60,9 @@ class TestTool(unittest.TestCase):
         return
     
     def test_valid_1(self):
-        """pdb_delchain - deletes single chain"""
+        """
+        pdb_delchain - deletes single chain
+        """
         
         input_file = os.path.join(data_dir, 'full_example.pdb')
         output_file = os.path.join(output_dir, 'output_pdb_delchain_1.pdb')
@@ -111,7 +114,9 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.stdout, self.output_data)
     
     def test_FileNotFound(self):
-        """pdb_delchain - file not found"""
+        """
+        pdb_delchain - file not found
+        """
 
         # Error (file not found)
         sys.argv = ['', '-A', os.path.join(data_dir, 'not_there.pdb')]
@@ -130,7 +135,9 @@ class TestTool(unittest.TestCase):
         self.assertEqual(stderr[0][:39], "ERROR!! File not found or not readable:")
     
     def test_FileNotGiven(self):
-        """pdb_delchain - file not provided"""
+        """
+        pdb_delchain - file not provided
+        """
 
         # Error (file not found)
         sys.argv = ['', '-Z']

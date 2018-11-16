@@ -28,7 +28,8 @@ from utils import OutputCapture
 
 
 class TestTool(unittest.TestCase):
-    """Generic class for testing tools.
+    """
+    Generic class for testing tools.
     """
 
     def setUp(self):
@@ -209,7 +210,9 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.stdout, self.output_data)
     
     def test_FileNotFound(self):
-        """pdb_wc - file not found"""
+        """
+        pdb_wc - file not found
+        """
         
         # Error (file not found)
         sys.argv = ['', os.path.join(data_dir, 'not_there.pdb')]
@@ -228,7 +231,9 @@ class TestTool(unittest.TestCase):
         self.assertEqual(stderr[0][:39], "ERROR!! File not found or not readable:")
     
     def test_FileNotGiven(self):
-        """pdb_wc - file not found"""
+        """
+        pdb_wc - file not found
+        """
         
         # Error (file not found)
         sys.argv = ['', '-c']
@@ -247,7 +252,9 @@ class TestTool(unittest.TestCase):
         self.assertEqual(stderr[0][:27], "ERROR!! No data to process!")
     
     def test_InvalidOptionValue(self):
-        """pdb_wc - invalid value"""
+        """
+        pdb_wc - invalid value
+        """
         
         # Error (file not found)
         sys.argv = ['', 'c', os.path.join(data_dir, 'pico.pdb')]

@@ -28,7 +28,8 @@ from utils import OutputCapture
 
 
 class TestTool(unittest.TestCase):
-    """Generic class for testing tools.
+    """
+    Generic class for testing tools.
     """
 
     def setUp(self):
@@ -53,7 +54,9 @@ class TestTool(unittest.TestCase):
         return
     
     def test_valid_1(self):
-        """pdb_gap - finds gaps"""
+        """
+        pdb_gap - finds gaps
+        """
         
         input_file = os.path.join(data_dir, 'full_example.pdb')
         
@@ -71,7 +74,9 @@ class TestTool(unittest.TestCase):
                          "Found 3 gap(s) in the structure"])
     
     def test_FileNotFound(self):
-        """pdb_gap - file not found"""
+        """
+        pdb_gap - file not found
+        """
 
         # Error (file not found)
         sys.argv = ['', os.path.join(data_dir, 'not_there.pdb')]

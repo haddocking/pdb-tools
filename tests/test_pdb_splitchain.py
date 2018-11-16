@@ -28,7 +28,8 @@ from utils import OutputCapture
 
 
 class TestTool(unittest.TestCase):
-    """Generic class for testing tools.
+    """
+    Generic class for testing tools.
     """
 
     def setUp(self):
@@ -37,7 +38,9 @@ class TestTool(unittest.TestCase):
         self.module = __import__(name, fromlist=[''])
     
     def test_valid_1(self):
-        """pdb_splitchain - new files created and equal"""
+        """
+        pdb_splitchain - new files created and equal
+        """
         
         input_file = os.path.join(data_dir, 'full_example.pdb')
         
@@ -75,7 +78,9 @@ class TestTool(unittest.TestCase):
         
     
     def test_FileNotFound(self):
-        """pdb_splitchain - file not found"""
+        """
+        pdb_splitchain - file not found
+        """
 
         # Error (file not found)
         sys.argv = ['', os.path.join(data_dir, 'not_there.pdb')]

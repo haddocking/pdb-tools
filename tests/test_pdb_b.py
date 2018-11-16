@@ -28,7 +28,8 @@ from utils import OutputCapture
 
 
 class TestTool(unittest.TestCase):
-    """Generic class for testing tools.
+    """
+    Generic class for testing tools.
     """
 
     def setUp(self):
@@ -37,7 +38,9 @@ class TestTool(unittest.TestCase):
         self.module = __import__(name, fromlist=[''])
 
     def test_valid(self):
-        """pdb_b - valid input"""
+        """
+        pdb_b - valid input
+        """
 
         sys.argv = ['', '-20.0', os.path.join(data_dir, 'pico.pdb')]  # simulate
         # Execute the script
@@ -57,7 +60,9 @@ class TestTool(unittest.TestCase):
                          "ATOM      1  N   ASN A   1      22.066  40.557   0.420  1.00 20.00              ")
 
     def test_FileNotFound(self):
-        """pdb_b - file not found"""
+        """
+        pdb_b - file not found
+        """
 
         # Error (file not found)
         sys.argv = ['', '-10.0', os.path.join(data_dir, 'not_there.pdb')]
@@ -76,7 +81,9 @@ class TestTool(unittest.TestCase):
         self.assertEqual(stderr[0][:35], "ERROR!! File not found or not reada")
 
     def test_InvalidOptionValue(self):
-        """pdb_b - invalid value"""
+        """
+        pdb_b - invalid value
+        """
 
         # Error (file not found)
         sys.argv = ['', '-A', os.path.join(data_dir, 'pico.pdb')]

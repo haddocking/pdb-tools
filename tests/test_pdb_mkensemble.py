@@ -28,7 +28,8 @@ from utils import OutputCapture
 
 
 class TestTool(unittest.TestCase):
-    """Generic class for testing tools.
+    """
+    Generic class for testing tools.
     """
 
     def setUp(self):
@@ -56,7 +57,9 @@ class TestTool(unittest.TestCase):
         return
     
     def test_valid_1(self):
-        """pdb_mkensemble - ensembles micro, nano and pico"""
+        """
+        pdb_mkensemble - ensembles micro, nano and pico
+        """
         
         input_file1 = os.path.join(data_dir, 'micro.pdb')
         input_file2 = os.path.join(data_dir, 'nano.pdb')
@@ -73,7 +76,9 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.stdout, self.output_data)
     
     def test_FileNotFound(self):
-        """pdb_mkensemble - file not found"""
+        """
+        pdb_mkensemble - file not found
+        """
 
         # Error (file not found)
         sys.argv = ['', os.path.join(data_dir, 'not_there.pdb')]
