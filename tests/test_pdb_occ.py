@@ -150,7 +150,7 @@ class TestTool(unittest.TestCase):
         self.assertEqual(stderr[0][:52], "ERROR!! You provided an invalid occupancy value: 'A'")
 
     def test_InvalidOptionValue_2(self):
-        """pdb_delsc - argument is not an option"""
+        """pdb_occ - argument is not an option"""
         
         # Error (file not found)
         sys.argv = ['', '1', os.path.join(data_dir, 'pico.pdb')]
