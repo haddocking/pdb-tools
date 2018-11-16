@@ -102,16 +102,16 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.stderr[0],
                          "ERROR!! File not found or not readable: '{}'".format(not_there))
     
-    def test_FileNotProvided(self):
+    def test_NothingProvided(self):
         """
-        pdb_chainxseg - file not provided
+        pdb_chainxseg - nothing provided
         """
         
         sys.argv = ['']
         
         # Execute the script
         self.exec_module()
-
+        
         self.assertEqual(self.retcode, 1)  # ensure the program exited gracefully.
         self.assertEqual(len(self.stdout), 0)  # no output
         self.assertEqual(self.stderr, self.module.__doc__.split("\n")[:-1])

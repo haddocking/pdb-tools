@@ -105,9 +105,9 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.stderr[0],
                          "ERROR!! File not found or not readable: '{}'".format(not_there))
     
-    def test_FileNotProvided(self):
+    def test_NothingProvided(self):
         """
-        pdb_chkensemble - file not provided
+        pdb_chkensemble - nothing provided
         """
         
         sys.argv = ['']

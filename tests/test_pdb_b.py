@@ -101,6 +101,20 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.stderr[0],
                          "ERROR!! No data to process!")
     
+    def test_NothingProvided(self):
+        """
+        pdb_b - nothing provided
+        """
+        
+        sys.argv = ['']
+        
+        # Execute the script
+        self.exec_module()
+
+        self.assertEqual(self.retcode, 1)  # ensure the program exited gracefully.
+        self.assertEqual(len(self.stdout), 0)  # no output
+        self.assertEqual(self.stderr, self.module.__doc__.split("\n")[:-1])
+    
     def test_InvalidOptionValue(self):
         """
         pdb_b - invalid argument
@@ -108,23 +122,23 @@ class TestTool(unittest.TestCase):
         
         # Error (file not found)
         sys.argv = ['', '-A', os.path.join(data_dir, 'pico.pdb')]
-        # Execute the script
         
+        # Execute the script
         self.exec_module()
         
         self.assertEqual(self.retcode, 1)
         self.assertEqual(len(self.stdout), 0)  # no output
         self.assertEqual(self.stderr[0][:47], "ERROR!! You provided an invalid b-factor value:")
     
-    def test_WrongOptionValue(self):
+    def test_NotOptionValue(self):
         """
-        pdb_b - invalid argument
+        pdb_b - not an option
         """
         
         # Error (file not found)
         sys.argv = ['', '20', os.path.join(data_dir, 'pico.pdb')]
-        # Execute the script
         
+        # Execute the script
         self.exec_module()
         
         self.assertEqual(self.retcode, 1)

@@ -136,6 +136,20 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.stderr[0],
                          "ERROR!! No data to process!")
     
+    def test_NothingProvided(self):
+        """
+        pdb_chain - nothing provided
+        """
+        
+        sys.argv = ['']
+        
+        # Execute the script
+        self.exec_module()
+
+        self.assertEqual(self.retcode, 1)  # ensure the program exited gracefully.
+        self.assertEqual(len(self.stdout), 0)  # no output
+        self.assertEqual(self.stderr, self.module.__doc__.split("\n")[:-1])
+    
     def test_InvalidOptionValue(self):
         """
         pdb_chain - invalid argument
@@ -143,23 +157,22 @@ class TestTool(unittest.TestCase):
         
         # Error (file not found)
         sys.argv = ['', '-AA', os.path.join(data_dir, 'pico.pdb')]
-        # Execute the script
         
+        # Execute the script
         self.exec_module()
         
         self.assertEqual(self.retcode, 1)
         self.assertEqual(len(self.stdout), 0)  # no output
         self.assertEqual(self.stderr[0], "ERROR!! Chain identifiers must be a single character: 'AA'")
     
-    def test_WrongOptionValue(self):
+    def test_NotOptionValue(self):
         """
-        pdb_chain - invalid argument
+        pdb_chain - not an option
         """
         
-        # Error (file not found)
         sys.argv = ['', 'A', os.path.join(data_dir, 'pico.pdb')]
-        # Execute the script
         
+        # Execute the script
         self.exec_module()
         
         self.assertEqual(self.retcode, 1)

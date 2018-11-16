@@ -37,9 +37,9 @@ class TestTool(unittest.TestCase):
         name = 'bin.pdb_delatom'
         self.module = __import__(name, fromlist=[''])
     
-    def read_prepare(self, input_file, output_file):
+    def exec_module(self):
         """
-        Prepares input and output common to the different tests.
+        Execs module.
         """
         
         with OutputCapture() as output:
@@ -51,6 +51,13 @@ class TestTool(unittest.TestCase):
         self.stdout = output.stdout
         self.stderr = output.stderr
         
+        return
+    
+    def read_prepare(self, input_file, output_file):
+        """
+        Prepares input and output common to the different tests.
+        """
+        
         with open(input_file) as ifile:
             self.len_original = len(ifile.readlines())
         
@@ -61,7 +68,7 @@ class TestTool(unittest.TestCase):
     
     def test_valid_1(self):
         """
-        pdb_chain - removes all atoms
+        pdb_delatom - removes all atoms
         """
         
         input_file = os.path.join(data_dir, 'full_example.pdb')
@@ -71,6 +78,7 @@ class TestTool(unittest.TestCase):
         # Execute the script
         
         self.read_prepare(input_file, output_file)
+        self.exec_module()
         
         self.assertEqual(self.retcode, 0)  # ensure the program exited gracefully.
         self.assertNotEqual(len(self.stdout), self.len_original)  # no lines deleted
@@ -79,7 +87,7 @@ class TestTool(unittest.TestCase):
     
     def test_valid_2(self):
         """
-        pdb_chain - remove S
+        pdb_delatom - remove S
         """
         
         input_file = os.path.join(data_dir, 'full_example.pdb')
@@ -89,6 +97,7 @@ class TestTool(unittest.TestCase):
         # Execute the script
         
         self.read_prepare(input_file, output_file)
+        self.exec_module()
         
         self.assertEqual(self.retcode, 0)  # ensure the program exited gracefully.
         self.assertNotEqual(len(self.stdout), self.len_original)  # no lines deleted
@@ -97,42 +106,71 @@ class TestTool(unittest.TestCase):
     
     def test_FileNotFound(self):
         """
-        pdb_chain - file not found
+        pdb_delatom - file not found
         """
-
+        
         # Error (file not found)
-        sys.argv = ['', '-H', os.path.join(data_dir, 'not_there.pdb')]
+        not_there = os.path.join(data_dir, 'not_there.pdb')
+        sys.argv = ['', '-A', not_there]
+        
         # Execute the script
-        with OutputCapture() as output:
-            try:
-                self.module.main()
-            except SystemExit as e:
-                retcode = e.code
+        self.exec_module()
 
-        stdout = output.stdout
-        stderr = output.stderr
-
-        self.assertEqual(retcode, 1)  # ensure the program exited gracefully.
-        self.assertEqual(len(stdout), 0)  # no output
-        self.assertEqual(stderr[0][:39], "ERROR!! File not found or not readable:")
+        self.assertEqual(self.retcode, 1)  # ensure the program exited gracefully.
+        self.assertEqual(len(self.stdout), 0)  # no output
+        self.assertEqual(self.stderr[0],
+                         "ERROR!! File not found or not readable: '{}'".format(not_there))
     
-    def test_FileNotGiven(self):
+    def test_FileNotProvided(self):
         """
-        pdb_chain - file not found
+        pdb_delatom - file not provided
         """
-
-        # Error (file not found)
-        sys.argv = ['', '-H']
+        
+        sys.argv = ['', '-A']
+        
         # Execute the script
-        with OutputCapture() as output:
-            try:
-                self.module.main()
-            except SystemExit as e:
-                retcode = e.code
+        self.exec_module()
+
+        self.assertEqual(self.retcode, 1)  # ensure the program exited gracefully.
+        self.assertEqual(len(self.stdout), 0)  # no output
+        self.assertEqual(self.stderr[0],
+                         "ERROR!! No data to process!")
+    
+    def test_NothingProvided(self):
+        """
+        pdb_delatom - nothing provided
+        """
         
-        stdout = output.stdout
-        stderr = output.stderr
+        sys.argv = ['']
         
-        self.assertEqual(retcode, 1)  # ensure the program exited gracefully.
-        self.assertEqual(len(stdout), 0)  # no output
-        self.assertEqual(stderr[0][:27], "ERROR!! No data to process!")
+        # Execute the script
+        self.exec_module()
+
+        self.assertEqual(self.retcode, 1)  # ensure the program exited gracefully.
+        self.assertEqual(len(self.stdout), 0)  # no output
+        self.assertEqual(self.stderr, self.module.__doc__.split("\n")[:-1])
+    
+    def test_InvalidOptionValue(self):
+        """
+        pdb_delatom - invalid argument
+        """
+        
+        msg = "module accepts any option value"
+        
+        self.assertEqual(msg, msg)
+        
+    
+    def test_NotOptionValue(self):
+        """
+        pdb_delatom - not an option
+        """
+        
+        # Error (file not found)
+        sys.argv = ['', 'A', os.path.join(data_dir, 'pico.pdb')]
+        
+        # Execute the script
+        self.exec_module()
+        
+        self.assertEqual(self.retcode, 1)
+        self.assertEqual(len(self.stdout), 0)  # no output
+        self.assertEqual(self.stderr[0], "ERROR! First argument is not an option: 'A'")

@@ -37,9 +37,9 @@ class TestTool(unittest.TestCase):
         name = 'bin.pdb_mkensemble'
         self.module = __import__(name, fromlist=[''])
     
-    def read_prepare(self, output_file):
+    def exec_module(self):
         """
-        Prepares input and output common to the different tests.
+        Execs module.
         """
         
         with OutputCapture() as output:
@@ -50,6 +50,13 @@ class TestTool(unittest.TestCase):
 
         self.stdout = output.stdout
         self.stderr = output.stderr
+        
+        return
+    
+    def read_prepare(self, output_file):
+        """
+        Prepares input and output common to the different tests.
+        """
         
         with open(output_file) as ofile:
             self.output_data = [l.strip("\n") for l in ofile]
@@ -67,9 +74,10 @@ class TestTool(unittest.TestCase):
         output_file = os.path.join(output_dir, 'output_pdb_mkensemble_1.pdb')
         
         sys.argv = ['', input_file1, input_file2, input_file3]  # simulate
-        # Execute the script
         
+        # Execute the script
         self.read_prepare(output_file)
+        self.exec_module()
         
         self.assertEqual(self.retcode, 0)  # ensure the program exited gracefully.
         self.assertEqual(len(self.stderr), 0)  # no errors
@@ -79,19 +87,30 @@ class TestTool(unittest.TestCase):
         """
         pdb_mkensemble - file not found
         """
-
+        
         # Error (file not found)
-        sys.argv = ['', os.path.join(data_dir, 'not_there.pdb')]
+        not_there = os.path.join(data_dir, 'not_there.pdb')
+        sys.argv = ['', not_there]
+        
         # Execute the script
-        with OutputCapture() as output:
-            try:
-                self.module.main()
-            except SystemExit as e:
-                retcode = e.code
+        self.exec_module()
 
-        stdout = output.stdout
-        stderr = output.stderr
-
-        self.assertEqual(retcode, 1)  # ensure the program exited gracefully.
-        self.assertEqual(len(stdout), 0)  # no output
-        self.assertEqual(stderr[0][:39], "ERROR!! File not found or not readable:")
+        self.assertEqual(self.retcode, 1)  # ensure the program exited gracefully.
+        self.assertEqual(len(self.stdout), 0)  # no output
+        self.assertEqual(self.stderr[0],
+                         "ERROR!! File not found or not readable: '{}'".format(not_there))
+    
+    def test_NothingProvided(self):
+        """
+        pdb_mkensemble - nothing provided
+        """
+        
+        sys.argv = ['']
+        
+        # Execute the script
+        self.exec_module()
+        
+        self.assertEqual(self.retcode, 1)  # ensure the program exited gracefully.
+        self.assertEqual(len(self.stdout), 0)  # no output
+        self.assertEqual(self.stderr, self.module.__doc__.split("\n")[:-1])
+        
