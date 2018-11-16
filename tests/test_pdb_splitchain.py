@@ -36,28 +36,6 @@ class TestTool(unittest.TestCase):
         name = 'bin.pdb_splitchain'
         self.module = __import__(name, fromlist=[''])
     
-    def read_prepare(self, input_file, output_file):
-        """
-        Prepares input and output common to the different tests.
-        """
-        
-        with OutputCapture() as output:
-            try:
-                self.module.main()
-            except SystemExit as e:
-                self.retcode = e.code
-
-        self.stdout = output.stdout
-        self.stderr = output.stderr
-        
-        with open(input_file) as ifile:
-            self.len_original = len(ifile.readlines())
-        
-        with open(output_file) as ofile:
-            self.output_data = [l.strip("\n") for l in ofile]
-        
-        return
-    
     def test_valid_1(self):
         """pdb_splitchain - new files created and equal"""
         
