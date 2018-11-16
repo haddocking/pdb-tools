@@ -37,9 +37,9 @@ class TestTool(unittest.TestCase):
         name = 'bin.pdb_delaltloc'
         self.module = __import__(name, fromlist=[''])
     
-    def read_prepare(self, input_file, output_file):
+    def exec_module(self):
         """
-        Prepares input and output common to the different tests.
+        Execs module.
         """
         
         with OutputCapture() as output:
@@ -50,6 +50,13 @@ class TestTool(unittest.TestCase):
 
         self.stdout = output.stdout
         self.stderr = output.stderr
+        
+        return
+    
+    def read_prepare(self, input_file, output_file):
+        """
+        Prepares input and output common to the different tests.
+        """
         
         with open(input_file) as ifile:
             self.len_original = len(ifile.readlines())
@@ -71,6 +78,7 @@ class TestTool(unittest.TestCase):
         # Execute the script
         
         self.read_prepare(input_file, output_file)
+        self.exec_module()
         
         self.assertEqual(self.retcode, 0)  # ensure the program exited gracefully.
         self.assertNotEqual(len(self.stdout), self.len_original)  # lines are deleted
@@ -89,6 +97,7 @@ class TestTool(unittest.TestCase):
         # Execute the script
         
         self.read_prepare(input_file, output_file)
+        self.exec_module()
         
         self.assertEqual(self.retcode, 0)  # ensure the program exited gracefully.
         self.assertNotEqual(len(self.stdout), self.len_original)  # lines are deleted
@@ -107,6 +116,7 @@ class TestTool(unittest.TestCase):
         # Execute the script
         
         self.read_prepare(input_file, output_file)
+        self.exec_module()
         
         self.assertEqual(self.retcode, 0)  # ensure the program exited gracefully.
         self.assertNotEqual(len(self.stdout), self.len_original)  # lines are deleted
@@ -115,63 +125,62 @@ class TestTool(unittest.TestCase):
     
     def test_FileNotFound(self):
         """
-        pdb_chain - file not found
+        pdb_delaltloc - file not found
         """
         
         # Error (file not found)
-        sys.argv = ['', '-Z', os.path.join(data_dir, 'not_there.pdb')]
+        not_there = os.path.join(data_dir, 'not_there.pdb')
+        sys.argv = ['', '-A', not_there]
+        
         # Execute the script
-        with OutputCapture() as output:
-            try:
-                self.module.main()
-            except SystemExit as e:
-                retcode = e.code
-        
-        stdout = output.stdout
-        stderr = output.stderr
-        
-        self.assertEqual(retcode, 1)  # ensure the program exited gracefully.
-        self.assertEqual(len(stdout), 0)  # no output
-        self.assertEqual(stderr[0][:39], "ERROR!! File not found or not readable:")
+        self.exec_module()
+
+        self.assertEqual(self.retcode, 1)  # ensure the program exited gracefully.
+        self.assertEqual(len(self.stdout), 0)  # no output
+        self.assertEqual(self.stderr[0],
+                         "ERROR!! File not found or not readable: '{}'".format(not_there))
     
-    def test_FileNotGiven(self):
+    def test_FileNotProvided(self):
         """
-        pdb_chain - file not found
+        pdb_delaltloc - file not provided
         """
         
-        # Error (file not found)
         sys.argv = ['', '-A']
+        
         # Execute the script
-        with OutputCapture() as output:
-            try:
-                self.module.main()
-            except SystemExit as e:
-                retcode = e.code
-        
-        stdout = output.stdout
-        stderr = output.stderr
-        
-        self.assertEqual(retcode, 1)  # ensure the program exited gracefully.
-        self.assertEqual(len(stdout), 0)  # no output
-        self.assertEqual(stderr[0], "ERROR!! No data to process!")
+        self.exec_module()
+
+        self.assertEqual(self.retcode, 1)  # ensure the program exited gracefully.
+        self.assertEqual(len(self.stdout), 0)  # no output
+        self.assertEqual(self.stderr[0],
+                         "ERROR!! No data to process!")
     
     def test_InvalidOptionValue(self):
         """
-        pdb_chain - invalid value
+        pdb_delaltloc - invalid argument
         """
         
         # Error (file not found)
         sys.argv = ['', '-AA', os.path.join(data_dir, 'pico.pdb')]
         # Execute the script
-        with OutputCapture() as output:
-            try:
-                self.module.main()
-            except SystemExit as e:
-                retcode = e.code
         
-        stdout = output.stdout
-        stderr = output.stderr
+        self.exec_module()
         
-        self.assertEqual(retcode, 1)
-        self.assertEqual(len(stdout), 0)  # no output
-        self.assertEqual(stderr[0][:65], "ERROR!! Alternate location identifiers must be single characters:")
+        self.assertEqual(self.retcode, 1)
+        self.assertEqual(len(self.stdout), 0)  # no output
+        self.assertEqual(self.stderr[0][:70], "ERROR!! Alternate location identifiers must be single characters: 'AA'")
+    
+    def test_WrongOptionValue(self):
+        """
+        pdb_delaltloc - invalid argument
+        """
+        
+        # Error (file not found)
+        sys.argv = ['', 'A', os.path.join(data_dir, 'pico.pdb')]
+        # Execute the script
+        
+        self.exec_module()
+        
+        self.assertEqual(self.retcode, 1)
+        self.assertEqual(len(self.stdout), 0)  # no output
+        self.assertEqual(self.stderr[0], "ERROR! First argument is not an option: 'A'")
