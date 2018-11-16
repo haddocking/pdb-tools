@@ -1,0 +1,8 @@
+No. models:	1
+No. chains:	7	(   7.0/model)
+No. residues:	84	(  84.0/model)
+No. atoms:	853	( 853.0/model)
+No. HETATM:	9
+Multiple Occ.:	True
+Res. Inserts:	False
+Has seq. gaps:	True
