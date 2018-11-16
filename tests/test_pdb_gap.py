@@ -67,7 +67,8 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.stdout,
                          ["B:ALA4 <   41.39A > B:LEU6",
                          "D:TRP61 <   42.10A > D:LYS63",
-                         "Found 2 gap(s) in the structure"])
+                         "D:ILE65 <  824.15A > D:PRO52",
+                         "Found 3 gap(s) in the structure"])
     
     def test_FileNotFound(self):
         """pdb_gap - file not found"""
