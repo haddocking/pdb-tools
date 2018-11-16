@@ -37,9 +37,9 @@ class TestTool(unittest.TestCase):
         name = 'bin.pdb_selres'
         self.module = __import__(name, fromlist=[''])
     
-    def read_prepare(self, input_file, output_file):
+    def exec_module(self):
         """
-        Prepares input and output common to the different tests.
+        Execs module.
         """
         
         with OutputCapture() as output:
@@ -50,6 +50,13 @@ class TestTool(unittest.TestCase):
 
         self.stdout = output.stdout
         self.stderr = output.stderr
+        
+        return
+    
+    def read_prepare(self, input_file, output_file):
+        """
+        Prepares input and output common to the different tests.
+        """
         
         with open(input_file) as ifile:
             self.len_original = len(ifile.readlines())
@@ -68,9 +75,10 @@ class TestTool(unittest.TestCase):
         output_file = os.path.join(output_dir, 'output_pdb_selres_1.pdb')
         
         sys.argv = ['', '-1:3', input_file]  # simulate
-        # Execute the script
         
+        # Execute the script
         self.read_prepare(input_file, output_file)
+        self.exec_module()
         
         self.assertEqual(self.retcode, 0)  # ensure the program exited gracefully.
         self.assertNotEqual(len(self.stdout), self.len_original)  # lines deleted
@@ -86,9 +94,10 @@ class TestTool(unittest.TestCase):
         output_file = os.path.join(output_dir, 'output_pdb_selres_2.pdb')
         
         sys.argv = ['', '-64:', input_file]  # simulate
-        # Execute the script
         
+        # Execute the script
         self.read_prepare(input_file, output_file)
+        self.exec_module()
         
         self.assertEqual(self.retcode, 0)  # ensure the program exited gracefully.
         self.assertNotEqual(len(self.stdout), self.len_original)  # lines deleted
@@ -104,9 +113,10 @@ class TestTool(unittest.TestCase):
         output_file = os.path.join(output_dir, 'output_pdb_selres_3.pdb')
         
         sys.argv = ['', '-:3', input_file]  # simulate
-        # Execute the script
         
+        # Execute the script
         self.read_prepare(input_file, output_file)
+        self.exec_module()
         
         self.assertEqual(self.retcode, 0)  # ensure the program exited gracefully.
         self.assertNotEqual(len(self.stdout), self.len_original)  # lines deleted
@@ -122,9 +132,10 @@ class TestTool(unittest.TestCase):
         output_file = os.path.join(output_dir, 'output_pdb_selres_4.pdb')
         
         sys.argv = ['', '-::5', input_file]  # simulate
-        # Execute the script
         
+        # Execute the script
         self.read_prepare(input_file, output_file)
+        self.exec_module()
         
         self.assertEqual(self.retcode, 0)  # ensure the program exited gracefully.
         self.assertNotEqual(len(self.stdout), self.len_original)  # lines deleted
@@ -140,9 +151,10 @@ class TestTool(unittest.TestCase):
         output_file = os.path.join(output_dir, 'output_pdb_selres_5.pdb')
         
         sys.argv = ['', '-40:60:5', input_file]  # simulate
-        # Execute the script
         
+        # Execute the script
         self.read_prepare(input_file, output_file)
+        self.exec_module()
         
         self.assertEqual(self.retcode, 0)  # ensure the program exited gracefully.
         self.assertNotEqual(len(self.stdout), self.len_original)  # lines deleted
@@ -153,61 +165,90 @@ class TestTool(unittest.TestCase):
         """
         pdb_selres - file not found
         """
-
+        
         # Error (file not found)
-        sys.argv = ['', '-1:3', os.path.join(data_dir, 'not_there.pdb')]
+        not_there = os.path.join(data_dir, 'not_there.pdb')
+        sys.argv = ['', '-1:2', not_there]
+        
         # Execute the script
-        with OutputCapture() as output:
-            try:
-                self.module.main()
-            except SystemExit as e:
-                retcode = e.code
+        self.exec_module()
 
-        stdout = output.stdout
-        stderr = output.stderr
-
-        self.assertEqual(retcode, 1)  # ensure the program exited gracefully.
-        self.assertEqual(len(stdout), 0)  # no output
-        self.assertEqual(stderr[0][:39], "ERROR!! File not found or not readable:")
+        self.assertEqual(self.retcode, 1)  # ensure the program exited gracefully.
+        self.assertEqual(len(self.stdout), 0)  # no output
+        self.assertEqual(self.stderr[0],
+                         "ERROR!! File not found or not readable: '{}'".format(not_there))
     
-    def test_FileNotGiven(self):
+    def test_FileNotProvided(self):
         """
-        pdb_selres - file not found
+        pdb_selres - file not provided
         """
-
-        # Error (file not found)
-        sys.argv = ['', '-1:3']
+        
+        sys.argv = ['', '-1:2']
+        
         # Execute the script
-        with OutputCapture() as output:
-            try:
-                self.module.main()
-            except SystemExit as e:
-                retcode = e.code
+        self.exec_module()
 
-        stdout = output.stdout
-        stderr = output.stderr
-
-        self.assertEqual(retcode, 1)  # ensure the program exited gracefully.
-        self.assertEqual(len(stdout), 0)  # no output
-        self.assertEqual(stderr[0][:27], "ERROR!! No data to process!")
-
+        self.assertEqual(self.retcode, 1)  # ensure the program exited gracefully.
+        self.assertEqual(len(self.stdout), 0)  # no output
+        self.assertEqual(self.stderr[0],
+                         "ERROR!! No data to process!")
+    
+    def test_NothingProvided(self):
+        """
+        pdb_selres - nothing provided
+        """
+        
+        sys.argv = ['']
+        
+        # Execute the script
+        self.exec_module()
+    
+        self.assertEqual(self.retcode, 1)  # ensure the program exited gracefully.
+        self.assertEqual(len(self.stdout), 0)  # no output
+        self.assertEqual(self.stderr, self.module.__doc__.split("\n")[:-1])
+    
+    
     def test_InvalidOptionValue_1(self):
+        """
+        pdb_selres - reversed order
+        """
+        
+        # Error (file not found)
+        sys.argv = ['', '-2:1', os.path.join(data_dir, 'pico.pdb')]
+        
+        # Execute the script
+        self.exec_module()
+        
+        self.assertEqual(self.retcode, 1)
+        self.assertEqual(len(self.stdout), 0)  # no output
+        self.assertEqual(self.stderr[0][:47], "ERROR!! Start (2) cannot be larger than End (1)")
+    
+    def test_InvalidOptionValue_2(self):
+        """
+        pdb_selres - too many evaluators
+        """
+        
+        # Error (file not found)
+        sys.argv = ['', '-1:2:3:4', os.path.join(data_dir, 'pico.pdb')]
+        
+        # Execute the script
+        self.exec_module()
+        
+        self.assertEqual(self.retcode, 1)
+        self.assertEqual(len(self.stdout), 0)  # no output
+        self.assertEqual(self.stderr[0][:180], "ERROR!! Residue range must be in 'a:z:s' where a and z are optional (default to first residue and last respectively), ands is an optional step value (to return every s-th residue).")
+    
+    def test_NotOptionValue(self):
         """
         pdb_selres - argument is not an option
         """
         
         # Error (file not found)
-        sys.argv = ['', '1', os.path.join(data_dir, 'pico.pdb')]
+        sys.argv = ['', '1:2', os.path.join(data_dir, 'pico.pdb')]
+        
         # Execute the script
-        with OutputCapture() as output:
-            try:
-                self.module.main()
-            except SystemExit as e:
-                retcode = e.code
+        self.exec_module()
 
-        stdout = output.stdout
-        stderr = output.stderr
-
-        self.assertEqual(retcode, 1)
-        self.assertEqual(len(stdout), 0)  # no output
-        self.assertEqual(stderr[0][:45], "ERROR! First argument is not an option: '1'")
+        self.assertEqual(self.retcode, 1)
+        self.assertEqual(len(self.stdout), 0)  # no output
+        self.assertEqual(self.stderr[0][:45], "ERROR! First argument is not an option: '1:2'")
