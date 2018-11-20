@@ -19,10 +19,10 @@
 Removes all HETATM records in the PDB file.
 
 Usage:
-    python pdb_striphet.py <pdb file>
+    python pdb_delhetatm.py <pdb file>
 
 Example:
-    python pdb_striphet.py 1CTF.pdb
+    python pdb_delhetatm.py 1CTF.pdb
 
 This program is part of the `pdb-tools` suite of utilities and should not be
 distributed isolatedly. The `pdb-tools` were created to quickly manipulate PDB
