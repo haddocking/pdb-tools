@@ -100,7 +100,7 @@ def check_input(args):
         sys.exit(1)
 
     # Validate option
-    if not (1 <= option.count(':') <= 3):
+    if not (1 <= option.count(':') <= 2):
         emsg = 'ERROR!! Residue range must be in \'a:z:s\' where a and z are '
         emsg += 'optional (default to first residue and last respectively), and'
         emsg += 's is an optional step value (to return every s-th residue).\n'
