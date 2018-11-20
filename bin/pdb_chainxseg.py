@@ -73,7 +73,7 @@ def place_chain_on_seg(fhandle):
     """Replaces the segment identifier with the contents of the chain identifier.
     """
 
-    records = ('ATOM', 'HETATM')
+    records = ('ATOM', 'HETATM', 'ANISOU')
     for line in fhandle:
         if line.startswith(records):
             yield line[:72] + line[21].ljust(4) + line[76:]

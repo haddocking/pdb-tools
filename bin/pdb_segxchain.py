@@ -76,7 +76,7 @@ def place_seg_on_chain(fhandle):
     Truncates the segment identifier to its first character.
     """
 
-    records = ('ATOM', 'HETATM')
+    records = ('ATOM', 'HETATM', 'ANISOU')
     for line in fhandle:
         if line.startswith(records):
             yield line[:21] + line[72] + line[22:]
