@@ -117,7 +117,7 @@ def renumber_atom_serials(fhandle, starting_value):
     serial_equiv = {}  # store for conect statements
 
     serial = starting_value
-    records = ('ATOM', 'HETATM', 'ANISOU')
+    records = ('ATOM', 'HETATM')
     for line in fhandle:
         if line.startswith(records):
             serial_equiv[line[6:11]] = serial
@@ -127,6 +127,10 @@ def renumber_atom_serials(fhandle, starting_value):
                 emsg = 'Cannot set atom serial number above 99999.\n'
                 sys.stderr.write(emsg)
                 sys.exit(1)
+
+        elif line.startswith('ANISOU'):
+            # Keep atom id as previous atom
+            yield line[:6] + str(serial - 1).rjust(5) + line[11:]
 
         elif line.startswith('CONECT'):
             # 6:11, 11:16, 16:21, 21:26, 26:31
@@ -142,6 +146,10 @@ def renumber_atom_serials(fhandle, starting_value):
         elif line.startswith('MODEL'):
             serial = starting_value
             yield line
+
+        elif line.startswith('TER'):
+            yield line[:6] + str(serial).rjust(5) + line[11:]
+            serial += 1
 
         else:
             yield line
