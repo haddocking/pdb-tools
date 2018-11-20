@@ -101,15 +101,15 @@ def tidy_pdbfile(fhandle):
                    slice(16, 21), slice(21, 26), slice(26, 31))
 
     records = ('ATOM', 'HETATM')
-    ignored = ('TER', 'END ')
+    ignored = set(('TER   ', 'END   '))
     # Iterate up to the first ATOM/HETATM line
     prev_line = None
     for line in fhandle:
 
-        line = line.strip()  # We will pad/add \n later to make uniform
-
-        if line.startswith(ignored):
+        if line[:6] in ignored:  # to avoid matching END _and_ ENDMDL
             continue
+
+        line = line.strip()  # We will pad/add \n later to make uniform
 
         # Check line length
         line = "{:<80}\n".format(line)
@@ -126,10 +126,10 @@ def tidy_pdbfile(fhandle):
     serial_offset = 0  # To offset after adding TER records
     for line in fhandle:
 
-        line = line.strip()
-
-        if line.startswith(ignored):
+        if line[:6] in ignored:
             continue
+
+        line = line.strip()
 
         # Treat ATOM/HETATM differently
         #   - no TER in HETATM
