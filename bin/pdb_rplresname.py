@@ -95,7 +95,7 @@ def check_input(args):
         sys.stderr.write(emsg.format(name_from))
         sys.exit(1)
 
-    if not (1 <= len(name_from) <= 3):
+    if not (1 <= len(name_to) <= 3):
         emsg = 'ERROR!! Residue names must have one to three characters: \'{}\''
         sys.stderr.write(emsg.format(name_to))
         sys.exit(1)
