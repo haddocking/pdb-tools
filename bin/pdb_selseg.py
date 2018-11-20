@@ -107,7 +107,7 @@ def select_segment_id(fhandle, segment_id):
     """
 
     segment_set = set(segment_id)
-    records = ('ATOM', 'HETATM', 'TER')
+    records = ('ATOM', 'HETATM', 'ANISOU')
     for line in fhandle:
         if line.startswith(records):
             if line[72:76].strip() not in segment_set:
