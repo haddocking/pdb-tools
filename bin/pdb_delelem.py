@@ -20,11 +20,12 @@ Deletes all atoms matching the given element in the PDB file. Elements are
 read from the element column.
 
 Usage:
-    python pdb_delatom.py -ELEMENT <pdb file>
+    python pdb_delatom.py -<option> <pdb file>
 
 Example:
-    python pdb_delatom.py -H 1CTF.pdb
-    python pdb_delatom.py -N 1CTF.pdb
+    python pdb_delatom.py -H 1CTF.pdb  # deletes all protons
+    python pdb_delatom.py -N 1CTF.pdb  # deletes all nitrogens
+    python pdb_delatom.py -H,N 1CTF.pdb  # deletes all protons and nitrogens
 
 This program is part of the `pdb-tools` suite of utilities and should not be
 distributed isolatedly. The `pdb-tools` were created to quickly manipulate PDB
@@ -95,29 +96,40 @@ def check_input(args):
         sys.exit(1)
 
     # Validate option
-    option = option.upper()
+    option_set = set([o.upper().strip() for o in option.split(',') if o.strip()])
+    if not option_set:
+        sys.stderr.write('ERROR!! Element set cannot be empty\n')
+        sys.stderr.write(__doc__)
+        sys.exit(1)
+    else:
+        for elem in option_set:
+            if len(elem) > 2:
+                emsg = 'ERROR!! Element name is invalid: \'{}\'\n'
+                sys.stderr.write(emsg.format(elem))
+                sys.stderr.write(__doc__)
+                sys.exit(1)
 
-    return (option, fh)
+    return (option_set, fh)
 
 
-def delete_atoms(fhandle, element):
-    """Removes specific atoms from the structure, matching a given element.
+def delete_elements(fhandle, element_set):
+    """Removes specific atoms matching the given element(s).
     """
 
     records = ('ATOM', 'HETATM', 'ANISOU')
     for line in fhandle:
         if line.startswith(records):
-            if line[76:78].strip() == element:
+            if line[76:78].strip() in element_set:
                 continue
         yield line
 
 
 def main():
     # Check Input
-    element, pdbfh = check_input(sys.argv[1:])
+    element_set, pdbfh = check_input(sys.argv[1:])
 
     # Do the job
-    new_pdb = delete_atoms(pdbfh, element)
+    new_pdb = delete_elements(pdbfh, element_set)
 
     try:
         sys.stdout.write(''.join(new_pdb))
