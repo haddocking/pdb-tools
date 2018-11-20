@@ -92,7 +92,15 @@ def main():
     new_pdb = place_seg_on_chain(pdbfh)
 
     try:
-        sys.stdout.write(''.join(new_pdb))
+        _buffer = []
+        _buffer_size = 5000  # write N lines at a time
+        for lineno, line in enumerate(new_pdb):
+            if not (lineno % _buffer_size):
+                sys.stdout.write(''.join(_buffer))
+                _buffer = []
+            _buffer.append(line)
+
+        sys.stdout.write(''.join(_buffer))
         sys.stdout.flush()
     except IOError:
         # This is here to catch Broken Pipes
