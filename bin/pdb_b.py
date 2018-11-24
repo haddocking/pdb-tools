@@ -103,14 +103,25 @@ def check_input(args):
     return (option, fh)
 
 
+def pad_line(line):
+    """Helper function to pad line to 80 characters in case it is shorter"""
+    size_of_line = len(line)
+    if size_of_line < 80:
+        padding = 80 - size_of_line + 1
+        line = line.strip('\n') + ' ' * padding + '\n'
+    return line[:81]  # 80 + newline character
+
+
 def alter_bfactor(fhandle, bfactor):
     """Sets the temperature column in all ATOM/HETATM records to a given value.
     """
 
+    _pad_line = pad_line
     records = ('ATOM', 'HETATM')
     bfactor = "{0:>6.2f}".format(bfactor)
     for line in fhandle:
         if line.startswith(records):
+            line = _pad_line(line)
             yield line[:60] + bfactor + line[66:]
         else:
             yield line

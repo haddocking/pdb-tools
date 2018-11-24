@@ -63,19 +63,33 @@ def check_input(args):
         fh = open(args[0], 'r')
 
     else:  # Whatever ...
+        emsg = 'ERROR!! Script takes 1 argument, not \'{}\'\n'
+        sys.stderr.write(emsg.format(len(args)))
         sys.stderr.write(__doc__)
         sys.exit(1)
 
     return fh
 
 
+def pad_line(line):
+    """Helper function to pad line to 80 characters in case it is shorter"""
+    size_of_line = len(line)
+    if size_of_line < 80:
+        padding = 80 - size_of_line + 1
+        line = line.strip('\n') + ' ' * padding + '\n'
+    return line[:81]  # 80 + newline character
+
+
 def place_chain_on_seg(fhandle):
     """Replaces the segment identifier with the contents of the chain identifier.
     """
 
+    _pad_line = pad_line
+
     records = ('ATOM', 'HETATM', 'ANISOU')
     for line in fhandle:
         if line.startswith(records):
+            line = _pad_line(line)
             yield line[:72] + line[21].ljust(4) + line[76:]
         else:
             yield line
