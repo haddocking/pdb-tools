@@ -23,7 +23,7 @@ Usage:
 
 Example:
     python pdb_delchain.py -A 1CTF.pdb  # removes chain A from PDB file
-    python pdb_delchain.py -AB 1CTF.pdb  # removes chains A and B from PDB file
+    python pdb_delchain.py -A,B 1CTF.pdb  # removes chains A and B from PDB file
 
 This program is part of the `pdb-tools` suite of utilities and should not be
 distributed isolatedly. The `pdb-tools` were created to quickly manipulate PDB
@@ -94,10 +94,19 @@ def check_input(args):
         sys.exit(1)
 
     # Validate option
-    if len(option) < 1:
-        emsg = 'ERROR!! You must provide at least ONE chain identifier.\n'
+    option_set = set([o.upper().strip() for o in option.split(',') if o.strip()])
+    if not option_set:
+        emsg = 'ERROR!! You must provide at least one chain identifier\n'
         sys.stderr.write(emsg)
+        sys.stderr.write(__doc__)
         sys.exit(1)
+    else:
+        for chain_id in option_set:
+            if len(chain_id) > 1:
+                emsg = 'ERROR!! Chain identifier name is invalid: \'{}\'\n'
+                sys.stderr.write(emsg.format(chain_id))
+                sys.stderr.write(__doc__)
+                sys.exit(1)
 
     return (option, fh)
 
