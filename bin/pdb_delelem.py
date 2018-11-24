@@ -98,7 +98,7 @@ def check_input(args):
     # Validate option
     option_set = set([o.upper().strip() for o in option.split(',') if o.strip()])
     if not option_set:
-        sys.stderr.write('ERROR!! Element set cannot be empty\n')
+        sys.stderr.write('ERROR!! You must provide at least one element name\n')
         sys.stderr.write(__doc__)
         sys.exit(1)
     else:
