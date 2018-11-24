@@ -63,6 +63,8 @@ def check_input(args):
         fh = open(args[0], 'r')
 
     else:  # Whatever ...
+        emsg = 'ERROR!! Script takes 1 argument, not \'{}\'\n'
+        sys.stderr.write(emsg.format(len(args)))
         sys.stderr.write(__doc__)
         sys.exit(1)
 
@@ -77,6 +79,7 @@ def check_ensemble(fhandle):
     """
 
     model_open = False
+    model_no = None
     model_data = {}  # list of sets
     records = ('ATOM', 'HETATM', 'ANISOU', 'TER')
     for lineno, line in enumerate(fhandle):
@@ -84,7 +87,7 @@ def check_ensemble(fhandle):
             if model_open:
                 emsg = 'ERROR!! MODEL record found before ENDMDL at line \'{}\'\n'
                 sys.stderr.write(emsg.format(lineno))
-                sys.exit(1)
+                return 1
 
             model_open = True
             model_no = int(line[10:14])
@@ -94,19 +97,24 @@ def check_ensemble(fhandle):
             if not model_open:
                 emsg = 'ERROR!! ENDMDL record found before MODEL at line \'{}\'\n'
                 sys.stderr.write(emsg.format(lineno))
-                sys.exit(1)
+                return 1
 
             model_open = False
             model_no = None  # will fail to add lines if a new model is not open
 
         elif line.startswith(records):
-            if model_no is None:
+            if not model_open:
                 emsg = 'ERROR!! MODEL record missing before ATOM at line \'{}\'\n'
                 sys.stderr.write(emsg.format(lineno))
-                sys.exit(1)
+                return 1
 
             atom_uid = line[6:27]
             model_data[model_no].add(atom_uid)
+        else:
+            if model_open:  # Missing last ENDMDL
+                emsg = 'ERROR!! ENDMDL record missing at line \'{}\'\n'
+                sys.stderr.write(emsg.format(lineno))
+                return 1
 
     # Verify all models have the same atoms
     bad_ensemble = False
@@ -139,6 +147,9 @@ def check_ensemble(fhandle):
         n_models = len(model_data)
         msg = 'Ensemble of {} models *seems* OK\n'
         sys.stdout.write(msg.format(n_models))
+        return 0
+
+    return 1
 
 
 def main():
@@ -146,10 +157,10 @@ def main():
     pdbfh = check_input(sys.argv[1:])
 
     # Do the job
-    check_ensemble(pdbfh)
-    
+    status_code = check_ensemble(pdbfh)
+
     pdbfh.close()
-    sys.exit(0)
+    sys.exit(status_code)
 
 
 if __name__ == '__main__':
