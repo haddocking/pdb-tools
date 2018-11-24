@@ -20,13 +20,13 @@ Returns a new PDB file only with atoms in common to all input PDB files.
 
 Atoms are judged equal is their name, altloc, res. name, res. num, insertion
 code and chain fields are the same. Coordinates are taken from the first input
-file.
+file. Keeps matching TER/ANISOU records.
 
 Usage:
-    python pdb_intersect.py <pdb file>
+    python pdb_intersect.py <pdb file> <pdb file>
 
 Example:
-    python pdb_intersect.py 1CTF.pdb
+    python pdb_intersect.py 1XYZ.pdb 1ABC.pdb
 
 This program is part of the `pdb-tools` suite of utilities and should not be
 distributed isolatedly. The `pdb-tools` were created to quickly manipulate PDB
@@ -60,7 +60,7 @@ def check_input(args):
             fh = open(fn, 'r')
             fl.append(fh)
 
-    else:  # Whatever ...
+    else:  # no arguments
         sys.stderr.write(__doc__)
         sys.exit(1)
 
