@@ -108,12 +108,12 @@ def renumber_residues(fhandle, starting_resid):
     """Resets the residue number column to start from a specific number.
     """
 
-    prev_resid = None
+    prev_resid = None  # tracks chain and resid
     resid = starting_resid - 1  # account for first residue
     records = ('ATOM', 'HETATM', 'TER', 'ANISOU')
     for line in fhandle:
         if line.startswith(records):
-            line_resid = line[22:26]
+            line_resid = line[20:26]
             if line_resid != prev_resid:
                 prev_resid = line_resid
                 resid += 1
