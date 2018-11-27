@@ -35,6 +35,7 @@ data to another. They are based on old FORTRAN77 code that was taking too much
 effort to maintain and compile. RIP.
 """
 
+import collections
 import os
 import sys
 
@@ -71,7 +72,7 @@ def intersect_pdb_files(flist):
     """Returns atoms common to all input files.
     """
 
-    atom_data = {}  # atom_uid: line
+    atom_data = collections.OrderedDict()  # atom_uid: line
     records = ('ATOM', 'HETATM', 'ANISOU', 'TER')
 
     ref = flist[0]
