@@ -62,15 +62,28 @@ def check_input(args):
         fh = open(args[0], 'r')
 
     else:  # Whatever ...
+        emsg = 'ERROR!! Script takes 1 argument, not \'{}\'\n'
+        sys.stderr.write(emsg.format(len(args)))
         sys.stderr.write(__doc__)
         sys.exit(1)
 
     return fh
 
 
+def pad_line(line):
+    """Helper function to pad line to 80 characters in case it is shorter"""
+    size_of_line = len(line)
+    if size_of_line < 80:
+        padding = 80 - size_of_line + 1
+        line = line.strip('\n') + ' ' * padding + '\n'
+    return line[:81]  # 80 + newline character
+
+
 def convert_to_mmcif(fhandle):
     """Converts a structure in PDB format to mmCIF format.
     """
+
+    _pad_line = pad_line
 
     # The spacing here is just aesthetic purposes when printing the file
     _a = '{:<6s} {:5d} {:2s} {:6s} {:1s} {:3s} {:3s} {:1s} {:5s} {:1s} '
@@ -115,6 +128,8 @@ def convert_to_mmcif(fhandle):
     records = (('ATOM', 'HETATM'))
     for line in fhandle:
         if line.startswith(records):
+            line = _pad_line(line)
+
             record = line[0:6].strip()
             serial += 1
 
@@ -148,7 +163,7 @@ def convert_to_mmcif(fhandle):
             occ = float(line[54:60])
             bfac = float(line[60:66])
 
-            charge = line[78:80]
+            charge = line[78:80].strip()
             if charge == '  ':
                 charge = '?'
 
