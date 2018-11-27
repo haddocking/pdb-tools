@@ -101,13 +101,24 @@ def check_input(args):
     return (option, fh)
 
 
+def pad_line(line):
+    """Helper function to pad line to 80 characters in case it is shorter"""
+    size_of_line = len(line)
+    if size_of_line < 80:
+        padding = 80 - size_of_line + 1
+        line = line.strip('\n') + ' ' * padding + '\n'
+    return line[:81]  # 80 + newline character
+
+
 def alter_segid(fhandle, segment_id):
     """Sets the segment identifier column in all ATOM/HETATM records to a value.
     """
 
+    _pad_line = pad_line
     records = ('ATOM', 'HETATM')
     for line in fhandle:
         if line.startswith(records):
+            line = _pad_line(line)
             yield line[:72] + segment_id.ljust(4) + line[76:]
         else:
             yield line
