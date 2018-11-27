@@ -66,16 +66,15 @@ class TestTool(unittest.TestCase):
 
         # Validate results
         self.assertEqual(self.retcode, 0)  # ensure the program exited OK.
-        self.assertEqual(len(self.stdout), 6)  # no lines deleted
+        self.assertEqual(len(self.stdout), 5)  # no lines deleted
         self.assertEqual(len(self.stderr), 0)  # no errors
 
         self.assertEqual(self.stdout,
                          ["B:ARG4 < Seq. Gap > B:GLU6",
                           "A:ASN1 <   88.69A > A:ASN1",
-                          "A:ASN1 <   83.52A > A:ARG2",
                           "C:ARG5 < Seq. Gap > C:GLU2",
                           "C:GLU2 < 9168.91A > C:MET-1",
-                          "Found 5 gap(s) in the structure"])
+                          "Found 4 gap(s) in the structure"])
 
     def test_file_not_found(self):
         """

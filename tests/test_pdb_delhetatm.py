@@ -67,7 +67,7 @@ class TestTool(unittest.TestCase):
 
         # Validate results
         self.assertEqual(self.retcode, 0)  # ensure the program exited OK.
-        self.assertEqual(len(self.stdout), 193)  # 9 HETATM records + 2 CONECT
+        self.assertEqual(len(self.stdout), 194)  # 9 HETATM records + 2 CONECT
         self.assertEqual(len(self.stderr), 0)  # no errors
 
     def test_file_not_found(self):
