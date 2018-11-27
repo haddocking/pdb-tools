@@ -33,7 +33,6 @@ data to another. They are based on old FORTRAN77 code that was taking too much
 effort to maintain and compile. RIP.
 """
 
-import itertools
 import os
 import re
 import sys
