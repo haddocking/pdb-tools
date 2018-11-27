@@ -75,24 +75,30 @@ def make_ensemble(flist):
     # MODEL        1
     fmt_MODEL = "MODEL {:>5d}\n"
 
-    records = ('ATOM', 'HETATM', 'CONECT')
-
     for fileno, fhandle in enumerate(flist, start=1):
         fpath = os.path.basename(fhandle.name)
         yield fmt_REMARK.format("MODEL {} FROM {}".format(fileno, fpath))
 
+    conect = []
+    records = ('ATOM', 'HETATM', 'TER')
     for fileno, fhandle in enumerate(flist, start=1):
 
         yield fmt_MODEL.format(fileno)
 
-        serial = 1  # Models are renumbered from 1
         for line in fhandle:
             if line.startswith(records):
-                yield line[:6] + str(serial).rjust(5) + line[11:]
-                serial += 1
+                yield line
+
+            # only store CONECT for first model
+            elif fileno == 1 and line.startswith('CONECT'):
+                conect.append(line)
 
         yield 'ENDMDL\n'
         fhandle.close()
+
+    # Write CONECT
+    for line in conect:
+        yield line
 
     yield 'END\n'
 
@@ -105,7 +111,15 @@ def main():
     new_pdb = make_ensemble(pdbfh)
 
     try:
-        sys.stdout.write(''.join(new_pdb))
+        _buffer = []
+        _buffer_size = 5000  # write N lines at a time
+        for lineno, line in enumerate(new_pdb):
+            if not (lineno % _buffer_size):
+                sys.stdout.write(''.join(_buffer))
+                _buffer = []
+            _buffer.append(line)
+
+        sys.stdout.write(''.join(_buffer))
         sys.stdout.flush()
     except IOError:
         # This is here to catch Broken Pipes

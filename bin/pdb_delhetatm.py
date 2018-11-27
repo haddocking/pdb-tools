@@ -19,10 +19,10 @@
 Removes all HETATM records in the PDB file.
 
 Usage:
-    python pdb_striphet.py <pdb file>
+    python pdb_delhetatm.py <pdb file>
 
 Example:
-    python pdb_striphet.py 1CTF.pdb
+    python pdb_delhetatm.py 1CTF.pdb
 
 This program is part of the `pdb-tools` suite of utilities and should not be
 distributed isolatedly. The `pdb-tools` were created to quickly manipulate PDB
@@ -61,6 +61,8 @@ def check_input(args):
         fh = open(args[0], 'r')
 
     else:  # Whatever ...
+        emsg = 'ERROR!! Script takes 1 argument, not \'{}\'\n'
+        sys.stderr.write(emsg.format(len(args)))
         sys.stderr.write(__doc__)
         sys.exit(1)
 
@@ -98,7 +100,15 @@ def main():
     new_pdb = remove_hetatm(pdbfh)
 
     try:
-        sys.stdout.write(''.join(new_pdb))
+        _buffer = []
+        _buffer_size = 5000  # write N lines at a time
+        for lineno, line in enumerate(new_pdb):
+            if not (lineno % _buffer_size):
+                sys.stdout.write(''.join(_buffer))
+                _buffer = []
+            _buffer.append(line)
+
+        sys.stdout.write(''.join(_buffer))
         sys.stdout.flush()
     except IOError:
         # This is here to catch Broken Pipes

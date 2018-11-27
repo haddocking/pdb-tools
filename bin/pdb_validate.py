@@ -63,6 +63,8 @@ def check_input(args):
         fh = open(args[0], 'r')
 
     else:  # Whatever ...
+        emsg = 'ERROR!! Script takes 1 argument, not \'{}\'\n'
+        sys.stderr.write(emsg.format(len(args)))
         sys.stderr.write(__doc__)
         sys.exit(1)
 
@@ -86,7 +88,7 @@ def check_pdb_format(fhandle):
         ('Res. Nam.', (slice(17, 20), re.compile(r'\s*[A-Z0-9]+\s*'))),
         ('Spacer #2', (slice(20, 21), re.compile(r'\s'))),
         ('Chain Id.', (slice(21, 22), re.compile(r'[A-Za-z0-9 ]{1}'))),
-        ('Res. Num.', (slice(22, 26), re.compile(r'\s*[\d]+\s*'))),
+        ('Res. Num.', (slice(22, 26), re.compile(r'\s*[\d\-]+\s*'))),
         ('Ins. Code', (slice(26, 27), re.compile(r'[A-Z0-9 ]{1}'))),
         ('Spacer #3', (slice(27, 30), re.compile(r'\s+'))),
         ('Coordn. X', (slice(30, 38), re.compile(r'\s*[\d\.\-]+\s*'))),
@@ -151,9 +153,11 @@ def check_pdb_format(fhandle):
         msg = '\nTo understand your errors, read the format specification:\n'
         msg += '  http://deposit.rcsb.org/adit/docs/pdb_atom_format.html\n'
         sys.stderr.write(msg)
+        return 1
     else:
         msg = 'It *seems* everything is OK.'
         sys.stdout.write(msg)
+        return 0
 
 
 def main():
@@ -161,12 +165,12 @@ def main():
     pdbfh = check_input(sys.argv[1:])
 
     # Do the job
-    check_pdb_format(pdbfh)
+    retcode = check_pdb_format(pdbfh)
 
     # last line of the script
     # We can close it even if it is sys.stdin
     pdbfh.close()
-    sys.exit(0)
+    sys.exit(retcode)
 
 
 if __name__ == '__main__':

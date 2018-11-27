@@ -33,8 +33,9 @@ following order:
     - HETATM
     - CONECT, sorted by the serial number of the central (first) atom
 
-MASTER, TER, END statements are removed. Headers (HEADER, REMARK) are kept and
-placed first.
+MASTER, TER, END statements are removed. Headers (HEADER, REMARK, etc) are kept
+and placed first. Does NOT support multi-model files. Use pdb_splitmodel, then
+pdb_sort on each model, and then pdb_mkensemble.
 
 Usage:
     python pdb_sort.py -<option> <pdb file>
@@ -134,6 +135,10 @@ def sort_file(fhandle, sorting_keys):
     resid_key = lambda x: (int(x[22:26]), x[26])  # resid, icode
     atoms_key = lambda x: int(x[6:11])  # atom serial
     altloc_key = lambda x: x[16]
+    icode_key = lambda x: x[26]
+
+    # ignored fields
+    ignored = (('END', 'MASTER', 'TER'))
 
     # First, separate records
     header_data = []
@@ -141,33 +146,56 @@ def sort_file(fhandle, sorting_keys):
     hetatm_data = []
     anisou_data = {}  # Matches a unique atom uid
     conect_data = []
+    chains_list = []  # list of chain identifiers in order they were read
     for line in fhandle:
-        if line.startswith(('HEADER', 'REMARK')):
-            header_data.append(line)
-        elif line.startswith('ATOM'):
+        if line.startswith('ATOM'):
             atomic_data.append(line)
+            chains_list.append(line[21])
         elif line.startswith('HETATM'):
             hetatm_data.append(line)
+            chains_list.append(line[21])
         elif line.startswith('ANISOU'):
             atom_uid = line[12:27]  # aname, chain, resid, resname, & alt/icode
             anisou_data[atom_uid] = line
         elif line.startswith('CONECT'):
             conect_data.append(line)
-        else:
+        elif line.startswith(ignored):
             continue
+        elif line.startswith(('MODEL', 'ENDMDL')):
+            emsg = 'ERROR!! Sorting does not support multi-model files\n'
+            sys.stderr.write(emsg)
+            sys.stderr.write(__doc__)
+            sys.exit(1)
+        elif line.strip():  # remove empty lines
+            header_data.append(line)
 
-    # Sort if requested
-    if 'C' in sorting_keys or 'R' in sorting_keys:
-        atomic_data.sort(key=altloc_key)
-        atomic_data.sort(key=atoms_key)
-        hetatm_data.sort(key=altloc_key)
-        hetatm_data.sort(key=atoms_key)
+    # Map original chain orders to integers
+    # To circumvent mixed chains when sorting by residue number
+    chain_order = {}
+    ordinal = 0
+    for chain in chains_list:
+        if chain not in chain_order:
+            chain_order[chain] = ordinal
+            ordinal += 1
+    del chains_list
+
+    # Always sort by altloc
+    atomic_data.sort(key=atoms_key)
+    atomic_data.sort(key=altloc_key)
+    hetatm_data.sort(key=atoms_key)
+    hetatm_data.sort(key=altloc_key)
 
     if 'R' in sorting_keys:
+        atomic_data.sort(key=icode_key)
         atomic_data.sort(key=resid_key)
+        hetatm_data.sort(key=icode_key)
         hetatm_data.sort(key=resid_key)
 
     if 'C' in sorting_keys:
+        atomic_data.sort(key=chain_key)
+        hetatm_data.sort(key=chain_key)
+    else:  # restore original order
+        chain_key = lambda x: chain_order.get(x[21])
         atomic_data.sort(key=chain_key)
         hetatm_data.sort(key=chain_key)
 
@@ -198,7 +226,15 @@ def main():
     new_pdb = sort_file(pdbfh, chain)
 
     try:
-        sys.stdout.write(''.join(new_pdb))
+        _buffer = []
+        _buffer_size = 5000  # write N lines at a time
+        for lineno, line in enumerate(new_pdb):
+            if not (lineno % _buffer_size):
+                sys.stdout.write(''.join(_buffer))
+                _buffer = []
+            _buffer.append(line)
+
+        sys.stdout.write(''.join(_buffer))
         sys.stdout.flush()
     except IOError:
         # This is here to catch Broken Pipes

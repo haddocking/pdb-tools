@@ -53,7 +53,7 @@ def check_input(args):
             sys.exit(1)
 
     elif len(args) == 1:
-        # One of two options: option & Pipe OR file & default option
+        # One option: option & Pipe
         if args[0].startswith('-'):
             option = args[0][1:]
             if sys.stdin.isatty():  # ensure the PDB data is streamed in
@@ -61,15 +61,6 @@ def check_input(args):
                 sys.stderr.write(emsg)
                 sys.stderr.write(__doc__)
                 sys.exit(1)
-
-        else:
-            if not os.path.isfile(args[0]):
-                emsg = 'ERROR!! File not found or not readable: \'{}\'\n'
-                sys.stderr.write(emsg.format(args[0]))
-                sys.stderr.write(__doc__)
-                sys.exit(1)
-
-            fh = open(args[0], 'r')
 
     elif len(args) == 2:
         # Two options: option & File
@@ -99,6 +90,12 @@ def check_input(args):
         sys.exit(1)
 
     chain_from, chain_to = option.split(':')
+
+    if chain_from == chain_to == '':
+        emsg = 'ERROR!! You did not provide any chain identifiers to replace'
+        sys.stderr.write(emsg)
+        sys.exit(1)
+
     if len(chain_from) > 1:
         emsg = 'ERROR!! Chain identifiers must be a single character: \'{}\''
         sys.stderr.write(emsg.format(chain_from))
@@ -140,7 +137,15 @@ def main():
     new_pdb = replace_chain_identifiers(pdbfh, chain_ids)
 
     try:
-        sys.stdout.write(''.join(new_pdb))
+        _buffer = []
+        _buffer_size = 5000  # write N lines at a time
+        for lineno, line in enumerate(new_pdb):
+            if not (lineno % _buffer_size):
+                sys.stdout.write(''.join(_buffer))
+                _buffer = []
+            _buffer.append(line)
+
+        sys.stdout.write(''.join(_buffer))
         sys.stdout.flush()
     except IOError:
         # This is here to catch Broken Pipes

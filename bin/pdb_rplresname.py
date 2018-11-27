@@ -23,7 +23,7 @@ Usage:
     python pdb_rplres.py -<from>:<to> <pdb file>
 
 Example:
-    python pdb_rplres.py -HIP -HIS 1CTF.pdb  # changes all HIP residues to HIS
+    python pdb_rplres.py -HIP:HIS 1CTF.pdb  # changes all HIP residues to HIS
 
 This program is part of the `pdb-tools` suite of utilities and should not be
 distributed isolatedly. The `pdb-tools` were created to quickly manipulate PDB
@@ -95,7 +95,7 @@ def check_input(args):
         sys.stderr.write(emsg.format(name_from))
         sys.exit(1)
 
-    if not (1 <= len(name_from) <= 3):
+    if not (1 <= len(name_to) <= 3):
         emsg = 'ERROR!! Residue names must have one to three characters: \'{}\''
         sys.stderr.write(emsg.format(name_to))
         sys.exit(1)
@@ -110,7 +110,7 @@ def rename_residues(fhandle, name_from, name_to):
     records = ('ATOM', 'HETATM', 'TER', 'ANISOU')
     for line in fhandle:
         if line.startswith(records):
-            line_resname = line[17:20]
+            line_resname = line[17:20].strip()
             if line_resname == name_from:
                 yield line[:17] + name_to.rjust(3) + line[20:]
                 continue
@@ -126,7 +126,15 @@ def main():
 
     # Output results
     try:
-        sys.stdout.write(''.join(new_pdb))
+        _buffer = []
+        _buffer_size = 5000  # write N lines at a time
+        for lineno, line in enumerate(new_pdb):
+            if not (lineno % _buffer_size):
+                sys.stdout.write(''.join(_buffer))
+                _buffer = []
+            _buffer.append(line)
+
+        sys.stdout.write(''.join(_buffer))
         sys.stdout.flush()
     except IOError:
         # This is here to catch Broken Pipes

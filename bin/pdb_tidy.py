@@ -70,6 +70,8 @@ def check_input(args):
         fh = open(args[0], 'r')
 
     else:  # Whatever ...
+        emsg = 'ERROR!! Script takes 1 argument, not \'{}\'\n'
+        sys.stderr.write(emsg.format(len(args)))
         sys.stderr.write(__doc__)
         sys.exit(1)
 
@@ -101,15 +103,15 @@ def tidy_pdbfile(fhandle):
                    slice(16, 21), slice(21, 26), slice(26, 31))
 
     records = ('ATOM', 'HETATM')
-    ignored = ('TER', 'END ')
+    ignored = set(('TER   ', 'END   '))
     # Iterate up to the first ATOM/HETATM line
     prev_line = None
     for line in fhandle:
 
-        line = line.strip()  # We will pad/add \n later to make uniform
-
-        if line.startswith(ignored):
+        if line[:6] in ignored:  # to avoid matching END _and_ ENDMDL
             continue
+
+        line = line.strip()  # We will pad/add \n later to make uniform
 
         # Check line length
         line = "{:<80}\n".format(line)
@@ -126,10 +128,10 @@ def tidy_pdbfile(fhandle):
     serial_offset = 0  # To offset after adding TER records
     for line in fhandle:
 
-        line = line.strip()
-
-        if line.startswith(ignored):
+        if line[:6] in ignored:
             continue
+
+        line = line.strip()
 
         # Treat ATOM/HETATM differently
         #   - no TER in HETATM
@@ -205,7 +207,15 @@ def main():
     new_pdb = tidy_pdbfile(pdbfh)
 
     try:
-        sys.stdout.write(''.join(new_pdb))
+        _buffer = []
+        _buffer_size = 5000  # write N lines at a time
+        for lineno, line in enumerate(new_pdb):
+            if not (lineno % _buffer_size):
+                sys.stdout.write(''.join(_buffer))
+                _buffer = []
+            _buffer.append(line)
+
+        sys.stdout.write(''.join(_buffer))
         sys.stdout.flush()
     except IOError:
         # This is here to catch Broken Pipes

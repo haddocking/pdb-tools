@@ -108,12 +108,12 @@ def renumber_residues(fhandle, starting_resid):
     """Resets the residue number column to start from a specific number.
     """
 
-    prev_resid = None
+    prev_resid = None  # tracks chain and resid
     resid = starting_resid - 1  # account for first residue
     records = ('ATOM', 'HETATM', 'TER', 'ANISOU')
     for line in fhandle:
         if line.startswith(records):
-            line_resid = line[22:26]
+            line_resid = line[20:26]
             if line_resid != prev_resid:
                 prev_resid = line_resid
                 resid += 1
@@ -137,7 +137,15 @@ def main():
 
     # Output results
     try:
-        sys.stdout.write(''.join(new_pdb))
+        _buffer = []
+        _buffer_size = 5000  # write N lines at a time
+        for lineno, line in enumerate(new_pdb):
+            if not (lineno % _buffer_size):
+                sys.stdout.write(''.join(_buffer))
+                _buffer = []
+            _buffer.append(line)
+
+        sys.stdout.write(''.join(_buffer))
         sys.stdout.flush()
     except IOError:
         # This is here to catch Broken Pipes

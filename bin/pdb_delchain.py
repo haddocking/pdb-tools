@@ -23,7 +23,7 @@ Usage:
 
 Example:
     python pdb_delchain.py -A 1CTF.pdb  # removes chain A from PDB file
-    python pdb_delchain.py -AB 1CTF.pdb  # removes chains A and B from PDB file
+    python pdb_delchain.py -A,B 1CTF.pdb  # removes chains A and B from PDB file
 
 This program is part of the `pdb-tools` suite of utilities and should not be
 distributed isolatedly. The `pdb-tools` were created to quickly manipulate PDB
@@ -94,19 +94,27 @@ def check_input(args):
         sys.exit(1)
 
     # Validate option
-    if len(option) < 1:
-        emsg = 'ERROR!! You must provide at least ONE chain identifier.\n'
+    option_set = set([o.upper().strip() for o in option.split(',') if o.strip()])
+    if not option_set:
+        emsg = 'ERROR!! You must provide at least one chain identifier\n'
         sys.stderr.write(emsg)
+        sys.stderr.write(__doc__)
         sys.exit(1)
+    else:
+        for chain_id in option_set:
+            if len(chain_id) > 1:
+                emsg = 'ERROR!! Chain identifier name is invalid: \'{}\'\n'
+                sys.stderr.write(emsg.format(chain_id))
+                sys.stderr.write(__doc__)
+                sys.exit(1)
 
-    return (option, fh)
+    return (option_set, fh)
 
 
-def delete_chain(fhandle, chain_id):
+def delete_chain(fhandle, chain_set):
     """Removes specific chains from the structure.
     """
 
-    chain_set = set(chain_id)
     records = ('ATOM', 'HETATM', 'TER', 'ANISOU')
     for line in fhandle:
         if line.startswith(records):
@@ -123,7 +131,15 @@ def main():
     new_pdb = delete_chain(pdbfh, element)
 
     try:
-        sys.stdout.write(''.join(new_pdb))
+        _buffer = []
+        _buffer_size = 5000  # write N lines at a time
+        for lineno, line in enumerate(new_pdb):
+            if not (lineno % _buffer_size):
+                sys.stdout.write(''.join(_buffer))
+                _buffer = []
+            _buffer.append(line)
+
+        sys.stdout.write(''.join(_buffer))
         sys.stdout.flush()
     except IOError:
         # This is here to catch Broken Pipes

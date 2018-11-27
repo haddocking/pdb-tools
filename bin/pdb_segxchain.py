@@ -64,10 +64,21 @@ def check_input(args):
         fh = open(args[0], 'r')
 
     else:  # Whatever ...
+        emsg = 'ERROR!! Script takes 1 argument, not \'{}\'\n'
+        sys.stderr.write(emsg.format(len(args)))
         sys.stderr.write(__doc__)
         sys.exit(1)
 
     return fh
+
+
+def pad_line(line):
+    """Helper function to pad line to 80 characters in case it is shorter"""
+    size_of_line = len(line)
+    if size_of_line < 80:
+        padding = 80 - size_of_line + 1
+        line = line.strip('\n') + ' ' * padding + '\n'
+    return line[:81]  # 80 + newline character
 
 
 def place_seg_on_chain(fhandle):
@@ -76,10 +87,22 @@ def place_seg_on_chain(fhandle):
     Truncates the segment identifier to its first character.
     """
 
-    records = ('ATOM', 'HETATM')
+    prev_line = None
+
+    _pad_line = pad_line
+    records = ('ATOM', 'HETATM', 'ANISOU')
     for line in fhandle:
         if line.startswith(records):
-            yield line[:21] + line[72] + line[22:]
+            line = _pad_line(line)
+            # trick to pick first non-empty character of segid OR empty space
+            # [0] on '' gives error, [:1] returns '', with ljust(1) == ' '
+            segid = line[72:76].strip()[:1]
+            yield line[:21] + segid.ljust(1) + line[22:]
+            prev_line = line
+        elif line.startswith('TER'):  # use previous chain ID
+            line = _pad_line(line)
+            segid = prev_line[72:76].strip()[:1]
+            yield line[:21] + segid.ljust(1) + line[22:]
         else:
             yield line
 
@@ -92,7 +115,15 @@ def main():
     new_pdb = place_seg_on_chain(pdbfh)
 
     try:
-        sys.stdout.write(''.join(new_pdb))
+        _buffer = []
+        _buffer_size = 5000  # write N lines at a time
+        for lineno, line in enumerate(new_pdb):
+            if not (lineno % _buffer_size):
+                sys.stdout.write(''.join(_buffer))
+                _buffer = []
+            _buffer.append(line)
+
+        sys.stdout.write(''.join(_buffer))
         sys.stdout.flush()
     except IOError:
         # This is here to catch Broken Pipes

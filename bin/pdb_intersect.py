@@ -20,13 +20,13 @@ Returns a new PDB file only with atoms in common to all input PDB files.
 
 Atoms are judged equal is their name, altloc, res. name, res. num, insertion
 code and chain fields are the same. Coordinates are taken from the first input
-file.
+file. Keeps matching TER/ANISOU records.
 
 Usage:
-    python pdb_intersect.py <pdb file>
+    python pdb_intersect.py <pdb file> <pdb file>
 
 Example:
-    python pdb_intersect.py 1CTF.pdb
+    python pdb_intersect.py 1XYZ.pdb 1ABC.pdb
 
 This program is part of the `pdb-tools` suite of utilities and should not be
 distributed isolatedly. The `pdb-tools` were created to quickly manipulate PDB
@@ -35,6 +35,7 @@ data to another. They are based on old FORTRAN77 code that was taking too much
 effort to maintain and compile. RIP.
 """
 
+import collections
 import os
 import sys
 
@@ -60,7 +61,7 @@ def check_input(args):
             fh = open(fn, 'r')
             fl.append(fh)
 
-    else:  # Whatever ...
+    else:  # no arguments
         sys.stderr.write(__doc__)
         sys.exit(1)
 
@@ -71,7 +72,7 @@ def intersect_pdb_files(flist):
     """Returns atoms common to all input files.
     """
 
-    atom_data = {}  # atom_uid: line
+    atom_data = collections.OrderedDict()  # atom_uid: line
     records = ('ATOM', 'HETATM', 'ANISOU', 'TER')
 
     ref = flist[0]
@@ -108,7 +109,15 @@ def main():
     new_pdb = intersect_pdb_files(pdbflist)
 
     try:
-        sys.stdout.write(''.join(new_pdb))
+        _buffer = []
+        _buffer_size = 5000  # write N lines at a time
+        for lineno, line in enumerate(new_pdb):
+            if not (lineno % _buffer_size):
+                sys.stdout.write(''.join(_buffer))
+                _buffer = []
+            _buffer.append(line)
+
+        sys.stdout.write(''.join(_buffer))
         sys.stdout.flush()
     except IOError:
         # This is here to catch Broken Pipes

@@ -101,13 +101,24 @@ def check_input(args):
     return (option, fh)
 
 
+def pad_line(line):
+    """Helper function to pad line to 80 characters in case it is shorter"""
+    size_of_line = len(line)
+    if size_of_line < 80:
+        padding = 80 - size_of_line + 1
+        line = line.strip('\n') + ' ' * padding + '\n'
+    return line[:81]  # 80 + newline character
+
+
 def alter_segid(fhandle, segment_id):
     """Sets the segment identifier column in all ATOM/HETATM records to a value.
     """
 
+    _pad_line = pad_line
     records = ('ATOM', 'HETATM')
     for line in fhandle:
         if line.startswith(records):
+            line = _pad_line(line)
             yield line[:72] + segment_id.ljust(4) + line[76:]
         else:
             yield line
@@ -121,7 +132,15 @@ def main():
     new_pdb = alter_segid(pdbfh, segment_id)
 
     try:
-        sys.stdout.write(''.join(new_pdb))
+        _buffer = []
+        _buffer_size = 5000  # write N lines at a time
+        for lineno, line in enumerate(new_pdb):
+            if not (lineno % _buffer_size):
+                sys.stdout.write(''.join(_buffer))
+                _buffer = []
+            _buffer.append(line)
+
+        sys.stdout.write(''.join(_buffer))
         sys.stdout.flush()
     except IOError:
         # This is here to catch Broken Pipes

@@ -114,6 +114,10 @@ def renumber_residues(fhandle, shifting_factor):
     for line in fhandle:
         if line.startswith(records):
             shifted_resid = int(line[22:26]) + shifting_factor
+            if shifted_resid > 9999:
+                emsg = 'Cannot set residue number above 9999.\n'
+                sys.stderr.write(emsg)
+                sys.exit(1)
             yield line[:22] + str(shifted_resid).rjust(4) + line[26:]
 
         else:
@@ -129,7 +133,15 @@ def main():
 
     # Output results
     try:
-        sys.stdout.write(''.join(new_pdb))
+        _buffer = []
+        _buffer_size = 5000  # write N lines at a time
+        for lineno, line in enumerate(new_pdb):
+            if not (lineno % _buffer_size):
+                sys.stdout.write(''.join(_buffer))
+                _buffer = []
+            _buffer.append(line)
+
+        sys.stdout.write(''.join(_buffer))
         sys.stdout.flush()
     except IOError:
         # This is here to catch Broken Pipes

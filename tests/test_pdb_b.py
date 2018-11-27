@@ -28,7 +28,8 @@ from utils import OutputCapture
 
 
 class TestTool(unittest.TestCase):
-    """Generic class for testing tools.
+    """
+    Generic class for testing tools.
     """
 
     def setUp(self):
@@ -36,60 +37,137 @@ class TestTool(unittest.TestCase):
         name = 'bin.pdb_b'
         self.module = __import__(name, fromlist=[''])
 
-    def test_valid(self):
-        """pdb_b - valid input"""
+    def exec_module(self):
+        """
+        Execs module.
+        """
 
-        sys.argv = ['', '-20.0', os.path.join(data_dir, 'pico.pdb')]  # simulate
-        # Execute the script
         with OutputCapture() as output:
             try:
                 self.module.main()
             except SystemExit as e:
-                retcode = e.code
+                self.retcode = e.code
 
-        stdout = output.stdout
-        stderr = output.stderr
+        self.stdout = output.stdout
+        self.stderr = output.stderr
 
-        self.assertEqual(retcode, 0)  # ensure the program exited gracefully.
-        self.assertEqual(len(stdout), 3)  # no lines deleted
-        self.assertEqual(len(stderr), 0)  # no errors
-        self.assertEqual(stdout[1],  # functions properly
-                         "ATOM      1  N   ASN A   1      22.066  40.557   0.420  1.00 20.00              ")
+        return
 
-    def test_FileNotFound(self):
-        """pdb_b - file not found"""
+    def test_default(self):
+        """
+        $ pdb_b data/dummy.pdb
+        """
 
-        # Error (file not found)
-        sys.argv = ['', '-10.0', os.path.join(data_dir, 'not_there.pdb')]
+        # Simulate input
+        # pdb_b -20 dummy.pdb
+        sys.argv = ['', os.path.join(data_dir, 'dummy.pdb')]
+
         # Execute the script
-        with OutputCapture() as output:
-            try:
-                self.module.main()
-            except SystemExit as e:
-                retcode = e.code
+        self.exec_module()
 
-        stdout = output.stdout
-        stderr = output.stderr
+        # Validate results
+        self.assertEqual(self.retcode, 0)  # ensure the program exited OK.
+        self.assertEqual(len(self.stdout), 204)  # no lines deleted
+        self.assertEqual(len(self.stderr), 0)  # no errors
 
-        self.assertEqual(retcode, 1)  # ensure the program exited gracefully.
-        self.assertEqual(len(stdout), 0)  # no output
-        self.assertEqual(stderr[0][:35], "ERROR!! File not found or not reada")
+        records = (('ATOM', 'HETATM'))
+        bfactors = [l[60:66] for l in self.stdout if l.startswith(records)]
+        unique_bfac = list(set(map(float, bfactors)))
+        self.assertEqual(unique_bfac, [10.00])  # all bfactors changed
 
-    def test_InvalidOptionValue(self):
-        """pdb_b - invalid value"""
+    def test_two_options(self):
+        """
+        $ pdb_b -20 data/dummy.pdb
+        """
 
-        # Error (file not found)
-        sys.argv = ['', '-A', os.path.join(data_dir, 'pico.pdb')]
-        # Execute the script
-        with OutputCapture() as output:
-            try:
-                self.module.main()
-            except SystemExit as e:
-                retcode = e.code
+        sys.argv = ['', '-20.0', os.path.join(data_dir, 'dummy.pdb')]
 
-        stdout = output.stdout
-        stderr = output.stderr
+        self.exec_module()
 
-        self.assertEqual(retcode, 1)
-        self.assertEqual(len(stdout), 0)  # no output
-        self.assertEqual(stderr[0][:35], "ERROR!! You provided an invalid b-f")
+        self.assertEqual(self.retcode, 0)
+        self.assertEqual(len(self.stdout), 204)
+        self.assertEqual(len(self.stderr), 0)
+
+        records = (('ATOM', 'HETATM'))
+        bfactors = [l[60:66] for l in self.stdout if l.startswith(records)]
+        unique_bfac = list(set(map(float, bfactors)))
+        self.assertEqual(unique_bfac, [20.00])
+
+    def test_file_not_found(self):
+        """
+        $ pdb_b not_existing.pdb
+        """
+
+        afile = os.path.join(data_dir, 'not_existing.pdb')
+        sys.argv = ['', '-10.0', afile]
+
+        self.exec_module()
+
+        self.assertEqual(self.retcode, 1)  # exit code is 1 (error)
+        self.assertEqual(len(self.stdout), 0)  # nothing written to stdout
+        self.assertEqual(self.stderr[0][:22],
+                         "ERROR!! File not found")  # proper error message
+
+    def test_file_missing(self):
+        """
+        $ pdb_b -10
+        """
+
+        sys.argv = ['', '-10.0']
+
+        self.exec_module()
+
+        self.assertEqual(self.retcode, 1)
+        self.assertEqual(len(self.stdout), 0)  # no output
+        self.assertEqual(self.stderr[0],
+                         "ERROR!! No data to process!")
+
+    def test_helptext(self):
+        """
+        $ pdb_b
+        """
+
+        sys.argv = ['']
+
+        self.exec_module()
+
+        self.assertEqual(self.retcode, 1)  # ensure the program exited gracefully.
+        self.assertEqual(len(self.stdout), 0)  # no output
+        self.assertEqual(self.stderr, self.module.__doc__.split("\n")[:-1])
+
+    def test_invalid_option(self):
+        """
+        $ pdb_b -A data/dummy.pdb
+        """
+
+        sys.argv = ['', '-A', os.path.join(data_dir, 'dummy.pdb')]
+
+        self.exec_module()
+
+        self.assertEqual(self.retcode, 1)
+        self.assertEqual(len(self.stdout), 0)
+        self.assertEqual(self.stderr[0][:47],
+                         "ERROR!! You provided an invalid b-factor value:")
+
+    def test_not_an_option(self):
+        """
+        $ pdb_b 20 data/dummy.pdb
+        """
+
+        sys.argv = ['', '20', os.path.join(data_dir, 'dummy.pdb')]
+
+        self.exec_module()
+
+        self.assertEqual(self.retcode, 1)
+        self.assertEqual(len(self.stdout), 0)
+        self.assertEqual(self.stderr[0],
+                         "ERROR! First argument is not an option: '20'")
+
+
+if __name__ == '__main__':
+    from config import test_dir
+
+    mpath = os.path.abspath(os.path.join(test_dir, '..'))
+    sys.path.insert(0, mpath)  # so we load dev files before  any installation
+
+    unittest.main()

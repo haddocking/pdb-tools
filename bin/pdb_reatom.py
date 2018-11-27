@@ -114,13 +114,13 @@ def renumber_atom_serials(fhandle, starting_value):
     char_ranges = (slice(6, 11), slice(11, 16),
                    slice(16, 21), slice(21, 26), slice(26, 31))
 
-    serial_equiv = {}  # store for conect statements
+    serial_equiv = {'': ''}  # store for conect statements
 
     serial = starting_value
-    records = ('ATOM', 'HETATM', 'ANISOU')
+    records = ('ATOM', 'HETATM')
     for line in fhandle:
         if line.startswith(records):
-            serial_equiv[line[6:11]] = serial
+            serial_equiv[line[6:11].strip()] = serial
             yield line[:6] + str(serial).rjust(5) + line[11:]
             serial += 1
             if serial > 99999:
@@ -128,9 +128,13 @@ def renumber_atom_serials(fhandle, starting_value):
                 sys.stderr.write(emsg)
                 sys.exit(1)
 
+        elif line.startswith('ANISOU'):
+            # Keep atom id as previous atom
+            yield line[:6] + str(serial - 1).rjust(5) + line[11:]
+
         elif line.startswith('CONECT'):
             # 6:11, 11:16, 16:21, 21:26, 26:31
-            serials = [line[cr] for cr in char_ranges]
+            serials = [line[cr].strip() for cr in char_ranges]
 
             # If not found, return default
             new_serials = [str(serial_equiv.get(s, s)) for s in serials]
@@ -142,6 +146,10 @@ def renumber_atom_serials(fhandle, starting_value):
         elif line.startswith('MODEL'):
             serial = starting_value
             yield line
+
+        elif line.startswith('TER'):
+            yield line[:6] + str(serial).rjust(5) + line[11:]
+            serial += 1
 
         else:
             yield line
@@ -156,7 +164,15 @@ def main():
 
     # Output results
     try:
-        sys.stdout.write(''.join(new_pdb))
+        _buffer = []
+        _buffer_size = 5000  # write N lines at a time
+        for lineno, line in enumerate(new_pdb):
+            if not (lineno % _buffer_size):
+                sys.stdout.write(''.join(_buffer))
+                _buffer = []
+            _buffer.append(line)
+
+        sys.stdout.write(''.join(_buffer))
         sys.stdout.flush()
     except IOError:
         # This is here to catch Broken Pipes

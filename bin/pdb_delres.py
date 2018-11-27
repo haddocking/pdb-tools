@@ -16,18 +16,22 @@
 # limitations under the License.
 
 """
-Removes the side-chain atoms of a selection of residues in the PDB file. Rules
-of the selection follow the same as `pdb_selres.py`, except the step option.
-
-Only works for protein residues (leaves other residues intact).
+Deletes a range of residues from a PDB file. The range option has three
+components: start, end, and step. Start and end are optional and if ommitted the
+range will start at the first residue or end at the last, respectively. The step
+option can only be used if both start and end are provided. Note that the start
+and end values of the range are purely numerical, while the range actually
+refers to every N-th residue, regardless of their sequence number.
 
 Usage:
-    python pdb_scdel.py -[resid][:[resid]] <pdb file>
+    python pdb_delres.py -[resid]:[resid]:[step] <pdb file>
 
 Example:
-    python pdb_scdel.py 1CTF.pdb  # removes all side-chain atoms
-    python pdb_scdel.py -5 1CTF.pdb # removes only for residue 5
-    python pdb_scdel.py -1:10 1CTF.pdb # removes only for residues 1 to 10
+    python pdb_delres.py -1:10 1CTF.pdb # Deletes residues 1 to 10
+    python pdb_delres.py -1: 1CTF.pdb # Deletes residues 1 to END
+    python pdb_delres.py -:5 1CTF.pdb # Deletes residues from START to 5.
+    python pdb_delres.py -::5 1CTF.pdb # Deletes every 5th residue
+    python pdb_delres.py -1:10:5 1CTF.pdb # Deletes every 5th residue from 1 to 10
 
 This program is part of the `pdb-tools` suite of utilities and should not be
 distributed isolatedly. The `pdb-tools` were created to quickly manipulate PDB
@@ -47,8 +51,16 @@ def check_input(args):
     """Checks whether to read from stdin/file and validates user input/options.
     """
 
+    def is_integer(string):
+        """Returns True if the string contains *any* integer"""
+        try:
+            int(string)
+            return True
+        except ValueError:
+            return False
+
     # Defaults
-    option = '::'
+    option = ':::'
     fh = sys.stdin  # file handle
 
     if not len(args):
@@ -97,27 +109,19 @@ def check_input(args):
         sys.stderr.write(__doc__)
         sys.exit(1)
 
-    # Validate single
-    if ':' not in option:
-        try:
-            single = int(option)
-            single = set((single,))
-        except ValueError:
-            emsg = 'ERROR!! Single residue selection must be a number: \'{}\'\n'
-            sys.stderr.write(emsg.format(option))
-            sys.exit(1)
-        return (single, fh)
-
-    # Validate range
+    # Validate option
     if not (1 <= option.count(':') <= 2):
-        emsg = 'ERROR!! Residue range must be in \'a:z\' where a and z are '
-        emsg += 'optional (default to first residue and last respectively).\n'
+        emsg = 'ERROR!! Residue range must be in \'a:z:s\' where a and z are '
+        emsg += 'optional (default to first residue and last respectively), and'
+        emsg += 's is an optional step value (to return every s-th residue).\n'
         sys.stderr.write(emsg)
         sys.exit(1)
 
-    start, end = None, None
+    start, end, step = None, None, 1
     slices = [num if num.strip() else None for num in option.split(':')]
-    if len(slices) == 2:
+    if len(slices) == 3:
+        start, end, step = slices
+    elif len(slices) == 2:
         start, end = slices
     elif len(slices) == 1:
         if option.startswith(':'):
@@ -127,52 +131,86 @@ def check_input(args):
 
     if start is None:
         start = -1000  # residues cannot reach this value (max 4 char)
+    elif not is_integer(start):
+        emsg = 'ERROR!! Starting value must be numerical: \'{}\'\n'
+        sys.stderr.write(emsg.format(start))
+        sys.exit(1)
+    elif not (-999 <= int(start) < 9999):
+        emsg = 'ERROR!! Starting value must be between -999 and 9998: \'{}\'\n'
+        sys.stderr.write(emsg.format(start))
+        sys.exit(1)
+
     if end is None:
         end = 10000  # residues cannot reach this value (max 4 char)
+    elif not is_integer(end):
+        emsg = 'ERROR!! End value must be numerical: \'{}\'\n'
+        sys.stderr.write(emsg.format(end))
+        sys.exit(1)
+    elif not (-999 <= int(end) < 9999):
+        emsg = 'ERROR!! End value must be between -999 and 9998: \'{}\'\n'
+        sys.stderr.write(emsg.format(end))
+        sys.exit(1)
 
-    try:
-        start, end = int(start), int(end)
-    except ValueError:
-        emsg = 'ERROR!! Values must be numerical: \'{}\'\n'
-        sys.stderr.write(emsg.format(option))
+    if step is None:
+        step = 1
+    elif not is_integer(step):
+        emsg = 'ERROR!! Step value must be numerical: \'{}\'\n'
+        sys.stderr.write(emsg.format(step))
+        sys.exit(1)
+    elif int(step) <= 0:
+        emsg = 'ERROR!! Step value must be a positive number: \'{}\'\n'
+        sys.stderr.write(emsg.format(step))
+        sys.exit(1)
+
+    start, end, step = int(start), int(end), int(step)
 
     if start >= end:
-        emsg = 'ERROR!! Start ({}) cannot be larger than End ({})\n'
+        emsg = 'ERROR!! Start ({}) cannot be larger than end ({})\n'
         sys.stderr.write(emsg.format(start, end))
+        sys.exit(1)
 
-    option = set(range(start, end + 1))
-    return (option, fh)
+    resrange = set(range(start, end + 1))
+    return (resrange, step, fh)
 
 
-def remove_sidechain(fhandle, residue_range):
-    """Deletes side chains of residues in a particular range.
+def delete_residues(fhandle, residue_range, step):
+    """Deletes residues within a certain numbering range.
     """
 
-    aa_names = set(('CYS', 'ASP', 'SER', 'GLN',
-                    'LYS', 'ILE', 'PRO', 'THR',
-                    'PHE', 'ASN', 'GLY', 'HIS',
-                    'LEU', 'ARG', 'TRP', 'ALA',
-                    'VAL', 'GLU', 'TYR', 'MET'))
-
-    backbone = set(('CA', 'N', 'O', 'C'))
-    records = ('ATOM', 'ANISOU')
+    prev_res = None
+    res_counter = -1
+    records = ('ATOM', 'HETATM', 'TER', 'ANISOU')
     for line in fhandle:
         if line.startswith(records):
-            if int(line[22:26]) in residue_range and line[17:20] in aa_names:
-                if line[12:16].strip() not in backbone:
-                    continue
+
+            res_id = line[21:26]  # include chain ID
+            if res_id != prev_res:
+                prev_res = res_id
+                res_counter += 1
+
+            if int(line[22:26]) in residue_range and res_counter % step == 0:
+                continue
+
         yield line
 
 
 def main():
     # Check Input
-    resrange, pdbfh = check_input(sys.argv[1:])
+    resrange, step, pdbfh = check_input(sys.argv[1:])
 
     # Do the job
-    new_pdb = remove_sidechain(pdbfh, resrange)
+    new_pdb = delete_residues(pdbfh, resrange, step)
 
     try:
-        sys.stdout.write(''.join(new_pdb))
+        _buffer = []
+        _buffer_size = 5000  # write N lines at a time
+        for lineno, line in enumerate(new_pdb):
+            if not (lineno % _buffer_size):
+                sys.stdout.write(''.join(_buffer))
+                _buffer = []
+            _buffer.append(line)
+
+        sys.stdout.write(''.join(_buffer))
         sys.stdout.flush()
     except IOError:
         # This is here to catch Broken Pipes
