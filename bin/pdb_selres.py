@@ -19,7 +19,9 @@
 Extracts a range of residues from a PDB file. The range option has three
 components: start, end, and step. Start and end are optional and if ommitted the
 range will start at the first residue or end at the last, respectively. The step
-option can only be used if both start and end are provided.
+option can only be used if both start and end are provided. Note that the start
+and end values of the range are purely numerical, while the range actually
+refers to every N-th residue, regardless of their sequence number.
 
 Usage:
     python pdb_selres.py -[resid]:[resid]:[step] <pdb file>
@@ -48,6 +50,14 @@ __email__ = "j.p.g.l.m.rodrigues@gmail.com"
 def check_input(args):
     """Checks whether to read from stdin/file and validates user input/options.
     """
+
+    def is_integer(string):
+        """Returns True if the string contains *any* integer"""
+        try:
+            _ = int(string)
+            return True
+        except ValueError as _:
+            return False
 
     # Defaults
     option = ':::'
@@ -121,43 +131,78 @@ def check_input(args):
 
     if start is None:
         start = -1000  # residues cannot reach this value (max 4 char)
-    if end is None:
-        end = 10000  # residues cannot reach this value (max 4 char)
-
-    try:
-        start, end, step = int(start), int(end), int(step)
-    except ValueError:
-        emsg = 'ERROR!! Values must be numerical: \'{}\'\n'
-        sys.stderr.write(emsg.format(option))
+    elif not is_integer(start):
+        emsg = 'ERROR!! Starting value must be numerical: \'{}\'\n'
+        sys.stderr.write(emsg.format(start))
+        sys.exit(1)
+    elif not (-999 <= int(start) < 9999):
+        emsg = 'ERROR!! Starting value must be between -999 and 9998: \'{}\'\n'
+        sys.stderr.write(emsg.format(start))
         sys.exit(1)
 
+    if end is None:
+        end = 10000  # residues cannot reach this value (max 4 char)
+    elif not is_integer(end):
+        emsg = 'ERROR!! End value must be numerical: \'{}\'\n'
+        sys.stderr.write(emsg.format(end))
+        sys.exit(1)
+    elif not (-999 <= int(end) < 9999):
+        emsg = 'ERROR!! End value must be between -999 and 9998: \'{}\'\n'
+        sys.stderr.write(emsg.format(end))
+        sys.exit(1)
+
+    if step is None:
+        step = 1
+    elif not is_integer(step):
+        emsg = 'ERROR!! Step value must be numerical: \'{}\'\n'
+        sys.stderr.write(emsg.format(step))
+        sys.exit(1)
+    elif int(step) <= 0:
+        emsg = 'ERROR!! Step value must be a positive number: \'{}\'\n'
+        sys.stderr.write(emsg.format(step))
+        sys.exit(1)
+
+    start, end, step = int(start), int(end), int(step)
+
     if start >= end:
-        emsg = 'ERROR!! Start ({}) cannot be larger than End ({})\n'
+        emsg = 'ERROR!! Start ({}) cannot be larger than end ({})\n'
         sys.stderr.write(emsg.format(start, end))
         sys.exit(1)
 
-    option = set(range(start, end + 1, step))
-    return (option, fh)
+    resrange = set(range(start, end + 1))
+    return (resrange, step, fh)
 
 
-def select_residues(fhandle, residue_range):
+def select_residues(fhandle, residue_range, step):
     """Outputs residues within a certain numbering range.
     """
 
+    prev_res = None
+    res_counter = -1
     records = ('ATOM', 'HETATM', 'TER', 'ANISOU')
     for line in fhandle:
         if line.startswith(records):
+
+            res_id = line[21:26]  # include chain ID
+            if res_id != prev_res:
+                prev_res = res_id
+                res_counter += 1
+
             if int(line[22:26]) not in residue_range:
                 continue
+
+            if res_counter % step != 0:
+                continue
+
         yield line
 
 
 def main():
     # Check Input
-    resrange, pdbfh = check_input(sys.argv[1:])
+    resrange, step, pdbfh = check_input(sys.argv[1:])
 
     # Do the job
-    new_pdb = select_residues(pdbfh, resrange)
+    new_pdb = select_residues(pdbfh, resrange, step)
 
     try:
         _buffer = []
