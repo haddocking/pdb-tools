@@ -3,7 +3,7 @@
 [![PyPI version](https://badge.fury.io/py/pdb-tools.svg)](https://badge.fury.io/py/pdb-tools)
 [![Travis (.org) branch](https://img.shields.io/travis/JoaoRodrigues/pdb-tools/version2.svg?style=flat&label=TravisCI)](https://travis-ci.org/JoaoRodrigues/pdb-tools)
 [![AppVeyor branch](https://img.shields.io/appveyor/ci/JoaoRodrigues/pdb-tools.svg?style=flat&label=AppVeyor)](https://ci.appveyor.com/project/JoaoRodrigues/pdb-tools)
-[![codecov](https://codecov.io/gh/JoaoRodrigues/pdb-tools/branch/version2-unittest/graph/badge.svg)](https://codecov.io/gh/JoaoRodrigues/pdb-tools)
+[![codecov](https://codecov.io/gh/JoaoRodrigues/pdb-tools/branch/version2/graph/badge.svg)](https://codecov.io/gh/JoaoRodrigues/pdb-tools)
 
 
 A swiss army knife for manipulating and editing PDB files.
