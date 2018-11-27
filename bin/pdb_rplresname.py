@@ -23,7 +23,7 @@ Usage:
     python pdb_rplres.py -<from>:<to> <pdb file>
 
 Example:
-    python pdb_rplres.py -HIP -HIS 1CTF.pdb  # changes all HIP residues to HIS
+    python pdb_rplres.py -HIP:HIS 1CTF.pdb  # changes all HIP residues to HIS
 
 This program is part of the `pdb-tools` suite of utilities and should not be
 distributed isolatedly. The `pdb-tools` were created to quickly manipulate PDB
@@ -110,7 +110,7 @@ def rename_residues(fhandle, name_from, name_to):
     records = ('ATOM', 'HETATM', 'TER', 'ANISOU')
     for line in fhandle:
         if line.startswith(records):
-            line_resname = line[17:20]
+            line_resname = line[17:20].strip()
             if line_resname == name_from:
                 yield line[:17] + name_to.rjust(3) + line[20:]
                 continue
