@@ -65,6 +65,8 @@ def check_input(args):
         fh = open(args[0], 'r')
 
     else:  # Whatever ...
+        emsg = 'ERROR!! Script takes 1 argument, not \'{}\'\n'
+        sys.stderr.write(emsg.format(len(args)))
         sys.stderr.write(__doc__)
         sys.exit(1)
 
@@ -76,7 +78,7 @@ def convert_to_pdb(fhandle):
     """
 
     _a = "{:6s}{:5d} {:<4s}{:1s}{:3s} {:1s}{:4d}{:1s}   {:8.3f}{:8.3f}{:8.3f}"
-    _a += "{:6.2f}{:6.2f}      {:<4s}{:>2s}{:2s}\n"
+    _a += "{:6.2f}{:6.2f}      {:<4s}{:<2s}{:2s}\n"
 
     in_section, read_atom = False, False
 
@@ -118,7 +120,10 @@ def convert_to_pdb(fhandle):
             # serial = int(fields[labels.get('_atom_site.id')])
             serial += 1
 
-            atname = fields[labels.get('_atom_site.auth_atom_id')]
+            fid = labels.get('_atom_site.auth_atom_id')
+            if fid is None:
+                fid = labels.get('_atom_site.label_atom_id')
+            atname = fields[fid]
 
             element = fields[labels.get('_atom_site.type_symbol')]
             if element in empty:
@@ -135,9 +140,21 @@ def convert_to_pdb(fhandle):
             if altloc in empty:
                 altloc = ' '
 
-            resname = fields[labels.get('_atom_site.auth_comp_id')]
-            chainid = fields[labels.get('_atom_site.auth_asym_id')]
-            resnum = int(fields[labels.get('_atom_site.auth_seq_id')])
+            fid = labels.get('_atom_site.auth_comp_id')
+            if fid is None:
+                fid = labels.get('_atom_site.label_comp_id')
+            resname = fields[fid]
+
+            fid = labels.get('_atom_site.auth_asym_id')
+            if fid is None:
+                fid = labels.get('_atom_site.label_asym_id')
+            chainid = fields[fid]
+
+            fid = labels.get('_atom_site.auth_seq_id')
+            if fid is None:
+                fid = labels.get('_atom_site.label_seq_id')
+            resnum = int(fields[fid])
+
             icode = fields[labels.get('_atom_site.pdbx_PDB_ins_code')]
             if icode in empty:
                 icode = ' '
@@ -150,7 +167,7 @@ def convert_to_pdb(fhandle):
 
             charge = fields[labels.get('_atom_site.pdbx_formal_charge')]
             try:
-                charge = int(charge)
+                charge = charge
             except ValueError as _:
                 charge = '  '
 
