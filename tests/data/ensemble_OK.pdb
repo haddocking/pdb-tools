@@ -1,11 +1,11 @@
 HEADER    THIS A DUMMY PDB FOR PDB-TOOLS TESTING                                
 TITLE     A RANDOM PDB                                                          
-MODEL        1
+MODEL        1                                                                  
 ATOM      1  N   ASN A   1      22.066  40.557   0.420  1.00  0.00           N  
 ATOM      2  H   ASN A   1      21.629  41.305  -0.098  1.00  0.00           H  
-ENDMDL
-MODEL        2
+ENDMDL                                                                          
+MODEL        2                                                                  
 ATOM      1  N   ASN A   1      22.066  40.557   0.420  1.00  0.00           N  
 ATOM      2  H   ASN A   1      21.629  41.305  -0.098  1.00  0.00           H  
-ENDMDL
-END
+ENDMDL                                                                          
+END                                                                             
