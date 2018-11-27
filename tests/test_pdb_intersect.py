@@ -54,9 +54,7 @@ class TestTool(unittest.TestCase):
         return
 
     def test_default(self):
-        """
-        $ pdb_intersect data/dummy.pdb data/dummy.pdb
-        """
+        """$ pdb_intersect data/dummy.pdb data/dummy.pdb"""
 
         # Simulate input
         sys.argv = ['', os.path.join(data_dir, 'dummy.pdb'),
@@ -104,9 +102,7 @@ class TestTool(unittest.TestCase):
         self.assertEqual(atoms_list, atom_names)
 
     def test_file_not_found(self):
-        """
-        $ pdb_intersect not_existing.pdb
-        """
+        """$ pdb_intersect not_existing.pdb"""
 
         # Error (file not found)
         afile = os.path.join(data_dir, 'not_existing.pdb')
@@ -121,9 +117,7 @@ class TestTool(unittest.TestCase):
                          "ERROR!! File not found")  # proper error message
 
     def test_helptext(self):
-        """
-        $ pdb_intersect
-        """
+        """$ pdb_intersect"""
 
         sys.argv = ['']
 

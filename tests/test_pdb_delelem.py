@@ -54,9 +54,7 @@ class TestTool(unittest.TestCase):
         return
 
     def test_default(self):
-        """
-        $ pdb_delelem -H data/dummy.pdb
-        """
+        """$ pdb_delelem -H data/dummy.pdb"""
 
         # Simulate input
         # pdb_delelem dummy.pdb
@@ -84,9 +82,7 @@ class TestTool(unittest.TestCase):
         self.assertEqual(len(self.stderr), 0)  # no errors
 
     def test_file_not_found(self):
-        """
-        $ pdb_delelem not_existing.pdb
-        """
+        """$ pdb_delelem not_existing.pdb"""
 
         afile = os.path.join(data_dir, 'not_existing.pdb')
         sys.argv = ['', afile]
@@ -99,9 +95,7 @@ class TestTool(unittest.TestCase):
                          "ERROR!! File not found")  # proper error message
 
     def test_file_missing(self):
-        """
-        $ pdb_delelem -A
-        """
+        """$ pdb_delelem -A"""
 
         sys.argv = ['', '-A']
 
@@ -113,9 +107,7 @@ class TestTool(unittest.TestCase):
                          "ERROR!! No data to process!")
 
     def test_helptext(self):
-        """
-        $ pdb_delelem
-        """
+        """$ pdb_delelem"""
 
         sys.argv = ['']
 
@@ -126,9 +118,7 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.stderr, self.module.__doc__.split("\n")[:-1])
 
     def test_invalid_option(self):
-        """
-        $ pdb_delelem data/dummy.pdb
-        """
+        """$ pdb_delelem data/dummy.pdb"""
 
         sys.argv = ['', os.path.join(data_dir, 'dummy.pdb')]
 
@@ -140,9 +130,7 @@ class TestTool(unittest.TestCase):
                          "ERROR!! You must provide at least one element n")
 
     def test_invalid_option_2(self):
-        """
-        $ pdb_delelem -ABD data/dummy.pdb
-        """
+        """$ pdb_delelem -ABD data/dummy.pdb"""
 
         sys.argv = ['', '-ABC', os.path.join(data_dir, 'dummy.pdb')]
 
@@ -154,9 +142,7 @@ class TestTool(unittest.TestCase):
                          "ERROR!! Element name is invalid:")
 
     def test_not_an_option(self):
-        """
-        $ pdb_delelem 20 data/dummy.pdb
-        """
+        """$ pdb_delelem 20 data/dummy.pdb"""
 
         sys.argv = ['', '20', os.path.join(data_dir, 'dummy.pdb')]
 

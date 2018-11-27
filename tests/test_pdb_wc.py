@@ -54,9 +54,7 @@ class TestTool(unittest.TestCase):
         return
 
     def test_default(self):
-        """
-        $ pdb_wc data/dummy.pdb
-        """
+        """$ pdb_wc data/dummy.pdb"""
 
         fpath = os.path.join(data_dir, 'dummy.pdb')
         sys.argv = ['', fpath]
@@ -80,9 +78,7 @@ class TestTool(unittest.TestCase):
                           "Has seq. gaps:\tTrue"])
 
     def test_single_option(self):
-        """
-        $ pdb_wc -m data/ensemble_OK.pdb
-        """
+        """$ pdb_wc -m data/ensemble_OK.pdb"""
 
         fpath = os.path.join(data_dir, 'ensemble_OK.pdb')
         sys.argv = ['', '-m', fpath]
@@ -99,9 +95,7 @@ class TestTool(unittest.TestCase):
                          ["No. models:\t2"])
 
     def test_file_not_found(self):
-        """
-        $ pdb_wc not_existing.pdb
-        """
+        """$ pdb_wc not_existing.pdb"""
 
         # Error (file not found)
         afile = os.path.join(data_dir, 'not_existing.pdb')
@@ -116,9 +110,7 @@ class TestTool(unittest.TestCase):
                          "ERROR!! File not found")
 
     def test_helptext(self):
-        """
-        $ pdb_wc
-        """
+        """$ pdb_wc"""
 
         sys.argv = ['']
 
@@ -130,9 +122,7 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.stderr, self.module.__doc__.split("\n")[:-1])
 
     def test_invalid_option(self):
-        """
-        $ pdb_wc -X data/dummy.pdb
-        """
+        """$ pdb_wc -X data/dummy.pdb"""
 
         sys.argv = ['', '-X', os.path.join(data_dir, 'dummy.pdb')]
 

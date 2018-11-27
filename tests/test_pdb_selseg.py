@@ -54,9 +54,7 @@ class TestTool(unittest.TestCase):
         return
 
     def test_one_option(self):
-        """
-        $ pdb_selseg -Z data/dummy.pdb
-        """
+        """$ pdb_selseg -Z data/dummy.pdb"""
 
         # Simulate input
         # pdb_selseg dummy.pdb
@@ -84,9 +82,7 @@ class TestTool(unittest.TestCase):
         self.assertEqual(len(self.stderr), 0)
 
     def test_file_not_found(self):
-        """
-        $ pdb_selseg not_existing.pdb
-        """
+        """$ pdb_selseg not_existing.pdb"""
 
         afile = os.path.join(data_dir, 'not_existing.pdb')
         sys.argv = ['', afile]
@@ -99,9 +95,7 @@ class TestTool(unittest.TestCase):
                          "ERROR!! File not found")  # proper error message
 
     def test_file_missing(self):
-        """
-        $ pdb_selseg -A
-        """
+        """$ pdb_selseg -A"""
 
         sys.argv = ['', '-A']
 
@@ -113,9 +107,7 @@ class TestTool(unittest.TestCase):
                          "ERROR!! No data to process!")
 
     def test_helptext(self):
-        """
-        $ pdb_selseg
-        """
+        """$ pdb_selseg"""
 
         sys.argv = ['']
 
@@ -126,9 +118,7 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.stderr, self.module.__doc__.split("\n")[:-1])
 
     def test_invalid_option(self):
-        """
-        $ pdb_selseg data/dummy.pdb
-        """
+        """$ pdb_selseg data/dummy.pdb"""
 
         sys.argv = ['', os.path.join(data_dir, 'dummy.pdb')]
 
@@ -140,9 +130,7 @@ class TestTool(unittest.TestCase):
                          "ERROR!! You must provide at least one segment i")
 
     def test_invalid_option_2(self):
-        """
-        $ pdb_selseg -ABCDE data/dummy.pdb
-        """
+        """$ pdb_selseg -ABCDE data/dummy.pdb"""
 
         sys.argv = ['', '-ABCDE', os.path.join(data_dir, 'dummy.pdb')]
 
@@ -154,9 +142,7 @@ class TestTool(unittest.TestCase):
                          "ERROR!! Segment identifier name is inval")
 
     def test_not_an_option(self):
-        """
-        $ pdb_selseg 20 data/dummy.pdb
-        """
+        """$ pdb_selseg 20 data/dummy.pdb"""
 
         sys.argv = ['', '20', os.path.join(data_dir, 'dummy.pdb')]
 

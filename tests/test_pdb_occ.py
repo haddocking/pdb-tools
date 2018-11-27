@@ -54,9 +54,7 @@ class TestTool(unittest.TestCase):
         return
 
     def test_default(self):
-        """
-        $ pdb_occ data/dummy.pdb
-        """
+        """$ pdb_occ data/dummy.pdb"""
 
         # Simulate input
         # pdb_occ dummy.pdb
@@ -76,9 +74,7 @@ class TestTool(unittest.TestCase):
         self.assertEqual(unique_occ, [1.0])  # all occ values changed
 
     def test_two_options(self):
-        """
-        $ pdb_occ -0.5 data/dummy.pdb
-        """
+        """$ pdb_occ -0.5 data/dummy.pdb"""
 
         sys.argv = ['', '-0.5', os.path.join(data_dir, 'dummy.pdb')]
 
@@ -94,9 +90,7 @@ class TestTool(unittest.TestCase):
         self.assertEqual(unique_occ, [0.5])
 
     def test_file_not_found(self):
-        """
-        $ pdb_occ not_existing.pdb
-        """
+        """$ pdb_occ not_existing.pdb"""
 
         afile = os.path.join(data_dir, 'not_existing.pdb')
         sys.argv = ['', '-1.0', afile]
@@ -109,9 +103,7 @@ class TestTool(unittest.TestCase):
                          "ERROR!! File not found")  # proper error message
 
     def test_file_missing(self):
-        """
-        $ pdb_occ -1.0
-        """
+        """$ pdb_occ -1.0"""
 
         sys.argv = ['', '-1.0']
 
@@ -123,9 +115,7 @@ class TestTool(unittest.TestCase):
                          "ERROR!! No data to process!")
 
     def test_helptext(self):
-        """
-        $ pdb_occ
-        """
+        """$ pdb_occ"""
 
         sys.argv = ['']
 
@@ -136,9 +126,7 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.stderr, self.module.__doc__.split("\n")[:-1])
 
     def test_invalid_option(self):
-        """
-        $ pdb_occ -A data/dummy.pdb
-        """
+        """$ pdb_occ -A data/dummy.pdb"""
 
         sys.argv = ['', '-A', os.path.join(data_dir, 'dummy.pdb')]
 
@@ -150,9 +138,7 @@ class TestTool(unittest.TestCase):
                          "ERROR!! You provided an invalid occupancy value")
 
     def test_not_an_option(self):
-        """
-        $ pdb_occ 20 data/dummy.pdb
-        """
+        """$ pdb_occ 20 data/dummy.pdb"""
 
         sys.argv = ['', '20', os.path.join(data_dir, 'dummy.pdb')]
 

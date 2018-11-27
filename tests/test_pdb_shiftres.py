@@ -54,9 +54,7 @@ class TestTool(unittest.TestCase):
         return
 
     def test_default(self):
-        """
-        $ pdb_shiftres data/dummy.pdb
-        """
+        """$ pdb_shiftres data/dummy.pdb"""
 
         # Simulate input
         # pdb_shiftres dummy.pdb
@@ -88,9 +86,7 @@ class TestTool(unittest.TestCase):
         self.assertEqual(resid_list, expected)
 
     def test_single_option_1(self):
-        """
-        $ pdb_shiftres -10 data/dummy.pdb
-        """
+        """$ pdb_shiftres -10 data/dummy.pdb"""
 
         # Simulate input
         # pdb_shiftres dummy.pdb
@@ -125,9 +121,7 @@ class TestTool(unittest.TestCase):
         self.assertEqual(resid_list, expected)
 
     def test_single_option_2(self):
-        """
-        $ pdb_shiftres --10 data/dummy.pdb
-        """
+        """$ pdb_shiftres --10 data/dummy.pdb"""
 
         # Simulate input
         # pdb_shiftres dummy.pdb
@@ -162,9 +156,7 @@ class TestTool(unittest.TestCase):
         self.assertEqual(resid_list, expected)
 
     def test_too_many_residues(self):
-        """
-        $ pdb_shiftres -9998 data/dummy.pdb
-        """
+        """$ pdb_shiftres -9998 data/dummy.pdb"""
 
         sys.argv = ['', '-9998', os.path.join(data_dir, 'dummy.pdb')]
 
@@ -178,9 +170,7 @@ class TestTool(unittest.TestCase):
                          "Cannot set residue num")  # proper error message
 
     def test_file_not_found(self):
-        """
-        $ pdb_shiftres -10 not_existing.pdb
-        """
+        """$ pdb_shiftres -10 not_existing.pdb"""
 
         afile = os.path.join(data_dir, 'not_existing.pdb')
         sys.argv = ['', '-10', afile]
@@ -193,9 +183,7 @@ class TestTool(unittest.TestCase):
                          "ERROR!! File not found")  # proper error message
 
     def test_file_missing(self):
-        """
-        $ pdb_shiftres -10
-        """
+        """$ pdb_shiftres -10"""
 
         sys.argv = ['', '-10']
 
@@ -207,9 +195,7 @@ class TestTool(unittest.TestCase):
                          "ERROR!! No data to process!")
 
     def test_helptext(self):
-        """
-        $ pdb_shiftres
-        """
+        """$ pdb_shiftres"""
 
         sys.argv = ['']
 
@@ -220,9 +206,7 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.stderr, self.module.__doc__.split("\n")[:-1])
 
     def test_invalid_option(self):
-        """
-        $ pdb_shiftres -A data/dummy.pdb
-        """
+        """$ pdb_shiftres -A data/dummy.pdb"""
 
         sys.argv = ['', '-A', os.path.join(data_dir, 'dummy.pdb')]
 
@@ -234,9 +218,7 @@ class TestTool(unittest.TestCase):
                          "ERROR!! You provided an invalid numb")
 
     def test_not_an_option(self):
-        """
-        $ pdb_shiftres 11 data/dummy.pdb
-        """
+        """$ pdb_shiftres 11 data/dummy.pdb"""
 
         sys.argv = ['', '11', os.path.join(data_dir, 'dummy.pdb')]
 

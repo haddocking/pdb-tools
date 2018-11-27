@@ -62,9 +62,7 @@ class TestTool(unittest.TestCase):
         return
 
     def test_default(self):
-        """
-        $ pdb_splitmodel data/ensemble_OK.pdb
-        """
+        """$ pdb_splitmodel data/ensemble_OK.pdb"""
 
         # Copy input file to tempdir
 
@@ -96,9 +94,7 @@ class TestTool(unittest.TestCase):
                 self.assertEqual(n_lines, 2)
 
     def test_file_not_found(self):
-        """
-        $ pdb_splitmodel not_existing.pdb
-        """
+        """$ pdb_splitmodel not_existing.pdb"""
 
         afile = os.path.join(data_dir, 'not_existing.pdb')
         sys.argv = ['', afile]
@@ -111,9 +107,7 @@ class TestTool(unittest.TestCase):
                          "ERROR!! File not found")  # proper error message
 
     def test_file_missing(self):
-        """
-        $ pdb_splitmodel -10
-        """
+        """$ pdb_splitmodel -10"""
 
         sys.argv = ['', '-10']
 
@@ -125,9 +119,7 @@ class TestTool(unittest.TestCase):
                          "ERROR!! File not found or not readable")
 
     def test_helptext(self):
-        """
-        $ pdb_splitmodel
-        """
+        """$ pdb_splitmodel"""
 
         sys.argv = ['']
 
@@ -138,9 +130,7 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.stderr, self.module.__doc__.split("\n")[:-1])
 
     def test_invalid_option(self):
-        """
-        $ pdb_splitmodel -A data/ensemble_OK.pdb
-        """
+        """$ pdb_splitmodel -A data/ensemble_OK.pdb"""
 
         sys.argv = ['', '-A', os.path.join(data_dir, 'ensemble_OK.pdb')]
 

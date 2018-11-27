@@ -54,9 +54,7 @@ class TestTool(unittest.TestCase):
         return
 
     def test_default(self):
-        """
-        $ pdb_reatom data/dummy.pdb
-        """
+        """$ pdb_reatom data/dummy.pdb"""
 
         # Simulate input
         # pdb_reatom dummy.pdb
@@ -92,9 +90,7 @@ class TestTool(unittest.TestCase):
         self.assertEqual(serial_list, expected)
 
     def test_two_options_pos(self):
-        """
-        $ pdb_reatom -10 data/dummy.pdb
-        """
+        """$ pdb_reatom -10 data/dummy.pdb"""
 
         # Simulate input
         # pdb_reatom dummy.pdb
@@ -130,9 +126,7 @@ class TestTool(unittest.TestCase):
         self.assertEqual(serial_list, expected)
 
     def test_two_options_neg(self):
-        """
-        $ pdb_reatom --10 data/dummy.pdb
-        """
+        """$ pdb_reatom --10 data/dummy.pdb"""
 
         sys.argv = ['', '--10', os.path.join(data_dir, 'dummy.pdb')]
 
@@ -164,9 +158,7 @@ class TestTool(unittest.TestCase):
         self.assertEqual(serial_list, expected)
 
     def test_too_many_atoms(self):
-        """
-        $ pdb_reatom -99998 data/dummy.pdb
-        """
+        """$ pdb_reatom -99998 data/dummy.pdb"""
 
         sys.argv = ['', '-99998', os.path.join(data_dir, 'dummy.pdb')]
 
@@ -180,9 +172,7 @@ class TestTool(unittest.TestCase):
                          "Cannot set atom serial")  # proper error message
 
     def test_file_not_found(self):
-        """
-        $ pdb_reatom -10 not_existing.pdb
-        """
+        """$ pdb_reatom -10 not_existing.pdb"""
 
         afile = os.path.join(data_dir, 'not_existing.pdb')
         sys.argv = ['', '-10', afile]
@@ -195,9 +185,7 @@ class TestTool(unittest.TestCase):
                          "ERROR!! File not found")  # proper error message
 
     def test_file_missing(self):
-        """
-        $ pdb_reatom -10
-        """
+        """$ pdb_reatom -10"""
 
         sys.argv = ['', '-10']
 
@@ -209,9 +197,7 @@ class TestTool(unittest.TestCase):
                          "ERROR!! No data to process!")
 
     def test_helptext(self):
-        """
-        $ pdb_reatom
-        """
+        """$ pdb_reatom"""
 
         sys.argv = ['']
 
@@ -222,9 +208,7 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.stderr, self.module.__doc__.split("\n")[:-1])
 
     def test_invalid_option(self):
-        """
-        $ pdb_reatom -A data/dummy.pdb
-        """
+        """$ pdb_reatom -A data/dummy.pdb"""
 
         sys.argv = ['', '-A', os.path.join(data_dir, 'dummy.pdb')]
 
@@ -236,9 +220,7 @@ class TestTool(unittest.TestCase):
                          "ERROR!! You provided an invalid atom serial num")
 
     def test_not_an_option(self):
-        """
-        $ pdb_reatom 11 data/dummy.pdb
-        """
+        """$ pdb_reatom 11 data/dummy.pdb"""
 
         sys.argv = ['', '11', os.path.join(data_dir, 'dummy.pdb')]
 

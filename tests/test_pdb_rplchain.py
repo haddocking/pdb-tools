@@ -54,9 +54,7 @@ class TestTool(unittest.TestCase):
         return
 
     def test_option_1(self):
-        """
-        $ pdb_rplchain -D:Z data/dummy.pdb
-        """
+        """$ pdb_rplchain -D:Z data/dummy.pdb"""
 
         sys.argv = ['', '-D:Z', os.path.join(data_dir, 'dummy.pdb')]
 
@@ -72,9 +70,7 @@ class TestTool(unittest.TestCase):
         self.assertTrue('D' not in chain_ids)
 
     def test_option_2(self):
-        """
-        $ pdb_rplchain -A: data/dummy.pdb
-        """
+        """$ pdb_rplchain -A: data/dummy.pdb"""
 
         # Simulate input
         sys.argv = ['', '-A:', os.path.join(data_dir, 'dummy.pdb')]
@@ -93,9 +89,7 @@ class TestTool(unittest.TestCase):
         self.assertTrue('A' not in chain_ids)
 
     def test_file_not_found(self):
-        """
-        $ pdb_rplchain -A not_existing.pdb
-        """
+        """$ pdb_rplchain -A not_existing.pdb"""
 
         afile = os.path.join(data_dir, 'not_existing.pdb')
         sys.argv = ['', '-A', afile]
@@ -108,9 +102,7 @@ class TestTool(unittest.TestCase):
                          "ERROR!! File not found")  # proper error message
 
     def test_file_missing(self):
-        """
-        $ pdb_rplchain -A
-        """
+        """$ pdb_rplchain -A"""
 
         sys.argv = ['', '-A']
 
@@ -122,9 +114,7 @@ class TestTool(unittest.TestCase):
                          "ERROR!! No data to process!")
 
     def test_helptext(self):
-        """
-        $ pdb_rplchain
-        """
+        """$ pdb_rplchain"""
 
         sys.argv = ['']
 
@@ -135,9 +125,7 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.stderr, self.module.__doc__.split("\n")[:-1])
 
     def test_invalid_option_1(self):
-        """
-        $ pdb_rplchain -AH data/dummy.pdb
-        """
+        """$ pdb_rplchain -AH data/dummy.pdb"""
 
         sys.argv = ['', '-AH', os.path.join(data_dir, 'dummy.pdb')]
 
@@ -149,9 +137,7 @@ class TestTool(unittest.TestCase):
                          "ERROR!! Invalid option value: 'AH'")
 
     def test_invalid_option_2(self):
-        """
-        $ pdb_rplchain -AH: data/dummy.pdb
-        """
+        """$ pdb_rplchain -AH: data/dummy.pdb"""
 
         sys.argv = ['', '-AH:', os.path.join(data_dir, 'dummy.pdb')]
 
@@ -163,9 +149,7 @@ class TestTool(unittest.TestCase):
                          "ERROR!! Chain identifiers must be a single char")
 
     def test_not_an_option(self):
-        """
-        $ pdb_rplchain A data/dummy.pdb
-        """
+        """$ pdb_rplchain A data/dummy.pdb"""
 
         sys.argv = ['', 'A', os.path.join(data_dir, 'dummy.pdb')]
 

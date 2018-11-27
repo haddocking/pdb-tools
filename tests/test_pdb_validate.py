@@ -54,9 +54,7 @@ class TestTool(unittest.TestCase):
         return
 
     def test_warnings(self):
-        """
-        $ pdb_validate data/dummy.pdb
-        """
+        """$ pdb_validate data/dummy.pdb"""
 
         fpath = os.path.join(data_dir, 'dummy.pdb')
         sys.argv = ['', fpath]
@@ -77,9 +75,7 @@ class TestTool(unittest.TestCase):
                          "[!] Line 203 is short: 26 < 80")
 
     def test_valid(self):
-        """
-        $ pdb_validate data/ensemble_OK.pdb
-        """
+        """$ pdb_validate data/ensemble_OK.pdb"""
 
         fpath = os.path.join(data_dir, 'ensemble_OK.pdb')
         sys.argv = ['', fpath]
@@ -96,9 +92,7 @@ class TestTool(unittest.TestCase):
                          ["It *seems* everything is OK."])
 
     def test_file_not_found(self):
-        """
-        $ pdb_validate not_existing.pdb
-        """
+        """$ pdb_validate not_existing.pdb"""
 
         # Error (file not found)
         afile = os.path.join(data_dir, 'not_existing.pdb')
@@ -113,9 +107,7 @@ class TestTool(unittest.TestCase):
                          "ERROR!! File not found")
 
     def test_helptext(self):
-        """
-        $ pdb_validate
-        """
+        """$ pdb_validate"""
 
         sys.argv = ['']
 
@@ -127,9 +119,7 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.stderr, self.module.__doc__.split("\n")[:-1])
 
     def test_invalid_option(self):
-        """
-        $ pdb_validate -A data/dummy.pdb
-        """
+        """$ pdb_validate -A data/dummy.pdb"""
 
         sys.argv = ['', '-A', os.path.join(data_dir, 'dummy.pdb')]
 

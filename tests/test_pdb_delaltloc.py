@@ -54,9 +54,7 @@ class TestTool(unittest.TestCase):
         return
 
     def test_default(self):
-        """
-        $ pdb_delaltloc data/dummy.pdb
-        """
+        """$ pdb_delaltloc data/dummy.pdb"""
 
         # Simulate input
         # pdb_delaltloc dummy.pdb
@@ -77,9 +75,7 @@ class TestTool(unittest.TestCase):
         self.assertEqual(atoms[' CA  ASN A   1'], 0.60)  # picked highest occ.
 
     def test_select_occupancy(self):
-        """
-        $ pdb_delaltloc -A data/dummy.pdb
-        """
+        """$ pdb_delaltloc -A data/dummy.pdb"""
 
         sys.argv = ['', '-A', os.path.join(data_dir, 'dummy.pdb')]
 
@@ -96,9 +92,7 @@ class TestTool(unittest.TestCase):
         self.assertEqual(atoms[' CA  ASN A   1'], 0.40)
 
     def test_file_not_found(self):
-        """
-        $ pdb_delaltloc not_existing.pdb
-        """
+        """$ pdb_delaltloc not_existing.pdb"""
 
         afile = os.path.join(data_dir, 'not_existing.pdb')
         sys.argv = ['', afile]
@@ -111,9 +105,7 @@ class TestTool(unittest.TestCase):
                          "ERROR!! File not found")  # proper error message
 
     def test_file_missing(self):
-        """
-        $ pdb_delaltloc -A
-        """
+        """$ pdb_delaltloc -A"""
 
         sys.argv = ['', '-A']
 
@@ -125,9 +117,7 @@ class TestTool(unittest.TestCase):
                          "ERROR!! No data to process!")
 
     def test_helptext(self):
-        """
-        $ pdb_delaltloc
-        """
+        """$ pdb_delaltloc"""
 
         sys.argv = ['']
 
@@ -138,9 +128,7 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.stderr, self.module.__doc__.split("\n")[:-1])
 
     def test_invalid_option(self):
-        """
-        $ pdb_delaltloc -AH data/dummy.pdb
-        """
+        """$ pdb_delaltloc -AH data/dummy.pdb"""
 
         sys.argv = ['', '-AH', os.path.join(data_dir, 'dummy.pdb')]
 
@@ -152,9 +140,7 @@ class TestTool(unittest.TestCase):
                          "ERROR!! Alternate location identifiers must be ")
 
     def test_not_an_option(self):
-        """
-        $ pdb_delaltloc 20 data/dummy.pdb
-        """
+        """$ pdb_delaltloc 20 data/dummy.pdb"""
 
         sys.argv = ['', '20', os.path.join(data_dir, 'dummy.pdb')]
 

@@ -54,9 +54,7 @@ class TestTool(unittest.TestCase):
         return
 
     def test_option_1(self):
-        """
-        $ pdb_rplresname -MET:DRG data/dummy.pdb
-        """
+        """$ pdb_rplresname -MET:DRG data/dummy.pdb"""
 
         sys.argv = ['', '-MET:DRG', os.path.join(data_dir, 'dummy.pdb')]
 
@@ -72,9 +70,7 @@ class TestTool(unittest.TestCase):
         self.assertTrue('MET' not in res_list)
 
     def test_option_2(self):
-        """
-        $ pdb_rplresname -DT:DA data/dummy.pdb
-        """
+        """$ pdb_rplresname -DT:DA data/dummy.pdb"""
 
         # Simulate input
         sys.argv = ['', '-DT:DA', os.path.join(data_dir, 'dummy.pdb')]
@@ -93,9 +89,7 @@ class TestTool(unittest.TestCase):
         self.assertTrue(' DT' not in res_list)
 
     def test_file_not_found(self):
-        """
-        $ pdb_rplresname -DA:DT not_existing.pdb
-        """
+        """$ pdb_rplresname -DA:DT not_existing.pdb"""
 
         afile = os.path.join(data_dir, 'not_existing.pdb')
         sys.argv = ['', '-DA:DT', afile]
@@ -108,9 +102,7 @@ class TestTool(unittest.TestCase):
                          "ERROR!! File not found")  # proper error message
 
     def test_file_missing(self):
-        """
-        $ pdb_rplresname -DA
-        """
+        """$ pdb_rplresname -DA"""
 
         sys.argv = ['', '-DA']
 
@@ -122,9 +114,7 @@ class TestTool(unittest.TestCase):
                          "ERROR!! No data to process!")
 
     def test_helptext(self):
-        """
-        $ pdb_rplresname
-        """
+        """$ pdb_rplresname"""
 
         sys.argv = ['']
 
@@ -135,9 +125,7 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.stderr, self.module.__doc__.split("\n")[:-1])
 
     def test_invalid_option_1(self):
-        """
-        $ pdb_rplresname -HIS data/dummy.pdb
-        """
+        """$ pdb_rplresname -HIS data/dummy.pdb"""
 
         sys.argv = ['', '-HIS', os.path.join(data_dir, 'dummy.pdb')]
 
@@ -149,9 +137,7 @@ class TestTool(unittest.TestCase):
                          "ERROR!! Invalid option value: 'HIS")
 
     def test_invalid_option_2(self):
-        """
-        $ pdb_rplresname -AH: data/dummy.pdb
-        """
+        """$ pdb_rplresname -AH: data/dummy.pdb"""
 
         sys.argv = ['', '-AH:', os.path.join(data_dir, 'dummy.pdb')]
 
@@ -163,9 +149,7 @@ class TestTool(unittest.TestCase):
                          "ERROR!! Residue names must have one to three ch")
 
     def test_not_an_option(self):
-        """
-        $ pdb_rplresname A data/dummy.pdb
-        """
+        """$ pdb_rplresname A data/dummy.pdb"""
 
         sys.argv = ['', 'A', os.path.join(data_dir, 'dummy.pdb')]
 

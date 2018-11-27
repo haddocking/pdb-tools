@@ -54,9 +54,7 @@ class TestTool(unittest.TestCase):
         return
 
     def test_default(self):
-        """
-        $ pdb_seg data/dummy.pdb
-        """
+        """$ pdb_seg data/dummy.pdb"""
 
         # Simulate input
         sys.argv = ['', os.path.join(data_dir, 'dummy.pdb')]
@@ -75,9 +73,7 @@ class TestTool(unittest.TestCase):
         self.assertEqual(unique_seg_ids, ['    '])
 
     def test_two_options(self):
-        """
-        $ pdb_seg -X data/dummy.pdb
-        """
+        """$ pdb_seg -X data/dummy.pdb"""
 
         sys.argv = ['', '-X', os.path.join(data_dir, 'dummy.pdb')]
 
@@ -93,9 +89,7 @@ class TestTool(unittest.TestCase):
         self.assertEqual(unique_seg_ids, ['X   '])
 
     def test_file_not_found(self):
-        """
-        $ pdb_seg -A not_existing.pdb
-        """
+        """$ pdb_seg -A not_existing.pdb"""
 
         afile = os.path.join(data_dir, 'not_existing.pdb')
         sys.argv = ['', '-A', afile]
@@ -108,9 +102,7 @@ class TestTool(unittest.TestCase):
                          "ERROR!! File not found")  # proper error message
 
     def test_file_missing(self):
-        """
-        $ pdb_seg -A
-        """
+        """$ pdb_seg -A"""
 
         sys.argv = ['', '-A']
 
@@ -122,9 +114,7 @@ class TestTool(unittest.TestCase):
                          "ERROR!! No data to process!")
 
     def test_helptext(self):
-        """
-        $ pdb_seg
-        """
+        """$ pdb_seg"""
 
         sys.argv = ['']
 
@@ -135,9 +125,7 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.stderr, self.module.__doc__.split("\n")[:-1])
 
     def test_invalid_option(self):
-        """
-        $ pdb_seg -AHASX data/dummy.pdb
-        """
+        """$ pdb_seg -AHASX data/dummy.pdb"""
 
         sys.argv = ['', '-AHASX', os.path.join(data_dir, 'dummy.pdb')]
 
@@ -149,9 +137,7 @@ class TestTool(unittest.TestCase):
                          "ERROR!! Segment id must be max. four characters")
 
     def test_not_an_option(self):
-        """
-        $ pdb_seg A data/dummy.pdb
-        """
+        """$ pdb_seg A data/dummy.pdb"""
 
         sys.argv = ['', 'A', os.path.join(data_dir, 'dummy.pdb')]
 

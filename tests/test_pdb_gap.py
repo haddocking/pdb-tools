@@ -54,9 +54,7 @@ class TestTool(unittest.TestCase):
         return
 
     def test_default(self):
-        """
-        $ pdb_gap data/dummy.pdb
-        """
+        """$ pdb_gap data/dummy.pdb"""
 
         # Simulate input
         sys.argv = ['', os.path.join(data_dir, 'dummy.pdb')]
@@ -77,9 +75,7 @@ class TestTool(unittest.TestCase):
                           "Found 4 gap(s) in the structure"])
 
     def test_file_not_found(self):
-        """
-        $ pdb_gap not_existing.pdb
-        """
+        """$ pdb_gap not_existing.pdb"""
 
         # Error (file not found)
         afile = os.path.join(data_dir, 'not_existing.pdb')
@@ -94,9 +90,7 @@ class TestTool(unittest.TestCase):
                          "ERROR!! File not found")  # proper error message
 
     def test_helptext(self):
-        """
-        $ pdb_gap
-        """
+        """$ pdb_gap"""
 
         sys.argv = ['']
 
@@ -108,9 +102,7 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.stderr, self.module.__doc__.split("\n")[:-1])
 
     def test_invalid_option(self):
-        """
-        $ pdb_gap -A data/dummy.pdb
-        """
+        """$ pdb_gap -A data/dummy.pdb"""
 
         sys.argv = ['', '-A', os.path.join(data_dir, 'dummy.pdb')]
 

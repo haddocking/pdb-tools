@@ -54,9 +54,7 @@ class TestTool(unittest.TestCase):
         return
 
     def test_default(self):
-        """
-        $ pdb_merge data/dummy.pdb
-        """
+        """$ pdb_merge data/dummy.pdb"""
 
         # Simulate input
         sys.argv = ['', os.path.join(data_dir, 'dummy.pdb'),
@@ -71,9 +69,7 @@ class TestTool(unittest.TestCase):
         self.assertEqual(len(self.stderr), 0)  # no errors
 
     def test_file_not_found(self):
-        """
-        $ pdb_merge not_existing.pdb
-        """
+        """$ pdb_merge not_existing.pdb"""
 
         # Error (file not found)
         afile = os.path.join(data_dir, 'not_existing.pdb')
@@ -88,9 +84,7 @@ class TestTool(unittest.TestCase):
                          "ERROR!! File not found")  # proper error message
 
     def test_helptext(self):
-        """
-        $ pdb_merge
-        """
+        """$ pdb_merge"""
 
         sys.argv = ['']
 

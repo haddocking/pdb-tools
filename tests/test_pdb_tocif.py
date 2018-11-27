@@ -54,9 +54,7 @@ class TestTool(unittest.TestCase):
         return
 
     def test_single_model(self):
-        """
-        $ pdb_tocif data/dummy.pdb
-        """
+        """$ pdb_tocif data/dummy.pdb"""
 
         fpath = os.path.join(data_dir, 'dummy.pdb')
         sys.argv = ['', fpath]
@@ -78,9 +76,7 @@ class TestTool(unittest.TestCase):
         self.assertEqual(n_coord, 185)
 
     def test_valid(self):
-        """
-        $ pdb_tocif data/ensemble_OK.pdb
-        """
+        """$ pdb_tocif data/ensemble_OK.pdb"""
 
         fpath = os.path.join(data_dir, 'ensemble_OK.pdb')
         sys.argv = ['', fpath]
@@ -112,9 +108,7 @@ class TestTool(unittest.TestCase):
         self.assertEqual(n_fields, [20])
 
     def test_file_not_found(self):
-        """
-        $ pdb_tocif not_existing.pdb
-        """
+        """$ pdb_tocif not_existing.pdb"""
 
         # Error (file not found)
         afile = os.path.join(data_dir, 'not_existing.pdb')
@@ -129,9 +123,7 @@ class TestTool(unittest.TestCase):
                          "ERROR!! File not found")
 
     def test_helptext(self):
-        """
-        $ pdb_tocif
-        """
+        """$ pdb_tocif"""
 
         sys.argv = ['']
 
@@ -143,9 +135,7 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.stderr, self.module.__doc__.split("\n")[:-1])
 
     def test_invalid_option(self):
-        """
-        $ pdb_tocif -A data/dummy.pdb
-        """
+        """$ pdb_tocif -A data/dummy.pdb"""
 
         sys.argv = ['', '-A', os.path.join(data_dir, 'dummy.pdb')]
 

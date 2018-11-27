@@ -54,9 +54,7 @@ class TestTool(unittest.TestCase):
         return
 
     def test_range_1(self):
-        """
-        $ pdb_selres -1:5 data/dummy.pdb
-        """
+        """$ pdb_selres -1:5 data/dummy.pdb"""
 
         # Simulate input
         sys.argv = ['', '-1:5', os.path.join(data_dir, 'dummy.pdb')]
@@ -70,9 +68,7 @@ class TestTool(unittest.TestCase):
         self.assertEqual(len(self.stderr), 0)
 
     def test_range_2(self):
-        """
-        $ pdb_selres -1: data/dummy.pdb
-        """
+        """$ pdb_selres -1: data/dummy.pdb"""
 
         # Simulate input
         sys.argv = ['', '-1:', os.path.join(data_dir, 'dummy.pdb')]
@@ -86,9 +82,7 @@ class TestTool(unittest.TestCase):
         self.assertEqual(len(self.stderr), 0)
 
     def test_range_3(self):
-        """
-        $ pdb_selres -:-1 data/dummy.pdb
-        """
+        """$ pdb_selres -:-1 data/dummy.pdb"""
 
         # Simulate input
         sys.argv = ['', '-:-1', os.path.join(data_dir, 'dummy.pdb')]
@@ -102,9 +96,7 @@ class TestTool(unittest.TestCase):
         self.assertEqual(len(self.stderr), 0)
 
     def test_range_4(self):
-        """
-        $ pdb_selres -::5 data/dummy.pdb
-        """
+        """$ pdb_selres -::5 data/dummy.pdb"""
 
         # Simulate input
         sys.argv = ['', '-::5', os.path.join(data_dir, 'dummy.pdb')]
@@ -118,9 +110,7 @@ class TestTool(unittest.TestCase):
         self.assertEqual(len(self.stderr), 0)
 
     def test_invalid_range_1(self):
-        """
-        $ pdb_selres --9998:: data/dummy.pdb
-        """
+        """$ pdb_selres --9998:: data/dummy.pdb"""
 
         # Simulate input
         sys.argv = ['', '--9998::', os.path.join(data_dir, 'dummy.pdb')]
@@ -135,9 +125,7 @@ class TestTool(unittest.TestCase):
                          "ERROR!! Starting value")
 
     def test_invalid_range_2(self):
-        """
-        $ pdb_selres -:10000: data/dummy.pdb
-        """
+        """$ pdb_selres -:10000: data/dummy.pdb"""
 
         # Simulate input
         sys.argv = ['', '-:10000:', os.path.join(data_dir, 'dummy.pdb')]
@@ -152,9 +140,7 @@ class TestTool(unittest.TestCase):
                          "ERROR!! End value must")
 
     def test_invalid_range_3(self):
-        """
-        $ pdb_selres -::: data/dummy.pdb
-        """
+        """$ pdb_selres -::: data/dummy.pdb"""
 
         # Simulate input
         sys.argv = ['', '-:::', os.path.join(data_dir, 'dummy.pdb')]
@@ -169,9 +155,7 @@ class TestTool(unittest.TestCase):
                          "ERROR!! Residue range")
 
     def test_invalid_range_4(self):
-        """
-        $ pdb_selres -5:1:: data/dummy.pdb
-        """
+        """$ pdb_selres -5:1:: data/dummy.pdb"""
 
         # Simulate input
         sys.argv = ['', '-5:1::', os.path.join(data_dir, 'dummy.pdb')]
@@ -186,9 +170,7 @@ class TestTool(unittest.TestCase):
                          "ERROR!! Residue range")
 
     def test_file_not_found(self):
-        """
-        $ pdb_selres not_existing.pdb
-        """
+        """$ pdb_selres not_existing.pdb"""
 
         afile = os.path.join(data_dir, 'not_existing.pdb')
         sys.argv = ['', afile]
@@ -201,9 +183,7 @@ class TestTool(unittest.TestCase):
                          "ERROR!! File not found")  # proper error message
 
     def test_file_missing(self):
-        """
-        $ pdb_selres -1:10
-        """
+        """$ pdb_selres -1:10"""
 
         sys.argv = ['', '-1:10']
 
@@ -215,9 +195,7 @@ class TestTool(unittest.TestCase):
                          "ERROR!! No data to process!")
 
     def test_helptext(self):
-        """
-        $ pdb_selres
-        """
+        """$ pdb_selres"""
 
         sys.argv = ['']
 
@@ -228,9 +206,7 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.stderr, self.module.__doc__.split("\n")[:-1])
 
     def test_invalid_option(self):
-        """
-        $ pdb_selres -A:B data/dummy.pdb
-        """
+        """$ pdb_selres -A:B data/dummy.pdb"""
 
         sys.argv = ['', '-A:B', os.path.join(data_dir, 'dummy.pdb')]
 
@@ -242,9 +218,7 @@ class TestTool(unittest.TestCase):
                          "ERROR!! Starting value must be numerica")
 
     def test_not_an_option(self):
-        """
-        $ pdb_selres 20 data/dummy.pdb
-        """
+        """$ pdb_selres 20 data/dummy.pdb"""
 
         sys.argv = ['', '20', os.path.join(data_dir, 'dummy.pdb')]
 

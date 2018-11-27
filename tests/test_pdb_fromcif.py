@@ -54,9 +54,7 @@ class TestTool(unittest.TestCase):
         return
 
     def test_conversion(self):
-        """
-        $ pdb_fromcif data/ensemble_OK.pdb
-        """
+        """$ pdb_fromcif data/ensemble_OK.pdb"""
 
         fpath = os.path.join(data_dir, 'ensemble_OK.cif')
         sys.argv = ['', fpath]
@@ -76,9 +74,7 @@ class TestTool(unittest.TestCase):
         self.assertEqual(records, expected)
 
     def test_file_not_found(self):
-        """
-        $ pdb_fromcif not_existing.pdb
-        """
+        """$ pdb_fromcif not_existing.pdb"""
 
         # Error (file not found)
         afile = os.path.join(data_dir, 'not_existing.pdb')
@@ -93,9 +89,7 @@ class TestTool(unittest.TestCase):
                          "ERROR!! File not found")
 
     def test_helptext(self):
-        """
-        $ pdb_fromcif
-        """
+        """$ pdb_fromcif"""
 
         sys.argv = ['']
 
@@ -107,9 +101,7 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.stderr, self.module.__doc__.split("\n")[:-1])
 
     def test_invalid_option(self):
-        """
-        $ pdb_fromcif -A data/dummy.pdb
-        """
+        """$ pdb_fromcif -A data/dummy.pdb"""
 
         sys.argv = ['', '-A', os.path.join(data_dir, 'dummy.pdb')]
 

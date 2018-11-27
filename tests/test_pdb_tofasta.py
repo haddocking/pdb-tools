@@ -54,9 +54,7 @@ class TestTool(unittest.TestCase):
         return
 
     def test_default(self):
-        """
-        $ pdb_tofasta data/dummy.pdb
-        """
+        """$ pdb_tofasta data/dummy.pdb"""
 
         fpath = os.path.join(data_dir, 'dummy.pdb')
         sys.argv = ['', fpath]
@@ -72,9 +70,7 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.stdout, ['>PDB|ABCD', 'EANREREMXXXXXXXXXX'])
 
     def test_multi(self):
-        """
-        $ pdb_tofasta -multi data/dummy.pdb
-        """
+        """$ pdb_tofasta -multi data/dummy.pdb"""
 
         fpath = os.path.join(data_dir, 'dummy.pdb')
         sys.argv = ['', '-multi', fpath]
@@ -96,9 +92,7 @@ class TestTool(unittest.TestCase):
                                        '>PDB|C', 'XXXXX'])
 
     def test_file_not_found(self):
-        """
-        $ pdb_tofasta not_existing.pdb
-        """
+        """$ pdb_tofasta not_existing.pdb"""
 
         # Error (file not found)
         afile = os.path.join(data_dir, 'not_existing.pdb')
@@ -113,9 +107,7 @@ class TestTool(unittest.TestCase):
                          "ERROR!! File not found")
 
     def test_helptext(self):
-        """
-        $ pdb_tofasta
-        """
+        """$ pdb_tofasta"""
 
         sys.argv = ['']
 
@@ -127,9 +119,7 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.stderr, self.module.__doc__.split("\n")[:-1])
 
     def test_invalid_option(self):
-        """
-        $ pdb_tofasta -A data/dummy.pdb
-        """
+        """$ pdb_tofasta -A data/dummy.pdb"""
 
         sys.argv = ['', '-A', os.path.join(data_dir, 'dummy.pdb')]
 

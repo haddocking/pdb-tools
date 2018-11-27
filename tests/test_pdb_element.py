@@ -54,9 +54,7 @@ class TestTool(unittest.TestCase):
         return
 
     def test_default(self):
-        """
-        $ pdb_element data/dummy.pdb
-        """
+        """$ pdb_element data/dummy.pdb"""
 
         # Simulate input
         sys.argv = ['', os.path.join(data_dir, 'dummy.pdb')]
@@ -103,9 +101,7 @@ class TestTool(unittest.TestCase):
         self.assertEqual(element_cols, element_list)
 
     def test_file_not_found(self):
-        """
-        $ pdb_element not_existing.pdb
-        """
+        """$ pdb_element not_existing.pdb"""
 
         # Error (file not found)
         afile = os.path.join(data_dir, 'not_existing.pdb')
@@ -120,9 +116,7 @@ class TestTool(unittest.TestCase):
                          "ERROR!! File not found")  # proper error message
 
     def test_helptext(self):
-        """
-        $ pdb_element
-        """
+        """$ pdb_element"""
 
         sys.argv = ['']
 
@@ -134,9 +128,7 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.stderr, self.module.__doc__.split("\n")[:-1])
 
     def test_invalid_option(self):
-        """
-        $ pdb_element -A data/dummy.pdb
-        """
+        """$ pdb_element -A data/dummy.pdb"""
 
         sys.argv = ['', '-A', os.path.join(data_dir, 'dummy.pdb')]
 

@@ -54,9 +54,7 @@ class TestTool(unittest.TestCase):
         return
 
     def test_valid_ensemble(self):
-        """
-        $ pdb_chkensemble data/ensemble_OK.pdb
-        """
+        """$ pdb_chkensemble data/ensemble_OK.pdb"""
 
         fpath = os.path.join(data_dir, 'ensemble_OK.pdb')
         sys.argv = ['', fpath]
@@ -73,9 +71,7 @@ class TestTool(unittest.TestCase):
                          "Ensemble of 2 models *seems* OK")
 
     def test_ensemble_diffatom(self):
-        """
-        $ pdb_chkensemble data/ensemble_error_1.pdb
-        """
+        """$ pdb_chkensemble data/ensemble_error_1.pdb"""
 
         fpath = os.path.join(data_dir, 'ensemble_error_1.pdb')
         sys.argv = ['', fpath]
@@ -94,9 +90,7 @@ class TestTool(unittest.TestCase):
                           "    2  H   ASN A   1 "])
 
     def test_ensemble_nomodel(self):
-        """
-        $ pdb_chkensemble data/ensemble_error_2.pdb
-        """
+        """$ pdb_chkensemble data/ensemble_error_2.pdb"""
 
         fpath = os.path.join(data_dir, 'ensemble_error_2.pdb')
         sys.argv = ['', fpath]
@@ -113,9 +107,7 @@ class TestTool(unittest.TestCase):
                          "ERROR!! MODEL record missing before ATOM at line '3'")
 
     def test_ensemble_noendmdl(self):
-        """
-        $ pdb_chkensemble data/ensemble_error_3.pdb
-        """
+        """$ pdb_chkensemble data/ensemble_error_3.pdb"""
 
         fpath = os.path.join(data_dir, 'ensemble_error_3.pdb')
         sys.argv = ['', fpath]
@@ -132,9 +124,7 @@ class TestTool(unittest.TestCase):
                          "ERROR!! ENDMDL record missing at line '10'")
 
     def test_ensemble_noendmdl2(self):
-        """
-        $ pdb_chkensemble data/ensemble_error_4.pdb
-        """
+        """$ pdb_chkensemble data/ensemble_error_4.pdb"""
 
         fpath = os.path.join(data_dir, 'ensemble_error_4.pdb')
         sys.argv = ['', fpath]
@@ -151,9 +141,7 @@ class TestTool(unittest.TestCase):
                          "ERROR!! MODEL record found before ENDMDL at line '6'")
 
     def test_file_not_found(self):
-        """
-        $ pdb_chkensemble not_existing.pdb
-        """
+        """$ pdb_chkensemble not_existing.pdb"""
 
         # Error (file not found)
         afile = os.path.join(data_dir, 'not_existing.pdb')
@@ -168,9 +156,7 @@ class TestTool(unittest.TestCase):
                          "ERROR!! File not found")
 
     def test_helptext(self):
-        """
-        $ pdb_chkensemble
-        """
+        """$ pdb_chkensemble"""
 
         sys.argv = ['']
 
@@ -182,9 +168,7 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.stderr, self.module.__doc__.split("\n")[:-1])
 
     def test_invalid_option(self):
-        """
-        $ pdb_chkensemble -A data/dummy.pdb
-        """
+        """$ pdb_chkensemble -A data/dummy.pdb"""
 
         sys.argv = ['', '-A', os.path.join(data_dir, 'dummy.pdb')]
 

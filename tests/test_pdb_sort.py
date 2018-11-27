@@ -54,9 +54,7 @@ class TestTool(unittest.TestCase):
         return
 
     def test_default(self):
-        """
-        $ pdb_sort data/dummy.pdb
-        """
+        """$ pdb_sort data/dummy.pdb"""
 
         fpath = os.path.join(data_dir, 'dummy.pdb')
         sys.argv = ['', fpath]
@@ -131,9 +129,7 @@ class TestTool(unittest.TestCase):
         self.assertEqual(altlocs, expected)
 
     def test_sort_chains(self):
-        """
-        $ pdb_sort -C data/dummy.pdb
-        """
+        """$ pdb_sort -C data/dummy.pdb"""
 
         fpath = os.path.join(data_dir, 'dummy.pdb')
         sys.argv = ['', '-C', fpath]
@@ -208,9 +204,7 @@ class TestTool(unittest.TestCase):
         self.assertEqual(altlocs, expected)
 
     def test_file_not_found(self):
-        """
-        $ pdb_sort not_existing.pdb
-        """
+        """$ pdb_sort not_existing.pdb"""
 
         # Error (file not found)
         afile = os.path.join(data_dir, 'not_existing.pdb')
@@ -225,9 +219,7 @@ class TestTool(unittest.TestCase):
                          "ERROR!! File not found")
 
     def test_helptext(self):
-        """
-        $ pdb_sort
-        """
+        """$ pdb_sort"""
 
         sys.argv = ['']
 
@@ -239,9 +231,7 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.stderr, self.module.__doc__.split("\n")[:-1])
 
     def test_invalid_option(self):
-        """
-        $ pdb_sort -A data/dummy.pdb
-        """
+        """$ pdb_sort -A data/dummy.pdb"""
 
         sys.argv = ['', '-A', os.path.join(data_dir, 'dummy.pdb')]
 
