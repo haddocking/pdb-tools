@@ -54,9 +54,9 @@ def check_input(args):
     def is_integer(string):
         """Returns True if the string contains *any* integer"""
         try:
-            _ = int(string)
+            int(string)
             return True
-        except ValueError as _:
+        except ValueError:
             return False
 
     # Defaults
@@ -173,8 +173,8 @@ def check_input(args):
     return (resrange, step, fh)
 
 
-def select_residues(fhandle, residue_range, step):
-    """Outputs residues within a certain numbering range.
+def delete_residues(fhandle, residue_range, step):
+    """Deletes residues within a certain numbering range.
     """
 
     prev_res = None
@@ -202,7 +202,7 @@ def main():
     resrange, step, pdbfh = check_input(sys.argv[1:])
 
     # Do the job
-    new_pdb = select_residues(pdbfh, resrange, step)
+    new_pdb = delete_residues(pdbfh, resrange, step)
 
     try:
         _buffer = []

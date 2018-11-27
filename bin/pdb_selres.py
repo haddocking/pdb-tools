@@ -54,9 +54,9 @@ def check_input(args):
     def is_integer(string):
         """Returns True if the string contains *any* integer"""
         try:
-            _ = int(string)
+            int(string)
             return True
-        except ValueError as _:
+        except ValueError:
             return False
 
     # Defaults
