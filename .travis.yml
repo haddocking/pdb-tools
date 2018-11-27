@@ -11,7 +11,7 @@ matrix:
       sudo: required  # required for Python 3.7 (travis-ci/travis-ci#9069)
 
 install:
-  - pip install --user flake8 coverage codecov
+  - pip install flake8 coverage codecov
 
 test_script: 
   - "flake8"
