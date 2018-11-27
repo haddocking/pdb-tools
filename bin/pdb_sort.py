@@ -166,7 +166,7 @@ def sort_file(fhandle, sorting_keys):
             sys.stderr.write(emsg)
             sys.stderr.write(__doc__)
             sys.exit(1)
-        else:
+        elif line.strip():  # remove empty lines
             header_data.append(line)
 
     # Map original chain orders to integers
