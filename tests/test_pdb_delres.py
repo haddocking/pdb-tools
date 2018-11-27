@@ -16,7 +16,7 @@
 # limitations under the License.
 
 """
-Unit Tests for `pdb_selres`.
+Unit Tests for `pdb_delres`.
 """
 
 import os
@@ -34,7 +34,7 @@ class TestTool(unittest.TestCase):
 
     def setUp(self):
         # Dynamically import the module
-        name = 'bin.pdb_selres'
+        name = 'bin.pdb_delres'
         self.module = __import__(name, fromlist=[''])
 
     def exec_module(self):
@@ -55,7 +55,7 @@ class TestTool(unittest.TestCase):
 
     def test_range_1(self):
         """
-        $ pdb_selres -1:5 data/dummy.pdb
+        $ pdb_delres -1:5 data/dummy.pdb
         """
 
         # Simulate input
@@ -66,12 +66,12 @@ class TestTool(unittest.TestCase):
 
         # Validate results
         self.assertEqual(self.retcode, 0)
-        self.assertEqual(len(self.stdout), 160)
+        self.assertEqual(len(self.stdout), 60)
         self.assertEqual(len(self.stderr), 0)
 
     def test_range_2(self):
         """
-        $ pdb_selres -1: data/dummy.pdb
+        $ pdb_delres -1: data/dummy.pdb
         """
 
         # Simulate input
@@ -82,12 +82,12 @@ class TestTool(unittest.TestCase):
 
         # Validate results
         self.assertEqual(self.retcode, 0)
-        self.assertEqual(len(self.stdout), 195)
+        self.assertEqual(len(self.stdout), 25)
         self.assertEqual(len(self.stderr), 0)
 
     def test_range_3(self):
         """
-        $ pdb_selres -:-1 data/dummy.pdb
+        $ pdb_delres -:-1 data/dummy.pdb
         """
 
         # Simulate input
@@ -98,12 +98,12 @@ class TestTool(unittest.TestCase):
 
         # Validate results
         self.assertEqual(self.retcode, 0)
-        self.assertEqual(len(self.stdout), 25)
+        self.assertEqual(len(self.stdout), 195)
         self.assertEqual(len(self.stderr), 0)
 
     def test_range_4(self):
         """
-        $ pdb_selres -::5 data/dummy.pdb
+        $ pdb_delres -::5 data/dummy.pdb
         """
 
         # Simulate input
@@ -114,12 +114,12 @@ class TestTool(unittest.TestCase):
 
         # Validate results
         self.assertEqual(self.retcode, 0)
-        self.assertEqual(len(self.stdout), 60)
+        self.assertEqual(len(self.stdout), 160)
         self.assertEqual(len(self.stderr), 0)
 
     def test_invalid_range_1(self):
         """
-        $ pdb_selres --9998:: data/dummy.pdb
+        $ pdb_delres --9998:: data/dummy.pdb
         """
 
         # Simulate input
@@ -136,7 +136,7 @@ class TestTool(unittest.TestCase):
 
     def test_invalid_range_2(self):
         """
-        $ pdb_selres -:10000: data/dummy.pdb
+        $ pdb_delres -:10000: data/dummy.pdb
         """
 
         # Simulate input
@@ -153,7 +153,7 @@ class TestTool(unittest.TestCase):
 
     def test_invalid_range_3(self):
         """
-        $ pdb_selres -::: data/dummy.pdb
+        $ pdb_delres -::: data/dummy.pdb
         """
 
         # Simulate input
@@ -170,7 +170,7 @@ class TestTool(unittest.TestCase):
 
     def test_invalid_range_4(self):
         """
-        $ pdb_selres -5:1: data/dummy.pdb
+        $ pdb_delres -5:1: data/dummy.pdb
         """
 
         # Simulate input
@@ -187,7 +187,7 @@ class TestTool(unittest.TestCase):
 
     def test_file_not_found(self):
         """
-        $ pdb_selres not_existing.pdb
+        $ pdb_delres not_existing.pdb
         """
 
         afile = os.path.join(data_dir, 'not_existing.pdb')
@@ -202,7 +202,7 @@ class TestTool(unittest.TestCase):
 
     def test_file_missing(self):
         """
-        $ pdb_selres -1:10
+        $ pdb_delres -1:10
         """
 
         sys.argv = ['', '-1:10']
@@ -216,7 +216,7 @@ class TestTool(unittest.TestCase):
 
     def test_helptext(self):
         """
-        $ pdb_selres
+        $ pdb_delres
         """
 
         sys.argv = ['']
@@ -229,7 +229,7 @@ class TestTool(unittest.TestCase):
 
     def test_invalid_option(self):
         """
-        $ pdb_selres -A:B data/dummy.pdb
+        $ pdb_delres -A:B data/dummy.pdb
         """
 
         sys.argv = ['', '-A:B', os.path.join(data_dir, 'dummy.pdb')]
@@ -243,7 +243,7 @@ class TestTool(unittest.TestCase):
 
     def test_not_an_option(self):
         """
-        $ pdb_selres 20 data/dummy.pdb
+        $ pdb_delres 20 data/dummy.pdb
         """
 
         sys.argv = ['', '20', os.path.join(data_dir, 'dummy.pdb')]

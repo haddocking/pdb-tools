@@ -23,7 +23,7 @@ import os
 import sys
 import unittest
 
-from config import data_dir, output_dir
+from config import data_dir
 from utils import OutputCapture
 
 
@@ -36,12 +36,12 @@ class TestTool(unittest.TestCase):
         # Dynamically import the module
         name = 'bin.pdb_chkensemble'
         self.module = __import__(name, fromlist=[''])
-    
+
     def exec_module(self):
         """
         Execs module.
         """
-        
+
         with OutputCapture() as output:
             try:
                 self.module.main()
@@ -50,71 +50,157 @@ class TestTool(unittest.TestCase):
 
         self.stdout = output.stdout
         self.stderr = output.stderr
-        
+
         return
-    
-    def test_valid_1(self):
+
+    def test_valid_ensemble(self):
         """
-        pdb_chkensemble - 2 equal models
+        $ pdb_chkensemble data/ensemble_OK.pdb
         """
-        
-        input_file = os.path.join(data_dir, 'nano_2_models.pdb')
-        
-        sys.argv = ['', input_file]  # simulate
+
+        fpath = os.path.join(data_dir, 'ensemble_OK.pdb')
+        sys.argv = ['', fpath]
+
         # Execute the script
-        
         self.exec_module()
-        
-        self.assertEqual(self.retcode, 0)  # ensure the program exited gracefully.
+
+        # Validate results
+        self.assertEqual(self.retcode, 0)  # ensure the program exited OK.
+        self.assertEqual(len(self.stdout), 1)
         self.assertEqual(len(self.stderr), 0)  # no errors
-        self.assertEqual(self.stdout[0][-17:], 'models *seems* OK')
-    
-    def test_valid_2(self):
+
+        self.assertEqual(self.stdout[0],
+                         "Ensemble of 2 models *seems* OK")
+
+    def test_ensemble_diffatom(self):
         """
-        pdb_chkensemble - 2 different models
+        $ pdb_chkensemble data/ensemble_error_1.pdb
         """
-        
-        input_file = os.path.join(data_dir, 'nano_2_models_diff.pdb')
-        
-        sys.argv = ['', input_file]  # simulate
+
+        fpath = os.path.join(data_dir, 'ensemble_error_1.pdb')
+        sys.argv = ['', fpath]
+
         # Execute the script
-        
         self.exec_module()
-        
-        self.assertEqual(self.retcode, 0)  # ensure the program exited gracefully.
+
+        # Validate results
+        self.assertEqual(self.retcode, 1)
+        self.assertEqual(len(self.stdout), 0)
+        self.assertEqual(len(self.stderr), 3)
+
         self.assertEqual(self.stderr,
                          ["Models 1 and 2 differ:",
-                          "Atoms in model 2 only:",
-                          "   17  O   ASN A   1 "
-                         ])  # no errors
-    
-    def test_FileNotFound(self):
+                          "Atoms in model 1 only:",
+                          "    2  H   ASN A   1 "])
+
+    def test_ensemble_nomodel(self):
         """
-        pdb_chkensemble - file not found
+        $ pdb_chkensemble data/ensemble_error_2.pdb
         """
-        
-        # Error (file not found)
-        not_there = os.path.join(data_dir, 'not_there.pdb')
-        sys.argv = ['', not_there]
-        
+
+        fpath = os.path.join(data_dir, 'ensemble_error_2.pdb')
+        sys.argv = ['', fpath]
+
         # Execute the script
         self.exec_module()
 
-        self.assertEqual(self.retcode, 1)  # ensure the program exited gracefully.
-        self.assertEqual(len(self.stdout), 0)  # no output
+        # Validate results
+        self.assertEqual(self.retcode, 1)
+        self.assertEqual(len(self.stdout), 0)
+        self.assertEqual(len(self.stderr), 1)
+
         self.assertEqual(self.stderr[0],
-                         "ERROR!! File not found or not readable: '{}'".format(not_there))
-    
-    def test_NothingProvided(self):
+                         "ERROR!! MODEL record missing before ATOM at line '3'")
+
+    def test_ensemble_noendmdl(self):
         """
-        pdb_chkensemble - nothing provided
+        $ pdb_chkensemble data/ensemble_error_3.pdb
         """
-        
-        sys.argv = ['']
-        
+
+        fpath = os.path.join(data_dir, 'ensemble_error_3.pdb')
+        sys.argv = ['', fpath]
+
         # Execute the script
         self.exec_module()
 
-        self.assertEqual(self.retcode, 1)  # ensure the program exited gracefully.
-        self.assertEqual(len(self.stdout), 0)  # no output
+        # Validate results
+        self.assertEqual(self.retcode, 1)
+        self.assertEqual(len(self.stdout), 0)
+        self.assertEqual(len(self.stderr), 1)
+
+        self.assertEqual(self.stderr[0],
+                         "ERROR!! ENDMDL record missing at line '10'")
+
+    def test_ensemble_noendmdl2(self):
+        """
+        $ pdb_chkensemble data/ensemble_error_4.pdb
+        """
+
+        fpath = os.path.join(data_dir, 'ensemble_error_4.pdb')
+        sys.argv = ['', fpath]
+
+        # Execute the script
+        self.exec_module()
+
+        # Validate results
+        self.assertEqual(self.retcode, 1)
+        self.assertEqual(len(self.stdout), 0)
+        self.assertEqual(len(self.stderr), 1)
+
+        self.assertEqual(self.stderr[0],
+                         "ERROR!! MODEL record found before ENDMDL at line '6'")
+
+    def test_file_not_found(self):
+        """
+        $ pdb_chkensemble not_existing.pdb
+        """
+
+        # Error (file not found)
+        afile = os.path.join(data_dir, 'not_existing.pdb')
+        sys.argv = ['', afile]
+
+        # Execute the script
+        self.exec_module()
+
+        self.assertEqual(self.retcode, 1)
+        self.assertEqual(len(self.stdout), 0)
+        self.assertEqual(self.stderr[0][:22],
+                         "ERROR!! File not found")
+
+    def test_helptext(self):
+        """
+        $ pdb_chkensemble
+        """
+
+        sys.argv = ['']
+
+        # Execute the script
+        self.exec_module()
+
+        self.assertEqual(self.retcode, 1)
+        self.assertEqual(len(self.stdout), 0)
         self.assertEqual(self.stderr, self.module.__doc__.split("\n")[:-1])
+
+    def test_invalid_option(self):
+        """
+        $ pdb_chkensemble -A data/dummy.pdb
+        """
+
+        sys.argv = ['', '-A', os.path.join(data_dir, 'dummy.pdb')]
+
+        # Execute the script
+        self.exec_module()
+
+        self.assertEqual(self.retcode, 1)
+        self.assertEqual(len(self.stdout), 0)
+        self.assertEqual(self.stderr[0][:36],
+                         "ERROR!! Script takes 1 argument, not")
+
+
+if __name__ == '__main__':
+    from config import test_dir
+
+    mpath = os.path.abspath(os.path.join(test_dir, '..'))
+    sys.path.insert(0, mpath)  # so we load dev files before  any installation
+
+    unittest.main()

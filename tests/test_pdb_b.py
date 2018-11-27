@@ -36,12 +36,12 @@ class TestTool(unittest.TestCase):
         # Dynamically import the module
         name = 'bin.pdb_b'
         self.module = __import__(name, fromlist=[''])
-    
+
     def exec_module(self):
         """
         Execs module.
         """
-        
+
         with OutputCapture() as output:
             try:
                 self.module.main()
@@ -50,97 +50,124 @@ class TestTool(unittest.TestCase):
 
         self.stdout = output.stdout
         self.stderr = output.stderr
-        
+
         return
-        
-    def test_valid_1(self):
+
+    def test_default(self):
         """
-        pdb_b - valid input
+        $ pdb_b data/dummy.pdb
         """
-        
-        sys.argv = ['', '-20.0', os.path.join(data_dir, 'pico.pdb')]  # simulate
+
+        # Simulate input
+        # pdb_b -20 dummy.pdb
+        sys.argv = ['', os.path.join(data_dir, 'dummy.pdb')]
+
         # Execute the script
-        
         self.exec_module()
-        
-        self.assertEqual(self.retcode, 0)  # ensure the program exited gracefully.
-        self.assertEqual(len(self.stdout), 3)  # no lines deleted
+
+        # Validate results
+        self.assertEqual(self.retcode, 0)  # ensure the program exited OK.
+        self.assertEqual(len(self.stdout), 204)  # no lines deleted
         self.assertEqual(len(self.stderr), 0)  # no errors
-        self.assertEqual(self.stdout[1],  # functions properly
-                         "ATOM      1  N   ASN A   1      22.066  40.557   0.420  1.00 20.00              ")
 
-    def test_FileNotFound(self):
+        records = (('ATOM', 'HETATM'))
+        bfactors = [l[60:66] for l in self.stdout if l.startswith(records)]
+        unique_bfac = list(set(map(float, bfactors)))
+        self.assertEqual(unique_bfac, [10.00])  # all bfactors changed
+
+    def test_two_options(self):
         """
-        pdb_b - file not found
+        $ pdb_b -20 data/dummy.pdb
         """
-        
-        # Error (file not found)
-        not_there = os.path.join(data_dir, 'not_there.pdb')
-        sys.argv = ['', '-10.0', not_there]
-        
-        # Execute the script
+
+        sys.argv = ['', '-20.0', os.path.join(data_dir, 'dummy.pdb')]
+
         self.exec_module()
 
-        self.assertEqual(self.retcode, 1)  # ensure the program exited gracefully.
-        self.assertEqual(len(self.stdout), 0)  # no output
-        self.assertEqual(self.stderr[0],
-                         "ERROR!! File not found or not readable: '{}'".format(not_there))
-    
-    def test_FileNotProvided(self):
+        self.assertEqual(self.retcode, 0)
+        self.assertEqual(len(self.stdout), 204)
+        self.assertEqual(len(self.stderr), 0)
+
+        records = (('ATOM', 'HETATM'))
+        bfactors = [l[60:66] for l in self.stdout if l.startswith(records)]
+        unique_bfac = list(set(map(float, bfactors)))
+        self.assertEqual(unique_bfac, [20.00])
+
+    def test_file_not_found(self):
         """
-        pdb_b - file not provided
+        $ pdb_b not_existing.pdb
         """
-        
+
+        afile = os.path.join(data_dir, 'not_existing.pdb')
+        sys.argv = ['', '-10.0', afile]
+
+        self.exec_module()
+
+        self.assertEqual(self.retcode, 1)  # exit code is 1 (error)
+        self.assertEqual(len(self.stdout), 0)  # nothing written to stdout
+        self.assertEqual(self.stderr[0][:22],
+                         "ERROR!! File not found")  # proper error message
+
+    def test_file_missing(self):
+        """
+        $ pdb_b -10
+        """
+
         sys.argv = ['', '-10.0']
-        
-        # Execute the script
+
         self.exec_module()
 
-        self.assertEqual(self.retcode, 1)  # ensure the program exited gracefully.
+        self.assertEqual(self.retcode, 1)
         self.assertEqual(len(self.stdout), 0)  # no output
         self.assertEqual(self.stderr[0],
                          "ERROR!! No data to process!")
-    
-    def test_NothingProvided(self):
+
+    def test_helptext(self):
         """
-        pdb_b - nothing provided
+        $ pdb_b
         """
-        
+
         sys.argv = ['']
-        
-        # Execute the script
+
         self.exec_module()
 
         self.assertEqual(self.retcode, 1)  # ensure the program exited gracefully.
         self.assertEqual(len(self.stdout), 0)  # no output
         self.assertEqual(self.stderr, self.module.__doc__.split("\n")[:-1])
-    
-    def test_InvalidOptionValue(self):
+
+    def test_invalid_option(self):
         """
-        pdb_b - invalid argument
+        $ pdb_b -A data/dummy.pdb
         """
-        
-        # Error (file not found)
-        sys.argv = ['', '-A', os.path.join(data_dir, 'pico.pdb')]
-        
-        # Execute the script
+
+        sys.argv = ['', '-A', os.path.join(data_dir, 'dummy.pdb')]
+
         self.exec_module()
-        
+
         self.assertEqual(self.retcode, 1)
-        self.assertEqual(len(self.stdout), 0)  # no output
-        self.assertEqual(self.stderr[0][:47], "ERROR!! You provided an invalid b-factor value:")
-    
-    def test_NotOptionValue(self):
+        self.assertEqual(len(self.stdout), 0)
+        self.assertEqual(self.stderr[0][:47],
+                         "ERROR!! You provided an invalid b-factor value:")
+
+    def test_not_an_option(self):
         """
-        pdb_b - not an option
+        $ pdb_b 20 data/dummy.pdb
         """
-        
-        # Error (file not found)
-        sys.argv = ['', '20', os.path.join(data_dir, 'pico.pdb')]
-        
-        # Execute the script
+
+        sys.argv = ['', '20', os.path.join(data_dir, 'dummy.pdb')]
+
         self.exec_module()
-        
+
         self.assertEqual(self.retcode, 1)
-        self.assertEqual(len(self.stdout), 0)  # no output
-        self.assertEqual(self.stderr[0], "ERROR! First argument is not an option: '20'")
+        self.assertEqual(len(self.stdout), 0)
+        self.assertEqual(self.stderr[0], 
+                         "ERROR! First argument is not an option: '20'")
+
+
+if __name__ == '__main__':
+    from config import test_dir
+
+    mpath = os.path.abspath(os.path.join(test_dir, '..'))
+    sys.path.insert(0, mpath)  # so we load dev files before  any installation
+
+    unittest.main()

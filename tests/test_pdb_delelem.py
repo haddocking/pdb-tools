@@ -16,7 +16,7 @@
 # limitations under the License.
 
 """
-Unit Tests for `pdb_delchain`.
+Unit Tests for `pdb_delelem`.
 """
 
 import os
@@ -34,7 +34,7 @@ class TestTool(unittest.TestCase):
 
     def setUp(self):
         # Dynamically import the module
-        name = 'bin.pdb_delchain'
+        name = 'bin.pdb_delelem'
         self.module = __import__(name, fromlist=[''])
 
     def exec_module(self):
@@ -55,37 +55,37 @@ class TestTool(unittest.TestCase):
 
     def test_default(self):
         """
-        $ pdb_delchain -A data/dummy.pdb
+        $ pdb_delelem -H data/dummy.pdb
         """
 
         # Simulate input
-        # pdb_delchain dummy.pdb
-        sys.argv = ['', '-A', os.path.join(data_dir, 'dummy.pdb')]
+        # pdb_delelem dummy.pdb
+        sys.argv = ['', '-H', os.path.join(data_dir, 'dummy.pdb')]
 
         # Execute the script
         self.exec_module()
 
         # Validate results
         self.assertEqual(self.retcode, 0)  # ensure the program exited OK.
-        self.assertEqual(len(self.stdout), 144)  # deleted chain A (60 atoms)
+        self.assertEqual(len(self.stdout), 130)  # deleted 74 protons
         self.assertEqual(len(self.stderr), 0)  # no errors
 
     def test_multiple(self):
         """
-        $ pdb_delchain -A,B data/dummy.pdb
+        $ pdb_delelem -CH data/dummy.pdb
         """
 
-        sys.argv = ['', '-A,B', os.path.join(data_dir, 'dummy.pdb')]
+        sys.argv = ['', '-C,H', os.path.join(data_dir, 'dummy.pdb')]
 
         self.exec_module()
 
         self.assertEqual(self.retcode, 0)  # ensure the program exited OK.
-        self.assertEqual(len(self.stdout), 91)  # deleted chains A+B (153 atoms)
+        self.assertEqual(len(self.stdout), 89)  # deleted protons and 41 carbons
         self.assertEqual(len(self.stderr), 0)  # no errors
 
     def test_file_not_found(self):
         """
-        $ pdb_delchain not_existing.pdb
+        $ pdb_delelem not_existing.pdb
         """
 
         afile = os.path.join(data_dir, 'not_existing.pdb')
@@ -100,7 +100,7 @@ class TestTool(unittest.TestCase):
 
     def test_file_missing(self):
         """
-        $ pdb_delchain -A
+        $ pdb_delelem -A
         """
 
         sys.argv = ['', '-A']
@@ -114,7 +114,7 @@ class TestTool(unittest.TestCase):
 
     def test_helptext(self):
         """
-        $ pdb_delchain
+        $ pdb_delelem
         """
 
         sys.argv = ['']
@@ -127,7 +127,7 @@ class TestTool(unittest.TestCase):
 
     def test_invalid_option(self):
         """
-        $ pdb_delchain data/dummy.pdb
+        $ pdb_delelem data/dummy.pdb
         """
 
         sys.argv = ['', os.path.join(data_dir, 'dummy.pdb')]
@@ -137,25 +137,25 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.retcode, 1)
         self.assertEqual(len(self.stdout), 0)
         self.assertEqual(self.stderr[0][:47],
-                         "ERROR!! You must provide at least one chain ide")
+                         "ERROR!! You must provide at least one element n")
 
     def test_invalid_option_2(self):
         """
-        $ pdb_delchain -AB data/dummy.pdb
+        $ pdb_delelem -ABD data/dummy.pdb
         """
 
-        sys.argv = ['', '-AB', os.path.join(data_dir, 'dummy.pdb')]
+        sys.argv = ['', '-ABC', os.path.join(data_dir, 'dummy.pdb')]
 
         self.exec_module()
 
         self.assertEqual(self.retcode, 1)
         self.assertEqual(len(self.stdout), 0)
-        self.assertEqual(self.stderr[0][:40],
-                         "ERROR!! Chain identifier name is invalid")
+        self.assertEqual(self.stderr[0][:32],
+                         "ERROR!! Element name is invalid:")
 
     def test_not_an_option(self):
         """
-        $ pdb_delchain 20 data/dummy.pdb
+        $ pdb_delelem 20 data/dummy.pdb
         """
 
         sys.argv = ['', '20', os.path.join(data_dir, 'dummy.pdb')]

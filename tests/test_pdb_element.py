@@ -23,7 +23,7 @@ import os
 import sys
 import unittest
 
-from config import data_dir, output_dir
+from config import data_dir
 from utils import OutputCapture
 
 
@@ -36,12 +36,12 @@ class TestTool(unittest.TestCase):
         # Dynamically import the module
         name = 'bin.pdb_element'
         self.module = __import__(name, fromlist=[''])
-    
+
     def exec_module(self):
         """
         Execs module.
         """
-        
+
         with OutputCapture() as output:
             try:
                 self.module.main()
@@ -50,69 +50,109 @@ class TestTool(unittest.TestCase):
 
         self.stdout = output.stdout
         self.stderr = output.stderr
-        
+
         return
-    
-    def read_prepare(self, input_file, output_file):
+
+    def test_default(self):
         """
-        Prepares input and output common to the different tests.
+        $ pdb_element data/dummy.pdb
         """
-        
-        with open(input_file) as ifile:
-            self.len_original = len(ifile.readlines())
-        
-        with open(output_file) as ofile:
-            self.output_data = [l.strip("\n") for l in ofile]
-        
-        return
-    
-    def test_valid_1(self):
-        """
-        pdb_element - adds elements C,N,H
-        """
-        
-        input_file = os.path.join(data_dir, 'full_example.pdb')
-        output_file = os.path.join(output_dir, 'output_pdb_element_1.pdb')
-        
-        sys.argv = ['', input_file]  # simulate
+
+        # Simulate input
+        sys.argv = ['', os.path.join(data_dir, 'dummy.pdb')]
+
         # Execute the script
-        
-        self.read_prepare(input_file, output_file)
         self.exec_module()
-        
-        self.assertEqual(self.retcode, 0)  # ensure the program exited gracefully.
-        self.assertEqual(len(self.stdout), self.len_original)  # no lines deleted
+
+        # Validate results
+        self.assertEqual(self.retcode, 0)  # ensure the program exited OK.
+        self.assertEqual(len(self.stdout), 204)  # no lines deleted
         self.assertEqual(len(self.stderr), 0)  # no errors
-        self.assertEqual(self.stdout, self.output_data)
-    
-    def test_FileNotFound(self):
+
+        element_cols = [l[76:78] for l in self.stdout]
+
+        # Test content
+        assigned = [l for l in element_cols if l.strip()]
+        self.assertEqual(len(assigned), 185)  # ignore TER/END & headers
+
+        # Test order
+        element_list = ['  ', '  ', '  ', '  ', '  ', '  ', '', '', '', '', '',
+                        '', '', ' N', ' H', ' H', ' H', ' C', ' H', ' C', ' H',
+                        ' H', ' C', ' H', ' H', ' C', ' H', ' H', ' N', ' H',
+                        ' C', ' N', ' H', ' H', ' N', ' H', ' H', ' C', ' O',
+                        ' N', ' H', ' C', ' H', ' C', ' H', ' H', ' C', ' H',
+                        ' H', ' C', ' O', ' O', ' C', ' O', ' N', ' H', ' C',
+                        ' H', ' C', ' H', ' H', ' H', ' C', ' O', '', ' N',
+                        ' H', ' H', ' H', ' C', ' C', ' H', ' C', ' H', ' H',
+                        ' C', ' O', ' N', ' H', ' H', ' C', ' O', ' N', ' H',
+                        ' C', ' H', ' C', ' H', ' H', ' C', ' H', ' H', ' C',
+                        ' H', ' H', ' N', ' H', ' C', ' N', ' H', ' H', ' N',
+                        ' H', ' H', ' C', ' O', ' N', ' H', ' C', ' H', ' C',
+                        ' H', ' H', ' C', ' H', ' H', ' C', ' O', ' O', ' C',
+                        ' O', '  ', ' N', ' H', ' H', ' H', ' C', ' H', ' C',
+                        ' H', ' H', ' C', ' H', ' H', ' C', ' H', ' H', ' N',
+                        ' H', ' C', ' N', ' H', ' H', ' N', ' H', ' H', ' C',
+                        ' O', ' N', ' H', ' C', ' H', ' C', ' H', ' H', ' C',
+                        ' H', ' H', ' C', ' O', ' O', ' C', ' O', ' N', ' C',
+                        ' C', ' O', ' C', ' C', ' S', ' C', '  ', ' P', ' O',
+                        ' O', ' O', ' C', ' C', ' O', ' C', ' O', ' C', ' C',
+                        ' N', ' C', ' O', ' N', ' C', ' O', ' C', ' C', ' C',
+                        'CA', ' O', ' O', ' O', ' O', ' O', ' O', ' O', ' O',
+                        '  ', '', '']
+
+        self.assertEqual(element_cols, element_list)
+
+    def test_file_not_found(self):
         """
-        pdb_element - file not found
+        $ pdb_element not_existing.pdb
         """
-        
+
         # Error (file not found)
-        not_there = os.path.join(data_dir, 'not_there.pdb')
-        sys.argv = ['', not_there]
-        
+        afile = os.path.join(data_dir, 'not_existing.pdb')
+        sys.argv = ['', afile]
+
+        # Execute the script
+        self.exec_module()
+
+        self.assertEqual(self.retcode, 1)  # exit code is 1 (error)
+        self.assertEqual(len(self.stdout), 0)  # nothing written to stdout
+        self.assertEqual(self.stderr[0][:22],
+                         "ERROR!! File not found")  # proper error message
+
+    def test_helptext(self):
+        """
+        $ pdb_element
+        """
+
+        sys.argv = ['']
+
         # Execute the script
         self.exec_module()
 
         self.assertEqual(self.retcode, 1)  # ensure the program exited gracefully.
         self.assertEqual(len(self.stdout), 0)  # no output
-        self.assertEqual(self.stderr[0],
-                         "ERROR!! File not found or not readable: '{}'".format(not_there))
-    
-    def test_NothingProvided(self):
+        self.assertEqual(self.stderr, self.module.__doc__.split("\n")[:-1])
+
+    def test_invalid_option(self):
         """
-        pdb_element - nothing provided
+        $ pdb_element -A data/dummy.pdb
         """
-        
-        sys.argv = ['']
-        
+
+        sys.argv = ['', '-A', os.path.join(data_dir, 'dummy.pdb')]
+
         # Execute the script
         self.exec_module()
-        
-        self.assertEqual(self.retcode, 1)  # ensure the program exited gracefully.
-        self.assertEqual(len(self.stdout), 0)  # no output
-        self.assertEqual(self.stderr, self.module.__doc__.split("\n")[:-1])
-    
+
+        self.assertEqual(self.retcode, 1)
+        self.assertEqual(len(self.stdout), 0)
+        self.assertEqual(self.stderr[0][:36],
+                         "ERROR!! Script takes 1 argument, not")
+
+
+if __name__ == '__main__':
+    from config import test_dir
+
+    mpath = os.path.abspath(os.path.join(test_dir, '..'))
+    sys.path.insert(0, mpath)  # so we load dev files before  any installation
+
+    unittest.main()

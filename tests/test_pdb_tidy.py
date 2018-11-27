@@ -16,7 +16,7 @@
 # limitations under the License.
 
 """
-Unit Tests for `pdb_wc`.
+Unit Tests for `pdb_tidy`.
 """
 
 import os
@@ -34,7 +34,7 @@ class TestTool(unittest.TestCase):
 
     def setUp(self):
         # Dynamically import the module
-        name = 'bin.pdb_wc'
+        name = 'bin.pdb_tidy'
         self.module = __import__(name, fromlist=[''])
 
     def exec_module(self):
@@ -55,7 +55,7 @@ class TestTool(unittest.TestCase):
 
     def test_default(self):
         """
-        $ pdb_wc data/dummy.pdb
+        $ pdb_tidy data/dummy.pdb
         """
 
         fpath = os.path.join(data_dir, 'dummy.pdb')
@@ -65,42 +65,20 @@ class TestTool(unittest.TestCase):
         self.exec_module()
 
         # Validate results
-        self.assertEqual(self.retcode, 0)
-        self.assertEqual(len(self.stdout), 8)
-        self.assertEqual(len(self.stderr), 0)
-
-        self.assertEqual(self.stdout,
-                         ["No. models:\t1",
-                          "No. chains:\t4\t(   4.0/model)",
-                          "No. residues:\t10\t(  10.0/model)",
-                          "No. atoms:\t176\t( 176.0/model)",
-                          "No. HETATM:\t9",
-                          "Multiple Occ.:\tTrue",
-                          "Res. Inserts:\tFalse",
-                          "Has seq. gaps:\tTrue"])
-
-    def test_single_option(self):
-        """
-        $ pdb_wc -m data/ensemble_OK.pdb
-        """
-
-        fpath = os.path.join(data_dir, 'ensemble_OK.pdb')
-        sys.argv = ['', '-m', fpath]
-
-        # Execute the script
-        self.exec_module()
-
-        # Validate results
         self.assertEqual(self.retcode, 0)  # ensure the program exited OK.
-        self.assertEqual(len(self.stdout), 1)
+        self.assertEqual(len(self.stdout), 207)
         self.assertEqual(len(self.stderr), 0)  # no errors
 
-        self.assertEqual(self.stdout,
-                         ["No. models:\t2"])
+        # Check if we added TER statements correctly
+        n_ter = len([r for r in self.stdout if r.startswith('TER')])
+        self.assertEqual(n_ter, 5)
+
+        # Check if we added END statements correctly
+        self.assertTrue(self.stdout[-1].startswith('END'))
 
     def test_file_not_found(self):
         """
-        $ pdb_wc not_existing.pdb
+        $ pdb_tidy not_existing.pdb
         """
 
         # Error (file not found)
@@ -117,7 +95,7 @@ class TestTool(unittest.TestCase):
 
     def test_helptext(self):
         """
-        $ pdb_wc
+        $ pdb_tidy
         """
 
         sys.argv = ['']
@@ -131,10 +109,10 @@ class TestTool(unittest.TestCase):
 
     def test_invalid_option(self):
         """
-        $ pdb_wc -A data/dummy.pdb
+        $ pdb_tidy -A data/dummy.pdb
         """
 
-        sys.argv = ['', '-X', os.path.join(data_dir, 'dummy.pdb')]
+        sys.argv = ['', '-A', os.path.join(data_dir, 'dummy.pdb')]
 
         # Execute the script
         self.exec_module()
@@ -142,7 +120,7 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.retcode, 1)
         self.assertEqual(len(self.stdout), 0)
         self.assertEqual(self.stderr[0][:36],
-                         "ERROR!! The following options are no")
+                         "ERROR!! Script takes 1 argument, not")
 
 
 if __name__ == '__main__':

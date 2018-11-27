@@ -23,7 +23,7 @@ import os
 import sys
 import unittest
 
-from config import data_dir, output_dir
+from config import data_dir
 from utils import OutputCapture
 
 
@@ -36,12 +36,12 @@ class TestTool(unittest.TestCase):
         # Dynamically import the module
         name = 'bin.pdb_validate'
         self.module = __import__(name, fromlist=[''])
-    
+
     def exec_module(self):
         """
-        Prepares input and output common to the different tests.
+        Execs module.
         """
-        
+
         with OutputCapture() as output:
             try:
                 self.module.main()
@@ -50,72 +50,102 @@ class TestTool(unittest.TestCase):
 
         self.stdout = output.stdout
         self.stderr = output.stderr
-        
+
         return
-    
-    def test_valid_1(self):
+
+    def test_warnings(self):
         """
-        pdb_validate - pdb okay
+        $ pdb_validate data/dummy.pdb
         """
-        
-        input_file = os.path.join(data_dir, 'nano.pdb')
-        
-        sys.argv = ['', input_file]  # simulate
-        # Execute the script
-        
-        self.exec_module()
-        
-        self.assertEqual(self.retcode, 0)  # ensure the program exited gracefully.
-        self.assertEqual(len(self.stderr), 0)  # no errors
-        self.assertEqual(self.stdout[0], "It *seems* everything is OK.")
-    
-    def test_valid_2(self):
-        """
-        pdb_validate - pdb not okay
-        """
-        
-        input_file = os.path.join(data_dir, 'full_example.pdb')
-        
-        sys.argv = ['', input_file]  # simulate
-        # Execute the script
-        
-        self.exec_module()
-        
-        self.assertEqual(self.retcode, 0)  # ensure the program exited gracefully.
-        self.assertEqual(len(self.stderr), 6)  # with errors
-        self.assertEqual(self.stderr[:3],
-                         ["[!] Line 10 is short: 67 < 80",
-                         "[!] Line 12 is short: 24 < 80",
-                         "[!] Line 13 is long: 81 > 80"])
-    
-    def test_FileNotFound(self):
-        """
-        pdb_validate - file not found
-        """
-        
-        # Error (file not found)
-        not_there = os.path.join(data_dir, 'not_there.pdb')
-        sys.argv = ['', not_there]
-        
+
+        fpath = os.path.join(data_dir, 'dummy.pdb')
+        sys.argv = ['', fpath]
+
         # Execute the script
         self.exec_module()
 
-        self.assertEqual(self.retcode, 1)  # ensure the program exited gracefully.
-        self.assertEqual(len(self.stdout), 0)  # no output
-        self.assertEqual(self.stderr[0],
-                         "ERROR!! File not found or not readable: '{}'".format(not_there))
-    
-    def test_NothingProvided(self):
+        # Validate results
+        self.assertEqual(self.retcode, 1)
+        self.assertEqual(len(self.stdout), 0)
+        self.assertEqual(len(self.stderr), 253)
+
+        # Count no. of line length warnings
+        n_warn = len([l for l in self.stderr if 'is short' in l])
+        self.assertEqual(n_warn, 70)
+
+        self.assertEqual(self.stderr[-4],
+                         "[!] Line 203 is short: 26 < 80")
+
+    def test_valid(self):
         """
-        pdb_validate - nothing provided
+        $ pdb_validate data/ensemble_OK.pdb
         """
-        
-        sys.argv = ['']
-        
+
+        fpath = os.path.join(data_dir, 'ensemble_OK.pdb')
+        sys.argv = ['', fpath]
+
         # Execute the script
         self.exec_module()
-        
-        self.assertEqual(self.retcode, 1)  # ensure the program exited gracefully.
-        self.assertEqual(len(self.stdout), 0)  # no output
+
+        # Validate results
+        self.assertEqual(self.retcode, 0)  # ensure the program exited OK.
+        self.assertEqual(len(self.stdout), 1)
+        self.assertEqual(len(self.stderr), 0)  # no errors
+
+        self.assertEqual(self.stdout,
+                         ["It *seems* everything is OK."])
+
+    def test_file_not_found(self):
+        """
+        $ pdb_validate not_existing.pdb
+        """
+
+        # Error (file not found)
+        afile = os.path.join(data_dir, 'not_existing.pdb')
+        sys.argv = ['', afile]
+
+        # Execute the script
+        self.exec_module()
+
+        self.assertEqual(self.retcode, 1)
+        self.assertEqual(len(self.stdout), 0)
+        self.assertEqual(self.stderr[0][:22],
+                         "ERROR!! File not found")
+
+    def test_helptext(self):
+        """
+        $ pdb_validate
+        """
+
+        sys.argv = ['']
+
+        # Execute the script
+        self.exec_module()
+
+        self.assertEqual(self.retcode, 1)
+        self.assertEqual(len(self.stdout), 0)
         self.assertEqual(self.stderr, self.module.__doc__.split("\n")[:-1])
-    
+
+    def test_invalid_option(self):
+        """
+        $ pdb_validate -A data/dummy.pdb
+        """
+
+        sys.argv = ['', '-A', os.path.join(data_dir, 'dummy.pdb')]
+
+        # Execute the script
+        self.exec_module()
+
+        self.assertEqual(self.retcode, 1)
+        self.assertEqual(len(self.stdout), 0)
+        self.assertEqual(self.stderr[0][:36],
+                         "ERROR!! Script takes 1 argument, not")
+
+
+if __name__ == '__main__':
+    from config import test_dir
+
+    mpath = os.path.abspath(os.path.join(test_dir, '..'))
+    sys.path.insert(0, mpath)  # so we load dev files before  any installation
+
+    unittest.main()

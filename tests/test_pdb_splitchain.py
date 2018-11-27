@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Copyright 2018 João Pedro Rodrigues
+# Copyright 1118 João Pedro Rodrigues
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,10 +20,12 @@ Unit Tests for `pdb_splitchain`.
 """
 
 import os
+import shutil
 import sys
+import tempfile
 import unittest
 
-from config import data_dir, output_dir
+from config import data_dir
 from utils import OutputCapture
 
 
@@ -36,16 +38,18 @@ class TestTool(unittest.TestCase):
         # Dynamically import the module
         name = 'bin.pdb_splitchain'
         self.module = __import__(name, fromlist=[''])
-    
-    def test_valid_1(self):
+        self.tempdir = tempfile.mkdtemp()  # set temp dir
+        os.chdir(self.tempdir)
+
+    def tearDown(self):
+        os.chdir(os.path.dirname(os.path.abspath('.')))  # cd ../
+        shutil.rmtree(self.tempdir)
+
+    def exec_module(self):
         """
-        pdb_splitchain - new files created and equal
+        Execs module.
         """
-        
-        input_file = os.path.join(data_dir, 'full_example.pdb')
-        
-        sys.argv = ['', input_file]  # simulate
-        
+
         with OutputCapture() as output:
             try:
                 self.module.main()
@@ -54,46 +58,107 @@ class TestTool(unittest.TestCase):
 
         self.stdout = output.stdout
         self.stderr = output.stderr
-        
-        self.assertEqual(self.retcode, 0)  # ensure the program exited gracefully.
-        self.assertEqual(len(self.stderr), 0)  # no errors
-        
-        
-        for chain in ['A','B','C','D','E','F', 'G']:
-            new_chain = "full_example_{}.pdb".format(chain)
-            test_chain = os.path.join(output_dir, new_chain)
-            
-            ncfh = open(new_chain, 'r')
-            nclines = ncfh.read()
-            
-            tcfh = open(test_chain, 'r')
-            tclines = tcfh.read()
-            
-            self.assertEqual(nclines, tclines)
-            
-            ncfh.close()
-            tcfh.close()
-            
-            os.remove(new_chain)
-        
-    
-    def test_FileNotFound(self):
+
+        return
+
+    def test_default(self):
         """
-        pdb_splitchain - file not found
+        $ pdb_splitchain data/dummy.pdb
         """
 
-        # Error (file not found)
-        sys.argv = ['', os.path.join(data_dir, 'not_there.pdb')]
+        # Copy input file to tempdir
+
+        # Simulate input
+        src = os.path.join(data_dir, 'dummy.pdb')
+        dst = os.path.join(self.tempdir, 'dummy.pdb')
+        shutil.copy(src, dst)
+        sys.argv = ['', dst]
+
         # Execute the script
-        with OutputCapture() as output:
-            try:
-                self.module.main()
-            except SystemExit as e:
-                retcode = e.code
+        self.exec_module()
 
-        stdout = output.stdout
-        stderr = output.stderr
+        # Validate results
+        self.assertEqual(self.retcode, 0)  # ensure the program exited OK.
+        self.assertEqual(len(self.stdout), 0)  # no output
+        self.assertEqual(len(self.stderr), 0)  # no errors
 
-        self.assertEqual(retcode, 1)  # ensure the program exited gracefully.
-        self.assertEqual(len(stdout), 0)  # no output
-        self.assertEqual(stderr[0][:39], "ERROR!! File not found or not readable:")
+        # Read files created by script and then delete
+        ofiles = [f for f in os.listdir(self.tempdir) if f.startswith('dummy')]
+        self.assertEqual(len(ofiles), 4 + 1)  # ori + 4 chains
+
+        # Make sure each file has the chain it should have
+        records = (('ATOM', 'HETATM', 'TER', 'ANISOU'))
+        for fpath in ofiles:
+            if fpath == 'dummy.pdb':
+                continue
+
+            with open(os.path.join(self.tempdir, fpath), 'r') as handle:
+                fname_chain = fpath.split('_')[1][:-4]  # xxx_(X).pdb
+                pdb_chains = [l[21] for l in handle if l.startswith(records)]
+
+                self.assertEqual(fname_chain, list(set(pdb_chains))[0])
+
+    def test_file_not_found(self):
+        """
+        $ pdb_splitchain not_existing.pdb
+        """
+
+        afile = os.path.join(data_dir, 'not_existing.pdb')
+        sys.argv = ['', afile]
+
+        self.exec_module()
+
+        self.assertEqual(self.retcode, 1)  # exit code is 1 (error)
+        self.assertEqual(len(self.stdout), 0)  # nothing written to stdout
+        self.assertEqual(self.stderr[0][:22],
+                         "ERROR!! File not found")  # proper error message
+
+    def test_file_missing(self):
+        """
+        $ pdb_splitchain -10
+        """
+
+        sys.argv = ['', '-10']
+
+        self.exec_module()
+
+        self.assertEqual(self.retcode, 1)
+        self.assertEqual(len(self.stdout), 0)  # no output
+        self.assertEqual(self.stderr[0][:38],
+                         "ERROR!! File not found or not readable")
+
+    def test_helptext(self):
+        """
+        $ pdb_splitchain
+        """
+
+        sys.argv = ['']
+
+        self.exec_module()
+
+        self.assertEqual(self.retcode, 1)  # ensure the program exited gracefully.
+        self.assertEqual(len(self.stdout), 0)  # no output
+        self.assertEqual(self.stderr, self.module.__doc__.split("\n")[:-1])
+
+    def test_invalid_option(self):
+        """
+        $ pdb_splitchain -A data/dummy.pdb
+        """
+
+        sys.argv = ['', '-A', os.path.join(data_dir, 'dummy.pdb')]
+
+        self.exec_module()
+
+        self.assertEqual(self.retcode, 1)
+        self.assertEqual(len(self.stdout), 0)
+        self.assertEqual(self.stderr[0][:22],
+                         "ERROR!! Script takes 1")  # proper error message
+
+
+if __name__ == '__main__':
+    from config import test_dir
+
+    mpath = os.path.abspath(os.path.join(test_dir, '..'))
+    sys.path.insert(0, mpath)  # so we load dev files before  any installation
+
+    unittest.main()

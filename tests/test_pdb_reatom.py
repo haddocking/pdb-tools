@@ -16,7 +16,7 @@
 # limitations under the License.
 
 """
-Unit Tests for `pdb_reres`.
+Unit Tests for `pdb_reatom`.
 """
 
 import os
@@ -34,7 +34,7 @@ class TestTool(unittest.TestCase):
 
     def setUp(self):
         # Dynamically import the module
-        name = 'bin.pdb_reres'
+        name = 'bin.pdb_reatom'
         self.module = __import__(name, fromlist=[''])
 
     def exec_module(self):
@@ -55,11 +55,11 @@ class TestTool(unittest.TestCase):
 
     def test_default(self):
         """
-        $ pdb_reres data/dummy.pdb
+        $ pdb_reatom data/dummy.pdb
         """
 
         # Simulate input
-        # pdb_reres dummy.pdb
+        # pdb_reatom dummy.pdb
         sys.argv = ['', os.path.join(data_dir, 'dummy.pdb')]
 
         # Execute the script
@@ -71,29 +71,33 @@ class TestTool(unittest.TestCase):
         self.assertEqual(len(self.stderr), 0)  # no errors
 
         records = (('ATOM', 'HETATM'))
-        resid_list = [int(l[22:26]) for l in self.stdout
-                      if l.startswith(records)]
+        serial_list = [int(l[6:11]) for l in self.stdout
+                       if l.startswith(records)]
 
-        expected = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                    1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-                    2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4,
-                    4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
-                    5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 6, 6,
-                    6, 6, 6, 6, 6, 6, 6, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
-                    7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 8, 8, 8, 8, 8, 8, 8,
-                    8, 8, 8, 8, 8, 8, 8, 8, 9, 9, 9, 9, 9, 9, 9, 9, 10, 10, 10,
-                    10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,
-                    10, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
+        expected = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17,
+                    18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32,
+                    33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47,
+                    48, 49, 50, 51, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63,
+                    64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78,
+                    79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93,
+                    94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106,
+                    107, 108, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119,
+                    120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131,
+                    132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143,
+                    144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155,
+                    156, 157, 158, 160, 161, 162, 163, 164, 165, 166, 167, 168,
+                    169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180,
+                    181, 182, 183, 184, 185, 186, 187, 188]
 
-        self.assertEqual(resid_list, expected)
+        self.assertEqual(serial_list, expected)
 
     def test_two_options_pos(self):
         """
-        $ pdb_reres -10 data/dummy.pdb
+        $ pdb_reatom -10 data/dummy.pdb
         """
 
         # Simulate input
-        # pdb_reres dummy.pdb
+        # pdb_reatom dummy.pdb
         sys.argv = ['', '-10', os.path.join(data_dir, 'dummy.pdb')]
 
         # Execute the script
@@ -105,28 +109,29 @@ class TestTool(unittest.TestCase):
         self.assertEqual(len(self.stderr), 0)  # no errors
 
         records = (('ATOM', 'HETATM'))
-        resid_list = [int(l[22:26]) for l in self.stdout
-                      if l.startswith(records)]
+        serial_list = [int(l[6:11]) for l in self.stdout
+                       if l.startswith(records)]
 
-        expected = [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,
-                    10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 11, 11, 11, 11,
-                    11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 12, 12, 12, 12,
-                    12, 12, 12, 12, 12, 12, 13, 13, 13, 13, 13, 13, 13, 13, 13,
-                    13, 13, 13, 13, 13, 13, 13, 13, 14, 14, 14, 14, 14, 14, 14,
-                    14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14,
-                    14, 14, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
-                    15, 15, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16,
-                    16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 17, 17,
-                    17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 18, 18,
-                    18, 18, 18, 18, 18, 18, 19, 19, 19, 19, 19, 19, 19, 19, 19,
-                    19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 20, 21, 22, 23,
-                    24, 25, 26, 27, 28]
+        expected = [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
+                    25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39,
+                    40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54,
+                    55, 56, 57, 58, 59, 60, 62, 63, 64, 65, 66, 67, 68, 69, 70,
+                    71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85,
+                    86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+                    101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112,
+                    113, 114, 115, 116, 117, 119, 120, 121, 122, 123, 124, 125,
+                    126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137,
+                    138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149,
+                    150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161,
+                    162, 163, 164, 165, 166, 167, 169, 170, 171, 172, 173, 174,
+                    175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186,
+                    187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197]
 
-        self.assertEqual(resid_list, expected)
+        self.assertEqual(serial_list, expected)
 
     def test_two_options_neg(self):
         """
-        $ pdb_reres --10 data/dummy.pdb
+        $ pdb_reatom --10 data/dummy.pdb
         """
 
         sys.argv = ['', '--10', os.path.join(data_dir, 'dummy.pdb')]
@@ -138,31 +143,32 @@ class TestTool(unittest.TestCase):
         self.assertEqual(len(self.stderr), 0)
 
         records = (('ATOM', 'HETATM'))
-        resid_list = [int(l[22:26]) for l in self.stdout
-                      if l.startswith(records)]
+        serial_list = [int(l[6:11]) for l in self.stdout
+                       if l.startswith(records)]
 
-        expected = [-10, -10, -10, -10, -10, -10, -10, -10, -10, -10, -10, -10,
-                    -10, -10, -10, -10, -10, -10, -10, -10, -10, -10, -10, -10,
-                    -10, -10, -9, -9, -9, -9, -9, -9, -9, -9, -9, -9, -9, -9,
-                    -9, -9, -9, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -7, -7,
-                    -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7,
-                    -6, -6, -6, -6, -6, -6, -6, -6, -6, -6, -6, -6, -6, -6, -6,
-                    -6, -6, -6, -6, -6, -6, -6, -6, -6, -5, -5, -5, -5, -5, -5,
-                    -5, -5, -5, -5, -5, -5, -5, -5, -5, -4, -4, -4, -4, -4, -4,
-                    -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4,
-                    -4, -4, -4, -4, -4, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3,
-                    -3, -3, -3, -3, -3, -2, -2, -2, -2, -2, -2, -2, -2, -1, -1,
-                    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-                    -1, -1, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8]
+        expected = [-10, -9, -8, -7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5,
+                    6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
+                    22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36,
+                    37, 38, 39, 40, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52,
+                    53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67,
+                    68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82,
+                    83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97,
+                    99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110,
+                    111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122,
+                    123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134,
+                    135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146,
+                    147, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159,
+                    160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171,
+                    172, 173, 174, 175, 176, 177]
 
-        self.assertEqual(resid_list, expected)
+        self.assertEqual(serial_list, expected)
 
-    def test_too_many_residues(self):
+    def test_too_many_atoms(self):
         """
-        $ pdb_reres -9998 data/dummy.pdb
+        $ pdb_reatom -99998 data/dummy.pdb
         """
 
-        sys.argv = ['', '-9998', os.path.join(data_dir, 'dummy.pdb')]
+        sys.argv = ['', '-99998', os.path.join(data_dir, 'dummy.pdb')]
 
         self.exec_module()
 
@@ -171,11 +177,11 @@ class TestTool(unittest.TestCase):
         self.assertEqual(len(self.stderr), 1)
 
         self.assertEqual(self.stderr[0][:22],
-                         "Cannot set residue num")  # proper error message
+                         "Cannot set atom serial")  # proper error message
 
     def test_file_not_found(self):
         """
-        $ pdb_reres not_existing.pdb
+        $ pdb_reatom not_existing.pdb
         """
 
         afile = os.path.join(data_dir, 'not_existing.pdb')
@@ -190,7 +196,7 @@ class TestTool(unittest.TestCase):
 
     def test_file_missing(self):
         """
-        $ pdb_reres -10
+        $ pdb_reatom -10
         """
 
         sys.argv = ['', '-10']
@@ -204,7 +210,7 @@ class TestTool(unittest.TestCase):
 
     def test_helptext(self):
         """
-        $ pdb_reres
+        $ pdb_reatom
         """
 
         sys.argv = ['']
@@ -217,7 +223,7 @@ class TestTool(unittest.TestCase):
 
     def test_invalid_option(self):
         """
-        $ pdb_reres -A data/dummy.pdb
+        $ pdb_reatom -A data/dummy.pdb
         """
 
         sys.argv = ['', '-A', os.path.join(data_dir, 'dummy.pdb')]
@@ -227,11 +233,11 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.retcode, 1)
         self.assertEqual(len(self.stdout), 0)
         self.assertEqual(self.stderr[0][:47],
-                         "ERROR!! You provided an invalid residue number:")
+                         "ERROR!! You provided an invalid atom serial num")
 
     def test_not_an_option(self):
         """
-        $ pdb_reres 11 data/dummy.pdb
+        $ pdb_reatom 11 data/dummy.pdb
         """
 
         sys.argv = ['', '11', os.path.join(data_dir, 'dummy.pdb')]

@@ -23,7 +23,7 @@ import os
 import sys
 import unittest
 
-from config import data_dir, output_dir
+from config import data_dir
 from utils import OutputCapture
 
 
@@ -36,12 +36,12 @@ class TestTool(unittest.TestCase):
         # Dynamically import the module
         name = 'bin.pdb_merge'
         self.module = __import__(name, fromlist=[''])
-    
+
     def exec_module(self):
         """
         Execs module.
         """
-        
+
         with OutputCapture() as output:
             try:
                 self.module.main()
@@ -50,73 +50,62 @@ class TestTool(unittest.TestCase):
 
         self.stdout = output.stdout
         self.stderr = output.stderr
-        
+
         return
-    
-    def read_prepare(self, input_file1, input_file2, output_file):
+
+    def test_default(self):
         """
-        Prepares input and output common to the different tests.
+        $ pdb_merge data/dummy.pdb
         """
-        
-        with open(input_file1) as ifile:
-            self.len_infile1 = len(ifile.readlines())
-        
-        with open(input_file2) as ifile:
-            self.len_infile2 = len(ifile.readlines())
-        
-        with open(output_file) as ofile:
-            self.output_data = [l.strip("\n") for l in ofile]
-        
-        return
-    
-    def test_valid_1(self):
-        """
-        pdb_merge - merge micro and nano
-        """
-        
-        input_file1 = os.path.join(data_dir, 'full_example.pdb')
-        input_file2 = os.path.join(data_dir, 'nano.pdb')
-        output_file = os.path.join(output_dir, 'output_pdb_merge_1.pdb')
-        
-        sys.argv = ['', input_file1, input_file2]  # simulate
-        
-        # Execute the script
-        self.read_prepare(input_file1, input_file2, output_file)
-        self.exec_module()
-        
-        self.assertEqual(self.retcode, 0)  # ensure the program exited gracefully.
-        self.assertEqual(len(self.stderr), 0)  # no errors
-        self.assertEqual(len(self.stdout), (self.len_infile1 + self.len_infile2))  # lines deleted
-        self.assertEqual(self.stdout, self.output_data)
-    
-    def test_FileNotFound(self):
-        """
-        pdb_merge - file not found
-        """
-        
-        # Error (file not found)
-        not_there = os.path.join(data_dir, 'not_there.pdb')
-        sys.argv = ['', not_there]
-        
+
+        # Simulate input
+        sys.argv = ['', os.path.join(data_dir, 'dummy.pdb'),
+                    os.path.join(data_dir, 'dummy.pdb')]
+
         # Execute the script
         self.exec_module()
 
-        self.assertEqual(self.retcode, 1)  # ensure the program exited gracefully.
-        self.assertEqual(len(self.stdout), 0)  # no output
-        self.assertEqual(self.stderr[0],
-                         "ERROR!! File not found or not readable: '{}'".format(not_there))
-    
-    def test_NothingProvided(self):
+        # Validate results
+        self.assertEqual(self.retcode, 0)  # ensure the program exited OK.
+        self.assertEqual(len(self.stdout), 408)  # no lines deleted
+        self.assertEqual(len(self.stderr), 0)  # no errors
+
+    def test_file_not_found(self):
         """
-        pdb_merge - nothing provided
+        $ pdb_merge not_existing.pdb
         """
-        
-        sys.argv = ['']
-        
+
+        # Error (file not found)
+        afile = os.path.join(data_dir, 'not_existing.pdb')
+        sys.argv = ['', afile]
+
         # Execute the script
         self.exec_module()
-        
-        self.assertEqual(self.retcode, 1)  # ensure the program exited gracefully.
+
+        self.assertEqual(self.retcode, 1)  # exit code is 1 (error)
+        self.assertEqual(len(self.stdout), 0)  # nothing written to stdout
+        self.assertEqual(self.stderr[0][:22],
+                         "ERROR!! File not found")  # proper error message
+
+    def test_helptext(self):
+        """
+        $ pdb_merge
+        """
+
+        sys.argv = ['']
+
+        # Execute the script
+        self.exec_module()
+
+        self.assertEqual(self.retcode, 1)
         self.assertEqual(len(self.stdout), 0)  # no output
         self.assertEqual(self.stderr, self.module.__doc__.split("\n")[:-1])
-        
+
+
+if __name__ == '__main__':
+    from config import test_dir
+
+    mpath = os.path.abspath(os.path.join(test_dir, '..'))
+    sys.path.insert(0, mpath)  # so we load dev files before  any installation
+
+    unittest.main()
