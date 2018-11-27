@@ -23,7 +23,8 @@ Usage:
     python pdb_selseg.py -<segment id> <pdb file>
 
 Example:
-    python pdb_selseg.py -C 1CTF.pdb
+    python pdb_selseg.py -C 1CTF.pdb  # selects segment C
+    python pdb_selseg.py -C,D 1CTF.pdb  # selects segments C and D
 
 This program is part of the `pdb-tools` suite of utilities and should not be
 distributed isolatedly. The `pdb-tools` were created to quickly manipulate PDB
@@ -94,19 +95,27 @@ def check_input(args):
         sys.exit(1)
 
     # Validate option
-    if len(option) != 1:
-        emsg = 'ERROR!! You must provide at least ONE segment identifier.'
-        sys.stderr.write(emsg.format(option))
+    option_set = set([o.upper().strip() for o in option.split(',') if o.strip()])
+    if not option_set:
+        emsg = 'ERROR!! You must provide at least one segment identifier\n'
+        sys.stderr.write(emsg)
+        sys.stderr.write(__doc__)
         sys.exit(1)
+    else:
+        for seg_id in option_set:
+            if len(seg_id) > 4:
+                emsg = 'ERROR!! Segment identifier name is invalid: \'{}\'\n'
+                sys.stderr.write(emsg.format(seg_id))
+                sys.stderr.write(__doc__)
+                sys.exit(1)
 
-    return (option, fh)
+    return (option_set, fh)
 
 
-def select_segment_id(fhandle, segment_id):
+def select_segment_id(fhandle, segment_set):
     """Filters the PDB file for specific segment identifiers.
     """
 
-    segment_set = set(segment_id)
     records = ('ATOM', 'HETATM', 'ANISOU')
     for line in fhandle:
         if line.startswith(records):
@@ -117,10 +126,10 @@ def select_segment_id(fhandle, segment_id):
 
 def main():
     # Check Input
-    segment_id, pdbfh = check_input(sys.argv[1:])
+    segment_set, pdbfh = check_input(sys.argv[1:])
 
     # Do the job
-    new_pdb = select_segment_id(pdbfh, segment_id)
+    new_pdb = select_segment_id(pdbfh, segment_set)
 
     try:
         _buffer = []
