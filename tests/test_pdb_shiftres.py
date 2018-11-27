@@ -179,7 +179,7 @@ class TestTool(unittest.TestCase):
 
     def test_file_not_found(self):
         """
-        $ pdb_shiftres not_existing.pdb
+        $ pdb_shiftres -10 not_existing.pdb
         """
 
         afile = os.path.join(data_dir, 'not_existing.pdb')

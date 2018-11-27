@@ -55,7 +55,7 @@ class TestTool(unittest.TestCase):
 
     def test_option_1(self):
         """
-        $ pdb_rplresname -D:Z data/dummy.pdb
+        $ pdb_rplresname -MET:DRG data/dummy.pdb
         """
 
         sys.argv = ['', '-MET:DRG', os.path.join(data_dir, 'dummy.pdb')]
@@ -73,7 +73,7 @@ class TestTool(unittest.TestCase):
 
     def test_option_2(self):
         """
-        $ pdb_rplresname -A: data/dummy.pdb
+        $ pdb_rplresname -DT:DA data/dummy.pdb
         """
 
         # Simulate input

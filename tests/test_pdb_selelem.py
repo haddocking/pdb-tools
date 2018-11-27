@@ -72,7 +72,7 @@ class TestTool(unittest.TestCase):
 
     def test_multiple(self):
         """
-        $ pdb_selelem -CA,CB data/dummy.pdb
+        $ pdb_selelem -C,O data/dummy.pdb
         """
 
         sys.argv = ['', '-C,O', os.path.join(data_dir, 'dummy.pdb')]

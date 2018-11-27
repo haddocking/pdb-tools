@@ -55,7 +55,7 @@ class TestTool(unittest.TestCase):
 
     def test_default(self):
         """
-        $ pdb_keepcoord -A data/dummy.pdb
+        $ pdb_keepcoord data/dummy.pdb
         """
 
         # Simulate input

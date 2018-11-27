@@ -94,7 +94,7 @@ class TestTool(unittest.TestCase):
 
     def test_file_not_found(self):
         """
-        $ pdb_chain not_existing.pdb
+        $ pdb_chain -A not_existing.pdb
         """
 
         afile = os.path.join(data_dir, 'not_existing.pdb')

@@ -78,7 +78,7 @@ class TestTool(unittest.TestCase):
 
     def test_select_occupancy(self):
         """
-        $ pdb_delaltloc -B data/dummy.pdb
+        $ pdb_delaltloc -A data/dummy.pdb
         """
 
         sys.argv = ['', '-A', os.path.join(data_dir, 'dummy.pdb')]

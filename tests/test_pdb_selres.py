@@ -170,7 +170,7 @@ class TestTool(unittest.TestCase):
 
     def test_invalid_range_4(self):
         """
-        $ pdb_selres -5:1: data/dummy.pdb
+        $ pdb_selres -5:1:: data/dummy.pdb
         """
 
         # Simulate input

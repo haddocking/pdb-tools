@@ -131,7 +131,7 @@ class TestTool(unittest.TestCase):
 
     def test_invalid_option(self):
         """
-        $ pdb_wc -A data/dummy.pdb
+        $ pdb_wc -X data/dummy.pdb
         """
 
         sys.argv = ['', '-X', os.path.join(data_dir, 'dummy.pdb')]

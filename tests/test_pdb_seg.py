@@ -94,7 +94,7 @@ class TestTool(unittest.TestCase):
 
     def test_file_not_found(self):
         """
-        $ pdb_seg not_existing.pdb
+        $ pdb_seg -A not_existing.pdb
         """
 
         afile = os.path.join(data_dir, 'not_existing.pdb')
@@ -136,7 +136,7 @@ class TestTool(unittest.TestCase):
 
     def test_invalid_option(self):
         """
-        $ pdb_seg -AH data/dummy.pdb
+        $ pdb_seg -AHASX data/dummy.pdb
         """
 
         sys.argv = ['', '-AHASX', os.path.join(data_dir, 'dummy.pdb')]

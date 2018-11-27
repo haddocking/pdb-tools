@@ -55,7 +55,7 @@ class TestTool(unittest.TestCase):
 
     def test_one_option(self):
         """
-        $ pdb_selseg -A data/dummy.pdb
+        $ pdb_selseg -Z data/dummy.pdb
         """
 
         # Simulate input
@@ -141,7 +141,7 @@ class TestTool(unittest.TestCase):
 
     def test_invalid_option_2(self):
         """
-        $ pdb_selseg -AB data/dummy.pdb
+        $ pdb_selseg -ABCDE data/dummy.pdb
         """
 
         sys.argv = ['', '-ABCDE', os.path.join(data_dir, 'dummy.pdb')]

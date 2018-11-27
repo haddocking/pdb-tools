@@ -72,7 +72,7 @@ class TestTool(unittest.TestCase):
 
     def test_multiple(self):
         """
-        $ pdb_delelem -CH data/dummy.pdb
+        $ pdb_delelem -C,H data/dummy.pdb
         """
 
         sys.argv = ['', '-C,H', os.path.join(data_dir, 'dummy.pdb')]

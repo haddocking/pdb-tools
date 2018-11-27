@@ -55,7 +55,7 @@ class TestTool(unittest.TestCase):
 
     def test_default(self):
         """
-        $ pdb_delhetatm -A data/dummy.pdb
+        $ pdb_delhetatm data/dummy.pdb
         """
 
         # Simulate input

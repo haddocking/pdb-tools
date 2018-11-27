@@ -110,7 +110,7 @@ class TestTool(unittest.TestCase):
 
     def test_file_missing(self):
         """
-        $ pdb_occ -10
+        $ pdb_occ -1.0
         """
 
         sys.argv = ['', '-1.0']

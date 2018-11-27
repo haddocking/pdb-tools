@@ -181,7 +181,7 @@ class TestTool(unittest.TestCase):
 
     def test_file_not_found(self):
         """
-        $ pdb_reatom not_existing.pdb
+        $ pdb_reatom -10 not_existing.pdb
         """
 
         afile = os.path.join(data_dir, 'not_existing.pdb')
