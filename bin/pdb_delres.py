@@ -188,10 +188,7 @@ def delete_residues(fhandle, residue_range, step):
                 prev_res = res_id
                 res_counter += 1
 
-            if int(line[22:26]) not in residue_range:
-                continue
-
-            if res_counter % step != 0:
+            if int(line[22:26]) in residue_range and res_counter % step == 0:
                 continue
 
         yield line
