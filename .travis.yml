@@ -13,10 +13,10 @@ matrix:
 install:
   - pip install flake8 coverage codecov
 
-test_script: 
+script: 
   - "flake8"
   - "coverage run --source=bin/ setup.py test"
   - "coverage xml"
 
-after_test:
+after_success:
   - "codecov --file coverage.xml -X pycov -X gcov"
