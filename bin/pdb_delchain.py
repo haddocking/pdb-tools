@@ -108,14 +108,13 @@ def check_input(args):
                 sys.stderr.write(__doc__)
                 sys.exit(1)
 
-    return (option, fh)
+    return (option_set, fh)
 
 
-def delete_chain(fhandle, chain_id):
+def delete_chain(fhandle, chain_set):
     """Removes specific chains from the structure.
     """
 
-    chain_set = set(chain_id)
     records = ('ATOM', 'HETATM', 'TER', 'ANISOU')
     for line in fhandle:
         if line.startswith(records):
