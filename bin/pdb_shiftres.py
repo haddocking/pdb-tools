@@ -114,6 +114,10 @@ def renumber_residues(fhandle, shifting_factor):
     for line in fhandle:
         if line.startswith(records):
             shifted_resid = int(line[22:26]) + shifting_factor
+            if shifted_resid > 9999:
+                emsg = 'Cannot set residue number above 9999.\n'
+                sys.stderr.write(emsg)
+                sys.exit(1)
             yield line[:22] + str(shifted_resid).rjust(4) + line[26:]
 
         else:
