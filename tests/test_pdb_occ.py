@@ -160,7 +160,7 @@ class TestTool(unittest.TestCase):
 
         self.assertEqual(self.retcode, 1)
         self.assertEqual(len(self.stdout), 0)
-        self.assertEqual(self.stderr[0], 
+        self.assertEqual(self.stderr[0],
                          "ERROR! First argument is not an option: '20'")
 
 
