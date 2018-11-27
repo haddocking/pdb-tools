@@ -167,7 +167,7 @@ def convert_to_pdb(fhandle):
             charge = fields[labels.get('_atom_site.pdbx_formal_charge')]
             try:
                 charge = charge
-            except ValueError as _:
+            except ValueError:
                 charge = '  '
 
             segid = chainid
