@@ -21,11 +21,11 @@ picks the atom with the highest occupancy value. User can define one specific
 location using an option.
 
 Usage:
-    python pdb_selocc.py [-<option>] <pdb file>
+    python pdb_selaltloc.py [-<option>] <pdb file>
 
 Example:
-    python pdb_selocc.py 1CTF.pdb  # picks locations with highest occupancy
-    python pdb_selocc.py -A 1CTF.pdb  # picks alternate locations labelled 'A'
+    python pdb_selaltloc.py 1CTF.pdb  # picks locations with highest occupancy
+    python pdb_selaltloc.py -A 1CTF.pdb  # picks alternate locations labelled 'A'
 
 This program is part of the `pdb-tools` suite of utilities and should not be
 distributed isolatedly. The `pdb-tools` were created to quickly manipulate PDB
