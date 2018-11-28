@@ -90,13 +90,15 @@ def convert_to_mmcif(fhandle):
     _a += '{:10.3f} {:10.3f} {:10.3f} {:10.3f} {:10.3f} {:1s} '
     _a += '{:5s} {:3s} {:1s} {:4s} {:1d}\n'
 
+    yield '# Converted to mmCIF by pdb-tools\n'
+    yield '#\n'
+
     # Headers
     fname, _ = os.path.splitext(os.path.basename(fhandle.name))
     if fname == '<stdin>':
-        fname = 'data_cell'
+        fname = 'cell'
     yield 'data_{}\n'.format(fname)
 
-    yield '# Converted to mmCIF by pdb-tools\n'
     yield '#\n'
     yield 'loop_\n'
     yield '_atom_site.group_PDB\n'
@@ -164,7 +166,7 @@ def convert_to_mmcif(fhandle):
             bfac = float(line[60:66])
 
             charge = line[78:80].strip()
-            if charge == '  ':
+            if charge == '':
                 charge = '?'
 
             yield _a.format(record, serial, element, atname, altloc,
