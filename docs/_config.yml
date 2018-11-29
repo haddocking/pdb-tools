@@ -1,0 +1,10 @@
+title: 'pdb-tools'
+headline: ''
+
+logo: /logo/pdb-tools.png
+show_downloads: true
+description: 'A swiss army knife for editing PDB files.'
+theme: jekyll-theme-minimal
+github:
+  zip_url: https://github.com/JoaoRodrigues/pdb-tools/archive/2.0.0-beta.1.zip
+  tar_url: https://github.com/JoaoRodrigues/pdb-tools/archive/2.0.0-beta.1.tar.gz

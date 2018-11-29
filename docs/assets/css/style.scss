@@ -1,0 +1,16 @@
+---
+---
+
+@import "{{ site.theme }}";
+
+/* Pad image bottom */
+.wrapper img {
+    padding-bottom: 1%;
+}
+
+/* Remove bullets from ordered lists */
+ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
