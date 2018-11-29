@@ -64,7 +64,7 @@ class TestTool(unittest.TestCase):
 
         # Validate results
         self.assertEqual(self.retcode, 0)
-        self.assertEqual(len(self.stdout), 211)
+        self.assertEqual(len(self.stdout), 212)
         self.assertEqual(len(self.stderr), 0)
 
         # Check no of records
@@ -75,7 +75,7 @@ class TestTool(unittest.TestCase):
         self.assertEqual(n_HETATM, 9)
         self.assertEqual(n_coord, 185)
 
-    def test_valid(self):
+    def test_multi_model(self):
         """$ pdb_tocif data/ensemble_OK.pdb"""
 
         fpath = os.path.join(data_dir, 'ensemble_OK.pdb')
@@ -86,7 +86,7 @@ class TestTool(unittest.TestCase):
 
         # Validate results
         self.assertEqual(self.retcode, 0)
-        self.assertEqual(len(self.stdout), 30)
+        self.assertEqual(len(self.stdout), 31)
         self.assertEqual(len(self.stderr), 0)
 
         # Check no of records
@@ -105,7 +105,7 @@ class TestTool(unittest.TestCase):
         # Check number of fields
         atom_lines = [l for l in self.stdout if l.startswith(records)]
         n_fields = list(set(map(lambda x: len(x.split()), atom_lines)))
-        self.assertEqual(n_fields, [20])
+        self.assertEqual(n_fields, [21])
 
     def test_file_not_found(self):
         """$ pdb_tocif not_existing.pdb"""
