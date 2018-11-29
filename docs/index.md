@@ -101,7 +101,7 @@ approach since it makes updating the tools extremely simple.
 
 ```bash
 # To download
-git clone https://github.com/JoaoRodrigues/pdb-tools
+git clone https://github.com/haddocking/pdb-tools
 cd pdb-tools
 
 # To update
@@ -113,7 +113,7 @@ python setup.py install
 
 ## Contributing
 If you want to contribute to the development of `pdb-tools`, provide a bug fix,
-or a new tools, read our `CONTRIBUTING` instructions [here](https://github.com/JoaoRodrigues/pdb-tools/blob/version2/CONTRIBUTING.md).
+or a new tools, read our `CONTRIBUTING` instructions [here](https://github.com/haddocking/pdb-tools/blob/master/CONTRIBUTING.md).
 
 ## License
 `pdb-tools` are open-source and licensed under the Apache License, version 2.0.

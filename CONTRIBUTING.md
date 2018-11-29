@@ -72,7 +72,7 @@ cd pdb-tools
 
 # Add our repository as 'upstream' to make sure you are using the latest
 # version of the code.
-git remote add upstream https://github.com/joaorodrigues/pdb-tools.git
+git remote add upstream https://github.com/haddocking/pdb-tools.git
 
 # Pull our master to update your local version
 # If there are changes, you should push them to the 'master' of your fork.

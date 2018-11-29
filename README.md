@@ -1,9 +1,9 @@
 # pdb-tools
 
 [![PyPI version](https://badge.fury.io/py/pdb-tools.svg)](https://badge.fury.io/py/pdb-tools)
-[![Travis (.org) branch](https://img.shields.io/travis/JoaoRodrigues/pdb-tools/version2.svg?style=flat&label=TravisCI)](https://travis-ci.org/JoaoRodrigues/pdb-tools)
-[![AppVeyor branch](https://img.shields.io/appveyor/ci/JoaoRodrigues/pdb-tools.svg?style=flat&label=AppVeyor)](https://ci.appveyor.com/project/JoaoRodrigues/pdb-tools)
-[![codecov](https://codecov.io/gh/JoaoRodrigues/pdb-tools/branch/version2/graph/badge.svg)](https://codecov.io/gh/JoaoRodrigues/pdb-tools)
+[![Travis (.org) branch](https://img.shields.io/travis/haddocking/pdb-tools/master.svg?style=flat&label=TravisCI)](https://travis-ci.org/haddocking/pdb-tools)
+[![AppVeyor branch](https://img.shields.io/appveyor/ci/haddocking/pdb-tools.svg?style=flat&label=AppVeyor)](https://ci.appveyor.com/project/haddocking/pdb-tools)
+[![codecov](https://codecov.io/gh/haddocking/pdb-tools/branch/master/graph/badge.svg)](https://codecov.io/gh/haddocking/pdb-tools)
 
 
 A swiss army knife for manipulating and editing PDB files.
@@ -47,13 +47,14 @@ features but also some bugs, see [here](#Installing-from-Source).
 
 
 ## What can I do with them?
-The names of the tools should be self-explanatory. Their usage is also pretty
-consistent. Therefore, here is a couple of examples to get you started:
+The names of the tools should be self-explanatory. Their command-line interface
+is also pretty consistent. Therefore, here is a couple of examples to get you
+started:
 
 * Downloading a structure
    ```bash
-   pdb_fetch 1ctf > 1ctf.pdb
-   pdb_fetch -biounit 1brs > 1brs_biounit.pdb
+   pdb_fetch 1brs > 1brs.pdb  # 6 chains
+   pdb_fetch -biounit 1brs > 1brs.pdb  # 2 chains
    ```
 
 * Renumbering a structure
@@ -61,21 +62,36 @@ consistent. Therefore, here is a couple of examples to get you started:
    pdb_reres -1 1ctf.pdb > 1ctf_renumbered.pdb
    ```
 
-* Extracting a particular chain
+* Selecting chain(s)
    ```bash
-   pdb_selchain -A 1brs_biounit.pdb > 1brs_A.pdb
+   pdb_selchain -A 1brs.pdb > 1brs_A.pdb
+   pdb_selchain -A,D 1brs.pdb > 1brs_AD.pdb
    ```
 
-* Downloading, extracting a chain, and extracting its aa sequence
+* Deleting hydrogens
+   ```bash
+   pdb_delelem -H 1brs.pdb > 1brs_noH.pdb
+   ```
+
+* Selecting backbone atoms
+   ```bash
+   pdb_selatom -CA,C,N,O 1brs.pdb > 1brs_bb.pdb
+   ```
+
+* Selecting chains, removing HETATM, and producing a valid PDB file
   ```bash
-  pdb_fetch 1brs | pdb_selchain -A | pdb_toseq > 1brs_A.fasta
+  pdb_selchain -A,D 1brs.pdb | pdb_delhetatm | pdb_tidy > 1brs_AD_noHET.pdb
   ```
 
+*Note: On Windows the tools will have the `.exe` extension.*
+
+
 ## What _can't_ I do with them?
-mmCIF files are not supported. There might be a sister repository `mmcif-tools`
-one day. Also, operations that involve coordinates or numerical calculations are
-usually not in the scope of `pdb-tools`. Use a proper library for that, it will
-be much faster and scalable.
+Operations that involve coordinates or numerical calculations are usually not in
+the scope of `pdb-tools`. Use a proper library for that, it will be much faster
+and scalable. Also, although we provide mmCIF<->PDB converters, we do not support
+large mmCIF files with more than 99999 atoms, or 9999 residues in a single chain.
+Our tools will complain if you try using them on such a molecule. 
 
 
 ## Citation
@@ -96,7 +112,7 @@ approach since it makes updating the tools extremely simple.
 
 ```bash
 # To download
-git clone https://github.com/JoaoRodrigues/pdb-tools
+git clone https://github.com/haddocking/pdb-tools
 cd pdb-tools
 
 # To update
@@ -108,7 +124,7 @@ python setup.py install
 
 ## Contributing
 If you want to contribute to the development of `pdb-tools`, provide a bug fix,
-or a new tools, read our `CONTRIBUTING` instructions [here](https://github.com/JoaoRodrigues/pdb-tools/blob/version2/CONTRIBUTING.md).
+or a new tools, read our `CONTRIBUTING` instructions [here](https://github.com/haddocking/pdb-tools/blob/master/CONTRIBUTING.md).
 
 ## License
 `pdb-tools` are open-source and licensed under the Apache License, version 2.0.
