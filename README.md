@@ -2,7 +2,7 @@
 
 [![PyPI version](https://badge.fury.io/py/pdb-tools.svg)](https://badge.fury.io/py/pdb-tools)
 [![Travis (.org) branch](https://img.shields.io/travis/haddocking/pdb-tools/master.svg?style=flat&label=TravisCI)](https://travis-ci.org/haddocking/pdb-tools)
-[![AppVeyor branch](https://img.shields.io/appveyor/ci/JoaoRodrigues/pdb-tools.svg?style=flat&label=AppVeyor)](https://ci.appveyor.com/project/JoaoRodrigues/pdb-tools-2coq6)
+[![AppVeyor branch](https://img.shields.io/appveyor/ci/JoaoRodrigues/pdb-tools-2coq6.svg?style=flat&label=AppVeyor)](https://ci.appveyor.com/project/JoaoRodrigues/pdb-tools-2coq6)
 [![codecov](https://codecov.io/gh/haddocking/pdb-tools/branch/master/graph/badge.svg)](https://codecov.io/gh/haddocking/pdb-tools)
 
 
