@@ -58,7 +58,7 @@ def _check_pdb_format(fhandle):
     Compares each ATOM/HETATM line with the format defined on the official
     PDB website.
 
-    http://deposit.rcsb.org/adit/docs/pdb_atom_format.html
+    https://www.wwpdb.org/documentation/file-format-content/format33/sect9.html#ATOM
     """
 
     has_error = False
@@ -117,7 +117,7 @@ def _check_pdb_format(fhandle):
 
                     has_error = True
                     break
-        else:
+        elif line[0:3] not in ('END', 'TER'):
             # Do basic line length check
             linelen = len(line)
             if linelen < 80:
@@ -129,7 +129,7 @@ def _check_pdb_format(fhandle):
 
     if has_error:
         print('\nTo understand your errors, read the format specification:')
-        print('  http://deposit.rcsb.org/adit/docs/pdb_atom_format.html')
+        print('  https://www.wwpdb.org/documentation/file-format-content/format33/sect9.html#ATOM')
     else:
         print('It *seems* everything is OK.')
 

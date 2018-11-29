@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/27217350.svg)](https://zenodo.org/badge/latestdoi/27217350)
+
 pdb-tools
 ================================================
 Set of utility scripts in python to manipulate PDB files as streams. Given the generic name, there
