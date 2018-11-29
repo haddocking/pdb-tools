@@ -27,11 +27,11 @@ bin_py = [f[:-3] + '=bin.' + f[:-3] + ':main' for f in binfiles]
 
 setup(
     name='pdb-tools',  # Required
-    version='2.0.0b2',  # Required
+    version='2.0.0-beta.3',  # Required
     description='A swiss army knife for PDB files.',  # Optional
     long_description=long_description,  # Optional
     long_description_content_type='text/markdown',  # Optional (see note above)
-    url='https://github.com/joaorodrigues/pdb-tools',  # Optional
+    url='http://bonvinlab.org/pdb-tools',  # Optional
     author='Joao Rodrigues',  # Optional
     author_email='j.p.g.l.m.rodrigues@gmail.com',  # Optional
     license='Apache Software License, version 2',
@@ -98,8 +98,8 @@ setup(
     # maintainers, and where to support the project financially. The key is
     # what's used to render the link text on PyPI.
     project_urls={  # Optional
-        'Bug Reports': 'https://github.com/joaorodrigues/pdb-tools/issues',
-        'Source': 'https://github.com/joaorodrigues/pdb-tools',
+        'Bug Reports': 'https://github.com/haddocking/pdb-tools/issues',
+        'Source': 'https://github.com/haddocking/pdb-tools',
     },
 
     # Test Suite
