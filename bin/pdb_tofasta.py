@@ -151,7 +151,6 @@ def pdb_to_fasta(fhandle, multi):
 
     # Yield fasta format
     _olw = 60
-
     if multi is None:
         # Remove chain labels and merge into one single sequence
         labels = sorted(set([c[0] for c in sequence]))
@@ -163,8 +162,9 @@ def pdb_to_fasta(fhandle, multi):
         if multi is not None:
             label = chain[0]
             yield '>PDB|' + label + '\n'
+            chain = chain[1:]
 
-        seq = ''.join(chain[1:])
+        seq = ''.join(chain)
         fmt_seq = [seq[i:i + _olw] + '\n' for i in range(0, len(seq), _olw)]
         yield ''.join(fmt_seq)
 
