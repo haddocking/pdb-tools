@@ -67,7 +67,7 @@ class TestTool(unittest.TestCase):
         self.assertEqual(len(self.stdout), 2)
         self.assertEqual(len(self.stderr), 0)  # no errors
 
-        self.assertEqual(self.stdout, ['>PDB|ABCD', 'EANREREMXXXXXXXXXX'])
+        self.assertEqual(self.stdout, ['>PDB|ABCD', 'REANREREMXXXXXXXXXX'])
 
     def test_multi(self):
         """$ pdb_tofasta -multi data/dummy.pdb"""
