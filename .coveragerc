@@ -1,6 +1,6 @@
 [run]
 branch = True
-source = bin/
+source = pdbtools/
 
 [report]
 exclude_lines =

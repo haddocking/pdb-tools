@@ -15,7 +15,7 @@ install:
 
 script: 
   - "flake8"
-  - "coverage run --source=bin/ setup.py test"
+  - "coverage run --source=pdbtools/ setup.py test"
   - "coverage xml"
 
 after_success:
