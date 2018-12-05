@@ -34,7 +34,7 @@ class TestTool(unittest.TestCase):
 
     def setUp(self):
         # Dynamically import the module
-        name = 'bin.pdb_rplresname'
+        name = 'pdbtools.pdb_rplresname'
         self.module = __import__(name, fromlist=[''])
 
     def exec_module(self):

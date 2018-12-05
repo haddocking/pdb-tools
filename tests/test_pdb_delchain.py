@@ -34,7 +34,7 @@ class TestTool(unittest.TestCase):
 
     def setUp(self):
         # Dynamically import the module
-        name = 'bin.pdb_delchain'
+        name = 'pdbtools.pdb_delchain'
         self.module = __import__(name, fromlist=[''])
 
     def exec_module(self):

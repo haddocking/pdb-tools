@@ -34,7 +34,7 @@ class TestTool(unittest.TestCase):
 
     def setUp(self):
         # Dynamically import the module
-        name = 'bin.pdb_delres'
+        name = 'pdbtools.pdb_delres'
         self.module = __import__(name, fromlist=[''])
 
     def exec_module(self):

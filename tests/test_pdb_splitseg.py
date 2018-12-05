@@ -36,7 +36,7 @@ class TestTool(unittest.TestCase):
 
     def setUp(self):
         # Dynamically import the module
-        name = 'bin.pdb_splitseg'
+        name = 'pdbtools.pdb_splitseg'
         self.module = __import__(name, fromlist=[''])
         self.tempdir = tempfile.mkdtemp()  # set temp dir
         os.chdir(self.tempdir)
