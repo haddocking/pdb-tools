@@ -22,12 +22,12 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 
 # Collect names of bin/*py scripts
 # e.g. 'pdb_intersect=bin.pdb_intersect:main',
-binfiles = listdir(path.join(here, 'bin'))
-bin_py = [f[:-3] + '=bin.' + f[:-3] + ':main' for f in binfiles]
+binfiles = listdir(path.join(here, 'pdbtools'))
+bin_py = [f[:-3] + '=pdbtools.' + f[:-3] + ':main' for f in binfiles]
 
 setup(
     name='pdb-tools',  # Required
-    version='2.0.0-beta.4',  # Required
+    version='2.0.0-beta.5',  # Required
     description='A swiss army knife for PDB files.',  # Optional
     long_description=long_description,  # Optional
     long_description_content_type='text/markdown',  # Optional (see note above)
