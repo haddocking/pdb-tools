@@ -1,38 +1,8 @@
-# pdb-tools
-
-[![PyPI version](https://badge.fury.io/py/pdb-tools.svg)](https://badge.fury.io/py/pdb-tools)
-[![Travis (.org) branch](https://img.shields.io/travis/haddocking/pdb-tools/master.svg?style=flat&label=TravisCI)](https://travis-ci.org/haddocking/pdb-tools)
-[![AppVeyor branch](https://img.shields.io/appveyor/ci/JoaoRodrigues/pdb-tools-2coq6.svg?style=flat&label=AppVeyor)](https://ci.appveyor.com/project/JoaoRodrigues/pdb-tools-2coq6)
-[![codecov](https://codecov.io/gh/haddocking/pdb-tools/branch/master/graph/badge.svg)](https://codecov.io/gh/haddocking/pdb-tools)
-
+---
+layout: default
+---
 
 A swiss army knife for manipulating and editing PDB files.
-
-
-## Looking for the _other_ pdb-tools?
-The Harms lab maintains a set of tools also called `pdbtools`, which perform a
-slightly different set of functions. You can find them [here](https://github.com/harmslab/pdbtools).
-
-
-## About
-Manipulating PDB files is often painful. Extracting a particular chain or set of
-residues, renumbering residues, splitting or merging models and chains, or just
-ensuring the file is conforming to the PDB specifications are examples of tasks
-that can be done using any decent parsing library or graphical interface. These,
-however, almost always require 1) scripting knowledge, 2) time, and 3) installing
-one or more programs.
-
-`pdb-tools` were designed to be a swiss-knife for the PDB format. They have no
-external dependencies, besides obviously the [Python programming language](http://www.python.org).
-They are the descendant of a set of old FORTRAN77 programs that had the 
-particular advantage of working with streams, i.e. the output of one script 
-could be piped into another. Since FORTRAN77 is a pain too, I rewrote them in
-Python and added a few more utilities. 
-
-The philosophy of the scripts is simple: one script, one task. If you want to 
-do two things, pipe the scripts together. Requests for new scripts will be taken
-into consideration - use the Issues button or write them yourself and create a
-Pull Request.
 
 
 ## Installation Instructions
@@ -85,13 +55,32 @@ started:
 
 *Note: On Windows the tools will have the `.exe` extension.*
 
-
 ## What _can't_ I do with them?
 Operations that involve coordinates or numerical calculations are usually not in
 the scope of `pdb-tools`. Use a proper library for that, it will be much faster
 and scalable. Also, although we provide mmCIF<->PDB converters, we do not support
 large mmCIF files with more than 99999 atoms, or 9999 residues in a single chain.
 Our tools will complain if you try using them on such a molecule. 
+
+
+## About
+Manipulating PDB files is often painful. Extracting a particular chain or set of
+residues, renumbering residues, splitting or merging models and chains, or just
+ensuring the file is conforming to the PDB specifications are examples of tasks
+that can be done using any decent parsing library or graphical interface. These,
+however, almost always require 1) scripting knowledge, 2) time, and 3) installing
+one or more programs.
+
+`pdb-tools` were designed to be a swiss army knife for the PDB format. The
+philosophy of the scripts is simple: one script, one task. If you want to do two
+things, pipe the scripts together. Requests for new scripts will be taken into
+consideration - use the Issues button or write them yourself and create a Pull
+Request.
+
+
+## Looking for the _other_ pdb-tools?
+The Harms lab maintains a set of tools also called `pdbtools`, which perform a
+slightly different set of functions. You can find them [here](https://github.com/harmslab/pdbtools).
 
 
 ## Citation
