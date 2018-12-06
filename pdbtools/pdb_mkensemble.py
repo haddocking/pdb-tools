@@ -45,9 +45,6 @@ def check_input(args):
     Checks whether to read from stdin/file and validates user input/options.
     """
 
-    # Defaults
-    fl = []  # file list
-
     if len(args) >= 1:
         for fn in args:
             if not os.path.isfile(fn):
@@ -83,9 +80,9 @@ def make_ensemble(f_name_list):
     for fileno, file_name in enumerate(f_name_list, start=1):
 
         yield fmt_MODEL.format(fileno)
-        
+
         fhandle = open(file_name, 'r')
-        
+
         for line in fhandle:
             if line.startswith(records):
                 yield line
