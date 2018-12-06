@@ -41,11 +41,9 @@ __email__ = "j.p.g.l.m.rodrigues@gmail.com"
 
 
 def check_input(args):
-    """Checks whether to read from stdin/file and validates user input/options.
     """
-
-    # Defaults
-    fl = []  # file list
+    Checks whether to read from stdin/file and validates user input/options.
+    """
 
     if len(args) >= 1:
         for fn in args:
@@ -55,18 +53,16 @@ def check_input(args):
                 sys.stderr.write(__doc__)
                 sys.exit(1)
 
-            fh = open(fn, 'r')
-            fl.append(fh)
-
     else:  # Whatever ...
         sys.stderr.write(__doc__)
         sys.exit(1)
 
-    return fl
+    return args
 
 
-def make_ensemble(flist):
-    """Combines several PDB files into a multi-model ensemble file.
+def make_ensemble(f_name_list):
+    """
+    Combines several PDB files into a multi-model ensemble file.
     """
 
     # REMARK     THIS ENTRY
@@ -75,26 +71,27 @@ def make_ensemble(flist):
     # MODEL        1
     fmt_MODEL = "MODEL {:>5d}\n"
 
-    for fileno, fhandle in enumerate(flist, start=1):
-        fpath = os.path.basename(fhandle.name)
+    for fileno, file_name in enumerate(f_name_list, start=1):
+        fpath = os.path.basename(file_name)
         yield fmt_REMARK.format("MODEL {} FROM {}".format(fileno, fpath))
 
     conect = []
     records = ('ATOM', 'HETATM', 'TER')
-    for fileno, fhandle in enumerate(flist, start=1):
+    for fileno, file_name in enumerate(f_name_list, start=1):
 
         yield fmt_MODEL.format(fileno)
 
-        for line in fhandle:
-            if line.startswith(records):
-                yield line
+        with open(file_name, 'r') as fhandle:
 
-            # only store CONECT for first model
-            elif fileno == 1 and line.startswith('CONECT'):
-                conect.append(line)
+            for line in fhandle:
+                if line.startswith(records):
+                    yield line
+
+                # only store CONECT for first model
+                elif fileno == 1 and line.startswith('CONECT'):
+                    conect.append(line)
 
         yield 'ENDMDL\n'
-        fhandle.close()
 
     # Write CONECT
     for line in conect:
@@ -105,10 +102,10 @@ def make_ensemble(flist):
 
 def main():
     # Check Input
-    pdbfh = check_input(sys.argv[1:])
+    pdbfile_list = check_input(sys.argv[1:])
 
     # Do the job
-    new_pdb = make_ensemble(pdbfh)
+    new_pdb = make_ensemble(pdbfile_list)
 
     try:
         _buffer = []
