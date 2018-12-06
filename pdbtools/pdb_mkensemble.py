@@ -86,7 +86,7 @@ def make_ensemble(f_name_list):
             for line in fhandle:
                 if line.startswith(records):
                     yield line
-    
+
                 # only store CONECT for first model
                 elif fileno == 1 and line.startswith('CONECT'):
                     conect.append(line)
