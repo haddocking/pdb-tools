@@ -158,7 +158,7 @@ def summarize_file(fhandle, option):
         elif line.startswith('HETATM'):
             n_hetatm += 1
 
-    if n_models == 0 and n_atoms > 0:
+    if n_models == 0:
         n_models = 1
 
     # Per-model
