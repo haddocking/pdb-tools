@@ -104,18 +104,28 @@ def check_input(args):
     return (option, fh)
 
 
+def pad_line(line):
+    """Helper function to pad line to 80 characters in case it is shorter"""
+    size_of_line = len(line)
+    if size_of_line < 80:
+        padding = 80 - size_of_line + 1
+        line = line.strip('\n') + ' ' * padding + '\n'
+    return line[:81]  # 80 + newline character
+
+
 def renumber_residues(fhandle, starting_resid):
     """Resets the residue number column to start from a specific number.
     """
-
+    _pad_line = pad_line
     prev_resid = None  # tracks chain and resid
     resid = starting_resid - 1  # account for first residue
     records = ('ATOM', 'HETATM', 'TER', 'ANISOU')
     for line in fhandle:
+        line = _pad_line(line)
         if line.startswith(records):
-            line_resid = line[20:26]
-            if line_resid != prev_resid:
-                prev_resid = line_resid
+            line_resuid = line[17:27]
+            if line_resuid != prev_resid:
+                prev_resid = line_resuid
                 resid += 1
                 if resid > 9999:
                     emsg = 'Cannot set residue number above 9999.\n'
