@@ -97,7 +97,7 @@ def check_input(args):
         option = int(option)
         if option < 1:
             raise ValueError
-    except ValueError as err:
+    except ValueError:
         emsg = 'ERROR!! Option must be a positive numerical value: \'{}\'\n'
         sys.stderr.write(emsg.format(option))
         sys.exit(1)
