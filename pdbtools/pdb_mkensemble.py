@@ -60,10 +60,21 @@ def check_input(args):
     return args
 
 
+def pad_line(line):
+    """Helper function to pad line to 80 characters in case it is shorter"""
+    size_of_line = len(line)
+    if size_of_line < 80:
+        padding = 80 - size_of_line + 1
+        line = line.strip('\n') + ' ' * padding + '\n'
+    return line[:81]  # 80 + newline character
+
+
 def make_ensemble(f_name_list):
     """
     Combines several PDB files into a multi-model ensemble file.
     """
+
+    _pad_line = pad_line
 
     # REMARK     THIS ENTRY
     fmt_REMARK = "REMARK     {:<67s}\n"
@@ -85,7 +96,7 @@ def make_ensemble(f_name_list):
 
             for line in fhandle:
                 if line.startswith(records):
-                    yield line
+                    yield _pad_line(line)
 
                 # only store CONECT for first model
                 elif fileno == 1 and line.startswith('CONECT'):
@@ -95,7 +106,7 @@ def make_ensemble(f_name_list):
 
     # Write CONECT
     for line in conect:
-        yield line
+        yield _pad_line(line)
 
     yield 'END\n'
 
