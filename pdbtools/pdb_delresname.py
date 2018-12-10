@@ -117,7 +117,7 @@ def delete_residue_by_name(fhandle, resname_set):
     """Removes specific residue that match a given name.
     """
 
-    records = ('ATOM', 'HETATM', 'ANISOU')
+    records = ('ATOM', 'HETATM', 'ANISOU', 'TER')
     for line in fhandle:
         if line.startswith(records):
             if line[17:20].strip() in resname_set:
