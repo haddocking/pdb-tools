@@ -4,7 +4,7 @@
 [![Travis (.org) branch](https://img.shields.io/travis/haddocking/pdb-tools/master.svg?style=flat&label=TravisCI)](https://travis-ci.org/haddocking/pdb-tools)
 [![AppVeyor branch](https://img.shields.io/appveyor/ci/JoaoRodrigues/pdb-tools-2coq6.svg?style=flat&label=AppVeyor)](https://ci.appveyor.com/project/JoaoRodrigues/pdb-tools-2coq6)
 [![codecov](https://codecov.io/gh/haddocking/pdb-tools/branch/master/graph/badge.svg)](https://codecov.io/gh/haddocking/pdb-tools)
-
+[![DOI](https://zenodo.org/badge/27217350.svg)](https://zenodo.org/badge/latestdoi/27217350)
 
 A swiss army knife for manipulating and editing PDB files.
 
@@ -95,11 +95,24 @@ Our tools will complain if you try using them on such a molecule.
 
 
 ## Citation
-There is no publication (yet!) for pdb-tools, but if you use them and want to
-cite them use this [DOI](http://dx.doi.org/10.5281/zenodo.31158) item.
+We finally decided to write up a small publication describing the tools. If you
+used them in a project that is going to be published, please cite us using the
+BibTex record below:
 
-[![DOI](https://zenodo.org/badge/18453/haddocking/pdb-tools.svg)](https://zenodo.org/badge/latestdoi/18453/haddocking/pdb-tools)
-
+```
+@article {Rodrigues483305,
+  author = {Rodrigues, Jo{\~a}o P.G.L.M. and Teixeira, Jo{\~a}o M.C. and Trellet, Mika{\"e}l and Bonvin, Alexandre M.J.J.},
+  title = {pdb-tools: a swiss army knife for molecular structures},
+  elocation-id = {483305},
+  year = {2018},
+  doi = {10.1101/483305},
+  publisher = {Cold Spring Harbor Laboratory},
+  abstract = {The pdb-tools are a collection of Python scripts for working with molecular structure data in the PDB format. They allow users to edit, convert, and validate PDB files, from the command-line, in a simple but efficient manner. The pdb-tools are implemented in Python, without any external dependencies, and are freely available under the open-source Apache License at https://github.com/haddocking/pdb-tools/ and on PyPI (https://pypi.org/project/pdb-tools/).},
+  URL = {https://www.biorxiv.org/content/early/2018/12/04/483305},
+  eprint = {https://www.biorxiv.org/content/early/2018/12/04/483305.full.pdf},
+  journal = {bioRxiv}
+}
+```
 
 ## Requirements
 `pdb-tools` should run on Python 2.7+ and Python 3.x. We test on Python 2.7, 3.6,
