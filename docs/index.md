@@ -85,9 +85,15 @@ slightly different set of functions. You can find them [here](https://github.com
 
 ## Citation
 We finally decided to write up a small publication describing the tools. If you
-used them in a project that is going to be published, please cite us using the
-BibTex record below:
+used them in a project that is going to be published, please cite us:
 
+```
+Rodrigues, J. P. G. L. M., Teixeira, J. M. C., Trellet, M. & Bonvin, A. M. J. J.
+pdb-tools: a swiss army knife for molecular structures. bioRxiv (2018). 
+doi:10.1101/483305
+```
+
+If you use a reference manager that supports BibTex, use this record:
 ```
 @article {Rodrigues483305,
   author = {Rodrigues, Jo{\~a}o P.G.L.M. and Teixeira, Jo{\~a}o M.C. and Trellet, Mika{\"e}l and Bonvin, Alexandre M.J.J.},
