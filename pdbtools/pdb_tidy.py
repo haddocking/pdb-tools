@@ -160,7 +160,7 @@ def tidy_pdbfile(fhandle):
         elif line.startswith('ANISOU'):
             # Fix serial based on previous atom
             # Avoids doing the offset again
-            serial = prev_line[6:11]
+            serial = int(prev_line[6:11])
             line = line[:6] + str(serial).rjust(5) + line[11:]
 
         elif line.startswith('CONECT'):
