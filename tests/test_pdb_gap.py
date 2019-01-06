@@ -69,9 +69,9 @@ class TestTool(unittest.TestCase):
 
         self.assertEqual(self.stdout,
                          ["B:ARG4 < Seq. Gap > B:GLU6",
-                          "A:ASN1 <   88.69A > A:ASN1",
+                          "A:ASN1 <    9.42A > A:ASN1",
                           "C:ARG5 < Seq. Gap > C:GLU2",
-                          "C:GLU2 < 9168.91A > C:MET-1",
+                          "C:GLU2 <   95.75A > C:MET-1",
                           "Found 4 gap(s) in the structure"])
 
     def test_file_not_found(self):

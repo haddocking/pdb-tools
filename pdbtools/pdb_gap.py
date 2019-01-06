@@ -110,7 +110,7 @@ def detect_gaps(fhandle):
             if prev_at[0] == at_uid[0] and prev_at[1] == at_uid[1]:
                 d = calculate_sq_atom_distance(at_uid[5], prev_at[5])
                 if d > distance_threshold:
-                    sys.stdout.write(fmt_GAPd.format(prev_at, at_uid, d))
+                    sys.stdout.write(fmt_GAPd.format(prev_at, at_uid, d**0.5))
                     n_gaps += 1
                 elif prev_at[2] + 1 != at_uid[2]:
                     sys.stdout.write(fmt_GAPs.format(prev_at, at_uid))
