@@ -64,12 +64,13 @@ class TestTool(unittest.TestCase):
 
         # Validate results
         self.assertEqual(self.retcode, 0)
-        self.assertEqual(len(self.stdout), 2)
+        self.assertEqual(len(self.stdout), 3)
         self.assertEqual(len(self.stderr), 0)
 
         self.assertEqual(self.stdout,
-                         ["Chains: B,A,C,D",
-                          "Residues: ARG,GLU,ALA,ASN,MET, DT, CA,HOH"])
+                         ["Chain Names:\t'B' 'A' 'C' 'D'",
+                          "Residue Names:\t'ARG' 'GLU' 'ALA' 'ASN' 'MET' ' DT'",
+                          "HETATM Names:\t' CA' 'HOH'"])
 
     def test_single_option(self):
         """$ pdb_uniq -c data/dummy.pdb"""
@@ -86,7 +87,7 @@ class TestTool(unittest.TestCase):
         self.assertEqual(len(self.stderr), 0)  # no errors
 
         self.assertEqual(self.stdout,
-                         ["Chains: B,A,C,D"])
+                         ["Chain Names:\t'B' 'A' 'C' 'D'"])
 
     def test_file_not_found(self):
         """$ pdb_uniq not_existing.pdb"""

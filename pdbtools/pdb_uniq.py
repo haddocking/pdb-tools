@@ -22,6 +22,8 @@ comma-separated values.
 Several options are available to produce only partial lists:
     [c] - chain names
     [r] - residue names
+    [h] - heteroatom residue names
+
 
 Usage:
     python pdb_uniq.py [-<option>] <pdb file>
@@ -51,7 +53,7 @@ def check_input(args):
     """
 
     # Defaults
-    option = 'cr'
+    option = 'crh'
     fh = sys.stdin  # file handle
 
     if not len(args):
@@ -102,9 +104,9 @@ def check_input(args):
 
     # Validate option
     if option == '':
-        option = 'cr'
+        option = 'crh'
 
-    valid = set('cr')
+    valid = set('crh')
     if set(option) - valid:
         diff = ''.join(set(option) - valid)
         emsg = 'ERROR!! The following options are not valid: \'{0}\'\n'
@@ -121,29 +123,39 @@ def list_unique(fhandle, option):
     # Do not use just a set. Preserve order.
     chainid_set = set()
     resname_set = set()
+    hetname_set = set()
     chainid_list = []
     resname_list = []
+    hetname_list = []
 
-    records = ('ATOM', 'HETATM')
     for line in fhandle:
-        if line.startswith(records):
+        if line.startswith(('ATOM', 'HETATM')):
+            if line.startswith('ATOM'):
+                resid_name = line[17:20]
+                if resid_name not in resname_set:
+                    resname_set.add(resid_name)
+                    resname_list.append(resid_name)
+
+            elif line.startswith('HETATM'):
+                resid_name = line[17:20]
+                if resid_name not in hetname_set:
+                    hetname_set.add(resid_name)
+                    hetname_list.append(resid_name)
 
             chain_name = line[21]
             if chain_name not in chainid_set:
                 chainid_set.add(chain_name)
                 chainid_list.append(chain_name)
 
-            resid_name = line[17:20]
-            if resid_name not in resname_set:
-                resname_set.add(resid_name)
-                resname_list.append(resid_name)
-
     if 'c' in option:
-        csv_chainid = ','.join(chainid_list)
-        sys.stdout.write('Chains: {0}\n'.format(csv_chainid))
+        csv_chainid = ' '.join(["'" + i + "'" for i in chainid_list])
+        sys.stdout.write('Chain Names:\t{0}\n'.format(csv_chainid))
     if 'r' in option:
-        csv_resname = ','.join(resname_list)
-        sys.stdout.write('Residues: {0}\n'.format(csv_resname))
+        csv_resname = ' '.join(["'" + i + "'" for i in resname_list])
+        sys.stdout.write('Residue Names:\t{0}\n'.format(csv_resname))
+    if 'h' in option:
+        csv_hetname = ' '.join(["'" + i + "'" for i in hetname_list])
+        sys.stdout.write('HETATM Names:\t{0}\n'.format(csv_hetname))
 
 
 def main():
