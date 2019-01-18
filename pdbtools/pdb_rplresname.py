@@ -20,10 +20,10 @@ Performs in-place replacement of a residue name by another. Affects all residues
 with that name.
 
 Usage:
-    python pdb_rplres.py -<from>:<to> <pdb file>
+    python pdb_rplresname.py -<from>:<to> <pdb file>
 
 Example:
-    python pdb_rplres.py -HIP:HIS 1CTF.pdb  # changes all HIP residues to HIS
+    python pdb_rplresname.py -HIP:HIS 1CTF.pdb  # changes all HIP residues to HIS
 
 This program is part of the `pdb-tools` suite of utilities and should not be
 distributed isolatedly. The `pdb-tools` were created to quickly manipulate PDB

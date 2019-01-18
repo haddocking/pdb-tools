@@ -20,12 +20,12 @@ Deletes all atoms matching the given element in the PDB file. Elements are
 read from the element column.
 
 Usage:
-    python pdb_delatom.py -<option> <pdb file>
+    python pdb_delelem.py -<option> <pdb file>
 
 Example:
-    python pdb_delatom.py -H 1CTF.pdb  # deletes all protons
-    python pdb_delatom.py -N 1CTF.pdb  # deletes all nitrogens
-    python pdb_delatom.py -H,N 1CTF.pdb  # deletes all protons and nitrogens
+    python pdb_delelem.py -H 1CTF.pdb  # deletes all protons
+    python pdb_delelem.py -N 1CTF.pdb  # deletes all nitrogens
+    python pdb_delelem.py -H,N 1CTF.pdb  # deletes all protons and nitrogens
 
 This program is part of the `pdb-tools` suite of utilities and should not be
 distributed isolatedly. The `pdb-tools` were created to quickly manipulate PDB
