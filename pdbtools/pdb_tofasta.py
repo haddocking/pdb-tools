@@ -24,10 +24,10 @@ The -multi option splits the different chains into different records in the
 FASTA file.
 
 Usage:
-    python pdb_toseq.py [-multi] <pdb file>
+    python pdb_tofasta.py [-multi] <pdb file>
 
 Example:
-    python pdb_toseq.py 1CTF.pdb
+    python pdb_tofasta.py 1CTF.pdb
 
 This program is part of the `pdb-tools` suite of utilities and should not be
 distributed isolatedly. The `pdb-tools` were created to quickly manipulate PDB

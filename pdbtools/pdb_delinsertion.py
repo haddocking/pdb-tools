@@ -21,11 +21,11 @@ downstream residues. Allows for picking specific residues to delete insertion
 codes for.
 
 Usage:
-    python pdb_delicode.py [-<option>] <pdb file>
+    python pdb_delinsertion.py [-<option>] <pdb file>
 
 Example:
-    python pdb_delicode.py 1CTF.pdb  # delete ALL insertion codes EVERYWHERE
-    python pdb_delicode.py -A99,B12 1CTF.pdb  # deletes ins. codes for residue
+    python pdb_delinsertion.py 1CTF.pdb  # delete ALL insertion codes EVERYWHERE
+    python pdb_delinsertion.py -A99,B12 1CTF.pdb  # deletes ins. codes for residue
                                               # 99 of chain A and 12 of chain B.
 
 This program is part of the `pdb-tools` suite of utilities and should not be

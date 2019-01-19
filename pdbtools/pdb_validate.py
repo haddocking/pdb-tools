@@ -20,10 +20,10 @@ Validates the PDB file ATOM/HETATM lines according to the format specifications.
 Does not catch all the errors though... people are creative!
 
 Usage:
-    python pdb_format.py <pdb file>
+    python pdb_validate.py <pdb file>
 
 Example:
-    python pdb_format.py 1CTF.pdb
+    python pdb_validate.py 1CTF.pdb
 
 This program is part of the `pdb-tools` suite of utilities and should not be
 distributed isolatedly. The `pdb-tools` were created to quickly manipulate PDB

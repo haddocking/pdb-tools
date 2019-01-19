@@ -20,11 +20,11 @@ Removes all residues matching the given name in the PDB file. Residues names are
 matched *without* taking into consideration spaces.
 
 Usage:
-    python pdb_selresname.py -<option> <pdb file>
+    python pdb_delresname.py -<option> <pdb file>
 
 Example:
-    python pdb_selresname.py -ALA 1CTF.pdb  # removes only Alanines
-    python pdb_selresname.py -ASP,GLU 1CTF.pdb  # removes (-) charged residues
+    python pdb_delresname.py -ALA 1CTF.pdb  # removes only Alanines
+    python pdb_delresname.py -ASP,GLU 1CTF.pdb  # removes (-) charged residues
 
 This program is part of the `pdb-tools` suite of utilities and should not be
 distributed isolatedly. The `pdb-tools` were created to quickly manipulate PDB
