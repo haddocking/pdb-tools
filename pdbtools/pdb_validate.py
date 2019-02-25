@@ -151,7 +151,7 @@ def check_pdb_format(fhandle):
 
     if has_error:
         msg = '\nTo understand your errors, read the format specification:\n'
-        msg += '  http://deposit.rcsb.org/adit/docs/pdb_atom_format.html\n'
+        msg += '  http://www.wwpdb.org/documentation/file-format-content/format33/sect9.html#ATOM\n'
         sys.stderr.write(msg)
         return 1
     else:
