@@ -164,7 +164,7 @@ def check_input(args):
 
     start, end, step = int(start), int(end), int(step)
 
-    if start >= end:
+    if start > end:
         emsg = 'ERROR!! Start ({}) cannot be larger than end ({})\n'
         sys.stderr.write(emsg.format(start, end))
         sys.exit(1)
