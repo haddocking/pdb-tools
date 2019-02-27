@@ -109,6 +109,20 @@ class TestTool(unittest.TestCase):
         self.assertEqual(len(self.stdout), 60)
         self.assertEqual(len(self.stderr), 0)
 
+    def test_range_5(self):
+        """$ pdb_selres -6:6 data/dummy.pdb"""
+
+        # Simulate input
+        sys.argv = ['', '-6:6', os.path.join(data_dir, 'dummy.pdb')]
+
+        # Execute the script
+        self.exec_module()
+
+        # Validate results
+        self.assertEqual(self.retcode, 0)
+        self.assertEqual(len(self.stdout), 31)
+        self.assertEqual(len(self.stderr), 0)
+
     def test_invalid_range_1(self):
         """$ pdb_selres --9998:: data/dummy.pdb"""
 
