@@ -23,7 +23,8 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 # Collect names of bin/*py scripts
 # e.g. 'pdb_intersect=bin.pdb_intersect:main',
 binfiles = listdir(path.join(here, 'pdbtools'))
-bin_py = [f[:-3] + '=pdbtools.' + f[:-3] + ':main' for f in binfiles]
+bin_py = [f[:-3] + '=pdbtools.' + f[:-3] + ':main' for f in binfiles
+          if f.endswith('.py')]
 
 setup(
     name='pdb-tools',  # Required
