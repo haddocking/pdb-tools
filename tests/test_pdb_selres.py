@@ -106,7 +106,7 @@ class TestTool(unittest.TestCase):
 
         # Validate results
         self.assertEqual(self.retcode, 0)
-        self.assertEqual(len(self.stdout), 60)
+        self.assertEqual(len(self.stdout), 63)
         self.assertEqual(len(self.stderr), 0)
 
     def test_range_5(self):
@@ -136,7 +136,8 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.retcode, 1)
         self.assertEqual(len(self.stdout), 0)
         self.assertEqual(self.stderr[0][:22],
-                         "ERROR!! Starting value")
+                         "ERROR!! Residue number")
+
 
     def test_invalid_range_2(self):
         """$ pdb_selres -:10000: data/dummy.pdb"""
@@ -151,7 +152,8 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.retcode, 1)
         self.assertEqual(len(self.stdout), 0)
         self.assertEqual(self.stderr[0][:22],
-                         "ERROR!! End value must")
+                         "ERROR!! Residue number")
+
 
     def test_invalid_range_3(self):
         """$ pdb_selres -::: data/dummy.pdb"""
@@ -228,8 +230,8 @@ class TestTool(unittest.TestCase):
 
         self.assertEqual(self.retcode, 1)
         self.assertEqual(len(self.stdout), 0)
-        self.assertEqual(self.stderr[0][:39],
-                         "ERROR!! Starting value must be numerica")
+        self.assertEqual(self.stderr[0][:31],
+                         "ERROR!! Not a valid number: 'A'")
 
     def test_not_an_option(self):
         """$ pdb_selres 20 data/dummy.pdb"""
