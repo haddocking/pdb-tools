@@ -137,31 +137,33 @@ def select_occupancy(fhandle, option):
     atom_prop = {}  # {atom_uid: (lineno, prop)}
     atom_data = []
 
-    # Iterate over file and store lines per atom_uid
-    records = ('ATOM', 'HETATM', 'ANISOU')
-    for lineno, line in enumerate(fhandle):
+    # Iterate over file and store atom_uid
+    records = ('ATOM', 'HETATM')
+    for line in fhandle:
 
         atom_data.append(line)
 
         if line.startswith(records):
             atom_uid = (line[12:16], line[17:26])
+            atom_full_uid = line[12:26]
             prop = get_prop(line)
 
             if atom_uid in atom_prop:
-                atom_prop[atom_uid].append((lineno, prop))
+                atom_prop[atom_uid].append((atom_full_uid, prop))
             else:
-                atom_prop[atom_uid] = [(lineno, prop)]
+                atom_prop[atom_uid] = [(atom_full_uid, prop)]
 
     # Filter atom_prop
     sel_atoms = set()
-    for prop_list in atom_prop.values():
+    for key, prop_list in atom_prop.items():
         selected = sel_prop(prop_list)
-        sel_atoms.add(selected[0])  # lineno
+        sel_atoms.add(selected[0])  # atom_full_uid
 
     # Iterate again and yield the right one
+    records = ('ATOM', 'HETATM', 'ANISOU') # we can filter ANISOU too
     for lineno, line in enumerate(atom_data):
         if line.startswith(records):
-            if lineno in sel_atoms:
+            if line[12:26] in sel_atoms:
                 yield line[:16] + ' ' + line[17:]  # clear altloc
             continue
 
