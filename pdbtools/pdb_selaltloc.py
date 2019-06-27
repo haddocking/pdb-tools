@@ -160,7 +160,7 @@ def select_occupancy(fhandle, option):
         sel_atoms.add(selected[0])  # atom_full_uid
 
     # Iterate again and yield the right one
-    records = ('ATOM', 'HETATM', 'ANISOU') # we can filter ANISOU too
+    records = ('ATOM', 'HETATM', 'ANISOU')  # we can filter ANISOU too
     for lineno, line in enumerate(atom_data):
         if line.startswith(records):
             if line[12:26] in sel_atoms:
