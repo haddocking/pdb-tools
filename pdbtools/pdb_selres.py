@@ -19,9 +19,7 @@
 Extracts residues from a PDB file, either arbitrarily or in a range. The range
 option has three components: start, end, and step. Start and end are optional
 and if ommitted the range will start at the first residue or end at the last,
-respectively. The step option can only be used if both start and end are provided.
-Note that the start and end values of the range are purely numerical, while the
-range actually refers to every N-th residue, regardless of their sequence number.
+respectively.
 
 Usage:
     python pdb_selres.py -[resid]:[resid]:[step] <pdb file>
@@ -71,7 +69,7 @@ def check_input(args):
                 sys.stderr.write(emsg.format(value))
                 sys.exit(1)
 
-    def _validate_opt_range(value):
+    def _validate_opt_range(value, resid_list):
         """Returns a numerical range or dies trying"""
 
         # Validate formatting
@@ -118,11 +116,11 @@ def check_input(args):
             sys.exit(1)
 
         # Build range
-        full_range = list(range(start, end + 1))
-        return [full_range[i] for i in range(0, len(full_range), step)]
+        bounded_resid = [r for r in resid_list if start <= r <= end]
+        return bounded_resid[::step]
 
     # Defaults
-    option = ':::'
+    option = '::'
     fh = sys.stdin  # file handle
 
     if not len(args):
@@ -171,10 +169,23 @@ def check_input(args):
         sys.stderr.write(__doc__)
         sys.exit(1)
 
+    # Read file handle to extract residue numbers
+    resid_list = []
+    records = ('ATOM', 'HETATM', 'TER', 'ANISOU')
+    prev_res = None
+    for line in fh:
+        if line.startswith(records):
+            res_id = line[21:26]  # include chain ID
+            if res_id != prev_res:
+                prev_res = res_id
+                resid_list.append(int(line[22:26]))
+
+    fh.seek(0)  # rewind
+
     residue_range = set()  # stores all the residues to write.
     for entry in option.split(','):
         if ':' in entry:
-            resrange = _validate_opt_range(entry)
+            resrange = _validate_opt_range(entry, resid_list)
             residue_range.update(resrange)
         else:
             singleres = _validate_opt_numeric(entry)
