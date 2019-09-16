@@ -16,7 +16,7 @@
 # limitations under the License.
 
 """
-Unit Tests for `pdb_gap`.
+Unit Tests for `pdb_selhetatm`.
 """
 
 import os
@@ -34,7 +34,7 @@ class TestTool(unittest.TestCase):
 
     def setUp(self):
         # Dynamically import the module
-        name = 'pdbtools.pdb_gap'
+        name = 'pdbtools.pdb_selhetatm'
         self.module = __import__(name, fromlist=[''])
 
     def exec_module(self):
@@ -54,9 +54,10 @@ class TestTool(unittest.TestCase):
         return
 
     def test_default(self):
-        """$ pdb_gap data/dummy.pdb"""
+        """$ pdb_selhetatm data/dummy.pdb"""
 
         # Simulate input
+        # pdb_selhetatm dummy.pdb
         sys.argv = ['', os.path.join(data_dir, 'dummy.pdb')]
 
         # Execute the script
@@ -64,24 +65,16 @@ class TestTool(unittest.TestCase):
 
         # Validate results
         self.assertEqual(self.retcode, 0)  # ensure the program exited OK.
-        self.assertEqual(len(self.stdout), 5)  # no lines deleted
+        self.assertEqual(len(self.stdout), 10)  # 9 HETATM records + 1 CONECT
         self.assertEqual(len(self.stderr), 0)  # no errors
 
-        self.assertEqual(self.stdout,
-                         ["B:ARG4 < Seq. Gap > B:GLU6",
-                          "A:ASN1 <    9.42A > A:ASN1",
-                          "C:ARG5 < Seq. Gap > C:GLU2",
-                          "C:GLU2 <   95.75A > C:MET-1",
-                          "Found 4 gap(s) in the structure"])
 
     def test_file_not_found(self):
-        """$ pdb_gap not_existing.pdb"""
+        """$ pdb_selhetatm not_existing.pdb"""
 
-        # Error (file not found)
         afile = os.path.join(data_dir, 'not_existing.pdb')
         sys.argv = ['', afile]
 
-        # Execute the script
         self.exec_module()
 
         self.assertEqual(self.retcode, 1)  # exit code is 1 (error)
@@ -90,11 +83,10 @@ class TestTool(unittest.TestCase):
                          "ERROR!! File not found")  # proper error message
 
     def test_helptext(self):
-        """$ pdb_gap"""
+        """$ pdb_selhetatm"""
 
         sys.argv = ['']
 
-        # Execute the script
         self.exec_module()
 
         self.assertEqual(self.retcode, 1)  # ensure the program exited gracefully.
@@ -102,11 +94,10 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.stderr, self.module.__doc__.split("\n")[:-1])
 
     def test_invalid_option(self):
-        """$ pdb_gap -A data/dummy.pdb"""
+        """$ pdb_selhetatm -A data/dummy.pdb"""
 
         sys.argv = ['', '-A', os.path.join(data_dir, 'dummy.pdb')]
 
-        # Execute the script
         self.exec_module()
 
         self.assertEqual(self.retcode, 1)

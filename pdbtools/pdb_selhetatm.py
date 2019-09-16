@@ -16,14 +16,13 @@
 # limitations under the License.
 
 """
-Detects gaps between consecutive residues in the sequence, both by a distance
-criterion or discontinuous residue numbering. Only applies for protein residues.
+Selects all HETATM records in the PDB file.
 
 Usage:
-    python pdb_gap.py <pdb file>
+    python pdb_selhetatm.py <pdb file>
 
 Example:
-    python pdb_gap.py 1CTF.pdb
+    python pdb_selhetatm.py 1CTF.pdb
 
 This program is part of the `pdb-tools` suite of utilities and should not be
 distributed isolatedly. The `pdb-tools` were created to quickly manipulate PDB
@@ -70,55 +69,25 @@ def check_input(args):
     return fh
 
 
-def detect_gaps(fhandle):
-    """Detects gaps between residues in the PDB file.
+def select_hetatm(fhandle):
+    """Selects all HETATM and associated records from the PDB file.
     """
 
-    fmt_GAPd = "{0[1]}:{0[3]}{0[2]} < {2:7.2f}A > {1[1]}:{1[3]}{1[2]}\n"
-    fmt_GAPs = "{0[1]}:{0[3]}{0[2]} < Seq. Gap > {1[1]}:{1[3]}{1[2]}\n"
+    # CONECT 1179  746 1184 1195 1203
+    char_ranges = (slice(6, 11), slice(11, 16),
+                   slice(16, 21), slice(21, 26), slice(26, 31))
 
-    centroid = ' CA '  # respect spacing. 'CA  ' != ' CA '
-    distance_threshold = 4.0 * 4.0
-
-    def calculate_sq_atom_distance(i, j):
-        """Squared euclidean distance between two 3d points"""
-        return (i[0] - j[0]) * (i[0] - j[0]) + \
-               (i[1] - j[1]) * (i[1] - j[1]) + \
-               (i[2] - j[2]) * (i[2] - j[2])
-
-    prev_at = (None, None, None, None, (None, None, None))
-    model = 0
-    n_gaps = 0
+    het_serials = set()
     for line in fhandle:
-
-        if line.startswith('MODEL'):
-            model = int(line[10:14])
-
-        elif line.startswith('ATOM'):
-            atom_name = line[12:16]
-            if atom_name != centroid:
-                continue
-
-            resn = line[17:20]
-            resi = int(line[22:26])
-            chain = line[21]
-            x = float(line[30:38])
-            y = float(line[38:46])
-            z = float(line[46:54])
-
-            at_uid = (model, chain, resi, resn, atom_name, (x, y, z))
-            if prev_at[0] == at_uid[0] and prev_at[1] == at_uid[1]:
-                d = calculate_sq_atom_distance(at_uid[5], prev_at[5])
-                if d > distance_threshold:
-                    sys.stdout.write(fmt_GAPd.format(prev_at, at_uid, d**0.5))
-                    n_gaps += 1
-                elif prev_at[2] + 1 != at_uid[2]:
-                    sys.stdout.write(fmt_GAPs.format(prev_at, at_uid))
-                    n_gaps += 1
-
-            prev_at = at_uid
-
-    sys.stdout.write('Found {} gap(s) in the structure\n'.format(n_gaps))
+        if line.startswith('HETATM'):
+            het_serials.add(line[6:11])
+            yield line
+        elif line.startswith('ANISOU'):
+            if line[6:11] in het_serials:
+                yield line
+        elif line.startswith('CONECT'):
+            if any(line[cr] in het_serials for cr in char_ranges):
+                yield line
 
 
 def main():
@@ -126,7 +95,24 @@ def main():
     pdbfh = check_input(sys.argv[1:])
 
     # Do the job
-    detect_gaps(pdbfh)
+    new_pdb = select_hetatm(pdbfh)
+
+    try:
+        _buffer = []
+        _buffer_size = 5000  # write N lines at a time
+        for lineno, line in enumerate(new_pdb):
+            if not (lineno % _buffer_size):
+                sys.stdout.write(''.join(_buffer))
+                _buffer = []
+            _buffer.append(line)
+
+        sys.stdout.write(''.join(_buffer))
+        sys.stdout.flush()
+    except IOError:
+        # This is here to catch Broken Pipes
+        # for example to use 'head' or 'tail' without
+        # the error message showing up
+        pass
 
     # last line of the script
     # We can close it even if it is sys.stdin

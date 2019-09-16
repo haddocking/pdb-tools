@@ -1,6 +1,9 @@
 ---
 name: Tool request
 about: Suggest an idea for a new pdb-tool
+title: ''
+labels: Tool Request
+assignees: ''
 
 ---
 

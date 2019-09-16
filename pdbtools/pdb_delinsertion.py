@@ -16,15 +16,17 @@
 # limitations under the License.
 
 """
-Removes all residues matching the given name in the PDB file. Residues names are
-matched *without* taking into consideration spaces.
+Deletes insertion codes in a PDB file, shifting the residue numbering of
+downstream residues. Allows for picking specific residues to delete insertion
+codes for.
 
 Usage:
-    python pdb_delresname.py -<option> <pdb file>
+    python pdb_delinsertion.py [-<option>] <pdb file>
 
 Example:
-    python pdb_delresname.py -ALA 1CTF.pdb  # removes only Alanines
-    python pdb_delresname.py -ASP,GLU 1CTF.pdb  # removes (-) charged residues
+    python pdb_delinsertion.py 1CTF.pdb  # delete ALL insertion codes EVERYWHERE
+    python pdb_delinsertion.py -A99,B12 1CTF.pdb  # deletes ins. codes for residue
+                                              # 99 of chain A and 12 of chain B.
 
 This program is part of the `pdb-tools` suite of utilities and should not be
 distributed isolatedly. The `pdb-tools` were created to quickly manipulate PDB
@@ -36,8 +38,8 @@ effort to maintain and compile. RIP.
 import os
 import sys
 
-__author__ = ["Joao Rodrigues", "Joao M.C. Teixeira"]
-__email__ = ["j.p.g.l.m.rodrigues@gmail.com", "joaomcteixeira@gmail.com"]
+__author__ = "Joao Rodrigues"
+__email__ = "j.p.g.l.m.rodrigues@gmail.com"
 
 
 def check_input(args):
@@ -95,42 +97,91 @@ def check_input(args):
         sys.exit(1)
 
     # Validate option
-    option_set = set([o.upper().strip() for o in option.split(',') if o.strip()])
-    if not option_set:
-        sys.stderr.write('ERROR!! Residue name set cannot be empty\n')
-        sys.stderr.write(__doc__)
-        sys.exit(1)
-    else:
-        for elem in option_set:
-            if len(elem) > 3:
-                emsg = 'ERROR!! Residue name is invalid: \'{}\'\n'
-                sys.stderr.write(emsg.format(elem))
-                sys.stderr.write(__doc__)
+    option_list = [o for o in option.split(',') if o.strip()]
+    if option_list:
+        for o in option_list:
+            if len(o) < 2 or not o[1:].isdigit():
+                emsg = 'ERROR!! Option invalid: \'{}\''
+                sys.stderr.write(emsg.format(o))
                 sys.exit(1)
 
-    return (option_set, fh)
-
-    return (option, fh)
+    return (option_list, fh)
 
 
-def delete_residue_by_name(fhandle, resname_set):
-    """Removes specific residue that match a given name.
+def delete_insertions(fhandle, option_list):
+    """Deletes insertion codes (at specific residues).
+
+    By default, removes ALL insertion codes on ALL residues. Also bumps the
+    residue numbering of residues downstream of each insertion.
     """
 
+    if not option_list:  # Delete all
+        has_option = False
+    else:  # turn into set
+        option_set = set(option_list)
+        has_option = True
+
+    # Keep track of residue numbering
+    # Keep track of residues read (chain, resname, resid)
+    offset = 0
+    prev_resi = None
+    seen_ids = set()
+    clean_icode = False
     records = ('ATOM', 'HETATM', 'ANISOU', 'TER')
     for line in fhandle:
+
         if line.startswith(records):
-            if line[17:20].strip() in resname_set:
-                continue
+            res_uid = line[17:26]  # resname, chain, resid
+            id_res = line[21] + line[22:26].strip()  # A99, B12
+            icode = line[26]
+
+            # unfortunately, this is messy but not all PDB files follow a nice
+            # order of ' ', 'A', 'B', ... when it comes to insertion codes..
+            if prev_resi != res_uid:  # new residue
+                # Have we seen this chain + resid combination
+                # catch insertions WITHOUT icode ('A' ... ' ' ... 'B')
+                if id_res in seen_ids:
+                    # Should we do something about it?
+                    if has_option and id_res not in option_set:
+                        clean_icode = False
+                    else:
+                        clean_icode = True
+                        line = line[:26] + ' ' + line[27:]  # clear icode
+                        offset += 1
+                # Do we have an explicit icode?
+                elif icode != ' ':
+                    if has_option and id_res not in option_set:
+                        pass
+                    else:
+                        if id_res in seen_ids:  # never saw this, do not offset!
+                            offset += 1
+                        clean_icode = True
+                        line = line[:26] + ' ' + line[27:]  # clear icode
+                else:
+                    clean_icode = False
+
+                prev_resi = res_uid
+
+            if clean_icode:
+                line = line[:26] + ' ' + line[27:]
+
+            resid = int(line[22:26]) + offset
+            line = line[:22] + str(resid).rjust(4) + line[26:]
+            seen_ids.add(id_res)
+
+            # Reset offset on TER
+            if line.startswith('TER'):
+                offset = 0
+
         yield line
 
 
 def main():
     # Check Input
-    resname_set, pdbfh = check_input(sys.argv[1:])
+    option_list, pdbfh = check_input(sys.argv[1:])
 
     # Do the job
-    new_pdb = delete_residue_by_name(pdbfh, resname_set)
+    new_pdb = delete_insertions(pdbfh, option_list)
 
     try:
         _buffer = []

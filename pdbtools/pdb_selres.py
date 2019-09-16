@@ -16,18 +16,18 @@
 # limitations under the License.
 
 """
-Extracts a range of residues from a PDB file. The range option has three
-components: start, end, and step. Start and end are optional and if ommitted the
-range will start at the first residue or end at the last, respectively. The step
-option can only be used if both start and end are provided. Note that the start
-and end values of the range are purely numerical, while the range actually
-refers to every N-th residue, regardless of their sequence number.
+Extracts residues from a PDB file, either arbitrarily or in a range. The range
+option has three components: start, end, and step. Start and end are optional
+and if ommitted the range will start at the first residue or end at the last,
+respectively.
 
 Usage:
     python pdb_selres.py -[resid]:[resid]:[step] <pdb file>
 
 Example:
+    python pdb_selres.py -1,2,4,6 1CTF.pdb # Extracts residues 1, 2, 4 and 6
     python pdb_selres.py -1:10 1CTF.pdb # Extracts residues 1 to 10
+    python pdb_selres.py -1:10,20:30 1CTF.pdb # Extracts residues 1 to 10 and 20 to 30
     python pdb_selres.py -1: 1CTF.pdb # Extracts residues 1 to END
     python pdb_selres.py -:5 1CTF.pdb # Extracts residues from START to 5.
     python pdb_selres.py -::5 1CTF.pdb # Extracts every 5th residue
@@ -51,16 +51,76 @@ def check_input(args):
     """Checks whether to read from stdin/file and validates user input/options.
     """
 
-    def is_integer(string):
-        """Returns True if the string contains *any* integer"""
+    # Options can be single numbers or ranges.
+    def _validate_opt_numeric(value):
+        """Returns a valid numerical option or dies trying"""
         try:
-            int(string)
-            return True
+            num = int(value)
         except ValueError:
-            return False
+            emsg = "ERROR!! Not a valid number: '{}'\n"
+            sys.stderr.write(emsg.format(value))
+            sys.exit(1)
+        else:
+            # resid 4-char limit
+            if (-999 <= num < 10000):
+                return num
+            else:
+                emsg = "ERROR!! Residue numbers must be between -999 and 9999: '{}'\n"
+                sys.stderr.write(emsg.format(value))
+                sys.exit(1)
+
+    def _validate_opt_range(value, resid_list):
+        """Returns a numerical range or dies trying"""
+
+        # Validate formatting
+        if not (1 <= value.count(':') <= 2):
+            emsg = "ERROR!! Residue range must be in 'a:z:s' where a and z are "
+            emsg += 'optional (default to first residue and last respectively), and'
+            emsg += 's is an optional step value (to return every s-th residue).\n'
+            sys.stderr.write(emsg)
+            sys.exit(1)
+
+        start, end, step = None, None, 1
+        slices = [_validate_opt_numeric(num)
+                  if num.strip() else None for num in value.split(':')]
+
+        if len(slices) == 3:
+            start, end, step = slices
+        elif len(slices) == 2:
+            start, end = slices
+        elif len(slices) == 1:
+            if value.startswith(':'):
+                end = slices[0]
+            else:
+                start = slices[0]
+
+        # Upper/Lower limits, resid max 4 char
+        if start is None:
+            start = -1000
+        if end is None:
+            end = 10000
+
+        # extra validation for step
+        if step is None:
+            step = 1
+        else:
+            if step < 1:
+                emsg = "ERROR!! Step value must be a positive number: '{}'\n"
+                sys.stderr.write(emsg.format(step))
+                sys.exit(1)
+
+        # validate proper order in range
+        if start > end:
+            emsg = 'ERROR!! Start ({}) cannot be larger than end ({})\n'
+            sys.stderr.write(emsg.format(start, end))
+            sys.exit(1)
+
+        # Build range
+        bounded_resid = [r for r in resid_list if start <= r <= end]
+        return bounded_resid[::step]
 
     # Defaults
-    option = ':::'
+    option = '::'
     fh = sys.stdin  # file handle
 
     if not len(args):
@@ -109,76 +169,36 @@ def check_input(args):
         sys.stderr.write(__doc__)
         sys.exit(1)
 
-    # Validate option
-    if not (1 <= option.count(':') <= 2):
-        emsg = 'ERROR!! Residue range must be in \'a:z:s\' where a and z are '
-        emsg += 'optional (default to first residue and last respectively), and'
-        emsg += 's is an optional step value (to return every s-th residue).\n'
-        sys.stderr.write(emsg)
-        sys.exit(1)
+    # Read file handle to extract residue numbers
+    resid_list = []
+    records = ('ATOM', 'HETATM', 'TER', 'ANISOU')
+    prev_res = None
+    for line in fh:
+        if line.startswith(records):
+            res_id = line[21:26]  # include chain ID
+            if res_id != prev_res:
+                prev_res = res_id
+                resid_list.append(int(line[22:26]))
 
-    start, end, step = None, None, 1
-    slices = [num if num.strip() else None for num in option.split(':')]
-    if len(slices) == 3:
-        start, end, step = slices
-    elif len(slices) == 2:
-        start, end = slices
-    elif len(slices) == 1:
-        if option.startswith(':'):
-            end = slices[0]
-        elif option.endswith(':'):
-            start = slices[0]
+    fh.seek(0)  # rewind
 
-    if start is None:
-        start = -1000  # residues cannot reach this value (max 4 char)
-    elif not is_integer(start):
-        emsg = 'ERROR!! Starting value must be numerical: \'{}\'\n'
-        sys.stderr.write(emsg.format(start))
-        sys.exit(1)
-    elif not (-999 <= int(start) < 9999):
-        emsg = 'ERROR!! Starting value must be between -999 and 9998: \'{}\'\n'
-        sys.stderr.write(emsg.format(start))
-        sys.exit(1)
+    residue_range = set()  # stores all the residues to write.
+    for entry in option.split(','):
+        if ':' in entry:
+            resrange = _validate_opt_range(entry, resid_list)
+            residue_range.update(resrange)
+        else:
+            singleres = _validate_opt_numeric(entry)
+            residue_range.add(singleres)
 
-    if end is None:
-        end = 10000  # residues cannot reach this value (max 4 char)
-    elif not is_integer(end):
-        emsg = 'ERROR!! End value must be numerical: \'{}\'\n'
-        sys.stderr.write(emsg.format(end))
-        sys.exit(1)
-    elif not (-999 <= int(end) < 9999):
-        emsg = 'ERROR!! End value must be between -999 and 9998: \'{}\'\n'
-        sys.stderr.write(emsg.format(end))
-        sys.exit(1)
-
-    if step is None:
-        step = 1
-    elif not is_integer(step):
-        emsg = 'ERROR!! Step value must be numerical: \'{}\'\n'
-        sys.stderr.write(emsg.format(step))
-        sys.exit(1)
-    elif int(step) <= 0:
-        emsg = 'ERROR!! Step value must be a positive number: \'{}\'\n'
-        sys.stderr.write(emsg.format(step))
-        sys.exit(1)
-
-    start, end, step = int(start), int(end), int(step)
-
-    if start >= end:
-        emsg = 'ERROR!! Start ({}) cannot be larger than end ({})\n'
-        sys.stderr.write(emsg.format(start, end))
-        sys.exit(1)
-
-    resrange = set(range(start, end + 1))
-    return (resrange, step, fh)
+    return (residue_range, fh)
 
 
-def select_residues(fhandle, residue_range, step):
+def select_residues(fhandle, residue_range):
     """Outputs residues within a certain numbering range.
     """
 
     prev_res = None
-    res_counter = -1
     records = ('ATOM', 'HETATM', 'TER', 'ANISOU')
     for line in fhandle:
         if line.startswith(records):
@@ -186,12 +206,8 @@ def select_residues(fhandle, residue_range, step):
             res_id = line[21:26]  # include chain ID
             if res_id != prev_res:
                 prev_res = res_id
-                res_counter += 1
 
             if int(line[22:26]) not in residue_range:
-                continue
-
-            if res_counter % step != 0:
                 continue
 
         yield line
@@ -199,10 +215,10 @@ def select_residues(fhandle, residue_range, step):
 
 def main():
     # Check Input
-    resrange, step, pdbfh = check_input(sys.argv[1:])
+    resrange, pdbfh = check_input(sys.argv[1:])
 
     # Do the job
-    new_pdb = select_residues(pdbfh, resrange, step)
+    new_pdb = select_residues(pdbfh, resrange)
 
     try:
         _buffer = []
