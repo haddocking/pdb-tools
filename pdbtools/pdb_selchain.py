@@ -94,7 +94,7 @@ def check_input(args):
         sys.exit(1)
 
     # Validate option
-    option_set = set([o.upper().strip() for o in option.split(',') if o.strip()])
+    option_set = set([o.strip() for o in option.split(',') if o.strip().isalnum()])
     if not option_set:
         emsg = 'ERROR!! You must provide at least one chain identifier\n'
         sys.stderr.write(emsg)
