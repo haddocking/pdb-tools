@@ -68,6 +68,51 @@ class TestTool(unittest.TestCase):
         self.assertEqual(len(self.stdout), 76)  # selected c.A
         self.assertEqual(len(self.stderr), 0)  # no errors
 
+    def test_one_option_CAPS_lowercase(self):
+        """$ pdb_selchain -A data/dummy_az09.pdb"""
+
+        # Simulate input
+        # pdb_selchain dummy_az09.pdb
+        sys.argv = ['', '-A', os.path.join(data_dir, 'dummy_az09.pdb')]
+
+        # Execute the script
+        self.exec_module()
+        
+        # Validate results
+        self.assertEqual(self.retcode, 0)  # ensure the program exited OK.
+        self.assertEqual(len(self.stdout), 76)  # selected c.A
+        self.assertEqual(len(self.stderr), 0)  # no errors
+
+    def test_one_option_lowercase(self):
+        """$ pdb_selchain -b data/dummy_az09.pdb"""
+
+        # Simulate input
+        # pdb_selchain dummy.pdb
+        sys.argv = ['', '-b', os.path.join(data_dir, 'dummy_az09.pdb')]
+
+        # Execute the script
+        self.exec_module()
+
+        # Validate results
+        self.assertEqual(self.retcode, 0)  # ensure the program exited OK.
+        self.assertEqual(len(self.stdout), 68)  # selected c.b
+        self.assertEqual(len(self.stderr), 0)  # no errors
+
+    def test_one_option_digit(self):
+        """$ pdb_selchain -1 data/dummy_az09.pdb"""
+
+        # Simulate input
+        # pdb_selchain dummy.pdb
+        sys.argv = ['', '-1', os.path.join(data_dir, 'dummy_az09.pdb')]
+
+        # Execute the script
+        self.exec_module()
+
+        # Validate results
+        self.assertEqual(self.retcode, 0)  # ensure the program exited OK.
+        self.assertEqual(len(self.stdout), 66)  # selected c.1
+        self.assertEqual(len(self.stderr), 0)  # no errors
+    
     def test_multiple(self):
         """
         $ pdb_selchain -A,B data/dummy.pdb
