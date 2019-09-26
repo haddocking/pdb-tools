@@ -95,7 +95,7 @@ class TestTool(unittest.TestCase):
 
         # Validate results
         self.assertEqual(self.retcode, 0)  # ensure the program exited OK.
-        self.assertEqual(len(self.stdout), 68)  # selected c.b
+        self.assertEqual(len(self.stdout), 69)  # selected c.b
         self.assertEqual(len(self.stderr), 0)  # no errors
 
     def test_one_option_digit(self):
@@ -110,7 +110,7 @@ class TestTool(unittest.TestCase):
 
         # Validate results
         self.assertEqual(self.retcode, 0)  # ensure the program exited OK.
-        self.assertEqual(len(self.stdout), 66)  # selected c.1
+        self.assertEqual(len(self.stdout), 71)  # selected c.1
         self.assertEqual(len(self.stderr), 0)  # no errors
     
     def test_multiple(self):
