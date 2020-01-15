@@ -12,6 +12,9 @@ impact any of the existing ones, increment MINOR (e.g. 2.1.0).
 * For major changes that will most likely impact the usage of existing tools,
 increment MAJOR (e.g. 3.0.0).
 
+In practice, when packaging the distribution we should update the version number
+in `setup.py` accordingly (otherwise `twine` will give an error).
+
 ## Packaging
 This is a rough guide to building a distributable package:
 
