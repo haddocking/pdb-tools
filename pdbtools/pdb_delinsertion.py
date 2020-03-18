@@ -16,17 +16,18 @@
 # limitations under the License.
 
 """
-Deletes insertion codes in a PDB file, shifting the residue numbering of
-downstream residues. Allows for picking specific residues to delete insertion
-codes for.
+Deletes insertion codes in a PDB file.
+
+Deleting an insertion code shifts the residue numbering of downstream
+residues. Allows for picking specific residues to delete insertion codes for.
 
 Usage:
     python pdb_delinsertion.py [-<option>] <pdb file>
 
 Example:
-    python pdb_delinsertion.py 1CTF.pdb  # delete ALL insertion codes EVERYWHERE
-    python pdb_delinsertion.py -A99,B12 1CTF.pdb  # deletes ins. codes for residue
-                                              # 99 of chain A and 12 of chain B.
+    python pdb_delinsertion.py 1CTF.pdb  # delete ALL insertion codes
+    python pdb_delinsertion.py -A9,B12 1CTF.pdb  # deletes ins. codes for res
+                                                 # 9 of chain A and 12 of chain B.
 
 This program is part of the `pdb-tools` suite of utilities and should not be
 distributed isolatedly. The `pdb-tools` were created to quickly manipulate PDB

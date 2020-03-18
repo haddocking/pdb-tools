@@ -17,6 +17,7 @@
 
 """
 Validates the PDB file ATOM/HETATM lines according to the format specifications.
+
 Does not catch all the errors though... people are creative!
 
 Usage:

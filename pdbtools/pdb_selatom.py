@@ -16,9 +16,10 @@
 # limitations under the License.
 
 """
-Selects all atoms matching the given name in the PDB file. Atom names are matched
-*without* taking into consideration spaces, so ' CA ' (alpha carbon) and 'CA  '
-(calcium) will both be kept if -CA is passed.
+Selects all atoms matching the given name in the PDB file.
+
+Atom names are matched *without* taking into consideration spaces, so ' CA '
+(alpha carbon) and 'CA  ' (calcium) will both be kept if -CA is passed.
 
 Usage:
     python pdb_selatom.py -<option> <pdb file>

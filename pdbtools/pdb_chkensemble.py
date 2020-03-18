@@ -16,8 +16,9 @@
 # limitations under the License.
 
 """
-Performs a basic check on a multi-model PDB file (ensemble) to ensure all models
-have exactly the same atoms (as they should).
+Checks all models in a multi-model PDB file have the same composition.
+
+Composition is defined as same atoms/residues/chains.
 
 Usage:
     python pdb_chkensemble.py <pdb file>

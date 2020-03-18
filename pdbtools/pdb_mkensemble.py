@@ -16,9 +16,10 @@
 # limitations under the License.
 
 """
-Merges several PDB files into one multi-model (ensemble) file. Strips all
-HEADER information and adds REMARK statements with the provenance of each
-conformer.
+Merges several PDB files into one multi-model (ensemble) file.
+
+Strips all HEADER information and adds REMARK statements with the provenance
+of each conformer.
 
 Usage:
     python pdb_mkensemble.py <pdb file> <pdb file>

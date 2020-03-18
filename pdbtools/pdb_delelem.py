@@ -16,8 +16,9 @@
 # limitations under the License.
 
 """
-Deletes all atoms matching the given element in the PDB file. Elements are
-read from the element column.
+Deletes all atoms matching the given element in the PDB file. 
+
+Elements are read from the element column.
 
 Usage:
     python pdb_delelem.py -<option> <pdb file>

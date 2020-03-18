@@ -16,8 +16,9 @@
 # limitations under the License.
 
 """
-Removes all residues matching the given name in the PDB file. Residues names are
-matched *without* taking into consideration spaces.
+Removes all residues matching the given name in the PDB file. 
+
+Residues names are matched *without* taking into consideration spaces.
 
 Usage:
     python pdb_delresname.py -<option> <pdb file>

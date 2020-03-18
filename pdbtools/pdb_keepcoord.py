@@ -17,6 +17,7 @@
 
 """
 Removes all non-coordinate records from the file.
+
 Keeps only MODEL, ENDMDL, END, ATOM, HETATM, and CONECT.
 
 Usage:

@@ -16,8 +16,7 @@
 # limitations under the License.
 
 """
-Assigns the element column to the PDB file, guessing the element from the atom
-names.
+Assigns the elements in the PDB file from atom names.
 
 Usage:
     python pdb_element.py <pdb file>

@@ -16,9 +16,10 @@
 # limitations under the License.
 
 """
-Picks one location for each atom with fractional occupancy values. By default,
-picks the atom with the highest occupancy value. User can define one specific
-location using an option.
+Selects altloc labels for the entire PDB file.
+
+By default, picks the label with the highest occupancy value for each atom, 
+but the user can define a specific label. Removes all labels afterwards.
 
 Usage:
     python pdb_selaltloc.py [-<option>] <pdb file>

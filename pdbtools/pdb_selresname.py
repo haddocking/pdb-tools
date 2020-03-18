@@ -16,8 +16,9 @@
 # limitations under the License.
 
 """
-Selects all residues matching the given name in the PDB file. Residues names are
-matched *without* taking into consideration spaces.
+Selects all residues matching the given name in the PDB file.
+
+Residues names are matched *without* taking into consideration spaces.
 
 Usage:
     python pdb_selresname.py -<option> <pdb file>

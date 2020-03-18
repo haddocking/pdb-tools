@@ -16,8 +16,9 @@
 # limitations under the License.
 
 """
-Performs in-place replacement of a residue name by another. Affects all residues
-with that name.
+Performs in-place replacement of a residue name by another.
+
+Affects all residues with that name.
 
 Usage:
     python pdb_rplresname.py -<from>:<to> <pdb file>

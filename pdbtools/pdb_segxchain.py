@@ -16,9 +16,10 @@
 # limitations under the License.
 
 """
-Replaces the chain identifier column by the value in the segment identifier
-column of the PDB file. Truncates the segment identifier if longer than one
-character.
+Swaps the chain identifier by the segment identifier.
+
+If the segment identifier is longer than one character, the script will
+truncate it. Does not ensure unique chain IDs.
 
 Usage:
     python pdb_segxchain.py <pdb file>

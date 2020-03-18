@@ -16,8 +16,10 @@
 # limitations under the License.
 
 """
-Detects gaps between consecutive residues in the sequence, both by a distance
-criterion or discontinuous residue numbering. Only applies for protein residues.
+Finds gaps between consecutive protein residues in the PDB.
+
+Detects gaps both by a distance criterion or discontinuous residue numbering.
+Only applies to protein residues.
 
 Usage:
     python pdb_gap.py <pdb file>
