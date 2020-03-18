@@ -16,7 +16,7 @@
 # limitations under the License.
 
 """
-Merges several PDB files into one. 
+Merges several PDB files into one.
 
 The contents are not sorted and no lines are deleted (e.g. END, TER
 statements) so we recommend piping the results through `pdb_tidy.py`.

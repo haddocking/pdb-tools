@@ -16,7 +16,7 @@
 # limitations under the License.
 
 """
-Deletes all atoms matching the given element in the PDB file. 
+Deletes all atoms matching the given element in the PDB file.
 
 Elements are read from the element column.
 

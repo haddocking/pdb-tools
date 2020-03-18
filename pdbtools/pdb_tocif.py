@@ -16,7 +16,7 @@
 # limitations under the License.
 
 """
-Rudimentarily converts the PDB file to mmCIF format. 
+Rudimentarily converts the PDB file to mmCIF format.
 
 Will convert only the coordinate section.
 

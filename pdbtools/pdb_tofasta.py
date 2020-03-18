@@ -16,7 +16,7 @@
 # limitations under the License.
 
 """
-Extracts the residue sequence in a PDB file to FASTA format. 
+Extracts the residue sequence in a PDB file to FASTA format.
 
 Canonical amino acids and nucleotides are represented by their
 one-letter code while all others are represented by 'X'.

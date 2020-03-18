@@ -16,7 +16,7 @@
 # limitations under the License.
 
 """
-Downloads a structure in PDB format from the RCSB website. 
+Downloads a structure in PDB format from the RCSB website.
 
 Allows downloading the (first) biological structure if selected.
 

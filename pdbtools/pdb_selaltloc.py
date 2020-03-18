@@ -18,7 +18,7 @@
 """
 Selects altloc labels for the entire PDB file.
 
-By default, picks the label with the highest occupancy value for each atom, 
+By default, picks the label with the highest occupancy value for each atom,
 but the user can define a specific label. Removes all labels afterwards.
 
 Usage:
