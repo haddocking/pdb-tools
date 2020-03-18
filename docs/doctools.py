@@ -43,7 +43,7 @@ with open('descriptions.md', 'w') as handle:
 				long_description.append(line)
 	
 		long_description = '\n'.join(long_description)
-		print("<div>")
+		print('<div style="margin-bottom: 1em;">')
 		print('<details>')
 		print(f"<summary><b>{name}</b><p>{summary}</p></summary>")
 		print(f'<span style="font-family: monospace; white-space: pre;">{long_description}</span>')

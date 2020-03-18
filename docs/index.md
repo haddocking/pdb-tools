@@ -139,7 +139,7 @@ or a new tools, read our `CONTRIBUTING` instructions [here](https://github.com/h
 For details, see the LICENSE file.
 
 ## List of Tools
-<div>
+<div style="margin-bottom: 1em;">
 <details>
 <summary><b>pdb_b</b> | Modifies the temperature factor column of a PDB file (default 10.0).</summary>
 <span style="font-family: monospace; white-space: pre;">
