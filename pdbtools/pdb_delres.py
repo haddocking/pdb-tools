@@ -16,7 +16,7 @@
 # limitations under the License.
 
 """
-Deletes a range of residues from a PDB file. 
+Deletes a range of residues from a PDB file.
 
 The range option has three components: start, end, and step. Start and end
 are optional and if ommitted the range will start at the first residue or

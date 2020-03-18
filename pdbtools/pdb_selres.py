@@ -16,7 +16,7 @@
 # limitations under the License.
 
 """
-Selects residues by their index, piecewise or in a range. 
+Selects residues by their index, piecewise or in a range.
 
 The range option has three components: start, end, and step. Start and end
 are optional and if ommitted the range will start at the first residue or

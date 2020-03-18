@@ -16,7 +16,7 @@
 # limitations under the License.
 
 """
-Rudimentarily converts a mmCIF file to the PDB format. 
+Rudimentarily converts a mmCIF file to the PDB format.
 
 Will not convert if the file does not 'fit' in PDB format, e.g. too many
 chains, residues, or atoms. Will convert only the coordinate section.

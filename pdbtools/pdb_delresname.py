@@ -16,7 +16,7 @@
 # limitations under the License.
 
 """
-Removes all residues matching the given name in the PDB file. 
+Removes all residues matching the given name in the PDB file.
 
 Residues names are matched *without* taking into consideration spaces.
 
