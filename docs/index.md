@@ -151,7 +151,7 @@ Example:
 </span>
 </details>
 </div>
-<div>
+<div style="margin-bottom: 1em;">
 <details>
 <summary><b>pdb_chain</b> | Modifies the chain identifier column of a PDB file (default is an empty chain).</summary>
 <span style="font-family: monospace; white-space: pre;">
@@ -163,7 +163,7 @@ Example:
 </span>
 </details>
 </div>
-<div>
+<div style="margin-bottom: 1em;">
 <details>
 <summary><b>pdb_chainxseg</b> | Swaps the segment identifier for the chain identifier.</summary>
 <span style="font-family: monospace; white-space: pre;">
@@ -175,7 +175,7 @@ Example:
 </span>
 </details>
 </div>
-<div>
+<div style="margin-bottom: 1em;">
 <details>
 <summary><b>pdb_chkensemble</b> | Checks all models in a multi-model PDB file have the same composition.</summary>
 <span style="font-family: monospace; white-space: pre;">
@@ -189,7 +189,7 @@ Example:
 </span>
 </details>
 </div>
-<div>
+<div style="margin-bottom: 1em;">
 <details>
 <summary><b>pdb_delchain</b> | Deletes all atoms matching specific chains in the PDB file.</summary>
 <span style="font-family: monospace; white-space: pre;">
@@ -202,7 +202,7 @@ Example:
 </span>
 </details>
 </div>
-<div>
+<div style="margin-bottom: 1em;">
 <details>
 <summary><b>pdb_delelem</b> | Deletes all atoms matching the given element in the PDB file. </summary>
 <span style="font-family: monospace; white-space: pre;">
@@ -218,7 +218,7 @@ Example:
 </span>
 </details>
 </div>
-<div>
+<div style="margin-bottom: 1em;">
 <details>
 <summary><b>pdb_delhetatm</b> | Removes all HETATM records in the PDB file.</summary>
 <span style="font-family: monospace; white-space: pre;">
@@ -230,7 +230,7 @@ Example:
 </span>
 </details>
 </div>
-<div>
+<div style="margin-bottom: 1em;">
 <details>
 <summary><b>pdb_delinsertion</b> | Deletes insertion codes in a PDB file.</summary>
 <span style="font-family: monospace; white-space: pre;">
@@ -247,7 +247,7 @@ Example:
 </span>
 </details>
 </div>
-<div>
+<div style="margin-bottom: 1em;">
 <details>
 <summary><b>pdb_delres</b> | Deletes a range of residues from a PDB file. </summary>
 <span style="font-family: monospace; white-space: pre;">
@@ -270,7 +270,7 @@ Example:
 </span>
 </details>
 </div>
-<div>
+<div style="margin-bottom: 1em;">
 <details>
 <summary><b>pdb_delresname</b> | Removes all residues matching the given name in the PDB file. </summary>
 <span style="font-family: monospace; white-space: pre;">
@@ -285,7 +285,7 @@ Example:
 </span>
 </details>
 </div>
-<div>
+<div style="margin-bottom: 1em;">
 <details>
 <summary><b>pdb_element</b> | Assigns the elements in the PDB file from atom names.</summary>
 <span style="font-family: monospace; white-space: pre;">
@@ -297,7 +297,7 @@ Example:
 </span>
 </details>
 </div>
-<div>
+<div style="margin-bottom: 1em;">
 <details>
 <summary><b>pdb_fetch</b> | Downloads a structure in PDB format from the RCSB website. </summary>
 <span style="font-family: monospace; white-space: pre;">
@@ -312,7 +312,7 @@ Example:
 </span>
 </details>
 </div>
-<div>
+<div style="margin-bottom: 1em;">
 <details>
 <summary><b>pdb_fromcif</b> | Rudimentarily converts a mmCIF file to the PDB format. </summary>
 <span style="font-family: monospace; white-space: pre;">
@@ -327,7 +327,7 @@ Example:
 </span>
 </details>
 </div>
-<div>
+<div style="margin-bottom: 1em;">
 <details>
 <summary><b>pdb_gap</b> | Finds gaps between consecutive protein residues in the PDB.</summary>
 <span style="font-family: monospace; white-space: pre;">
@@ -342,7 +342,7 @@ Example:
 </span>
 </details>
 </div>
-<div>
+<div style="margin-bottom: 1em;">
 <details>
 <summary><b>pdb_head</b> | Returns the first N coordinate (ATOM/HETATM) lines of the file.</summary>
 <span style="font-family: monospace; white-space: pre;">
@@ -354,7 +354,7 @@ Example:
 </span>
 </details>
 </div>
-<div>
+<div style="margin-bottom: 1em;">
 <details>
 <summary><b>pdb_intersect</b> | Returns a new PDB file only with atoms in common to all input PDB files.</summary>
 <span style="font-family: monospace; white-space: pre;">
@@ -370,7 +370,7 @@ Example:
 </span>
 </details>
 </div>
-<div>
+<div style="margin-bottom: 1em;">
 <details>
 <summary><b>pdb_keepcoord</b> | Removes all non-coordinate records from the file.</summary>
 <span style="font-family: monospace; white-space: pre;">
@@ -384,7 +384,7 @@ Example:
 </span>
 </details>
 </div>
-<div>
+<div style="margin-bottom: 1em;">
 <details>
 <summary><b>pdb_merge</b> | Merges several PDB files into one. </summary>
 <span style="font-family: monospace; white-space: pre;">
@@ -399,7 +399,7 @@ Example:
 </span>
 </details>
 </div>
-<div>
+<div style="margin-bottom: 1em;">
 <details>
 <summary><b>pdb_mkensemble</b> | Merges several PDB files into one multi-model (ensemble) file.</summary>
 <span style="font-family: monospace; white-space: pre;">
@@ -414,7 +414,7 @@ Example:
 </span>
 </details>
 </div>
-<div>
+<div style="margin-bottom: 1em;">
 <details>
 <summary><b>pdb_occ</b> | Modifies the occupancy column of a PDB file (default 1.0).</summary>
 <span style="font-family: monospace; white-space: pre;">
@@ -426,7 +426,7 @@ Example:
 </span>
 </details>
 </div>
-<div>
+<div style="margin-bottom: 1em;">
 <details>
 <summary><b>pdb_reatom</b> | Renumbers atom serials in the PDB file starting from a given value (default 1).</summary>
 <span style="font-family: monospace; white-space: pre;">
@@ -439,7 +439,7 @@ Example:
 </span>
 </details>
 </div>
-<div>
+<div style="margin-bottom: 1em;">
 <details>
 <summary><b>pdb_reres</b> | Renumbers the residues of the PDB file starting from a given number (default 1).</summary>
 <span style="font-family: monospace; white-space: pre;">
@@ -452,7 +452,7 @@ Example:
 </span>
 </details>
 </div>
-<div>
+<div style="margin-bottom: 1em;">
 <details>
 <summary><b>pdb_rplchain</b> | Performs in-place replacement of a chain identifier by another.</summary>
 <span style="font-family: monospace; white-space: pre;">
@@ -464,7 +464,7 @@ Example:
 </span>
 </details>
 </div>
-<div>
+<div style="margin-bottom: 1em;">
 <details>
 <summary><b>pdb_rplresname</b> | Performs in-place replacement of a residue name by another.</summary>
 <span style="font-family: monospace; white-space: pre;">
@@ -478,7 +478,7 @@ Example:
 </span>
 </details>
 </div>
-<div>
+<div style="margin-bottom: 1em;">
 <details>
 <summary><b>pdb_seg</b> | Modifies the segment identifier column of a PDB file (default is an empty segment).</summary>
 <span style="font-family: monospace; white-space: pre;">
@@ -490,7 +490,7 @@ Example:
 </span>
 </details>
 </div>
-<div>
+<div style="margin-bottom: 1em;">
 <details>
 <summary><b>pdb_segxchain</b> | Swaps the chain identifier by the segment identifier.</summary>
 <span style="font-family: monospace; white-space: pre;">
@@ -505,7 +505,7 @@ Example:
 </span>
 </details>
 </div>
-<div>
+<div style="margin-bottom: 1em;">
 <details>
 <summary><b>pdb_selaltloc</b> | Selects altloc labels for the entire PDB file.</summary>
 <span style="font-family: monospace; white-space: pre;">
@@ -521,7 +521,7 @@ Example:
 </span>
 </details>
 </div>
-<div>
+<div style="margin-bottom: 1em;">
 <details>
 <summary><b>pdb_selatom</b> | Selects all atoms matching the given name in the PDB file.</summary>
 <span style="font-family: monospace; white-space: pre;">
@@ -537,7 +537,7 @@ Example:
 </span>
 </details>
 </div>
-<div>
+<div style="margin-bottom: 1em;">
 <details>
 <summary><b>pdb_selchain</b> | Extracts one or more chains from a PDB file.</summary>
 <span style="font-family: monospace; white-space: pre;">
@@ -550,7 +550,7 @@ Example:
 </span>
 </details>
 </div>
-<div>
+<div style="margin-bottom: 1em;">
 <details>
 <summary><b>pdb_selelem</b> | Selects all atoms that match the given element(s) in the PDB file.</summary>
 <span style="font-family: monospace; white-space: pre;">
@@ -566,7 +566,7 @@ Example:
 </span>
 </details>
 </div>
-<div>
+<div style="margin-bottom: 1em;">
 <details>
 <summary><b>pdb_selhetatm</b> | Selects all HETATM records in the PDB file.</summary>
 <span style="font-family: monospace; white-space: pre;">
@@ -578,7 +578,7 @@ Example:
 </span>
 </details>
 </div>
-<div>
+<div style="margin-bottom: 1em;">
 <details>
 <summary><b>pdb_selres</b> | Selects residues by their index, piecewise or in a range. </summary>
 <span style="font-family: monospace; white-space: pre;">
@@ -600,7 +600,7 @@ Example:
 </span>
 </details>
 </div>
-<div>
+<div style="margin-bottom: 1em;">
 <details>
 <summary><b>pdb_selresname</b> | Selects all residues matching the given name in the PDB file.</summary>
 <span style="font-family: monospace; white-space: pre;">
@@ -615,7 +615,7 @@ Example:
 </span>
 </details>
 </div>
-<div>
+<div style="margin-bottom: 1em;">
 <details>
 <summary><b>pdb_selseg</b> | Selects all atoms matching the given segment identifier.</summary>
 <span style="font-family: monospace; white-space: pre;">
@@ -628,7 +628,7 @@ Example:
 </span>
 </details>
 </div>
-<div>
+<div style="margin-bottom: 1em;">
 <details>
 <summary><b>pdb_shiftres</b> | Shifts the residue numbers in the PDB file by a constant value.</summary>
 <span style="font-family: monospace; white-space: pre;">
@@ -641,7 +641,7 @@ Example:
 </span>
 </details>
 </div>
-<div>
+<div style="margin-bottom: 1em;">
 <details>
 <summary><b>pdb_sort</b> | Sorts the ATOM/HETATM/ANISOU/CONECT records in a PDB file.</summary>
 <span style="font-family: monospace; white-space: pre;">
@@ -674,7 +674,7 @@ Example:
 </span>
 </details>
 </div>
-<div>
+<div style="margin-bottom: 1em;">
 <details>
 <summary><b>pdb_splitchain</b> | Splits a PDB file into several, each containing one chain.</summary>
 <span style="font-family: monospace; white-space: pre;">
@@ -686,7 +686,7 @@ Example:
 </span>
 </details>
 </div>
-<div>
+<div style="margin-bottom: 1em;">
 <details>
 <summary><b>pdb_splitmodel</b> | Splits a PDB file into several, each containing one MODEL.</summary>
 <span style="font-family: monospace; white-space: pre;">
@@ -698,7 +698,7 @@ Example:
 </span>
 </details>
 </div>
-<div>
+<div style="margin-bottom: 1em;">
 <details>
 <summary><b>pdb_splitseg</b> | Splits a PDB file into several, each containing one segment.</summary>
 <span style="font-family: monospace; white-space: pre;">
@@ -710,7 +710,7 @@ Example:
 </span>
 </details>
 </div>
-<div>
+<div style="margin-bottom: 1em;">
 <details>
 <summary><b>pdb_tidy</b> | Modifies the file to adhere (as much as possible) to the format specifications.</summary>
 <span style="font-family: monospace; white-space: pre;">
@@ -732,7 +732,7 @@ Example:
 </span>
 </details>
 </div>
-<div>
+<div style="margin-bottom: 1em;">
 <details>
 <summary><b>pdb_tocif</b> | Rudimentarily converts the PDB file to mmCIF format. </summary>
 <span style="font-family: monospace; white-space: pre;">
@@ -746,7 +746,7 @@ Example:
 </span>
 </details>
 </div>
-<div>
+<div style="margin-bottom: 1em;">
 <details>
 <summary><b>pdb_tofasta</b> | Extracts the residue sequence in a PDB file to FASTA format. </summary>
 <span style="font-family: monospace; white-space: pre;">
@@ -764,7 +764,7 @@ Example:
 </span>
 </details>
 </div>
-<div>
+<div style="margin-bottom: 1em;">
 <details>
 <summary><b>pdb_validate</b> | Validates the PDB file ATOM/HETATM lines according to the format specifications.</summary>
 <span style="font-family: monospace; white-space: pre;">
@@ -778,7 +778,7 @@ Example:
 </span>
 </details>
 </div>
-<div>
+<div style="margin-bottom: 1em;">
 <details>
 <summary><b>pdb_wc</b> | Summarizes the contents of a PDB file, like the wc command in UNIX.</summary>
 <span style="font-family: monospace; white-space: pre;">
