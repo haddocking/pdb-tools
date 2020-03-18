@@ -64,14 +64,14 @@ class TestTool(unittest.TestCase):
 
         # Validate results
         self.assertEqual(self.retcode, 1)
-        self.assertEqual(len(self.stdout), 0)
-        self.assertEqual(len(self.stderr), 253)
+        self.assertEqual(len(self.stdout), 253)
+        self.assertEqual(len(self.stderr), 0)
 
         # Count no. of line length warnings
-        n_warn = len([l for l in self.stderr if 'is short' in l])
+        n_warn = len([l for l in self.stdout if 'is short' in l])
         self.assertEqual(n_warn, 70)
 
-        self.assertEqual(self.stderr[-4],
+        self.assertEqual(self.stdout[-4],
                          "[!] Line 203 is short: 26 < 80")
 
     def test_valid(self):
@@ -85,8 +85,8 @@ class TestTool(unittest.TestCase):
 
         # Validate results
         self.assertEqual(self.retcode, 0)  # ensure the program exited OK.
-        self.assertEqual(len(self.stdout), 1)
-        self.assertEqual(len(self.stderr), 0)  # no errors
+        self.assertEqual(len(self.stderr), 0)
+        self.assertEqual(len(self.stdout), 1)  # no errors
 
         self.assertEqual(self.stdout,
                          ["It *seems* everything is OK."])

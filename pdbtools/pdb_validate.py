@@ -117,12 +117,12 @@ def check_pdb_format(fhandle):
             linelen = len(line)
             if linelen < 80:
                 emsg = '[!] Line {0} is short: {1} < 80\n'
-                sys.stderr.write(emsg.format(iline, linelen))
+                sys.stdout.write(emsg.format(iline, linelen))
                 has_error = True
 
             elif linelen > 80:
                 emsg = '[!] Line {0} is long: {1} > 80\n'
-                sys.stderr.write(emsg.format(iline, linelen))
+                sys.stdout.write(emsg.format(iline, linelen))
                 has_error = True
 
             for fname, (fcol, fcheck) in _fmt_check:
@@ -130,10 +130,10 @@ def check_pdb_format(fhandle):
                 if not fcheck.match(field):
                     pointer = _make_pointer(fcol)
                     emsg = '[!] Offending field ({0}) at line {1}\n'
-                    sys.stderr.write(emsg.format(fname, iline))
+                    sys.stdout.write(emsg.format(fname, iline))
 
-                    sys.stderr.write(repr(line) + '\n')
-                    sys.stderr.write(pointer + '\n')
+                    sys.stdout.write(repr(line) + '\n')
+                    sys.stdout.write(pointer + '\n')
 
                     has_error = True
                     break
@@ -142,17 +142,17 @@ def check_pdb_format(fhandle):
             linelen = len(line)
             if linelen < 80:
                 emsg = '[!] Line {0} is short: {1} < 80\n'
-                sys.stderr.write(emsg.format(iline, linelen))
+                sys.stdout.write(emsg.format(iline, linelen))
                 has_error = True
             elif linelen > 80:
                 emsg = '[!] Line {0} is long: {1} > 80\n'
-                sys.stderr.write(emsg.format(iline, linelen))
+                sys.stdout.write(emsg.format(iline, linelen))
                 has_error = True
 
     if has_error:
         msg = '\nTo understand your errors, read the format specification:\n'
         msg += '  http://www.wwpdb.org/documentation/file-format-content/format33/sect9.html#ATOM\n'
-        sys.stderr.write(msg)
+        sys.stdout.write(msg)
         return 1
     else:
         msg = 'It *seems* everything is OK.'
