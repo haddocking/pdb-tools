@@ -31,7 +31,7 @@ with open('descriptions.md', 'w') as handle:
 		summary = None
 		long_description = []
 
-		doctext = tool.__doc__.replace('<', '&lt').replace('>', '&gt')
+		doctext = tool.__doc__.replace('<', '&lt;').replace('>', '&gt;')
 		for line in doctext.split('\n'):
 			if summary is None and not line.strip():
 				continue
