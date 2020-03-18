@@ -17,6 +17,7 @@
 
 """
 Modifies the file to adhere (as much as possible) to the format specifications.
+
 Expects a sorted file - REMARK/ATOM/HETATM/END - so use pdb_sort in case you are
 not sure.
 

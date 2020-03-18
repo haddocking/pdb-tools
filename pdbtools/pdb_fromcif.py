@@ -16,9 +16,10 @@
 # limitations under the License.
 
 """
-Converts a mmCIF file to the PDB format. Will not convert if the file does not
-'fit' in PDB format, e.g. too many chains, residues, or atoms. Will convert
-only the coordinate section.
+Rudimentarily converts a mmCIF file to the PDB format. 
+
+Will not convert if the file does not 'fit' in PDB format, e.g. too many
+chains, residues, or atoms. Will convert only the coordinate section.
 
 Usage:
     python pdb_fromcif.py <pdb file>

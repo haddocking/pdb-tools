@@ -16,8 +16,7 @@
 # limitations under the License.
 
 """
-Replaces the segment identifier column by the value in the chain identifier
-column of the PDB file.
+Swaps the segment identifier for the chain identifier.
 
 Usage:
     python pdb_chainxseg.py <pdb file>

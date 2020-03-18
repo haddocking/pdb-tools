@@ -16,8 +16,9 @@
 # limitations under the License.
 
 """
-Downloads a structure in PDB format from the RCSB website. Allows downloading
-the (first) biological structure if selected.
+Downloads a structure in PDB format from the RCSB website. 
+
+Allows downloading the (first) biological structure if selected.
 
 Usage:
     python pdb_fetch.py [-biounit] <pdb code>

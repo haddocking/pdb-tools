@@ -16,8 +16,7 @@
 # limitations under the License.
 
 """
-Renumbers atom serial numbers of the PDB file starting from a given value
-(default 1).
+Renumbers atom serials in the PDB file starting from a given value (default 1).
 
 Usage:
     python pdb_reatom.py -<number> <pdb file>

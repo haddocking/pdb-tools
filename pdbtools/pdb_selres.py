@@ -16,10 +16,11 @@
 # limitations under the License.
 
 """
-Extracts residues from a PDB file, either arbitrarily or in a range. The range
-option has three components: start, end, and step. Start and end are optional
-and if ommitted the range will start at the first residue or end at the last,
-respectively.
+Selects residues by their index, piecewise or in a range. 
+
+The range option has three components: start, end, and step. Start and end
+are optional and if ommitted the range will start at the first residue or
+end at the last, respectively.
 
 Usage:
     python pdb_selres.py -[resid]:[resid]:[step] <pdb file>

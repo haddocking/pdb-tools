@@ -16,8 +16,7 @@
 # limitations under the License.
 
 """
-Extracts one or more segments from a PDB file based on their segment
-identifiers.
+Selects all atoms matching the given segment identifier.
 
 Usage:
     python pdb_selseg.py -<segment id> <pdb file>

@@ -16,8 +16,9 @@
 # limitations under the License.
 
 """
-Converts a PDB file to the mmCIF format. Will convert only the coordinate
-section.
+Rudimentarily converts the PDB file to mmCIF format. 
+
+Will convert only the coordinate section.
 
 Usage:
     python pdb_tocif.py <pdb file>

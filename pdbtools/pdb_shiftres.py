@@ -16,8 +16,7 @@
 # limitations under the License.
 
 """
-Renumbers the residues of the PDB file by adding/subtracting a given number
-from the original numbering.
+Shifts the residue numbers in the PDB file by a constant value.
 
 Usage:
     python pdb_shiftres.py -<number> <pdb file>

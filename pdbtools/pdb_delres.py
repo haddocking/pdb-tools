@@ -16,12 +16,14 @@
 # limitations under the License.
 
 """
-Deletes a range of residues from a PDB file. The range option has three
-components: start, end, and step. Start and end are optional and if ommitted the
-range will start at the first residue or end at the last, respectively. The step
-option can only be used if both start and end are provided. Note that the start
-and end values of the range are purely numerical, while the range actually
-refers to every N-th residue, regardless of their sequence number.
+Deletes a range of residues from a PDB file. 
+
+The range option has three components: start, end, and step. Start and end
+are optional and if ommitted the range will start at the first residue or
+end at the last, respectively. The step option can only be used if both start
+and end are provided. Note that the start and end values of the range are
+purely numerical, while the range actually refers to every N-th residue,
+regardless of their sequence number.
 
 Usage:
     python pdb_delres.py -[resid]:[resid]:[step] <pdb file>

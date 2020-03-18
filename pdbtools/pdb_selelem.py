@@ -16,8 +16,9 @@
 # limitations under the License.
 
 """
-Selects all atoms that match the given element(s) in the PDB file. Elements are
-read from the element column.
+Selects all atoms that match the given element(s) in the PDB file.
+
+Elements are read from the element column.
 
 Usage:
     python pdb_selelem.py -<option> <pdb file>
