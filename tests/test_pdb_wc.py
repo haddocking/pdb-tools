@@ -64,7 +64,7 @@ class TestTool(unittest.TestCase):
 
         # Validate results
         self.assertEqual(self.retcode, 0)
-        self.assertEqual(len(self.stdout), 8)
+        self.assertEqual(len(self.stdout), 7)
         self.assertEqual(len(self.stderr), 0)
 
         self.assertEqual(self.stdout,
@@ -74,10 +74,9 @@ class TestTool(unittest.TestCase):
                           "No. atoms:\t176\t( 176.0/model)",
                           "No. HETATM:\t9",
                           "Multiple Occ.:\tTrue",
-                          "Res. Inserts:\tFalse",
-                          "Has seq. gaps:\tTrue"])
+                          "Res. Inserts:\tFalse"])
 
-    def test_single_option(self):
+    def test_single_option_1(self):
         """$ pdb_wc -m data/ensemble_OK.pdb"""
 
         fpath = os.path.join(data_dir, 'ensemble_OK.pdb')
@@ -88,11 +87,28 @@ class TestTool(unittest.TestCase):
 
         # Validate results
         self.assertEqual(self.retcode, 0)  # ensure the program exited OK.
-        self.assertEqual(len(self.stdout), 1)
+        self.assertEqual(len(self.stdout), 2)
         self.assertEqual(len(self.stderr), 0)  # no errors
 
         self.assertEqual(self.stdout,
-                         ["No. models:\t2"])
+                         ["No. models:\t2", "\t->\t1,2"])
+
+    def test_single_option_2(self):
+        """$ pdb_wc -c data/dummy.pdb"""
+
+        fpath = os.path.join(data_dir, 'dummy.pdb')
+        sys.argv = ['', '-c', fpath]
+
+        # Execute the script
+        self.exec_module()
+
+        # Validate results
+        self.assertEqual(self.retcode, 0)  # ensure the program exited OK.
+        self.assertEqual(len(self.stdout), 2)
+        self.assertEqual(len(self.stderr), 0)  # no errors
+
+        self.assertEqual(self.stdout,
+                         ['No. chains:\t4\t(   4.0/model)', '\t->\tA,B,C,D'])
 
     def test_file_not_found(self):
         """$ pdb_wc not_existing.pdb"""
