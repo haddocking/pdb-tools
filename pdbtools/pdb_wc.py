@@ -26,7 +26,6 @@ Several options are available to produce only partial summaries:
     [h] - no. of HETATM (plus per-model if multi-model file).
     [o] - no. of disordered atoms (altloc) (plus per-model if multi-model file).
     [i] - no. of insertion codes (plus per-model if multi-model file).
-    [g] - presence/absence of gaps (discontinuous residue numbering).
 
 Usage:
     python pdb_wc.py [-<option>] <pdb file>
@@ -55,7 +54,7 @@ def check_input(args):
     """
 
     # Defaults
-    option = 'mcrahoig'
+    option = ''  # empty produces overall summary
     fh = sys.stdin  # file handle
 
     if not len(args):
@@ -104,89 +103,142 @@ def check_input(args):
         sys.stderr.write(__doc__)
         sys.exit(1)
 
-    # Validate option
-    if option == '':
-        option = 'mcrahoig'
-
-    valid = set('mcrahoig')
-    if set(option) - valid:
-        diff = ''.join(set(option) - valid)
-        emsg = 'ERROR!! The following options are not valid: \'{0}\'\n'
-        sys.stderr.write(emsg.format(diff))
-        sys.exit(1)
+    if option:
+        valid = set('mcrahoi')
+        if set(option) - valid:
+            diff = ''.join(set(option) - valid)
+            emsg = 'ERROR!! The following options are not valid: \'{0}\'\n'
+            sys.stderr.write(emsg.format(diff))
+            sys.exit(1)
 
     return (option, fh)
 
 
 def summarize_file(fhandle, option):
-    """Returns a count of models, chains, residue, and atoms.
+    """Returns summary of models, chains, residue, and atoms.
     """
 
-    n_models, n_chains, n_residues, n_atoms = 0, 0, 0, 0
-    n_hetatm, n_altloc, n_inscodes, n_rgaps = 0, 0, 0, 0
+    models = set()
+    chains, resids, atoms, hetatm = set(), set(), set(), set()
+    has_altloc, has_icode = False, False  # flags only
 
-    prev_chain, prev_res = None, None
+    model_id = "X   "
     for line in fhandle:
         if line.startswith('MODEL'):
-            n_models += 1
+            model_id = line[10:14]
+            models.add(model_id.strip())
 
         elif line.startswith('ATOM'):
 
-            res_uid = line[17:26]
-            chain_uid = line[21]
-
-            if prev_res and (int(line[22:26]) - int(prev_res[5:])) > 1:
-                if prev_chain == chain_uid:
-                    n_rgaps += 1
-
-            if res_uid != prev_res:
-                n_residues += 1
-                prev_res = res_uid
-
-            if chain_uid != prev_chain:
-                n_chains += 1
-                prev_chain = chain_uid
+            chains.add(model_id + line[21])
+            resids.add(model_id + line[17:26])
+            atoms.add(model_id + line[12:27])
 
             if line[16] != ' ':
-                n_altloc += 1
+                has_altloc = True
 
             if line[26] != ' ':
-                n_inscodes += 1
-
-            n_atoms += 1
+                has_icode = True
 
         elif line.startswith('HETATM'):
-            n_hetatm += 1
+            chains.add(model_id + line[21])
+            hetatm.add(model_id + line[17:26])
 
-    if n_models == 0:
-        n_models = 1
+    if not models:
+        models = {None}
+
+    # Tally counts
+    n_models = len(models)
+    n_chains = len(chains)
+    n_resids = len(resids)
+    n_atoms = len(atoms)
+    n_hetatm = len(hetatm)
 
     # Per-model
-    n_atom_pm = '{0:>6.1f}'.format(n_atoms / float(n_models))
-    n_resi_pm = '{0:>6.1f}'.format(n_residues / float(n_models))
-    n_chain_pm = '{0:>6.1f}'.format(n_chains / float(n_models))
+    n_atoms_pm = '{0:>6.1f}'.format(n_atoms / n_models)
+    n_resids_pm = '{0:>6.1f}'.format(n_resids / n_models)
+    n_chains_pm = '{0:>6.1f}'.format(n_chains / n_models)
 
-    # Booleans
-    has_gaps = bool(n_rgaps)
-    has_altloc = bool(n_altloc)
-    has_icode = bool(n_inscodes)
+    if not option:
+        sys.stdout.write(
+            'No. models:\t{0}\n'.format(n_models)
+        )
+        sys.stdout.write(
+            'No. chains:\t{0}\t({1}/model)\n'.format(n_chains, n_chains_pm)
+        )
+        sys.stdout.write(
+            'No. residues:\t{0}\t({1}/model)\n'.format(n_resids, n_resids_pm)
+        )
+        sys.stdout.write(
+            'No. atoms:\t{0}\t({1}/model)\n'.format(n_atoms, n_atoms_pm)
+        )
+        sys.stdout.write(
+            'No. HETATM:\t{0}\n'.format(n_hetatm)
+        )
+        sys.stdout.write(
+            'Multiple Occ.:\t{0}\n'.format(has_altloc)
+        )
+        sys.stdout.write(
+            'Res. Inserts:\t{0}\n'.format(has_icode)
+        )
+
+        return
 
     if 'm' in option:
-        sys.stdout.write('No. models:\t{0}\n'.format(n_models))
+        sys.stdout.write(
+            'No. models:\t{0}\n'.format(n_models)
+        )
+        if models != {None}:
+            models_str = ','.join(sorted(models, key=int))
+            sys.stdout.write(
+                '\t->\t{0}\n'.format(models_str)
+            )
+
     if 'c' in option:
-        sys.stdout.write('No. chains:\t{0}\t({1}/model)\n'.format(n_chains, n_chain_pm))
+        sys.stdout.write(
+            'No. chains:\t{0}\t({1}/model)\n'.format(n_chains, n_chains_pm)
+        )
+        chains_str = ','.join(sorted((c[4:] for c in chains)))
+        sys.stdout.write(
+            '\t->\t{0}\n'.format(chains_str)
+        )
+
     if 'r' in option:
-        sys.stdout.write('No. residues:\t{0}\t({1}/model)\n'.format(n_residues, n_resi_pm))
+        sys.stdout.write(
+            'No. residues:\t{0}\t({1}/model)\n'.format(n_resids, n_resids_pm)
+        )
+        resnames = ','.join(sorted({f[4:7].strip() for f in resids}))
+        sys.stdout.write(
+            '\t->\t{0}\n'.format(resnames)
+        )
+
     if 'a' in option:
-        sys.stdout.write('No. atoms:\t{0}\t({1}/model)\n'.format(n_atoms, n_atom_pm))
+        sys.stdout.write(
+            'No. atoms:\t{0}\t({1}/model)\n'.format(n_atoms, n_atoms_pm)
+        )
+        atnames = ','.join(sorted({repr(f[4:8]) for f in atoms}))
+        sys.stdout.write(
+            '\t->\t{0}\n'.format(atnames)
+        )
+
     if 'h' in option:
-        sys.stdout.write('No. HETATM:\t{0}\n'.format(n_hetatm))
+        sys.stdout.write(
+            'No. HETATM:\t{0}\n'.format(n_hetatm)
+        )
+        hetnames = ','.join(sorted({repr(f[4:7]) for f in hetatm}))
+        sys.stdout.write(
+            '\t->\t{0}\n'.format(hetnames)
+        )
+
     if 'o' in option:
-        sys.stdout.write('Multiple Occ.:\t{0}\n'.format(has_altloc))
+        sys.stdout.write(
+            'Multiple Occ.:\t{0}\n'.format(has_altloc)
+        )
+
     if 'i' in option:
-        sys.stdout.write('Res. Inserts:\t{0}\n'.format(has_icode))
-    if 'g' in option:
-        sys.stdout.write('Has seq. gaps:\t{0}\n'.format(has_gaps))
+        sys.stdout.write(
+            'Res. Inserts:\t{0}\n'.format(has_icode)
+        )
 
 
 def main():
