@@ -68,6 +68,32 @@ class TestTool(unittest.TestCase):
         self.assertEqual(len(self.stdout), 385)
         self.assertEqual(len(self.stderr), 0)
 
+    def test_default_multiple(self):
+        """$ pdb_mkensemble data/dummy.pdb x20"""
+
+        # Simulate input
+        args = [os.path.join(data_dir, 'dummy.pdb') for _ in range(20)]
+        sys.argv = [''] + args
+
+        # Execute the script
+        self.exec_module()
+
+        # Validate results
+        self.assertEqual(self.retcode, 0)
+        self.assertEqual(len(self.stdout), 3823)
+        self.assertEqual(len(self.stderr), 0)
+
+        # Validate MODEL lines
+        model_no = [
+            int(line[10:14])
+            for line in self.stdout
+            if line.startswith('MODEL')
+        ]
+        model_no = sorted(set(model_no))
+        n_models = len(model_no)
+        self.assertEqual(n_models, 20)
+        self.assertEqual(model_no, list(range(1, 21)))
+
     def test_file_not_found(self):
         """$ pdb_mkensemble not_existing.pdb"""
 
