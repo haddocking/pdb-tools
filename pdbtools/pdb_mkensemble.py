@@ -81,7 +81,7 @@ def make_ensemble(f_name_list):
     fmt_REMARK = "REMARK     {:<67s}\n"
 
     # MODEL        1
-    fmt_MODEL = "MODEL {:>5d}\n"
+    fmt_MODEL = "MODEL    {:>5d}\n"
 
     for fileno, file_name in enumerate(f_name_list, start=1):
         fpath = os.path.basename(file_name)
