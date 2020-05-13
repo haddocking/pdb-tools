@@ -13,9 +13,9 @@ jobs:
 
     steps:
 
-    - uses: actions/checkout@v2
-      with:
-        token: ${{ secrets.PDBPAT }}
+    - uses: actions/checkout@v1
+      # with:
+      #   token: ${{ secrets.PDBPAT }}
 
     - name: Set up Python
       uses: actions/setup-python@v1

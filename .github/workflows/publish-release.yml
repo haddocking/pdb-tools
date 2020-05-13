@@ -1,9 +1,9 @@
 name: Package and Publish Release
 
 on:
-  release:
-    types:
-      - created
+  push:
+    tags:
+      - '*'
 
 jobs:
 
