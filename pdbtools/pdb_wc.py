@@ -18,7 +18,8 @@
 """
 Summarizes the contents of a PDB file, like the wc command in UNIX.
 
-Several options are available to produce only partial summaries:
+By default, this tool produces a general summary, but you can use several
+options to produce focused but more detailed summaries:
     [m] - no. of models.
     [c] - no. of chains (plus per-model if multi-model file).
     [r] - no. of residues (plus per-model if multi-model file).
