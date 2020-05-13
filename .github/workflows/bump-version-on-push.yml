@@ -22,13 +22,10 @@ jobs:
       with:
         python-version: '3.x'
 
-    # - name: Setup Git
-    #   uses: actions/checkout@v2
-    #   with:
-    #     token: ${{ secrets.PDBPAT }}
-    #   run: |
-    #     git config user.email "dev@null.com"
-    #     git config user.name "Github Actions - Bumper"
+    - name: Setup Git
+      run: |
+        git config user.email "dev@null.com"
+        git config user.name "AutoBumper"
 
     - name: Create skip flag
       run: |
