@@ -49,4 +49,4 @@ jobs:
 
     - name: Commit version change to master
       run: |
-        git push
+        git push --tags
