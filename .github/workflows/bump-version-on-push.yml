@@ -46,3 +46,7 @@ jobs:
       if: env.SKIPBUMP == 'FALSE'
 
     # No major version change should go through automatically.
+
+    - name: Commit version change to master
+      run: |
+        git push
