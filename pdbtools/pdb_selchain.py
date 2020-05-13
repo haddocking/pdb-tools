@@ -118,7 +118,7 @@ def select_chain(fhandle, chain_set):
     records = ('ATOM', 'HETATM', 'TER', 'ANISOU')
     for line in fhandle:
         if line.startswith(records):
-            if len(line)>20 and line[21] not in chain_set:
+            if len(line) > 20 and line[21] not in chain_set:
                 continue
         yield line
 
