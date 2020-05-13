@@ -40,7 +40,7 @@ jobs:
       run: |
         bump2version minor
         echo "::set-env name=SKIPBUMP::TRUE"
-      if: "startsWith(github.event.head_commit.message, 'FEATURE')"
+      if: "startsWith(github.event.head_commit.message, '[FEATURE]')"
 
     # Default action
     - name: Bump Patch Version
