@@ -132,7 +132,7 @@ def select_occupancy(fhandle, option):
     else:  # get altloc
         option_set = set((option, ' '))
         get_prop = lambda l: l[16]
-        sel_prop = lambda d: [l for l in d if l[1] in option_set][0]
+        sel_prop = lambda d: [ln for ln in d if ln[1] in option_set][0]
 
     # We have to iterate multiple times
     atom_prop = {}  # {atom_uid: (lineno, prop)}
