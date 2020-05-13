@@ -13,6 +13,10 @@ jobs:
 
     steps:
 
+    - uses: actions/checkout@v2
+      with:
+        token: ${{ secrets.PDBPAT }}
+
     - name: Set up Python
       uses: actions/setup-python@v1
       with:
@@ -36,9 +40,6 @@ jobs:
         pip install bump2version
 
     - name: Bump Minor Version
-      uses: actions/checkout@v2
-      with:
-        token: ${{ secrets.PDBPAT }}
       run: |
         bump2version minor
         echo "::set-env name=SKIPBUMP::TRUE"
@@ -53,8 +54,5 @@ jobs:
     # No major version change should go through automatically.
 
     - name: Commit version change to master
-      uses: actions/checkout@v2
-      with:
-        token: ${{ secrets.PDBPAT }}
       run: |
         git push --follow-tags
