@@ -19,11 +19,6 @@ jobs:
       with:
         python-version: '3.x'
 
-    - name: Setup Git
-      run: |
-        git config user.email "dev@null.com"
-        git config user.name "Github Actions - Bumper"
-
     - name: Create skip flag
       run: |
         echo "::set-env name=SKIPBUMP::FALSE"
@@ -48,5 +43,7 @@ jobs:
     # No major version change should go through automatically.
 
     - name: Commit version change to master
+      env:
+        GITHUB_TOKEN: ${{ secrets.PDBPAT }}
       run: |
-        git push --tags
+        git push --follow-tags
