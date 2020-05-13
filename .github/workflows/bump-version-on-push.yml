@@ -19,6 +19,11 @@ jobs:
       with:
         python-version: '3.x'
 
+    - name: Setup Git
+      run: |
+        git config user.email "dev@null.com"
+        git config user.name "Github Actions - Bumper"
+
     - name: Create skip flag
       run: |
         echo "::set-env name=SKIPBUMP::FALSE"
