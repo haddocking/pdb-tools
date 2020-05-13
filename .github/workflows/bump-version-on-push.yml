@@ -9,7 +9,7 @@ jobs:
   bump-version:
 
     runs-on: ubuntu-latest
-    if: "!startsWith(github.event.head_commit.message, 'Bump version:')"
+    if: "!startsWith(github.event.head_commit.message, '[SKIP]')"
 
     steps:
     - uses: actions/checkout@v2
