@@ -14,8 +14,6 @@ jobs:
     steps:
 
     - uses: actions/checkout@v1
-      # with:
-      #   token: ${{ secrets.PDBPAT }}
 
     - name: Set up Python
       uses: actions/setup-python@v1
@@ -24,8 +22,10 @@ jobs:
 
     - name: Setup Git
       run: |
-        git config user.email "dev@null.com"
-        git config user.name "AutoBumper"
+        git config user.name "JoaoRodrigues"
+        git config user.email 'joaorodrigues@users.noreply.github.com'
+        git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY
+        git checkout "${GITHUB_REF:11}"
 
     - name: Create skip flag
       run: |
