@@ -132,3 +132,13 @@ for good examples of how to handle multiple options.
 for people processing very large files.
 * Following the previous item, make use of generators (`yield`) to output the
 results of your tool. 
+
+## Merging Pull Requests
+If you are tasked with merging a pull request yourself, you should know that there
+is an automated job running every time a push is made to the master branch. This job
+will trigger a version bump and automatically publish the new package to PyPi. By default,
+only the patch (x.x.Y) number is incremented. If you want to trigger a minor version (x.Y.x)
+update, start your commit with `[FEATURE]`. Note that since we use merge commits, this means
+you have to edit the title of the merge commit. It is your responsibility to handle this as
+a package maintainer! Finally, if your last commit message starts with `[SKIP]`, the automated
+job does not run, so use this flag if your commits are for documentation, README, etc.
