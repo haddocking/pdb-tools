@@ -12,12 +12,19 @@ jobs:
     if: "!startsWith(github.event.head_commit.message, '[SKIP]')"
 
     steps:
-    - uses: actions/checkout@v2
 
     - name: Set up Python
       uses: actions/setup-python@v1
       with:
         python-version: '3.x'
+
+    # - name: Setup Git
+    #   uses: actions/checkout@v2
+    #   with:
+    #     token: ${{ secrets.PDBPAT }}
+    #   run: |
+    #     git config user.email "dev@null.com"
+    #     git config user.name "Github Actions - Bumper"
 
     - name: Create skip flag
       run: |
@@ -29,6 +36,9 @@ jobs:
         pip install bump2version
 
     - name: Bump Minor Version
+      uses: actions/checkout@v2
+      with:
+        token: ${{ secrets.PDBPAT }}
       run: |
         bump2version minor
         echo "::set-env name=SKIPBUMP::TRUE"
@@ -43,7 +53,8 @@ jobs:
     # No major version change should go through automatically.
 
     - name: Commit version change to master
-      env:
-        GITHUB_TOKEN: ${{ secrets.PDBPAT }}
+      uses: actions/checkout@v2
+      with:
+        token: ${{ secrets.PDBPAT }}
       run: |
         git push --follow-tags
