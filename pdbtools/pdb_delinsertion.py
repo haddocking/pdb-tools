@@ -132,7 +132,7 @@ def delete_insertions(fhandle, option_list):
     for line in fhandle:
 
         if line.startswith(records):
-            res_uid = line[17:26]  # resname, chain, resid
+            res_uid = line[17:27]  # resname, chain, resid, icode
             id_res = line[21] + line[22:26].strip()  # A99, B12
             icode = line[26]
 
