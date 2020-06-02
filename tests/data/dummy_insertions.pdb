@@ -6,7 +6,8 @@ KEYWDS    PDB-TOOLS, TEST-PDB
 REMARK    THIS STRUCTURE CONTAINS 4 CHAINS                                      
 REMARK    ALL ATOM SERIAL NUMBERS ARE 1 FOR ATOM
 REMARK    CHAIN A HAS SEGID Z
-REMARK    CHAIN A CONTAINS AN INSERTION
+REMARK    CHAIN A CONTAINS MULTIPLE INSERTIONS
+REMARK    CHAIN Y CONTAINS INSERTIONS BUT A NON-ICODE TER STATEMENT
 REMARK    DOUBLE OCCUPANCIES ON THE FIRST RESIDUE OF CHAIN A
 REMARK    CHAIN B HAS NON-CONTINUOUS RESIDUES (SHOULD HAVE A TER STATEMENT)
 REMARK    CHAIN B HAS AN INSERTION
@@ -68,7 +69,48 @@ ATOM      3  HB2 ALA B   7      36.167  42.973   1.802  1.00  0.00           H
 ATOM      3  HB3 ALA B   7      35.847  44.180   3.181  1.00  0.00           H  
 ATOM      3  C   ALA B   7      36.213  46.067   1.258  1.00  0.00           C  
 ATOM      3  O   ALA B   7      36.287  47.046   2.028  1.00  0.00           O  
-TER       3      ALA B   7
+ATOM      3  N   ALA B   7A     34.725  44.679  -0.087  1.00  0.00           N  
+ATOM      3  H   ALA B   7A     34.813  43.714  -0.371  1.00  0.00           H  
+ATOM      3  CA  ALA B   7A     35.081  45.036   1.305  1.00  0.00           C  
+ATOM      3  HA  ALA B   7A     34.200  45.604   1.876  1.00  0.00           H  
+ATOM      3  CB  ALA B   7A     35.381  43.810   2.140  1.00  0.00           C  
+ATOM      3  HB1 ALA B   7A     34.382  43.229   2.456  1.00  0.00           H  
+ATOM      3  HB2 ALA B   7A     36.167  42.973   1.802  1.00  0.00           H  
+ATOM      3  HB3 ALA B   7A     35.847  44.180   3.181  1.00  0.00           H  
+ATOM      3  C   ALA B   7A     36.213  46.067   1.258  1.00  0.00           C  
+ATOM      3  O   ALA B   7A     36.287  47.046   2.028  1.00  0.00           O  
+TER       3      ALA B   7A                                                     
+ATOM      3  N   ALA Y   7      34.725  44.679  -0.087  1.00  0.00           N  
+ATOM      3  H   ALA Y   7      34.813  43.714  -0.371  1.00  0.00           H  
+ATOM      3  CA  ALA Y   7      35.081  45.036   1.305  1.00  0.00           C  
+ATOM      3  HA  ALA Y   7      34.200  45.604   1.876  1.00  0.00           H  
+ATOM      3  CB  ALA Y   7      35.381  43.810   2.140  1.00  0.00           C  
+ATOM      3  HB1 ALA Y   7      34.382  43.229   2.456  1.00  0.00           H  
+ATOM      3  HB2 ALA Y   7      36.167  42.973   1.802  1.00  0.00           H  
+ATOM      3  HB3 ALA Y   7      35.847  44.180   3.181  1.00  0.00           H  
+ATOM      3  C   ALA Y   7      36.213  46.067   1.258  1.00  0.00           C  
+ATOM      3  O   ALA Y   7      36.287  47.046   2.028  1.00  0.00           O  
+ATOM      3  N   ALA Y   7A     34.725  44.679  -0.087  1.00  0.00           N  
+ATOM      3  H   ALA Y   7A     34.813  43.714  -0.371  1.00  0.00           H  
+ATOM      3  CA  ALA Y   7A     35.081  45.036   1.305  1.00  0.00           C  
+ATOM      3  HA  ALA Y   7A     34.200  45.604   1.876  1.00  0.00           H  
+ATOM      3  CB  ALA Y   7A     35.381  43.810   2.140  1.00  0.00           C  
+ATOM      3  HB1 ALA Y   7A     34.382  43.229   2.456  1.00  0.00           H  
+ATOM      3  HB2 ALA Y   7A     36.167  42.973   1.802  1.00  0.00           H  
+ATOM      3  HB3 ALA Y   7A     35.847  44.180   3.181  1.00  0.00           H  
+ATOM      3  C   ALA Y   7A     36.213  46.067   1.258  1.00  0.00           C  
+ATOM      3  O   ALA Y   7A     36.287  47.046   2.028  1.00  0.00           O  
+ATOM      3  N   ALA Y   8      34.725  44.679  -0.087  1.00  0.00           N  
+ATOM      3  H   ALA Y   8      34.813  43.714  -0.371  1.00  0.00           H  
+ATOM      3  CA  ALA Y   8      35.081  45.036   1.305  1.00  0.00           C  
+ATOM      3  HA  ALA Y   8      34.200  45.604   1.876  1.00  0.00           H  
+ATOM      3  CB  ALA Y   8      35.381  43.810   2.140  1.00  0.00           C  
+ATOM      3  HB1 ALA Y   8      34.382  43.229   2.456  1.00  0.00           H  
+ATOM      3  HB2 ALA Y   8      36.167  42.973   1.802  1.00  0.00           H  
+ATOM      3  HB3 ALA Y   8      35.847  44.180   3.181  1.00  0.00           H  
+ATOM      3  C   ALA Y   8      36.213  46.067   1.258  1.00  0.00           C  
+ATOM      3  O   ALA Y   8      36.287  47.046   2.028  1.00  0.00           O  
+TER       3      ALA Y   8                                                      
 ATOM      3  N   ASN A   1A     22.066  40.557   0.420  1.00  0.00           N  
 ATOM      3  H   ASN A   1A     21.629  41.305  -0.098  1.00  0.00           H  
 ATOM      3  H2  ASN A   1A     23.236  40.798   0.369  1.00  0.00           H  
@@ -211,4 +253,3 @@ HETATM   11  O   HOH C 304      -4.491  -9.687  56.752  1.00 55.08
 HETATM   12  O   HOH C 305      24.561   0.532  70.565  1.00 44.77              
 CONECT   10   11                                                                
 CONECT    1    2   4   5  
-
