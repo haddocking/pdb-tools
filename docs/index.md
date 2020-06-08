@@ -12,8 +12,14 @@ recommended way as it makes updating/uninstalling rather simple:
 pip install pdb-tools
 ```
 
-If you want to install the latest development version, which might give you new
-features but also some bugs, see [here](#Installing-from-Source).
+Because we use semantic versioning in the development of `pdb-tools`, every bugfix
+or new feature results in a new version of the software that is automatically published
+on PyPI. As such, there is no difference between the code on github and the latest version
+you can install with `pip`. To update your installation to the latest version of the code
+run:
+```bash
+pip install --upgrade pdb-tools
+```
 
 
 ## What can I do with them?
