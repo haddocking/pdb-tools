@@ -124,6 +124,7 @@ def renumber_residues(fhandle, starting_resid):
         line = _pad_line(line)
         if line.startswith('MODEL'):
             resid = starting_resid - 1  # account for first residue
+            yield line
         elif line.startswith(records):
             line_resuid = line[17:27]
             if line_resuid != prev_resid:
