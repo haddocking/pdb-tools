@@ -151,6 +151,50 @@ class TestTool(unittest.TestCase):
 
         self.assertEqual(resid_list, expected)
 
+    def test_three_with_single_res_models(self):
+        """$ pdb_reres -4 data/ensemble.OK.pdb"""
+        sys.argv = ['', '-4', os.path.join(data_dir, 'ensemble_OK.pdb')]
+
+        self.exec_module()
+
+        self.assertEqual(self.retcode, 0)
+        self.assertEqual(len(self.stdout), 11)
+        self.assertEqual(len(self.stderr), 0)
+
+        records = ('ATOM', 'HETATM')
+        resid_list = [int(l[22:26]) for l in self.stdout
+                      if l.startswith(records)]
+
+        expected = [4, 4, 4, 4]
+        self.assertEqual(resid_list, expected)
+
+        models = ('MODEL',)
+        models_int = [int(l[5:]) for l in self.stdout if l.startswith(models)]
+        models_expected = [1, 2]
+        self.assertEqual(models_int, models_expected)
+
+    def test_three_with_models(self):
+        """$ pdb_reres -4 data/ensemble.OK.pdb"""
+        sys.argv = ['', '-4', os.path.join(data_dir, 'ensemble_more_OK.pdb')]
+
+        self.exec_module()
+
+        self.assertEqual(self.retcode, 0)
+        self.assertEqual(len(self.stdout), 13)
+        self.assertEqual(len(self.stderr), 0)
+
+        records = ('ATOM', 'HETATM')
+        resid_list = [int(l[22:26]) for l in self.stdout
+                      if l.startswith(records)]
+
+        expected = [4, 4, 5, 5, 4, 4]
+        self.assertEqual(resid_list, expected)
+
+        models = ('MODEL',)
+        models_int = [int(l[5:]) for l in self.stdout if l.startswith(models)]
+        models_expected = [1, 2]
+        self.assertEqual(models_int, models_expected)
+
     def test_too_many_residues(self):
         """$ pdb_reres -9998 data/dummy.pdb"""
 
