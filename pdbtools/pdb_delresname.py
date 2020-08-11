@@ -111,8 +111,6 @@ def check_input(args):
 
     return (option_set, fh)
 
-    return (option, fh)
-
 
 def delete_residue_by_name(fhandle, resname_set):
     """Removes specific residue that match a given name.
