@@ -98,13 +98,9 @@ def tidy_pdbfile(fhandle):
 
     # TER     606      LEU A  75
     fmt_TER = "TER   {:>5d}      {:3s} {:1s}{:>4s}{:1s}" + " " * 53 + "\n"
-    # CONECT 1179  746 1184 1195 1203
-    fmt_CONECT = "CONECT{:>5s}{:>5s}{:>5s}{:>5s}{:>5s}" + " " * 49 + "\n"
-    char_ranges = (slice(6, 11), slice(11, 16),
-                   slice(16, 21), slice(21, 26), slice(26, 31))
 
     records = ('ATOM', 'HETATM')
-    ignored = ('TER', 'END ', 'END\n')
+    ignored = ('TER', 'END ', 'END\n', 'CONECT')
     # Iterate up to the first ATOM/HETATM line
     prev_line = None
     for line in fhandle:
@@ -124,7 +120,6 @@ def tidy_pdbfile(fhandle):
             break
 
     # Now go through all the remaining lines
-    serial_equiv = {}  # store for conect statements
     atom_section = False
     serial_offset = 0  # To offset after adding TER records
     for line in fhandle:
@@ -163,19 +158,6 @@ def tidy_pdbfile(fhandle):
             # Avoids doing the offset again
             serial = int(prev_line[6:11])
             line = line[:6] + str(serial).rjust(5) + line[11:]
-
-        elif line.startswith('CONECT'):
-            if atom_section:
-                atom_section = False
-                yield make_TER(prev_line)
-
-            # 6:11, 11:16, 16:21, 21:26, 26:31
-            serials = [line[cr] for cr in char_ranges]
-            # If not found, return default
-            new_serials = [str(serial_equiv.get(s, s)) for s in serials]
-            conect_line = fmt_CONECT.format(*new_serials)
-            yield conect_line
-            continue
 
         else:
             if atom_section:
