@@ -64,12 +64,17 @@ class TestTool(unittest.TestCase):
 
         # Validate results
         self.assertEqual(self.retcode, 0)  # ensure the program exited OK.
-        self.assertEqual(len(self.stdout), 207)
+        # CONECTs are ignored by issue #72, expected only 205 lines
+        self.assertEqual(len(self.stdout), 205)
         self.assertEqual(len(self.stderr), 0)  # no errors
 
         # Check if we added TER statements correctly
         n_ter = len([r for r in self.stdout if r.startswith('TER')])
         self.assertEqual(n_ter, 5)
+
+        # Check no CONECT in output
+        c_conect = sum(1 for i in self.stdout if i.startswith('CONECT'))
+        self.assertEqual(c_conect, 0)
 
         # Check if we added END statements correctly
         self.assertTrue(self.stdout[-1].startswith('END'))
