@@ -1,0 +1,10 @@
+HEADER    THIS A DUMMY PDB FOR PDB-TOOLS TESTING                                
+TITLE     A RANDOM PDB                                                          
+COMPND    MOL_ID: 1;                                                            
+SOURCE    MOL_ID: 1;                                                            
+KEYWDS    PDB-TOOLS, TEST-PDB                                                   
+REMARK    ATOMS HAVE REPEATED NAMES WITHIN EACH RESIDUE.
+REMARK    NO ELEMENTS ASSIGNED.
+HETATM    1  C   UNK A   1      34.813  43.714  -0.371  1.00  0.00              
+HETATM    2  C   UNK A   1      35.081  45.036   1.305  1.00  0.00              
+END
