@@ -120,7 +120,6 @@ def tidy_pdbfile(fhandle):
             break
 
     # Now go through all the remaining lines
-    serial_equiv = {}  # store for conect statements
     atom_section = False
     serial_offset = 0  # To offset after adding TER records
     for line in fhandle:
