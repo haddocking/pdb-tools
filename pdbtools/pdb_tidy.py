@@ -100,7 +100,7 @@ def tidy_pdbfile(fhandle):
     fmt_TER = "TER   {:>5d}      {:3s} {:1s}{:>4s}{:1s}" + " " * 53 + "\n"
 
     records = ('ATOM', 'HETATM')
-    ignored = ('TER', 'END ', 'END\n')
+    ignored = ('TER', 'END ', 'END\n', 'CONECT')
     # Iterate up to the first ATOM/HETATM line
     prev_line = None
     for line in fhandle:
@@ -158,9 +158,6 @@ def tidy_pdbfile(fhandle):
             # Avoids doing the offset again
             serial = int(prev_line[6:11])
             line = line[:6] + str(serial).rjust(5) + line[11:]
-
-        elif line.startswith('CONECT'):
-            continue
 
         else:
             if atom_section:
