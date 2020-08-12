@@ -21,7 +21,7 @@ Renames atoms sequentially (C1, C2, O1, ...) for each HETATM residue.
 Relies on an element column being present (see pdb_element).
 
 Usage:
-    python pdb_uniqname.py -<option> <pdb file>
+    python pdb_uniqname.py <pdb file>
 
 Example:
     python pdb_uniqname.py 1CTF.pdb
