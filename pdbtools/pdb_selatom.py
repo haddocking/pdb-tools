@@ -112,8 +112,6 @@ def check_input(args):
 
     return (option_set, fh)
 
-    return (option, fh)
-
 
 def filter_atoms(fhandle, atomname_set):
     """Removes specific atoms that do not match a given atom name.
