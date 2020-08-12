@@ -64,10 +64,10 @@ class TestTool(unittest.TestCase):
 
         # Validate results
         self.assertEqual(self.retcode, 0)  # ensure the program exited OK.
-        self.assertEqual(len(self.stdout), 15)  # no lines deleted
+        self.assertEqual(len(self.stdout), 19)  # no lines deleted
         self.assertEqual(len(self.stderr), 0)  # no errors
 
-        records = ('HETATM',)
+        records = ('ATOM', 'HETATM')
         atnames = [l[12:16] for l in self.stdout if l.startswith(records)]
 
         self.assertEqual(
@@ -75,6 +75,7 @@ class TestTool(unittest.TestCase):
             [
                 ' C1 ', ' C2 ', ' H1 ', ' C3 ',
                 'CA1 ', 'CA2 ', ' H1 ', ' H2 ',
+                ' C1 ', ' C2 ', ' H  ', ' H  '
             ]
         )
 
