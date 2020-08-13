@@ -772,6 +772,20 @@ Example:
 </div>
 <div style="margin-bottom: 1em;">
 <details>
+<summary><b>pdb_uniqname</b> | Renames atoms sequentially (C1, C2, O1, ...) for each HETATM residue.</summary>
+<span style="font-family: monospace; white-space: pre;">
+Relies on an element column being present (see pdb_element).
+
+Usage:
+    python pdb_uniqname.py <pdb file>
+
+Example:
+    python pdb_uniqname.py 1CTF.pdb
+</span>
+</details>
+</div>
+<div style="margin-bottom: 1em;">
+<details>
 <summary><b>pdb_validate</b> | Validates the PDB file ATOM/HETATM lines according to the format specifications.</summary>
 <span style="font-family: monospace; white-space: pre;">
 Does not catch all the errors though... people are creative!
