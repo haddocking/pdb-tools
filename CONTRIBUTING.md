@@ -39,7 +39,7 @@ job much easier to answer your question and provide a fix if necessary.
 
     I tried using pdb_reatom.py on a PDB file and it did not renumber nitrogen
     atoms. Here is an example:
-
+    
     $ cat 1abc.pdb
     ATOM      9  N   ASN A   1      22.066  40.557   1.420  1.00  1.00              
     ATOM      2  N   ASN A   2      43.123  76.234   0.123  1.00  1.00              
@@ -48,10 +48,10 @@ job much easier to answer your question and provide a fix if necessary.
     ATOM      9  N   ASN A   1      22.066  40.557   1.420  1.00  1.00              
     ATOM      2  N   ASN A   2      43.123  76.234   0.123  1.00  1.00              
     END
-
+    
     I was expecting the two atoms to be consecutively renumbered from 1. I am 
     using pdb-tools version 2.0.0:
-
+    
     $ pip show pdb-tools
     Name: pdb-tools
     Version: 2.0.0
@@ -76,6 +76,8 @@ git remote add upstream https://github.com/haddocking/pdb-tools.git
 
 # Pull our master to update your local version
 # If there are changes, you should push them to the 'master' of your fork.
+# IMPORTANT, start the commit message title of the merging step (`git pull`)
+# with the tag `[SKIP]` to avoid trigering our GitHub actions in your own fork.
 git pull upstream master
 git push origin master  # Update your fork if necessary
 
@@ -131,7 +133,7 @@ for good examples of how to handle multiple options.
 * Avoid reading the entire file in memory unless you have to. This makes it nice
 for people processing very large files.
 * Following the previous item, make use of generators (`yield`) to output the
-results of your tool. 
+results of your tool.
 
 ## Merging Pull Requests
 If you are tasked with merging a pull request yourself, you should know that there
