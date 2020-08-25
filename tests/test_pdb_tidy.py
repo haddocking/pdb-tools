@@ -19,7 +19,11 @@
 Unit Tests for `pdb_tidy`.
 """
 
-import io
+try:
+    from StringIO import StringIO  # python 2.7
+except ImportError:
+    from io import StringIO  # python 3.x
+
 import os
 import sys
 import unittest
@@ -44,7 +48,7 @@ class TestTool(unittest.TestCase):
         """
 
         if stdin is not None:
-            sys.stdin = io.StringIO(stdin)
+            sys.stdin = StringIO(stdin)
 
         with OutputCapture() as output:
             try:
