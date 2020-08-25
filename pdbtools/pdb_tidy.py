@@ -112,6 +112,8 @@ def tidy_pdbfile(fhandle, strict=False):
     If strict is True, does not add TER statements at intra-chain breaks.
     """
 
+    not_strict = not strict
+
     def make_TER(prev_line):
         """Creates a TER statement based on the last ATOM/HETATM line.
         """
@@ -163,7 +165,7 @@ def tidy_pdbfile(fhandle, strict=False):
         if line.startswith('ATOM'):
 
             is_gap = (int(line[22:26]) - int(prev_line[22:26])) > 1
-            if atom_section and (line[21] != prev_line[21] or (not strict and is_gap)):
+            if atom_section and (line[21] != prev_line[21] or (not_strict and is_gap)):
                 serial_offset += 1  # account for TER statement
                 yield make_TER(prev_line)
 
