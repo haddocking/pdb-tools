@@ -19,6 +19,7 @@
 Unit Tests for `pdb_tidy`.
 """
 
+import io
 import os
 import sys
 import unittest
@@ -37,10 +38,13 @@ class TestTool(unittest.TestCase):
         name = 'pdbtools.pdb_tidy'
         self.module = __import__(name, fromlist=[''])
 
-    def exec_module(self):
+    def exec_module(self, stdin=None):
         """
         Execs module.
         """
+
+        if stdin is not None:
+            sys.stdin = io.StringIO(stdin)
 
         with OutputCapture() as output:
             try:
@@ -50,6 +54,8 @@ class TestTool(unittest.TestCase):
 
         self.stdout = output.stdout
         self.stderr = output.stderr
+
+        sys.stdin = sys.__stdin__  # restore
 
         return
 
@@ -79,6 +85,33 @@ class TestTool(unittest.TestCase):
         # Check if we added END statements correctly
         self.assertTrue(self.stdout[-1].startswith('END'))
 
+    def test_default_stdin(self):
+        """$ cat data/dummy.pdb | pdb_tidy"""
+
+        fpath = os.path.join(data_dir, 'dummy.pdb')
+        sys.argv = ['']
+
+        # Execute the script with file as stdin
+        with open(fpath) as fp:
+            self.exec_module(fp.read())
+
+        # Validate results
+        self.assertEqual(self.retcode, 0)  # ensure the program exited OK.
+        # CONECTs are ignored by issue #72, expected only 205 lines
+        self.assertEqual(len(self.stdout), 205)
+        self.assertEqual(len(self.stderr), 0)  # no errors
+
+        # Check if we added TER statements correctly
+        n_ter = len([r for r in self.stdout if r.startswith('TER')])
+        self.assertEqual(n_ter, 5)
+
+        # Check no CONECT in output
+        c_conect = sum(1 for i in self.stdout if i.startswith('CONECT'))
+        self.assertEqual(c_conect, 0)
+
+        # Check if we added END statements correctly
+        self.assertTrue(self.stdout[-1].startswith('END'))
+
     def test_default_strict(self):
         """$ pdb_tidy -strict data/dummy.pdb"""
 
@@ -87,6 +120,33 @@ class TestTool(unittest.TestCase):
 
         # Execute the script
         self.exec_module()
+
+        # Validate results
+        self.assertEqual(self.retcode, 0)  # ensure the program exited OK.
+        # CONECTs are ignored by issue #72, expected only 204 lines
+        self.assertEqual(len(self.stdout), 204)
+        self.assertEqual(len(self.stderr), 0)  # no errors
+
+        # Check if we added TER statements correctly
+        n_ter = len([r for r in self.stdout if r.startswith('TER')])
+        self.assertEqual(n_ter, 4)
+
+        # Check no CONECT in output
+        c_conect = sum(1 for i in self.stdout if i.startswith('CONECT'))
+        self.assertEqual(c_conect, 0)
+
+        # Check if we added END statements correctly
+        self.assertTrue(self.stdout[-1].startswith('END'))
+
+    def test_default_strict_stdin(self):
+        """$ cat data/dummy.pdb | pdb_tidy -strict"""
+
+        fpath = os.path.join(data_dir, 'dummy.pdb')
+        sys.argv = ['', '-strict']
+
+        # Execute the script
+        with open(fpath) as fp:
+            self.exec_module(fp.read())
 
         # Validate results
         self.assertEqual(self.retcode, 0)  # ensure the program exited OK.
