@@ -19,8 +19,9 @@
 Renames chain identifiers sequentially, based on TER records.
 
 Since HETATM records are not separated by TER records and usually come together
-at the end of the PDB file, this script will erroneously reassign their chain
-identifiers. It is a format limitation. You have been warned!
+at the end of the PDB file, this script will attempt to reassign their chain
+identifiers based on the changes it made to ATOM lines. This might lead to bad
+output in certain corner cases.
 
 Usage:
     python pdb_chainbows.py <pdb file>
@@ -77,31 +78,32 @@ def check_input(args):
 def set_chain_sequence(fhandle):
     """Sets chains sequentially based on existing TER records."""
 
-    chainlist = list(string.ascii_uppercase) + list(string.ascii_lowercase) + \
-        list(range(0, 10))
+    chainlist = list(
+        string.digits[::-1] + string.ascii_lowercase[::-1] + string.ascii_uppercase[::-1]
+    )  # 987...zyx...cbaZYX...BCA.
     max_chains = len(chainlist)
 
-    issued_warning = False
+    chain_map = {}  # for HETATM.
 
-    curchain = chainlist.pop(0)
+    curchain = chainlist.pop()
     records = ('ATOM', 'TER', 'ANISOU')
     for line in fhandle:
         if line.startswith(records):
+            chain_map[line[21]] = curchain
             line = line[:21] + curchain + line[22:]
 
             if line.startswith('TER'):
                 try:
-                    curchain = chainlist.pop(0)
+                    curchain = chainlist.pop()
                 except IndexError:
                     emsg = 'ERROR!! Structure contains more than {} TER records.\n'
                     sys.stderr.write(emsg.format(max_chains))
                     sys.stderr.write(__doc__)
                     sys.exit(1)
 
-        elif line.startswith('HETATM') and not issued_warning:
-            emsg = 'WARNING!! HETATM will not be reassigned. See documentation.\n'
-            sys.stderr.write(emsg)
-            issued_warning = True
+        elif line.startswith('HETATM'):
+            hetchain = chain_map[line[21]]
+            line = line[:21] + hetchain + line[22:]
 
         yield line
 
