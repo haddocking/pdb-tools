@@ -29,10 +29,11 @@ This includes:
 Will remove all original TER/END statements from the file.
 
 Usage:
-    python pdb_tidy.py <pdb file>
+    python pdb_tidy.py [-strict] <pdb file>
 
 Example:
     python pdb_tidy.py 1CTF.pdb
+    python pdb_tidy.py -strict 1CTF.pdb  # does not add TER on chain breaks
 
 This program is part of the `pdb-tools` suite of utilities and should not be
 distributed isolatedly. The `pdb-tools` were created to quickly manipulate PDB
@@ -53,6 +54,7 @@ def check_input(args):
     """
 
     # Defaults
+    option = False
     fh = sys.stdin  # file handle
 
     if not len(args):
@@ -62,25 +64,52 @@ def check_input(args):
             sys.exit(1)
 
     elif len(args) == 1:
-        if not os.path.isfile(args[0]):
-            emsg = 'ERROR!! File not found or not readable: \'{}\'\n'
+        # One of two options: option & Pipe OR file & default option
+        if args[0] == '-strict':
+            option = True
+            if sys.stdin.isatty():  # ensure the PDB data is streamed in
+                emsg = 'ERROR!! No data to process!\n'
+                sys.stderr.write(emsg)
+                sys.stderr.write(__doc__)
+                sys.exit(1)
+
+        else:
+            if not os.path.isfile(args[0]):
+                emsg = 'ERROR!! File not found or not readable: \'{}\'\n'
+                sys.stderr.write(emsg.format(args[0]))
+                sys.stderr.write(__doc__)
+                sys.exit(1)
+
+            fh = open(args[0], 'r')
+
+    elif len(args) == 2:
+        # Two options: option & File
+        if not args[0] == '-strict':
+            emsg = 'ERROR! First argument is not a valid option: \'{}\'\n'
             sys.stderr.write(emsg.format(args[0]))
             sys.stderr.write(__doc__)
             sys.exit(1)
 
-        fh = open(args[0], 'r')
+        if not os.path.isfile(args[1]):
+            emsg = 'ERROR!! File not found or not readable: \'{}\'\n'
+            sys.stderr.write(emsg.format(args[1]))
+            sys.stderr.write(__doc__)
+            sys.exit(1)
+
+        option = args[0][1:]
+        fh = open(args[1], 'r')
 
     else:  # Whatever ...
-        emsg = 'ERROR!! Script takes 1 argument, not \'{}\'\n'
-        sys.stderr.write(emsg.format(len(args)))
         sys.stderr.write(__doc__)
         sys.exit(1)
 
-    return fh
+    return (option, fh)
 
 
-def tidy_pdbfile(fhandle):
+def tidy_pdbfile(fhandle, strict=False):
     """Adds TER/END statements and pads all lines to 80 characters.
+
+    If strict is True, does not add TER statements at intra-chain breaks.
     """
 
     def make_TER(prev_line):
@@ -134,7 +163,7 @@ def tidy_pdbfile(fhandle):
         if line.startswith('ATOM'):
 
             is_gap = (int(line[22:26]) - int(prev_line[22:26])) > 1
-            if atom_section and (line[21] != prev_line[21] or is_gap):
+            if atom_section and (line[21] != prev_line[21] or (not strict and is_gap)):
                 serial_offset += 1  # account for TER statement
                 yield make_TER(prev_line)
 
@@ -190,10 +219,10 @@ def tidy_pdbfile(fhandle):
 
 def main():
     # Check Input
-    pdbfh = check_input(sys.argv[1:])
+    strict, pdbfh = check_input(sys.argv[1:])
 
     # Do the job
-    new_pdb = tidy_pdbfile(pdbfh)
+    new_pdb = tidy_pdbfile(pdbfh, strict)
 
     try:
         _buffer = []

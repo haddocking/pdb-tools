@@ -79,6 +79,32 @@ class TestTool(unittest.TestCase):
         # Check if we added END statements correctly
         self.assertTrue(self.stdout[-1].startswith('END'))
 
+    def test_default_strict(self):
+        """$ pdb_tidy -strict data/dummy.pdb"""
+
+        fpath = os.path.join(data_dir, 'dummy.pdb')
+        sys.argv = ['', '-strict', fpath]
+
+        # Execute the script
+        self.exec_module()
+
+        # Validate results
+        self.assertEqual(self.retcode, 0)  # ensure the program exited OK.
+        # CONECTs are ignored by issue #72, expected only 204 lines
+        self.assertEqual(len(self.stdout), 204)
+        self.assertEqual(len(self.stderr), 0)  # no errors
+
+        # Check if we added TER statements correctly
+        n_ter = len([r for r in self.stdout if r.startswith('TER')])
+        self.assertEqual(n_ter, 4)
+
+        # Check no CONECT in output
+        c_conect = sum(1 for i in self.stdout if i.startswith('CONECT'))
+        self.assertEqual(c_conect, 0)
+
+        # Check if we added END statements correctly
+        self.assertTrue(self.stdout[-1].startswith('END'))
+
     def test_file_not_found(self):
         """$ pdb_tidy not_existing.pdb"""
 
@@ -117,7 +143,7 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.retcode, 1)
         self.assertEqual(len(self.stdout), 0)
         self.assertEqual(self.stderr[0][:36],
-                         "ERROR!! Script takes 1 argument, not")
+                         "ERROR! First argument is not a valid")
 
 
 if __name__ == '__main__':
