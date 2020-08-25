@@ -66,6 +66,7 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.retcode, 0)  # ensure the program exited OK.
         # CONECTs are ignored by issue #72, expected only 204 lines
         self.assertEqual(len(self.stdout), 204)
+        self.assertEqual(len(self.stderr), 0)  # no warnings/errors
 
         # Check chains were reassigned properly
         expected = ['A'] * 51 + ['B'] * 56 + ['C'] * 49 + ['D'] * 20
@@ -81,10 +82,8 @@ class TestTool(unittest.TestCase):
         ]
         self.assertEqual(chains, expected)
 
-        # Check HETATM were ignored and warning was issued
-        self.assertEqual(len(self.stderr), 1)  # one warning message
-        self.assertEqual(self.stderr[0][:40], 'WARNING!! HETATM will not be reassigned.')
-        expected = ['A', 'A', 'A', 'B', 'C', 'C', 'C', 'C', 'C']
+        # Check HETATM were reassigned properly
+        expected = ['B', 'B', 'B', 'A', 'C', 'C', 'C', 'C', 'C']
         chains = [
             l[21] for l in self.stdout if l.startswith('HETATM')
         ]
