@@ -143,7 +143,7 @@ def summarize_file(fhandle, option):
 
         elif line.startswith('HETATM'):
             chains.add(model_id + line[21])
-            hetatm.add(model_id + line[17:26])
+            hetatm.add(model_id + line[12:27])
 
     if not models:
         models = {None}
