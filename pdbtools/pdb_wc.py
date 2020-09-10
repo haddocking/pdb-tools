@@ -25,8 +25,8 @@ options to produce focused but more detailed summaries:
     [r] - no. of residues (plus per-model if multi-model file).
     [a] - no. of atoms (plus per-model if multi-model file).
     [h] - no. of HETATM (plus per-model if multi-model file).
-    [o] - no. of disordered atoms (altloc) (plus per-model if multi-model file).
-    [i] - no. of insertion codes (plus per-model if multi-model file).
+    [o] - presence of disordered atoms (altloc).
+    [i] - presence of insertion codes.
 
 Usage:
     python pdb_wc.py [-<option>] <pdb file>
@@ -143,7 +143,7 @@ def summarize_file(fhandle, option):
 
         elif line.startswith('HETATM'):
             chains.add(model_id + line[21])
-            hetatm.add(model_id + line[17:26])
+            hetatm.add(model_id + line[12:27])
 
     if not models:
         models = {None}
