@@ -25,8 +25,8 @@ options to produce focused but more detailed summaries:
     [r] - no. of residues (plus per-model if multi-model file).
     [a] - no. of atoms (plus per-model if multi-model file).
     [h] - no. of HETATM (plus per-model if multi-model file).
-    [o] - no. of disordered atoms (altloc) (plus per-model if multi-model file).
-    [i] - no. of insertion codes (plus per-model if multi-model file).
+    [o] - presence of disordered atoms (altloc).
+    [i] - presence of insertion codes.
 
 Usage:
     python pdb_wc.py [-<option>] <pdb file>
