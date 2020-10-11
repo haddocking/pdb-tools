@@ -41,6 +41,7 @@ data to another. They are based on old FORTRAN77 code that was taking too much
 effort to maintain and compile. RIP.
 """
 
+from itertools import chain as iter_chain
 import os
 import sys
 
@@ -122,7 +123,7 @@ def check_input(args):
 
     # Defaults
     option = '::'
-    fh = sys.stdin  # file handle
+    fh = sys.stdin.buffer  # file handle
 
     if not len(args):
         # Reading from pipe with default option
@@ -171,17 +172,28 @@ def check_input(args):
         sys.exit(1)
 
     # Read file handle to extract residue numbers
+    # Because sys.stdin is not seekable we store the
+    # lines again in an iterator.
+    buffer = iter([])
     resid_list = []
+        
     records = ('ATOM', 'HETATM', 'TER', 'ANISOU')
     prev_res = None
     for line in fh:
+        line = line.decode('utf-8')
         if line.startswith(records):
             res_id = line[21:26]  # include chain ID
             if res_id != prev_res:
                 prev_res = res_id
                 resid_list.append(int(line[22:26]))
+        buffer = iter_chain(buffer, [line])
 
-    fh.seek(0)  # rewind
+    try:
+        fh.close()  # in case we opened a file. Just to be clean.
+    except AttributeError:
+        pass
+
+    fh = buffer
 
     residue_range = set()  # stores all the residues to write.
     for entry in option.split(','):
@@ -239,8 +251,8 @@ def main():
         pass
 
     # last line of the script
-    # We can close it even if it is sys.stdin
-    pdbfh.close()
+    # No need to close the file handle since we
+    # build an iterator in the check_input functions
     sys.exit(0)
 
 
