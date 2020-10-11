@@ -176,7 +176,7 @@ def check_input(args):
     # lines again in an iterator.
     buffer = iter([])
     resid_list = []
-        
+
     records = ('ATOM', 'HETATM', 'TER', 'ANISOU')
     prev_res = None
     for line in fh:
