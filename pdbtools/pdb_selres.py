@@ -148,7 +148,7 @@ def check_input(args):
                 sys.stderr.write(__doc__)
                 sys.exit(1)
 
-            fh = open(args[0], 'r')
+            fh = open(args[0], 'rb')
 
     elif len(args) == 2:
         # Two options: option & File
@@ -165,7 +165,7 @@ def check_input(args):
             sys.exit(1)
 
         option = args[0][1:]
-        fh = open(args[1], 'r')
+        fh = open(args[1], 'rb')
 
     else:  # Whatever ...
         sys.stderr.write(__doc__)
