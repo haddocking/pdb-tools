@@ -180,7 +180,6 @@ def check_input(args):
     records = ('ATOM', 'HETATM', 'TER', 'ANISOU')
     prev_res = None
     for line in fh:
-        line = line
         if line.startswith(records):
             res_id = line[21:26]  # include chain ID
             if res_id != prev_res:
