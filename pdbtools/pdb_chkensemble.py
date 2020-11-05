@@ -154,6 +154,11 @@ def check_ensemble(fhandle):
 
 
 def main():
+    """
+    Main program.
+
+    Args:
+    """
     # Check Input
     pdbfh = check_input(sys.argv[1:])
 

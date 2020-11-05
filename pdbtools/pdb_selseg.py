@@ -124,6 +124,11 @@ def select_segment_id(fhandle, segment_set):
 
 
 def main():
+    """
+    Run pdb.
+
+    Args:
+    """
     # Check Input
     segment_set, pdbfh = check_input(sys.argv[1:])
 

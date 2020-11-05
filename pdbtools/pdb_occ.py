@@ -117,6 +117,11 @@ def alter_occupancy(fhandle, occupancy):
 
 
 def main():
+    """
+    Main function.
+
+    Args:
+    """
     # Check Input
     occupancy, pdbfh = check_input(sys.argv[1:])
 

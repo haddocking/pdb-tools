@@ -243,6 +243,11 @@ def summarize_file(fhandle, option):
 
 
 def main():
+    """
+    Main function.
+
+    Args:
+    """
     # Check Input
     option, pdbfh = check_input(sys.argv[1:])
 

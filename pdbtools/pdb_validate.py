@@ -104,6 +104,12 @@ def check_pdb_format(fhandle):
     )
 
     def _make_pointer(column):
+        """
+        Generate a string representing the column.
+
+        Args:
+            column: (str): write your description
+        """
         col_bg, col_en = column.start, column.stop
         pt = ['^' if c in range(col_bg, col_en) else ' ' for c in range(80)]
         return ''.join(pt)
@@ -162,6 +168,11 @@ def check_pdb_format(fhandle):
 
 
 def main():
+    """
+    Main function.
+
+    Args:
+    """
     # Check Input
     pdbfh = check_input(sys.argv[1:])
 

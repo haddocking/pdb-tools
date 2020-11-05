@@ -170,6 +170,11 @@ def delete_insertions(fhandle, option_list):
 
 
 def main():
+    """
+    The main function.
+
+    Args:
+    """
     # Check Input
     option_list, pdbfh = check_input(sys.argv[1:])
 

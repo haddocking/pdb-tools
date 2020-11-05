@@ -124,6 +124,11 @@ def detect_gaps(fhandle):
 
 
 def main():
+    """
+    Main function.
+
+    Args:
+    """
     # Check Input
     pdbfh = check_input(sys.argv[1:])
 

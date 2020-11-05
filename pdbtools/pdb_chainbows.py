@@ -109,6 +109,11 @@ def set_chain_sequence(fhandle):
 
 
 def main():
+    """
+    Run pdb.
+
+    Args:
+    """
     # Check Input
     pdbfh = check_input(sys.argv[1:])
 

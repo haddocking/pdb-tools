@@ -102,6 +102,11 @@ def intersect_pdb_files(flist):
 
 
 def main():
+    """
+    Main function.
+
+    Args:
+    """
     # Check Input
     pdbflist = check_input(sys.argv[1:])
 

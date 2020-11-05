@@ -172,6 +172,11 @@ def select_occupancy(fhandle, option):
 
 
 def main():
+    """
+    Main program.
+
+    Args:
+    """
     # Check Input
     option, pdbfh = check_input(sys.argv[1:])
 

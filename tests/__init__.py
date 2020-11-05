@@ -27,6 +27,11 @@ from .config import test_dir
 
 
 def test_all():
+    """
+    Return a list of all test files.
+
+    Args:
+    """
     mpath = os.path.abspath(os.path.join(test_dir, '..'))
     sys.path.insert(0, mpath)  # so we load dev files before  any installation
 

@@ -133,6 +133,11 @@ def get_first_n_lines(fhandle, num_lines):
 
 
 def main():
+    """
+    Main function.
+
+    Args:
+    """
     # Check Input
     chain, pdbfh = check_input(sys.argv[1:])
 

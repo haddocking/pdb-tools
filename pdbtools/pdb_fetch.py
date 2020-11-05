@@ -128,6 +128,11 @@ def fetch_structure(pdbid, biounit=False):
 
 
 def main():
+    """
+    Main function.
+
+    Args:
+    """
     # Check Input
     pdb_code, biounit = check_input(sys.argv[1:])
 

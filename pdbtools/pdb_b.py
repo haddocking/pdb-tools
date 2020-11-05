@@ -128,6 +128,11 @@ def alter_bfactor(fhandle, bfactor):
 
 
 def main():
+    """
+    Main function.
+
+    Args:
+    """
 
     # Check Input
     bfactor, pdbfh = check_input(sys.argv[1:])

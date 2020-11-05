@@ -124,6 +124,11 @@ def select_chain(fhandle, chain_set):
 
 
 def main():
+    """
+    Main function.
+
+    Args:
+    """
     # Check Input
     chain, pdbfh = check_input(sys.argv[1:])
 

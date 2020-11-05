@@ -171,6 +171,11 @@ def pdb_to_fasta(fhandle, multi):
 
 
 def main():
+    """
+    Run pdb on pdb.
+
+    Args:
+    """
     # Check Input
     multi, pdbfh = check_input(sys.argv[1:])
 

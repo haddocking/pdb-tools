@@ -125,6 +125,11 @@ def alter_chain(fhandle, chain_id):
 
 
 def main():
+    """
+    Main function.
+
+    Args:
+    """
     # Check Input
     chain, pdbfh = check_input(sys.argv[1:])
 

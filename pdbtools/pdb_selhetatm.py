@@ -91,6 +91,11 @@ def select_hetatm(fhandle):
 
 
 def main():
+    """
+    Main function.
+
+    Args:
+    """
     # Check Input
     pdbfh = check_input(sys.argv[1:])
 
