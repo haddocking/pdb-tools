@@ -119,6 +119,11 @@ def rename_residues(fhandle, name_from, name_to):
 
 
 def main():
+    """
+    Main function.
+
+    Args:
+    """
     # Check Input
     name_from, name_to, pdbfh = check_input(sys.argv[1:])
 

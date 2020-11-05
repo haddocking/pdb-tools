@@ -214,6 +214,11 @@ def convert_to_pdb(fhandle):
 
 
 def main():
+    """
+    Main function.
+
+    Args:
+    """
     # Check Input
     pdbfh = check_input(sys.argv[1:])
 

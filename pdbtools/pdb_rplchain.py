@@ -130,6 +130,11 @@ def replace_chain_identifiers(fhandle, chain_ids):
 
 
 def main():
+    """
+    Main function.
+
+    Args:
+    """
     # Check Input
     chain_ids, pdbfh = check_input(sys.argv[1:])
 

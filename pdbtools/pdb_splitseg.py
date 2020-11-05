@@ -102,6 +102,11 @@ def split_segment(fhandle):
 
 
 def main():
+    """
+    Main entry point.
+
+    Args:
+    """
     # Check Input
     pdbfh = check_input(sys.argv[1:])
 

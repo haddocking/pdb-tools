@@ -125,6 +125,11 @@ def alter_segid(fhandle, segment_id):
 
 
 def main():
+    """
+    Main function.
+
+    Args:
+    """
     # Check Input
     segment_id, pdbfh = check_input(sys.argv[1:])
 

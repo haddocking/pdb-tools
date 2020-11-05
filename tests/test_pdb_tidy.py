@@ -38,6 +38,12 @@ class TestTool(unittest.TestCase):
     """
 
     def setUp(self):
+        """
+        Sets the module.
+
+        Args:
+            self: (todo): write your description
+        """
         # Dynamically import the module
         name = 'pdbtools.pdb_tidy'
         self.module = __import__(name, fromlist=[''])

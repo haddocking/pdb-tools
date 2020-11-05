@@ -197,6 +197,11 @@ def delete_residues(fhandle, residue_range, step):
 
 
 def main():
+    """
+    Main function.
+
+    Args:
+    """
     # Check Input
     resrange, step, pdbfh = check_input(sys.argv[1:])
 

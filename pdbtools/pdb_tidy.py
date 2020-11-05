@@ -220,6 +220,11 @@ def tidy_pdbfile(fhandle, strict=False):
 
 
 def main():
+    """
+    Run pdb.
+
+    Args:
+    """
     # Check Input
     strict, pdbfh = check_input(sys.argv[1:])
 

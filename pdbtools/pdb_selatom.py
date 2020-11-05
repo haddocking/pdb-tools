@@ -126,6 +126,11 @@ def filter_atoms(fhandle, atomname_set):
 
 
 def main():
+    """
+    Main function.
+
+    Args:
+    """
     # Check Input
     atomname_set, pdbfh = check_input(sys.argv[1:])
 

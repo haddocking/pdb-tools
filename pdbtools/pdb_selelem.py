@@ -126,6 +126,11 @@ def delete_elements(fhandle, element_set):
 
 
 def main():
+    """
+    Run pdb.
+
+    Args:
+    """
     # Check Input
     element_set, pdbfh = check_input(sys.argv[1:])
 

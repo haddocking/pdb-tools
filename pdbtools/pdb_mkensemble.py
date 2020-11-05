@@ -113,6 +113,11 @@ def make_ensemble(f_name_list):
 
 
 def main():
+    """
+    Main program.
+
+    Args:
+    """
     # Check Input
     pdbfile_list = check_input(sys.argv[1:])
 

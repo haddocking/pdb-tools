@@ -125,6 +125,11 @@ def delete_residue_by_name(fhandle, resname_set):
 
 
 def main():
+    """
+    Main function.
+
+    Args:
+    """
     # Check Input
     resname_set, pdbfh = check_input(sys.argv[1:])
 

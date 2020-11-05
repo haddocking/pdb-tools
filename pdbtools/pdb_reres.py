@@ -144,6 +144,11 @@ def renumber_residues(fhandle, starting_resid):
 
 
 def main():
+    """
+    Run pdb.
+
+    Args:
+    """
     # Check Input
     starting_resid, pdbfh = check_input(sys.argv[1:])
 

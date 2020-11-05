@@ -219,6 +219,11 @@ def sort_file(fhandle, sorting_keys):
 
 
 def main():
+    """
+    Run pdb.
+
+    Args:
+    """
     # Check Input
     chain, pdbfh = check_input(sys.argv[1:])
 

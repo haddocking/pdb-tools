@@ -95,6 +95,11 @@ def place_chain_on_seg(fhandle):
 
 
 def main():
+    """
+    Main function.
+
+    Args:
+    """
     # Check Input
     pdbfh = check_input(sys.argv[1:])
 

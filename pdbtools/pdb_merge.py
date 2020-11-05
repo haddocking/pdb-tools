@@ -77,6 +77,11 @@ def concatenate_files(flist):
 
 
 def main():
+    """
+    Concat script.
+
+    Args:
+    """
     # Check Input
     pdbfh = check_input(sys.argv[1:])
 

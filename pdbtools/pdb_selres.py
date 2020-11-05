@@ -226,6 +226,11 @@ def select_residues(fhandle, residue_range):
 
 
 def main():
+    """
+    Main function.
+
+    Args:
+    """
     # Check Input
     resrange, pdbfh = check_input(sys.argv[1:])
 

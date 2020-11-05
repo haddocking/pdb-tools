@@ -155,6 +155,11 @@ def renumber_atom_serials(fhandle, starting_value):
 
 
 def main():
+    """
+    Main function for pdb.
+
+    Args:
+    """
     # Check Input
     starting_resid, pdbfh = check_input(sys.argv[1:])
 

@@ -35,6 +35,12 @@ class TestTool(unittest.TestCase):
     """
 
     def setUp(self):
+        """
+        Create a temporary directory.
+
+        Args:
+            self: (todo): write your description
+        """
         # Dynamically import the module
         name = 'pdbtools.pdb_splitseg'
         self.module = __import__(name, fromlist=[''])
@@ -42,6 +48,12 @@ class TestTool(unittest.TestCase):
         os.chdir(self.tempdir)
 
     def tearDown(self):
+        """
+        Create a temporary directory.
+
+        Args:
+            self: (todo): write your description
+        """
         os.chdir(os.path.dirname(os.path.abspath('.')))  # cd ../
         shutil.rmtree(self.tempdir)
 

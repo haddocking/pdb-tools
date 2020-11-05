@@ -37,6 +37,12 @@ class OutputCapture(object):
     """
 
     def __enter__(self):
+        """
+        Prints stdout and stderr.
+
+        Args:
+            self: (todo): write your description
+        """
         self.stdout = []
         self.stderr = []
 
@@ -47,6 +53,12 @@ class OutputCapture(object):
         return self
 
     def __exit__(self, *args):
+        """
+        Executes the exit.
+
+        Args:
+            self: (todo): write your description
+        """
 
         self.stdout.extend(self._stringout.getvalue().splitlines())
         self.stderr.extend(self._stringerr.getvalue().splitlines())

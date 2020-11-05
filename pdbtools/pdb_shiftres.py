@@ -124,6 +124,11 @@ def renumber_residues(fhandle, shifting_factor):
 
 
 def main():
+    """
+    Main function.
+
+    Args:
+    """
     # Check Input
     shifting_factor, pdbfh = check_input(sys.argv[1:])
 
