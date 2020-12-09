@@ -131,7 +131,7 @@ def tidy_pdbfile(fhandle, strict=False):
     fmt_TER = "TER   {:>5d}      {:3s} {:1s}{:>4s}{:1s}" + " " * 53 + "\n"
 
     records = ('ATOM', 'HETATM')
-    ignored = ('TER', 'END ', 'END\n', 'CONECT')
+    ignored = ('TER', 'END ', 'END\n', 'CONECT', 'MASTER')
     # Iterate up to the first ATOM/HETATM line
     prev_line = None
     for line in fhandle:
