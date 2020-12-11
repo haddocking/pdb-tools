@@ -18,7 +18,7 @@
 """
 Removes all non-coordinate records from the file.
 
-Keeps only MODEL, ENDMDL, END, ATOM, HETATM, CONECT, and MASTER.
+Keeps only MODEL, ENDMDL, END, ATOM, HETATM, CONECT.
 
 Usage:
     python pdb_keepcoord.py <pdb file>
@@ -77,7 +77,7 @@ def keep_coordinates(fhandle):
 
     records = ('MODEL ', 'ATOM  ', 'HETATM',
                'ENDMDL', 'END   ',
-               'TER   ', 'CONECT', 'MASTER')
+               'TER   ', 'CONECT')
     for line in fhandle:
         if line.startswith(records):
             yield line
