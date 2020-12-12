@@ -89,6 +89,18 @@ class TestTool(unittest.TestCase):
         # Check if we added END statements correctly
         self.assertTrue(self.stdout[-1].startswith('END'))
 
+    def test_tidy_removes_master(self):
+        """Test pdb_tidy removes MASTER lines as well."""
+        sys.argv = ['']
+        self.exec_module(
+            'MASTER      378    0    9    5    3    '
+            '0   29    6  847    1   76    7'
+            )
+
+        # Check no MASTER in output
+        m_master = sum(1 for i in self.stdout if i.startswith('MASTER'))
+        self.assertEqual(m_master, 0)
+
     def test_default_stdin(self):
         """$ cat data/dummy.pdb | pdb_tidy"""
 
