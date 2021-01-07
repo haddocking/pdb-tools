@@ -22,11 +22,11 @@ Deleting an insertion code shifts the residue numbering of downstream
 residues. Allows for picking specific residues to delete insertion codes for.
 
 Usage:
-    python pdb_delinsertion.py [-<option>] <pdb file>
+    python pdb_renuminsertion.py [-<option>] <pdb file>
 
 Example:
-    python pdb_delinsertion.py 1CTF.pdb  # delete ALL insertion codes
-    python pdb_delinsertion.py -A9,B12 1CTF.pdb  # deletes ins. codes for res
+    python pdb_renuminsertion.py 1CTF.pdb  # delete ALL insertion codes
+    python pdb_renuminsertion.py -A9,B12 1CTF.pdb  # deletes ins. codes for res
                                                  # 9 of chain A and 12 of chain B.
 
 This program is part of the `pdb-tools` suite of utilities and should not be
