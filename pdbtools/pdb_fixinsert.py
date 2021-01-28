@@ -16,9 +16,9 @@
 # limitations under the License.
 
 """
-Deletes insertion codes in a PDB file.
+Fixes insertion codes in a PDB file.
 
-Deleting an insertion code shifts the residue numbering of downstream
+Works by deleting an insertion code shifts the residue numbering of downstream
 residues. Allows for picking specific residues to delete insertion codes for.
 
 Usage:
