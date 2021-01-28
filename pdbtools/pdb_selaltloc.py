@@ -135,7 +135,7 @@ def select_occupancy(fhandle, option):
         sel_prop = lambda d: [ln for ln in d if ln[1] in option_set][0]
 
     # We have to iterate multiple times
-    atom_prop = {}  # {atom_uid: (lineno, prop)}
+    atom_prop = {}  # {atom_uid: (atom_full_id, prop)}
     atom_data = []
 
     # Iterate over file and store atom_uid
@@ -157,8 +157,17 @@ def select_occupancy(fhandle, option):
     # Filter atom_prop
     sel_atoms = set()
     for key, prop_list in atom_prop.items():
-        selected = sel_prop(prop_list)
-        sel_atoms.add(selected[0])  # atom_full_uid
+        try:
+            selected = sel_prop(prop_list)
+        except IndexError:
+            # Some residues have a single altloc that does not
+            # match the option. e.g. pdb_selaltloc -A 3u7t
+            # see residue A PRO 22.
+            # In this case we ignore it since the user explicitly
+            # requested a given altloc.
+            pass
+        else:
+            sel_atoms.add(selected[0])  # atom_full_uid
 
     # Iterate again and yield the right one
     records = ('ATOM', 'HETATM', 'ANISOU')  # we can filter ANISOU too
