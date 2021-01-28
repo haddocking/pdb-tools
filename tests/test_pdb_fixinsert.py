@@ -16,7 +16,7 @@
 # limitations under the License.
 
 """
-Unit Tests for `pdb_renuminsertion`.
+Unit Tests for `pdb_fixinsert`.
 """
 
 import os
@@ -34,7 +34,7 @@ class TestTool(unittest.TestCase):
 
     def setUp(self):
         # Dynamically import the module
-        name = 'pdbtools.pdb_renuminsertion'
+        name = 'pdbtools.pdb_fixinsert'
         self.module = __import__(name, fromlist=[''])
 
     def exec_module(self):
@@ -54,10 +54,10 @@ class TestTool(unittest.TestCase):
         return
 
     def test_default(self):
-        """$ pdb_renuminsertion data/dummy_insertions.pdb"""
+        """$ pdb_fixinsert data/dummy_insertions.pdb"""
 
         # Simulate input
-        # pdb_renuminsertion dummy_insertions.pdb
+        # pdb_fixinsert dummy_insertions.pdb
         sys.argv = ['', os.path.join(data_dir, 'dummy_insertions.pdb')]
 
         # Execute the script
@@ -91,7 +91,7 @@ class TestTool(unittest.TestCase):
         self.assertEqual(resid, expected)
 
     def test_select_insertion(self):
-        """$ pdb_renuminsertion -A1 data/dummy_insertions.pdb"""
+        """$ pdb_fixinsert -A1 data/dummy_insertions.pdb"""
 
         sys.argv = ['', '-A1', os.path.join(data_dir, 'dummy_insertions.pdb')]
 
@@ -140,7 +140,7 @@ class TestTool(unittest.TestCase):
         self.assertEqual(resid, expected)
 
     def test_file_not_found(self):
-        """$ pdb_renuminsertion not_existing.pdb"""
+        """$ pdb_fixinsert not_existing.pdb"""
 
         afile = os.path.join(data_dir, 'not_existing.pdb')
         sys.argv = ['', afile]
@@ -153,7 +153,7 @@ class TestTool(unittest.TestCase):
                          "ERROR!! File not found")  # proper error message
 
     def test_file_missing(self):
-        """$ pdb_renuminsertion -A89"""
+        """$ pdb_fixinsert -A89"""
 
         sys.argv = ['', '-A89']
 
@@ -165,7 +165,7 @@ class TestTool(unittest.TestCase):
                          "ERROR!! No data to process!")
 
     def test_helptext(self):
-        """$ pdb_renuminsertion"""
+        """$ pdb_fixinsert"""
 
         sys.argv = ['']
 
@@ -176,7 +176,7 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.stderr, self.module.__doc__.split("\n")[:-1])
 
     def test_invalid_option(self):
-        """$ pdb_renuminsertion -A data/dummy_insertions.pdb"""
+        """$ pdb_fixinsert -A data/dummy_insertions.pdb"""
 
         sys.argv = ['', '-A', os.path.join(data_dir, 'dummy_insertions.pdb')]
 
@@ -188,7 +188,7 @@ class TestTool(unittest.TestCase):
                          "ERROR!! Option invalid: 'A'")
 
     def test_invalid_option_2(self):
-        """$ pdb_renuminsertion -12A data/dummy_insertions.pdb"""
+        """$ pdb_fixinsert -12A data/dummy_insertions.pdb"""
 
         sys.argv = ['', '-12A', os.path.join(data_dir, 'dummy_insertions.pdb')]
 
@@ -200,7 +200,7 @@ class TestTool(unittest.TestCase):
                          "ERROR!! Option invalid: '12A'")
 
     def test_not_an_option(self):
-        """$ pdb_renuminsertion 20 data/dummy_insertions.pdb"""
+        """$ pdb_fixinsert 20 data/dummy_insertions.pdb"""
 
         sys.argv = ['', '20', os.path.join(data_dir, 'dummy_insertions.pdb')]
 
