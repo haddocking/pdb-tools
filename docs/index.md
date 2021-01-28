@@ -59,6 +59,13 @@ same command-line interface. Here is a couple of examples to get you started:
   pdb_selchain -A,D 1brs.pdb | pdb_delhetatm | pdb_tidy > 1brs_AD_noHET.pdb
   ```
 
+* Removing hydrogens, renaming `HIP` to `HIS`, and renumbering atoms, for all PDBs from a folder to a new folder:
+
+  ```bash
+  mkdir folder_new
+  for i in folder/*pdb; do pdb_delelem -H $i | pdb_rplresname -HIP:HIS | pdb_reatom -1 | pdb_tidy > folder_new/$(basename $i); done
+  ```
+
 *Note: On Windows the tools will have the `.exe` extension.*
 
 ## What _can't_ I do with them?
