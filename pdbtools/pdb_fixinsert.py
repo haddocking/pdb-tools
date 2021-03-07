@@ -18,8 +18,9 @@
 """
 Fixes insertion codes in a PDB file.
 
-Works by deleting an insertion code shifts the residue numbering of downstream
-residues. Allows for picking specific residues to delete insertion codes for.
+Works by deleting an insertion code and shifting the residue numbering of
+downstream residues. Allows for picking specific residues to delete insertion
+codes for.
 
 Usage:
     python pdb_fixinsert.py [-<option>] <pdb file>
@@ -27,7 +28,7 @@ Usage:
 Example:
     python pdb_fixinsert.py 1CTF.pdb  # delete ALL insertion codes
     python pdb_fixinsert.py -A9,B12 1CTF.pdb  # deletes ins. codes for res
-                                                 # 9 of chain A and 12 of chain B.
+                                              # 9 of chain A and 12 of chain B.
 
 This program is part of the `pdb-tools` suite of utilities and should not be
 distributed isolatedly. The `pdb-tools` were created to quickly manipulate PDB
@@ -104,12 +105,14 @@ def check_input(args):
             if len(o) < 2 or not o[1:].isdigit():
                 emsg = 'ERROR!! Option invalid: \'{}\''
                 sys.stderr.write(emsg.format(o))
+
+                fh.close()
                 sys.exit(1)
 
     return (option_list, fh)
 
 
-def delete_insertions(fhandle, option_list):
+def fix_insertions(fhandle, option_list):
     """Deletes insertion codes (at specific residues).
 
     By default, removes ALL insertion codes on ALL residues. Also bumps the
@@ -174,7 +177,7 @@ def main():
     option_list, pdbfh = check_input(sys.argv[1:])
 
     # Do the job
-    new_pdb = delete_insertions(pdbfh, option_list)
+    new_pdb = fix_insertions(pdbfh, option_list)
 
     try:
         _buffer = []
