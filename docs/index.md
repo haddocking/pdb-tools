@@ -154,7 +154,7 @@ For details, see the LICENSE file.
 ## List of Tools
 <div style="margin-bottom: 1em;">
 <details>
-<summary><b>pdb_b</b> | Modifies the temperature factor column of a PDB file (default 10.0).</summary>
+<summary><b>pdb_b</b><p>Modifies the temperature factor column of a PDB file (default 10.0).</p></summary>
 <span style="font-family: monospace; white-space: pre;">
 Usage:
     python pdb_b.py -&lt;bfactor&gt; &lt;pdb file&gt;
@@ -166,7 +166,7 @@ Example:
 </div>
 <div style="margin-bottom: 1em;">
 <details>
-<summary><b>pdb_chain</b> | Modifies the chain identifier column of a PDB file (default is an empty chain).</summary>
+<summary><b>pdb_chain</b><p>Modifies the chain identifier column of a PDB file (default is an empty chain).</p></summary>
 <span style="font-family: monospace; white-space: pre;">
 Usage:
     python pdb_chain.py -&lt;chain id&gt; &lt;pdb file&gt;
@@ -178,7 +178,24 @@ Example:
 </div>
 <div style="margin-bottom: 1em;">
 <details>
-<summary><b>pdb_chainxseg</b> | Swaps the segment identifier for the chain identifier.</summary>
+<summary><b>pdb_chainbows</b><p>Renames chain identifiers sequentially, based on TER records.</p></summary>
+<span style="font-family: monospace; white-space: pre;">
+Since HETATM records are not separated by TER records and usually come together
+at the end of the PDB file, this script will attempt to reassign their chain
+identifiers based on the changes it made to ATOM lines. This might lead to bad
+output in certain corner cases.
+
+Usage:
+    python pdb_chainbows.py &lt;pdb file&gt;
+
+Example:
+    python pdb_chainbows.py 1CTF.pdb
+</span>
+</details>
+</div>
+<div style="margin-bottom: 1em;">
+<details>
+<summary><b>pdb_chainxseg</b><p>Swaps the segment identifier for the chain identifier.</p></summary>
 <span style="font-family: monospace; white-space: pre;">
 Usage:
     python pdb_chainxseg.py &lt;pdb file&gt;
@@ -190,7 +207,7 @@ Example:
 </div>
 <div style="margin-bottom: 1em;">
 <details>
-<summary><b>pdb_chkensemble</b> | Checks all models in a multi-model PDB file have the same composition.</summary>
+<summary><b>pdb_chkensemble</b><p>Checks all models in a multi-model PDB file have the same composition.</p></summary>
 <span style="font-family: monospace; white-space: pre;">
 Composition is defined as same atoms/residues/chains.
 
@@ -204,7 +221,7 @@ Example:
 </div>
 <div style="margin-bottom: 1em;">
 <details>
-<summary><b>pdb_delchain</b> | Deletes all atoms matching specific chains in the PDB file.</summary>
+<summary><b>pdb_delchain</b><p>Deletes all atoms matching specific chains in the PDB file.</p></summary>
 <span style="font-family: monospace; white-space: pre;">
 Usage:
     python pdb_delchain.py -&lt;option&gt; &lt;pdb file&gt;
@@ -217,7 +234,7 @@ Example:
 </div>
 <div style="margin-bottom: 1em;">
 <details>
-<summary><b>pdb_delelem</b> | Deletes all atoms matching the given element in the PDB file. </summary>
+<summary><b>pdb_delelem</b><p>Deletes all atoms matching the given element in the PDB file.</p></summary>
 <span style="font-family: monospace; white-space: pre;">
 Elements are read from the element column.
 
@@ -233,7 +250,7 @@ Example:
 </div>
 <div style="margin-bottom: 1em;">
 <details>
-<summary><b>pdb_delhetatm</b> | Removes all HETATM records in the PDB file.</summary>
+<summary><b>pdb_delhetatm</b><p>Removes all HETATM records in the PDB file.</p></summary>
 <span style="font-family: monospace; white-space: pre;">
 Usage:
     python pdb_delhetatm.py &lt;pdb file&gt;
@@ -245,24 +262,7 @@ Example:
 </div>
 <div style="margin-bottom: 1em;">
 <details>
-<summary><b>pdb_delinsertion</b> | Deletes insertion codes in a PDB file.</summary>
-<span style="font-family: monospace; white-space: pre;">
-Deleting an insertion code shifts the residue numbering of downstream
-residues. Allows for picking specific residues to delete insertion codes for.
-
-Usage:
-    python pdb_delinsertion.py [-&lt;option&gt;] &lt;pdb file&gt;
-
-Example:
-    python pdb_delinsertion.py 1CTF.pdb  # delete ALL insertion codes
-    python pdb_delinsertion.py -A9,B12 1CTF.pdb  # deletes ins. codes for res
-                                                 # 9 of chain A and 12 of chain B.
-</span>
-</details>
-</div>
-<div style="margin-bottom: 1em;">
-<details>
-<summary><b>pdb_delres</b> | Deletes a range of residues from a PDB file. </summary>
+<summary><b>pdb_delres</b><p>Deletes a range of residues from a PDB file.</p></summary>
 <span style="font-family: monospace; white-space: pre;">
 The range option has three components: start, end, and step. Start and end
 are optional and if ommitted the range will start at the first residue or
@@ -285,7 +285,7 @@ Example:
 </div>
 <div style="margin-bottom: 1em;">
 <details>
-<summary><b>pdb_delresname</b> | Removes all residues matching the given name in the PDB file. </summary>
+<summary><b>pdb_delresname</b><p>Removes all residues matching the given name in the PDB file.</p></summary>
 <span style="font-family: monospace; white-space: pre;">
 Residues names are matched *without* taking into consideration spaces.
 
@@ -300,7 +300,7 @@ Example:
 </div>
 <div style="margin-bottom: 1em;">
 <details>
-<summary><b>pdb_element</b> | Assigns the elements in the PDB file from atom names.</summary>
+<summary><b>pdb_element</b><p>Assigns the elements in the PDB file from atom names.</p></summary>
 <span style="font-family: monospace; white-space: pre;">
 Usage:
     python pdb_element.py &lt;pdb file&gt;
@@ -312,7 +312,7 @@ Example:
 </div>
 <div style="margin-bottom: 1em;">
 <details>
-<summary><b>pdb_fetch</b> | Downloads a structure in PDB format from the RCSB website. </summary>
+<summary><b>pdb_fetch</b><p>Downloads a structure in PDB format from the RCSB website.</p></summary>
 <span style="font-family: monospace; white-space: pre;">
 Allows downloading the (first) biological structure if selected.
 
@@ -327,7 +327,25 @@ Example:
 </div>
 <div style="margin-bottom: 1em;">
 <details>
-<summary><b>pdb_fromcif</b> | Rudimentarily converts a mmCIF file to the PDB format. </summary>
+<summary><b>pdb_fixinsert</b><p>Fixes insertion codes in a PDB file.</p></summary>
+<span style="font-family: monospace; white-space: pre;">
+Works by deleting an insertion code and shifting the residue numbering of
+downstream residues. Allows for picking specific residues to delete insertion
+codes for.
+
+Usage:
+    python pdb_fixinsert.py [-&lt;option&gt;] &lt;pdb file&gt;
+
+Example:
+    python pdb_fixinsert.py 1CTF.pdb  # delete ALL insertion codes
+    python pdb_fixinsert.py -A9,B12 1CTF.pdb  # deletes ins. codes for res
+                                              # 9 of chain A and 12 of chain B.
+</span>
+</details>
+</div>
+<div style="margin-bottom: 1em;">
+<details>
+<summary><b>pdb_fromcif</b><p>Rudimentarily converts a mmCIF file to the PDB format.</p></summary>
 <span style="font-family: monospace; white-space: pre;">
 Will not convert if the file does not 'fit' in PDB format, e.g. too many
 chains, residues, or atoms. Will convert only the coordinate section.
@@ -342,7 +360,7 @@ Example:
 </div>
 <div style="margin-bottom: 1em;">
 <details>
-<summary><b>pdb_gap</b> | Finds gaps between consecutive protein residues in the PDB.</summary>
+<summary><b>pdb_gap</b><p>Finds gaps between consecutive protein residues in the PDB.</p></summary>
 <span style="font-family: monospace; white-space: pre;">
 Detects gaps both by a distance criterion or discontinuous residue numbering.
 Only applies to protein residues.
@@ -357,7 +375,7 @@ Example:
 </div>
 <div style="margin-bottom: 1em;">
 <details>
-<summary><b>pdb_head</b> | Returns the first N coordinate (ATOM/HETATM) lines of the file.</summary>
+<summary><b>pdb_head</b><p>Returns the first N coordinate (ATOM/HETATM) lines of the file.</p></summary>
 <span style="font-family: monospace; white-space: pre;">
 Usage:
     python pdb_head.py -&lt;num&gt; &lt;pdb file&gt;
@@ -369,7 +387,7 @@ Example:
 </div>
 <div style="margin-bottom: 1em;">
 <details>
-<summary><b>pdb_intersect</b> | Returns a new PDB file only with atoms in common to all input PDB files.</summary>
+<summary><b>pdb_intersect</b><p>Returns a new PDB file only with atoms in common to all input PDB files.</p></summary>
 <span style="font-family: monospace; white-space: pre;">
 Atoms are judged equal is their name, altloc, res. name, res. num, insertion
 code and chain fields are the same. Coordinates are taken from the first input
@@ -385,9 +403,9 @@ Example:
 </div>
 <div style="margin-bottom: 1em;">
 <details>
-<summary><b>pdb_keepcoord</b> | Removes all non-coordinate records from the file.</summary>
+<summary><b>pdb_keepcoord</b><p>Removes all non-coordinate records from the file.</p></summary>
 <span style="font-family: monospace; white-space: pre;">
-Keeps only MODEL, ENDMDL, END, ATOM, HETATM, and CONECT.
+Keeps only MODEL, ENDMDL, END, ATOM, HETATM, CONECT.
 
 Usage:
     python pdb_keepcoord.py &lt;pdb file&gt;
@@ -399,7 +417,7 @@ Example:
 </div>
 <div style="margin-bottom: 1em;">
 <details>
-<summary><b>pdb_merge</b> | Merges several PDB files into one. </summary>
+<summary><b>pdb_merge</b><p>Merges several PDB files into one.</p></summary>
 <span style="font-family: monospace; white-space: pre;">
 The contents are not sorted and no lines are deleted (e.g. END, TER
 statements) so we recommend piping the results through `pdb_tidy.py`.
@@ -414,7 +432,7 @@ Example:
 </div>
 <div style="margin-bottom: 1em;">
 <details>
-<summary><b>pdb_mkensemble</b> | Merges several PDB files into one multi-model (ensemble) file.</summary>
+<summary><b>pdb_mkensemble</b><p>Merges several PDB files into one multi-model (ensemble) file.</p></summary>
 <span style="font-family: monospace; white-space: pre;">
 Strips all HEADER information and adds REMARK statements with the provenance
 of each conformer.
@@ -429,7 +447,7 @@ Example:
 </div>
 <div style="margin-bottom: 1em;">
 <details>
-<summary><b>pdb_occ</b> | Modifies the occupancy column of a PDB file (default 1.0).</summary>
+<summary><b>pdb_occ</b><p>Modifies the occupancy column of a PDB file (default 1.0).</p></summary>
 <span style="font-family: monospace; white-space: pre;">
 Usage:
     python pdb_occ.py -&lt;occupancy&gt; &lt;pdb file&gt;
@@ -441,7 +459,7 @@ Example:
 </div>
 <div style="margin-bottom: 1em;">
 <details>
-<summary><b>pdb_reatom</b> | Renumbers atom serials in the PDB file starting from a given value (default 1).</summary>
+<summary><b>pdb_reatom</b><p>Renumbers atom serials in the PDB file starting from a given value (default 1).</p></summary>
 <span style="font-family: monospace; white-space: pre;">
 Usage:
     python pdb_reatom.py -&lt;number&gt; &lt;pdb file&gt;
@@ -454,7 +472,7 @@ Example:
 </div>
 <div style="margin-bottom: 1em;">
 <details>
-<summary><b>pdb_reres</b> | Renumbers the residues of the PDB file starting from a given number (default 1).</summary>
+<summary><b>pdb_reres</b><p>Renumbers the residues of the PDB file starting from a given number (default 1).</p></summary>
 <span style="font-family: monospace; white-space: pre;">
 Usage:
     python pdb_reres.py -&lt;number&gt; &lt;pdb file&gt;
@@ -467,7 +485,7 @@ Example:
 </div>
 <div style="margin-bottom: 1em;">
 <details>
-<summary><b>pdb_rplchain</b> | Performs in-place replacement of a chain identifier by another.</summary>
+<summary><b>pdb_rplchain</b><p>Performs in-place replacement of a chain identifier by another.</p></summary>
 <span style="font-family: monospace; white-space: pre;">
 Usage:
     python pdb_rplchain.py -&lt;from&gt;:&lt;to&gt; &lt;pdb file&gt;
@@ -479,7 +497,7 @@ Example:
 </div>
 <div style="margin-bottom: 1em;">
 <details>
-<summary><b>pdb_rplresname</b> | Performs in-place replacement of a residue name by another.</summary>
+<summary><b>pdb_rplresname</b><p>Performs in-place replacement of a residue name by another.</p></summary>
 <span style="font-family: monospace; white-space: pre;">
 Affects all residues with that name.
 
@@ -493,7 +511,7 @@ Example:
 </div>
 <div style="margin-bottom: 1em;">
 <details>
-<summary><b>pdb_seg</b> | Modifies the segment identifier column of a PDB file (default is an empty segment).</summary>
+<summary><b>pdb_seg</b><p>Modifies the segment identifier column of a PDB file (default is an empty segment).</p></summary>
 <span style="font-family: monospace; white-space: pre;">
 Usage:
     python pdb_seg.py -&lt;segment id&gt; &lt;pdb file&gt;
@@ -505,7 +523,7 @@ Example:
 </div>
 <div style="margin-bottom: 1em;">
 <details>
-<summary><b>pdb_segxchain</b> | Swaps the chain identifier by the segment identifier.</summary>
+<summary><b>pdb_segxchain</b><p>Swaps the chain identifier by the segment identifier.</p></summary>
 <span style="font-family: monospace; white-space: pre;">
 If the segment identifier is longer than one character, the script will
 truncate it. Does not ensure unique chain IDs.
@@ -520,9 +538,9 @@ Example:
 </div>
 <div style="margin-bottom: 1em;">
 <details>
-<summary><b>pdb_selaltloc</b> | Selects altloc labels for the entire PDB file.</summary>
+<summary><b>pdb_selaltloc</b><p>Selects altloc labels for the entire PDB file.</p></summary>
 <span style="font-family: monospace; white-space: pre;">
-By default, picks the label with the highest occupancy value for each atom, 
+By default, picks the label with the highest occupancy value for each atom,
 but the user can define a specific label. Removes all labels afterwards.
 
 Usage:
@@ -536,7 +554,7 @@ Example:
 </div>
 <div style="margin-bottom: 1em;">
 <details>
-<summary><b>pdb_selatom</b> | Selects all atoms matching the given name in the PDB file.</summary>
+<summary><b>pdb_selatom</b><p>Selects all atoms matching the given name in the PDB file.</p></summary>
 <span style="font-family: monospace; white-space: pre;">
 Atom names are matched *without* taking into consideration spaces, so ' CA '
 (alpha carbon) and 'CA  ' (calcium) will both be kept if -CA is passed.
@@ -552,7 +570,7 @@ Example:
 </div>
 <div style="margin-bottom: 1em;">
 <details>
-<summary><b>pdb_selchain</b> | Extracts one or more chains from a PDB file.</summary>
+<summary><b>pdb_selchain</b><p>Extracts one or more chains from a PDB file.</p></summary>
 <span style="font-family: monospace; white-space: pre;">
 Usage:
     python pdb_selchain.py -&lt;chain id&gt; &lt;pdb file&gt;
@@ -565,7 +583,7 @@ Example:
 </div>
 <div style="margin-bottom: 1em;">
 <details>
-<summary><b>pdb_selelem</b> | Selects all atoms that match the given element(s) in the PDB file.</summary>
+<summary><b>pdb_selelem</b><p>Selects all atoms that match the given element(s) in the PDB file.</p></summary>
 <span style="font-family: monospace; white-space: pre;">
 Elements are read from the element column.
 
@@ -581,7 +599,7 @@ Example:
 </div>
 <div style="margin-bottom: 1em;">
 <details>
-<summary><b>pdb_selhetatm</b> | Selects all HETATM records in the PDB file.</summary>
+<summary><b>pdb_selhetatm</b><p>Selects all HETATM records in the PDB file.</p></summary>
 <span style="font-family: monospace; white-space: pre;">
 Usage:
     python pdb_selhetatm.py &lt;pdb file&gt;
@@ -593,7 +611,7 @@ Example:
 </div>
 <div style="margin-bottom: 1em;">
 <details>
-<summary><b>pdb_selres</b> | Selects residues by their index, piecewise or in a range. </summary>
+<summary><b>pdb_selres</b><p>Selects residues by their index, piecewise or in a range.</p></summary>
 <span style="font-family: monospace; white-space: pre;">
 The range option has three components: start, end, and step. Start and end
 are optional and if ommitted the range will start at the first residue or
@@ -615,7 +633,7 @@ Example:
 </div>
 <div style="margin-bottom: 1em;">
 <details>
-<summary><b>pdb_selresname</b> | Selects all residues matching the given name in the PDB file.</summary>
+<summary><b>pdb_selresname</b><p>Selects all residues matching the given name in the PDB file.</p></summary>
 <span style="font-family: monospace; white-space: pre;">
 Residues names are matched *without* taking into consideration spaces.
 
@@ -630,7 +648,7 @@ Example:
 </div>
 <div style="margin-bottom: 1em;">
 <details>
-<summary><b>pdb_selseg</b> | Selects all atoms matching the given segment identifier.</summary>
+<summary><b>pdb_selseg</b><p>Selects all atoms matching the given segment identifier.</p></summary>
 <span style="font-family: monospace; white-space: pre;">
 Usage:
     python pdb_selseg.py -&lt;segment id&gt; &lt;pdb file&gt;
@@ -643,7 +661,7 @@ Example:
 </div>
 <div style="margin-bottom: 1em;">
 <details>
-<summary><b>pdb_shiftres</b> | Shifts the residue numbers in the PDB file by a constant value.</summary>
+<summary><b>pdb_shiftres</b><p>Shifts the residue numbers in the PDB file by a constant value.</p></summary>
 <span style="font-family: monospace; white-space: pre;">
 Usage:
     python pdb_shiftres.py -&lt;number&gt; &lt;pdb file&gt;
@@ -656,7 +674,7 @@ Example:
 </div>
 <div style="margin-bottom: 1em;">
 <details>
-<summary><b>pdb_sort</b> | Sorts the ATOM/HETATM/ANISOU/CONECT records in a PDB file.</summary>
+<summary><b>pdb_sort</b><p>Sorts the ATOM/HETATM/ANISOU/CONECT records in a PDB file.</p></summary>
 <span style="font-family: monospace; white-space: pre;">
 Atoms are always sorted by their serial number, meaning the original ordering
 of the atoms within each residue are not changed. Alternate locations are sorted
@@ -689,7 +707,7 @@ Example:
 </div>
 <div style="margin-bottom: 1em;">
 <details>
-<summary><b>pdb_splitchain</b> | Splits a PDB file into several, each containing one chain.</summary>
+<summary><b>pdb_splitchain</b><p>Splits a PDB file into several, each containing one chain.</p></summary>
 <span style="font-family: monospace; white-space: pre;">
 Usage:
     python pdb_splitchain.py &lt;pdb file&gt;
@@ -701,7 +719,7 @@ Example:
 </div>
 <div style="margin-bottom: 1em;">
 <details>
-<summary><b>pdb_splitmodel</b> | Splits a PDB file into several, each containing one MODEL.</summary>
+<summary><b>pdb_splitmodel</b><p>Splits a PDB file into several, each containing one MODEL.</p></summary>
 <span style="font-family: monospace; white-space: pre;">
 Usage:
     python pdb_splitmodel.py &lt;pdb file&gt;
@@ -713,7 +731,7 @@ Example:
 </div>
 <div style="margin-bottom: 1em;">
 <details>
-<summary><b>pdb_splitseg</b> | Splits a PDB file into several, each containing one segment.</summary>
+<summary><b>pdb_splitseg</b><p>Splits a PDB file into several, each containing one segment.</p></summary>
 <span style="font-family: monospace; white-space: pre;">
 Usage:
     python pdb_splitseg.py &lt;pdb file&gt;
@@ -725,7 +743,7 @@ Example:
 </div>
 <div style="margin-bottom: 1em;">
 <details>
-<summary><b>pdb_tidy</b> | Modifies the file to adhere (as much as possible) to the format specifications.</summary>
+<summary><b>pdb_tidy</b><p>Modifies the file to adhere (as much as possible) to the format specifications.</p></summary>
 <span style="font-family: monospace; white-space: pre;">
 Expects a sorted file - REMARK/ATOM/HETATM/END - so use pdb_sort in case you are
 not sure.
@@ -738,16 +756,17 @@ This includes:
 Will remove all original TER/END statements from the file.
 
 Usage:
-    python pdb_tidy.py &lt;pdb file&gt;
+    python pdb_tidy.py [-strict] &lt;pdb file&gt;
 
 Example:
     python pdb_tidy.py 1CTF.pdb
+    python pdb_tidy.py -strict 1CTF.pdb  # does not add TER on chain breaks
 </span>
 </details>
 </div>
 <div style="margin-bottom: 1em;">
 <details>
-<summary><b>pdb_tocif</b> | Rudimentarily converts the PDB file to mmCIF format. </summary>
+<summary><b>pdb_tocif</b><p>Rudimentarily converts the PDB file to mmCIF format.</p></summary>
 <span style="font-family: monospace; white-space: pre;">
 Will convert only the coordinate section.
 
@@ -761,7 +780,7 @@ Example:
 </div>
 <div style="margin-bottom: 1em;">
 <details>
-<summary><b>pdb_tofasta</b> | Extracts the residue sequence in a PDB file to FASTA format. </summary>
+<summary><b>pdb_tofasta</b><p>Extracts the residue sequence in a PDB file to FASTA format.</p></summary>
 <span style="font-family: monospace; white-space: pre;">
 Canonical amino acids and nucleotides are represented by their
 one-letter code while all others are represented by 'X'.
@@ -779,12 +798,12 @@ Example:
 </div>
 <div style="margin-bottom: 1em;">
 <details>
-<summary><b>pdb_uniqname</b> | Renames atoms sequentially (C1, C2, O1, ...) for each HETATM residue.</summary>
+<summary><b>pdb_uniqname</b><p>Renames atoms sequentially (C1, C2, O1, ...) for each HETATM residue.</p></summary>
 <span style="font-family: monospace; white-space: pre;">
 Relies on an element column being present (see pdb_element).
 
 Usage:
-    python pdb_uniqname.py <pdb file>
+    python pdb_uniqname.py &lt;pdb file&gt;
 
 Example:
     python pdb_uniqname.py 1CTF.pdb
@@ -793,7 +812,7 @@ Example:
 </div>
 <div style="margin-bottom: 1em;">
 <details>
-<summary><b>pdb_validate</b> | Validates the PDB file ATOM/HETATM lines according to the format specifications.</summary>
+<summary><b>pdb_validate</b><p>Validates the PDB file ATOM/HETATM lines according to the format specifications.</p></summary>
 <span style="font-family: monospace; white-space: pre;">
 Does not catch all the errors though... people are creative!
 
@@ -807,17 +826,17 @@ Example:
 </div>
 <div style="margin-bottom: 1em;">
 <details>
-<summary><b>pdb_wc</b> | Summarizes the contents of a PDB file, like the wc command in UNIX.</summary>
+<summary><b>pdb_wc</b><p>Summarizes the contents of a PDB file, like the wc command in UNIX.</p></summary>
 <span style="font-family: monospace; white-space: pre;">
-Several options are available to produce only partial summaries:
+By default, this tool produces a general summary, but you can use several
+options to produce focused but more detailed summaries:
     [m] - no. of models.
     [c] - no. of chains (plus per-model if multi-model file).
     [r] - no. of residues (plus per-model if multi-model file).
     [a] - no. of atoms (plus per-model if multi-model file).
     [h] - no. of HETATM (plus per-model if multi-model file).
-    [o] - no. of disordered atoms (altloc) (plus per-model if multi-model file).
-    [i] - no. of insertion codes (plus per-model if multi-model file).
-    [g] - presence/absence of gaps (discontinuous residue numbering).
+    [o] - presence of disordered atoms (altloc).
+    [i] - presence of insertion codes.
 
 Usage:
     python pdb_wc.py [-&lt;option&gt;] &lt;pdb file&gt;
