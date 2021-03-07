@@ -25,7 +25,9 @@ pip install --upgrade pdb-tools
 ## What can I do with them?
 The purpose of each tool should be obvious from its name. In any case, [here](#list-of-tools)
 is a list of all the tools in the suite and their function. All tools share the
-same command-line interface. Here is a couple of examples to get you started:
+same command-line interface. Below are a couple of examples to get you started. If you want to
+check out more examples of how to use the tools and their applications, or have any cool examples
+of your own, check out the [cookbook](cookbook).
 
 * Downloading a structure
    ```bash
@@ -59,14 +61,8 @@ same command-line interface. Here is a couple of examples to get you started:
   pdb_selchain -A,D 1brs.pdb | pdb_delhetatm | pdb_tidy > 1brs_AD_noHET.pdb
   ```
 
-* Removing hydrogens, renaming `HIP` to `HIS`, and renumbering atoms, for all PDBs from a folder to a new folder:
-
-  ```bash
-  mkdir folder_new
-  for i in folder/*pdb; do pdb_delelem -H $i | pdb_rplresname -HIP:HIS | pdb_reatom -1 | pdb_tidy > folder_new/$(basename $i); done
-  ```
-
 *Note: On Windows the tools will have the `.exe` extension.*
+
 
 ## What _can't_ I do with them?
 Operations that involve coordinates or numerical calculations are usually not in
@@ -152,6 +148,7 @@ or a new tools, read our `CONTRIBUTING` instructions [here](https://github.com/h
 For details, see the LICENSE file.
 
 ## List of Tools
+
 <div style="margin-bottom: 1em;">
 <details>
 <summary><b>pdb_b</b><p>Modifies the temperature factor column of a PDB file (default 10.0).</p></summary>
@@ -322,24 +319,6 @@ Usage:
 Example:
     python pdb_fetch.py 1brs  # downloads unit cell, all 6 chains
     python pdb_fetch.py -biounit 1brs  # downloads biounit, 2 chains
-</span>
-</details>
-</div>
-<div style="margin-bottom: 1em;">
-<details>
-<summary><b>pdb_fixinsert</b><p>Fixes insertion codes in a PDB file.</p></summary>
-<span style="font-family: monospace; white-space: pre;">
-Works by deleting an insertion code and shifting the residue numbering of
-downstream residues. Allows for picking specific residues to delete insertion
-codes for.
-
-Usage:
-    python pdb_fixinsert.py [-&lt;option&gt;] &lt;pdb file&gt;
-
-Example:
-    python pdb_fixinsert.py 1CTF.pdb  # delete ALL insertion codes
-    python pdb_fixinsert.py -A9,B12 1CTF.pdb  # deletes ins. codes for res
-                                              # 9 of chain A and 12 of chain B.
 </span>
 </details>
 </div>
