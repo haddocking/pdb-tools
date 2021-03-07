@@ -22,7 +22,6 @@ Unit Tests for `pdb_fixinsert`.
 import os
 import sys
 import unittest
-import warnings
 
 from config import data_dir
 from utils import OutputCapture
@@ -35,7 +34,7 @@ class TestTool(unittest.TestCase):
 
     def setUp(self):
         # Dynamically import the module
-        name = 'pdbtools.pdb_delinsertion'
+        name = 'pdbtools.pdb_fixinsert'
         self.module = __import__(name, fromlist=[''])
 
     def exec_module(self):
@@ -45,9 +44,7 @@ class TestTool(unittest.TestCase):
 
         with OutputCapture() as output:
             try:
-                with warnings.catch_warnings():
-                    warnings.simplefilter("ignore")
-                    self.module.main()
+                self.module.main()
             except SystemExit as e:
                 self.retcode = e.code
 
@@ -167,16 +164,16 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.stderr[0],
                          "ERROR!! No data to process!")
 
-    # def test_helptext(self):
-    #     """$ pdb_fixinsert"""
+    def test_helptext(self):
+        """$ pdb_fixinsert"""
 
-    #     sys.argv = ['']
+        sys.argv = ['']
 
-    #     self.exec_module()
+        self.exec_module()
 
-    #     self.assertEqual(self.retcode, 1)  # ensure the program exited gracefully.
-    #     self.assertEqual(len(self.stdout), 0)  # no output
-    #     self.assertEqual(self.stderr, self.module.__doc__.split("\n")[:-1])
+        self.assertEqual(self.retcode, 1)  # ensure the program exited gracefully.
+        self.assertEqual(len(self.stdout), 0)  # no output
+        self.assertEqual(self.stderr, self.module.__doc__.split("\n")[:-1])
 
     def test_invalid_option(self):
         """$ pdb_fixinsert -A data/dummy_insertions.pdb"""
