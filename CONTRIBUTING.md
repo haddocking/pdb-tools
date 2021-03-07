@@ -101,6 +101,11 @@ python setup.py test
 pip install flake8  # Optional obviously
 flake8 --ignore E501,E731 --statistics bin/
 
+# Update the documentation, if you added new tools (or changed docstrings).
+cd docs/
+python doctools.py
+git add index.md && git commit -m "Updated documentation"
+
 # When there are no issues left, push to your fork on github
 git push origin pdb_newtool
 
