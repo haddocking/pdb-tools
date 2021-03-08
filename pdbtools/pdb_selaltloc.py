@@ -35,6 +35,8 @@ data to another. They are based on old FORTRAN77 code that was taking too much
 effort to maintain and compile. RIP.
 """
 
+import collections
+import operator
 import os
 import sys
 
@@ -47,7 +49,7 @@ def check_input(args):
     """
 
     # Defaults
-    option = ''
+    option = None
     fh = sys.stdin  # file handle
 
     if not len(args):
@@ -97,7 +99,7 @@ def check_input(args):
         sys.exit(1)
 
     # Validate option
-    if len(option) > 1:
+    if option and len(option) > 1:
         emsg = 'ERROR!! Alternate location identifiers must be single '
         emsg += 'characters: \'{}\''
         sys.stderr.write(emsg.format(option))
@@ -106,75 +108,111 @@ def check_input(args):
     return (option, fh)
 
 
-def select_occupancy(fhandle, option):
-    """Picks one occupancy when atoms have more than one.
-
-    By default checks the occupancy line for the atom with the highest value.
-    Otherwise, the user can provide a specific label ('A', 'B', etc.)
+def select_by_occupancy(fhandle):
+    """Picks the altloc with the highest occupancy.
     """
 
-    # Filter functions
-    def pick_by_altloc(line, altloc):
-        """Selects atom lines based on altloc (or none, in case there is none)
-        """
-        if line[16] == altloc or line[16] == ' ':
-            return line
-
-    def pick_by_occupancy(data, *args):
-        """Selects atom lines based on highest occupancy value.
-        """
-        data.sort(key=lambda l: float(l[54:60]), reverse=True)
-        return data[0]
-
-    if option == '':  # Get occupancy
-        get_prop = lambda l: float(l[54:60])
-        sel_prop = lambda d: sorted(d, key=lambda x: x[1], reverse=True)[0]
-    else:  # get altloc
-        option_set = set((option, ' '))
-        get_prop = lambda l: l[16]
-        sel_prop = lambda d: [ln for ln in d if ln[1] in option_set][0]
-
-    # We have to iterate multiple times
-    atom_prop = {}  # {atom_uid: (atom_full_id, prop)}
+    atom_prop = collections.defaultdict(list)
     atom_data = []
+    anisou_lines = {}  # map atom_uid to lineno
+    ignored = set()
 
     # Iterate over file and store atom_uid
-    records = ('ATOM', 'HETATM')
-    for line in fhandle:
+    records = ('ATOM', 'HETATM', 'ANISOU')
+    for lineno, line in enumerate(fhandle):
 
         atom_data.append(line)
 
         if line.startswith(records):
-            atom_uid = (line[12:16], line[17:26])
-            atom_full_uid = line[12:26]
-            prop = get_prop(line)
+            # Sometimes altlocs are used between different residue names.
+            # See 3u7t (residue 22 of chain A). So we ignore the resname below.
+            atom_uid = (line[12:16], line[20:26])
 
-            if atom_uid in atom_prop:
-                atom_prop[atom_uid].append((atom_full_uid, prop))
+            # ANISOU records do not have occupancy values.
+            # To keep things simple, we map ANISOU to ATOM/HETATM records
+            if line.startswith('ANISOU'):
+                anisou_lines[lineno - 1] = lineno
+                ignored.add(lineno)  # we will fix this below
             else:
-                atom_prop[atom_uid] = [(atom_full_uid, prop)]
+                occ = float(line[54:60])
+                atom_prop[atom_uid].append((lineno, occ))
 
-    # Filter atom_prop
-    sel_atoms = set()
-    for key, prop_list in atom_prop.items():
-        try:
-            selected = sel_prop(prop_list)
-        except IndexError:
-            # Some residues have a single altloc that does not
-            # match the option. e.g. pdb_selaltloc -A 3u7t
-            # see residue A PRO 22.
-            # In this case we ignore it since the user explicitly
-            # requested a given altloc.
-            pass
-        else:
-            sel_atoms.add(selected[0])  # atom_full_uid
+    # Iterate and pick highest occupancy for each atom.
+    for atom_uid, prop_list in atom_prop.items():
+        prop_list.sort(key=operator.itemgetter(1), reverse=True)
 
-    # Iterate again and yield the right one
-    records = ('ATOM', 'HETATM', 'ANISOU')  # we can filter ANISOU too
+        lineno = prop_list[0][0]
+
+        # Edit altloc field(s)
+        line = atom_data[lineno]
+        atom_data[lineno] = line[:16] + ' ' + line[17:]
+
+        if lineno in anisou_lines:
+            anisou_lineno = anisou_lines[lineno]
+            line = atom_data[anisou_lineno]
+            atom_data[anisou_lineno] = line[:16] + ' ' + line[17:]
+            ignored.discard(anisou_lineno)
+
+        ignored.update(p[0] for p in prop_list[1:])
+
+    # Now yield
     for lineno, line in enumerate(atom_data):
+        if lineno in ignored:
+            continue
+
+        yield line
+
+
+def select_by_altloc(fhandle, selloc):
+    """Picks one altloc when atoms have more than one.
+
+    If the specified altloc (selloc) is not present for this particular atom,
+    outputs all altlocs. For instance, if atom X has altlocs A and B but the
+    user picked C, we return A and B anyway. If atom Y has altlocs A, B, and C,
+    then we only return C.
+    """
+
+    # We have to iterate multiple times
+    atom_prop = collections.defaultdict(list)
+    atom_data = []
+
+    # Iterate over file and store atom_uid
+    records = ('ATOM', 'HETATM', 'ANISOU')
+    editable = set()
+    for lineno, line in enumerate(fhandle):
+
+        atom_data.append(line)
+
         if line.startswith(records):
-            if line[12:26] in sel_atoms:
-                yield line[:16] + ' ' + line[17:]  # clear altloc
+            # Sometimes altlocs are used between different residue names.
+            # See 3u7t (residue 22 of chain A). So we ignore the resname below.
+            atom_uid = (line[12:16], line[20:26])
+
+            altloc = line[16]
+            atom_prop[atom_uid].append((altloc, lineno))
+
+            if altloc == selloc:  # flag as editable
+                editable.add(lineno)
+
+    # Reduce editable indexes to atom_uid entries
+    editable = {
+        (atom_data[i][12:16], atom_data[i][20:26]) for i in editable
+    }
+
+    # Now define lines to ignore in the output
+    ignored = set()
+    for atom_uid in editable:
+        for altloc, lineno in atom_prop[atom_uid]:
+            if altloc != selloc:
+                ignored.add(lineno)
+            else:
+                # Edit altloc field
+                line = atom_data[lineno]
+                atom_data[lineno] = line[:16] + ' ' + line[17:]
+
+    # Iterate again and yield the correct lines.
+    for lineno, line in enumerate(atom_data):
+        if lineno in ignored:
             continue
 
         yield line
@@ -185,7 +223,10 @@ def main():
     option, pdbfh = check_input(sys.argv[1:])
 
     # Do the job
-    new_pdb = select_occupancy(pdbfh, option)
+    if option is None:
+        new_pdb = select_by_occupancy(pdbfh)
+    else:
+        new_pdb = select_by_altloc(pdbfh, option)
 
     try:
         _buffer = []
