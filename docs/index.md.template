@@ -97,24 +97,22 @@ We finally decided to write up a small publication describing the tools. If you
 used them in a project that is going to be published, please cite us:
 
 ```
-Rodrigues, J. P. G. L. M., Teixeira, J. M. C., Trellet, M. & Bonvin, A. M. J. J.
-pdb-tools: a swiss army knife for molecular structures. bioRxiv (2018). 
-doi:10.1101/483305
+Rodrigues JPGLM, Teixeira JMC, Trellet M and Bonvin AMJJ.
+pdb-tools: a swiss army knife for molecular structures. 
+F1000Research 2018, 7:1961 (https://doi.org/10.12688/f1000research.17456.1) 
 ```
 
 If you use a reference manager that supports BibTex, use this record:
 ```
-@article {Rodrigues483305,
-  author = {Rodrigues, Jo{\~a}o P.G.L.M. and Teixeira, Jo{\~a}o M.C. and Trellet, Mika{\"e}l and Bonvin, Alexandre M.J.J.},
-  title = {pdb-tools: a swiss army knife for molecular structures},
-  elocation-id = {483305},
-  year = {2018},
-  doi = {10.1101/483305},
-  publisher = {Cold Spring Harbor Laboratory},
-  abstract = {The pdb-tools are a collection of Python scripts for working with molecular structure data in the PDB format. They allow users to edit, convert, and validate PDB files, from the command-line, in a simple but efficient manner. The pdb-tools are implemented in Python, without any external dependencies, and are freely available under the open-source Apache License at https://github.com/haddocking/pdb-tools/ and on PyPI (https://pypi.org/project/pdb-tools/).},
-  URL = {https://www.biorxiv.org/content/early/2018/12/04/483305},
-  eprint = {https://www.biorxiv.org/content/early/2018/12/04/483305.full.pdf},
-  journal = {bioRxiv}
+@Article{ 10.12688/f1000research.17456.1,
+AUTHOR = { Rodrigues, JPGLM and Teixeira, JMC and Trellet, M and Bonvin, AMJJ},
+TITLE = {pdb-tools: a swiss army knife for molecular structures [version 1; peer review: 2 approved]
+},
+JOURNAL = {F1000Research},
+VOLUME = {7},
+YEAR = {2018},
+NUMBER = {1961},
+DOI = {10.12688/f1000research.17456.1}
 }
 ```
 
