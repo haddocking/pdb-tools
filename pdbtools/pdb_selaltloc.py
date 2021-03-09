@@ -19,7 +19,12 @@
 Selects altloc labels for the entire PDB file.
 
 By default, picks the label with the highest occupancy value for each atom,
-but the user can define a specific label. Removes all labels afterwards.
+but the user can define a specific label.
+
+If highest occupancy is selected, removes all altloc labels. If the user
+specifies a label, the selected atoms will be presented without the altloc
+label. The altloc label is maintained in atoms for which the selection did not
+apply.
 
 Usage:
     python pdb_selaltloc.py [-<option>] <pdb file>
@@ -35,7 +40,6 @@ data to another. They are based on old FORTRAN77 code that was taking too much
 effort to maintain and compile. RIP.
 """
 
-import collections
 import operator
 import os
 import sys
@@ -112,16 +116,21 @@ def select_by_occupancy(fhandle):
     """Picks the altloc with the highest occupancy.
     """
 
-    atom_prop = collections.defaultdict(list)
+    atom_prop = {}
+    atom_prop_setd = atom_prop.setdefault
     atom_data = []
+    atom_data_append = atom_data.append
     anisou_lines = {}  # map atom_uid to lineno
     ignored = set()
+    ignored_add = ignored.add
+    ignored_discard = ignored.discard
+    ignored_update = ignored.update
 
     # Iterate over file and store atom_uid
     records = ('ATOM', 'HETATM', 'ANISOU')
     for lineno, line in enumerate(fhandle):
 
-        atom_data.append(line)
+        atom_data_append(line)
 
         if line.startswith(records):
             # Sometimes altlocs are used between different residue names.
@@ -132,10 +141,11 @@ def select_by_occupancy(fhandle):
             # To keep things simple, we map ANISOU to ATOM/HETATM records
             if line.startswith('ANISOU'):
                 anisou_lines[lineno - 1] = lineno
-                ignored.add(lineno)  # we will fix this below
+                ignored_add(lineno)  # we will fix this below
             else:
                 occ = float(line[54:60])
-                atom_prop[atom_uid].append((lineno, occ))
+                atom_prop_l = atom_prop_setd(atom_uid, [])
+                atom_prop_l.append((lineno, occ))
 
     # Iterate and pick highest occupancy for each atom.
     for atom_uid, prop_list in atom_prop.items():
@@ -151,9 +161,9 @@ def select_by_occupancy(fhandle):
             anisou_lineno = anisou_lines[lineno]
             line = atom_data[anisou_lineno]
             atom_data[anisou_lineno] = line[:16] + ' ' + line[17:]
-            ignored.discard(anisou_lineno)
+            ignored_discard(anisou_lineno)
 
-        ignored.update(p[0] for p in prop_list[1:])
+        ignored_update(p[0] for p in prop_list[1:])
 
     # Now yield
     for lineno, line in enumerate(atom_data):
@@ -173,15 +183,18 @@ def select_by_altloc(fhandle, selloc):
     """
 
     # We have to iterate multiple times
-    atom_prop = collections.defaultdict(list)
+    atom_prop = {}
+    atom_prop_setd = atom_prop.setdefault
     atom_data = []
+    atom_data_append = atom_data.append
 
     # Iterate over file and store atom_uid
     records = ('ATOM', 'HETATM', 'ANISOU')
     editable = set()
+    editable_add = editable.add
     for lineno, line in enumerate(fhandle):
 
-        atom_data.append(line)
+        atom_data_append(line)
 
         if line.startswith(records):
             # Sometimes altlocs are used between different residue names.
@@ -189,10 +202,11 @@ def select_by_altloc(fhandle, selloc):
             atom_uid = (line[12:16], line[20:26])
 
             altloc = line[16]
-            atom_prop[atom_uid].append((altloc, lineno))
+            atom_prop_l = atom_prop_setd(atom_uid, [])
+            atom_prop_l.append((altloc, lineno))
 
             if altloc == selloc:  # flag as editable
-                editable.add(lineno)
+                editable_add(lineno)
 
     # Reduce editable indexes to atom_uid entries
     editable = {

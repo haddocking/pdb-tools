@@ -86,6 +86,39 @@ class TestTool(unittest.TestCase):
         self.assertEqual(len(atom_CA_GLU_26), 2)
         self.assertEqual(atom_CA_GLU_26[0], " -10.679  -3.437 -12.387")
 
+    def test_default2(self):
+        """$ pdb_selaltloc data/dummy_altloc2.pdb"""
+
+        # Simulate input
+        # pdb_selaltloc dummy.pdb
+        sys.argv = ['', os.path.join(data_dir, 'dummy_altloc2.pdb')]
+
+        # Execute the script
+        self.exec_module()
+
+        # Validate results
+        self.assertEqual(self.retcode, 0)  # ensure the program exited OK.
+        self.assertEqual(len(self.stdout), 37)
+        self.assertEqual(len(self.stderr), 0)  # no errors
+
+        # Make sure sequence is correct
+        expected = [
+            aa for aa in ['SER', 'GLU', 'ALA', 'LEU'] for _ in range(8)
+        ] + ["GLU"] * 2
+        observed = [
+            ln[17:20] for ln in self.stdout if ln.startswith(("ATOM", "ANISOU"))
+        ]
+
+        self.assertEqual(observed, expected)
+
+        # Make sure we picked the right GLU atom
+        atom_CA_GLU_26 = [
+            l[30:54] for l in self.stdout
+            if l[12:16] == " CA " and l[17:20] == "GLU" and l[22:26] == "  26"
+        ]
+        self.assertEqual(len(atom_CA_GLU_26), 2)
+        self.assertEqual(atom_CA_GLU_26[0], " -10.679  -3.437 -12.387")
+
     def test_select_loc_A(self):
         """$ pdb_selaltloc -A data/dummy_altloc.pdb"""
 
@@ -98,6 +131,38 @@ class TestTool(unittest.TestCase):
         # Validate results
         self.assertEqual(self.retcode, 0)  # ensure the program exited OK.
         self.assertEqual(len(self.stdout), 36)
+        self.assertEqual(len(self.stderr), 0)  # no errors
+
+        # Make sure sequence is correct
+        expected = [
+            aa for aa in ['SER', 'GLU', 'ALA', 'LEU'] for _ in range(8)
+        ] + ["GLU"] * 2
+        observed = [
+            ln[17:20] for ln in self.stdout if ln.startswith(("ATOM", "ANISOU"))
+        ]
+
+        self.assertEqual(observed, expected)
+
+        # Make sure we picked the right GLU atom
+        atom_CA_GLU_26 = [
+            l[30:54] for l in self.stdout
+            if l[12:16] == " CA " and l[17:20] == "GLU" and l[22:26] == "  26"
+        ]
+        self.assertEqual(len(atom_CA_GLU_26), 2)
+        self.assertEqual(atom_CA_GLU_26[0], " -10.000  -3.000 -12.000")
+
+    def test_select_loc_A_2(self):
+        """$ pdb_selaltloc -A data/dummy_altloc2.pdb"""
+
+        # Simulate input
+        sys.argv = ['', '-A', os.path.join(data_dir, 'dummy_altloc2.pdb')]
+
+        # Execute the script
+        self.exec_module()
+
+        # Validate results
+        self.assertEqual(self.retcode, 0)  # ensure the program exited OK.
+        self.assertEqual(len(self.stdout), 37)
         self.assertEqual(len(self.stderr), 0)  # no errors
 
         # Make sure sequence is correct
@@ -136,6 +201,79 @@ class TestTool(unittest.TestCase):
         expected = [
             aa for aa in ['PRO', 'GLU', 'ALA', 'ILE', 'LEU'] for _ in range(8)
         ] + ["GLU"] * 4
+        observed = [
+            ln[17:20] for ln in self.stdout if ln.startswith(("ATOM", "ANISOU"))
+        ]
+
+        self.assertEqual(observed, expected)
+
+    def test_select_loc_B_2(self):
+        """$ pdb_selaltloc -B data/dummy_altloc2.pdb"""
+
+        # Simulate input
+        sys.argv = ['', '-B', os.path.join(data_dir, 'dummy_altloc2.pdb')]
+
+        # Execute the script
+        self.exec_module()
+
+        # Validate results
+        self.assertEqual(self.retcode, 0)  # ensure the program exited OK.
+        self.assertEqual(len(self.stdout), 47)
+        self.assertEqual(len(self.stderr), 0)  # no errors
+
+        # Make sure sequence is correct
+        expected = [
+            aa for aa in ['PRO', 'GLU', 'ALA', 'ILE', 'LEU'] for _ in range(8)
+        ] + ["GLU"] * 4
+        observed = [
+            ln[17:20] for ln in self.stdout if ln.startswith(("ATOM", "ANISOU"))
+        ]
+
+        self.assertEqual(observed, expected)
+
+    def test_select_loc_C(self):
+        """$ pdb_selaltloc -C data/dummy_altloc.pdb"""
+
+        # Simulate input
+        sys.argv = ['', '-C', os.path.join(data_dir, 'dummy_altloc.pdb')]
+
+        # Execute the script
+        self.exec_module()
+
+        # Validate results
+        self.assertEqual(self.retcode, 0)  # ensure the program exited OK.
+        self.assertEqual(len(self.stdout), 52)
+        self.assertEqual(len(self.stderr), 0)  # no errors
+
+        # Make sure sequence is correct
+        expected = [
+            aa for aa in ['SER', 'PRO', 'GLU', 'ALA', 'ILE', 'LEU'] for _ in range(8)
+        ] + ["GLU"] * 2
+        observed = [
+            ln[17:20] for ln in self.stdout if ln.startswith(("ATOM", "ANISOU"))
+        ]
+
+        self.assertEqual(observed, expected)
+
+    def test_select_loc_C_2(self):
+        """$ pdb_selaltloc -C data/dummy_altloc2.pdb"""
+
+        # Simulate input
+        sys.argv = ['', '-C', os.path.join(data_dir, 'dummy_altloc2.pdb')]
+
+        # Execute the script
+        self.exec_module()
+
+        # Validate results
+        self.assertEqual(self.retcode, 0)  # ensure the program exited OK.
+        self.assertEqual(len(self.stdout), 61)
+        self.assertEqual(len(self.stderr), 0)  # no errors
+
+        # Make sure sequence is correct
+        expected = [
+            aa for aa in ['SER', 'GLU', 'PRO', 'GLU', 'ALA', 'ILE', 'LEU']
+            for _ in range(8)
+            ] + ["GLU"] * 2
         observed = [
             ln[17:20] for ln in self.stdout if ln.startswith(("ATOM", "ANISOU"))
         ]
