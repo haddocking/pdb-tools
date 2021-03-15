@@ -18,13 +18,13 @@
 """
 Selects altloc labels for the entire PDB file.
 
-By default, picks the label with the highest occupancy value for each atom,
-but the user can define a specific label.
+By default, selects the label with the highest occupancy value for each atom,
+but the user can define a specific altloc label to select.
 
-If highest occupancy is selected, removes all altloc labels. If the user
-specifies a label, the selected atoms will be presented without the altloc
-label. The altloc label is maintained in atoms for which the selection did not
-apply.
+Selecting by highest occupancy removes all altloc labels for all atoms. If the
+user provides an option (e.g. -A), only atoms with conformers with an altloc A
+are processed by the script. If you select -A and an atom has conformers with
+altlocs B and C, both B and C will be kept in the output.
 
 Usage:
     python pdb_selaltloc.py [-<option>] <pdb file>
