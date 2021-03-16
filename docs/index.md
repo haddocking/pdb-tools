@@ -97,24 +97,22 @@ We finally decided to write up a small publication describing the tools. If you
 used them in a project that is going to be published, please cite us:
 
 ```
-Rodrigues, J. P. G. L. M., Teixeira, J. M. C., Trellet, M. & Bonvin, A. M. J. J.
-pdb-tools: a swiss army knife for molecular structures. bioRxiv (2018). 
-doi:10.1101/483305
+Rodrigues JPGLM, Teixeira JMC, Trellet M and Bonvin AMJJ.
+pdb-tools: a swiss army knife for molecular structures. 
+F1000Research 2018, 7:1961 (https://doi.org/10.12688/f1000research.17456.1) 
 ```
 
 If you use a reference manager that supports BibTex, use this record:
 ```
-@article {Rodrigues483305,
-  author = {Rodrigues, Jo{\~a}o P.G.L.M. and Teixeira, Jo{\~a}o M.C. and Trellet, Mika{\"e}l and Bonvin, Alexandre M.J.J.},
-  title = {pdb-tools: a swiss army knife for molecular structures},
-  elocation-id = {483305},
-  year = {2018},
-  doi = {10.1101/483305},
-  publisher = {Cold Spring Harbor Laboratory},
-  abstract = {The pdb-tools are a collection of Python scripts for working with molecular structure data in the PDB format. They allow users to edit, convert, and validate PDB files, from the command-line, in a simple but efficient manner. The pdb-tools are implemented in Python, without any external dependencies, and are freely available under the open-source Apache License at https://github.com/haddocking/pdb-tools/ and on PyPI (https://pypi.org/project/pdb-tools/).},
-  URL = {https://www.biorxiv.org/content/early/2018/12/04/483305},
-  eprint = {https://www.biorxiv.org/content/early/2018/12/04/483305.full.pdf},
-  journal = {bioRxiv}
+@Article{ 10.12688/f1000research.17456.1,
+AUTHOR = { Rodrigues, JPGLM and Teixeira, JMC and Trellet, M and Bonvin, AMJJ},
+TITLE = {pdb-tools: a swiss army knife for molecular structures [version 1; peer review: 2 approved]
+},
+JOURNAL = {F1000Research},
+VOLUME = {7},
+YEAR = {2018},
+NUMBER = {1961},
+DOI = {10.12688/f1000research.17456.1}
 }
 ```
 
@@ -259,6 +257,23 @@ Example:
 </div>
 <div style="margin-bottom: 1em;">
 <details>
+<summary><b>pdb_delinsertion</b><p>Deletes insertion codes in a PDB file.</p></summary>
+<span style="font-family: monospace; white-space: pre;">
+Deleting an insertion code shifts the residue numbering of downstream
+residues. Allows for picking specific residues to delete insertion codes for.
+
+Usage:
+    python pdb_delinsertion.py [-&lt;option&gt;] &lt;pdb file&gt;
+
+Example:
+    python pdb_delinsertion.py 1CTF.pdb  # delete ALL insertion codes
+    python pdb_delinsertion.py -A9,B12 1CTF.pdb  # deletes ins. codes for res
+                                                 # 9 of chain A and 12 of chain B.
+</span>
+</details>
+</div>
+<div style="margin-bottom: 1em;">
+<details>
 <summary><b>pdb_delres</b><p>Deletes a range of residues from a PDB file.</p></summary>
 <span style="font-family: monospace; white-space: pre;">
 The range option has three components: start, end, and step. Start and end
@@ -319,6 +334,24 @@ Usage:
 Example:
     python pdb_fetch.py 1brs  # downloads unit cell, all 6 chains
     python pdb_fetch.py -biounit 1brs  # downloads biounit, 2 chains
+</span>
+</details>
+</div>
+<div style="margin-bottom: 1em;">
+<details>
+<summary><b>pdb_fixinsert</b><p>Fixes insertion codes in a PDB file.</p></summary>
+<span style="font-family: monospace; white-space: pre;">
+Works by deleting an insertion code and shifting the residue numbering of
+downstream residues. Allows for picking specific residues to delete insertion
+codes for.
+
+Usage:
+    python pdb_fixinsert.py [-&lt;option&gt;] &lt;pdb file&gt;
+
+Example:
+    python pdb_fixinsert.py 1CTF.pdb  # delete ALL insertion codes
+    python pdb_fixinsert.py -A9,B12 1CTF.pdb  # deletes ins. codes for res
+                                              # 9 of chain A and 12 of chain B.
 </span>
 </details>
 </div>
@@ -519,8 +552,13 @@ Example:
 <details>
 <summary><b>pdb_selaltloc</b><p>Selects altloc labels for the entire PDB file.</p></summary>
 <span style="font-family: monospace; white-space: pre;">
-By default, picks the label with the highest occupancy value for each atom,
-but the user can define a specific label. Removes all labels afterwards.
+By default, selects the label with the highest occupancy value for each atom,
+but the user can define a specific altloc label to select.
+
+Selecting by highest occupancy removes all altloc labels for all atoms. If the
+user provides an option (e.g. -A), only atoms with conformers with an altloc A
+are processed by the script. If you select -A and an atom has conformers with
+altlocs B and C, both B and C will be kept in the output.
 
 Usage:
     python pdb_selaltloc.py [-&lt;option&gt;] &lt;pdb file&gt;

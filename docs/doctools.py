@@ -14,7 +14,7 @@ with open('index.md', 'w') as handle:
 
     import pdbtools
     modfile = Path(pdbtools.__file__)
-    for f in modfile.parent.iterdir():
+    for f in sorted(list(modfile.parent.iterdir())):
         # ignore __init__.py and others.
         if f.stem.startswith('_') or f.suffix != '.py':
             continue
