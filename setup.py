@@ -4,7 +4,7 @@ See:
 https://packaging.python.org/en/latest/distributing.html
 https://github.com/pypa/sampleproject
 """
-
+import sys
 # Always prefer setuptools over distutils
 from setuptools import setup, find_packages
 from os import listdir, path
@@ -36,12 +36,16 @@ cli_choices = {
     's': subcommands,
     }
 
-cli_choice = None
-while cli_choice not in ('i', 's'):
-    _ = input('Install [I]ndependent scripts or [S]ubcommands? ')
-    cli_choice = _.lower()
+if 'test' in sys.argv:
+    exec_cli = bin_py
 
-exec_cli = cli_choices[cli_choice]
+else:
+    cli_choice = None
+    while cli_choice not in ('i', 's'):
+        _ = input('Install [I]ndependent scripts or [S]ubcommands? ')
+        cli_choice = _.lower()
+
+    exec_cli = cli_choices[cli_choice]
 
 
 setup(
