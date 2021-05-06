@@ -23,8 +23,26 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 # Collect names of bin/*py scripts
 # e.g. 'pdb_intersect=bin.pdb_intersect:main',
 binfiles = listdir(path.join(here, 'pdbtools'))
-bin_py = [f[:-3] + '=pdbtools.' + f[:-3] + ':main' for f in binfiles
-          if f.endswith('.py')]
+bin_py = [
+    f[:-3] + '=pdbtools.' + f[:-3] + ':main'
+    for f in binfiles
+    if f.endswith('.py')
+    ]
+
+subcommands = 'pdbtools = pdbtools.cli:main'
+
+cli_choices = {
+    'i': bin_py,
+    's': subcommands,
+    }
+
+cli_choice = None
+while cli_choice not in ('i', 's'):
+    _ = input('Install [I]ndependent scripts or [S]ubcommands? ')
+    cli_choice = _.lower()
+
+exec_cli = cli_choices[cli_choice]
+
 
 setup(
     name='pdb-tools',  # Required
@@ -84,7 +102,7 @@ setup(
     # For example, the following would provide a command called `sample` which
     # executes the function `main` from this package when invoked:
     entry_points={  # Optional
-        'console_scripts': bin_py,
+        'console_scripts': exec_cli,
     },
 
     # scripts=[path.join('bin', f) for f in listdir(path.join(here, 'bin'))],
