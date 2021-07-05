@@ -72,14 +72,22 @@ def check_input(args):
     return fh
 
 
-def check_pdb_format(fhandle):
+def run(fhandle):
     """
-    Compares each ATOM/HETATM line with the format defined on the official
-    PDB website.
+    Compare each ATOM/HETATM line with the format defined on the
+    official PDB website.
 
     http://deposit.rcsb.org/adit/docs/pdb_atom_format.html
-    """
 
+    Parameters
+    ----------
+    fhandle : an iterable given PDB file line-by-line
+
+    Returns
+    -------
+    int
+        1 if error was found. 0 if no errors were found.
+    """
     has_error = False
     _fmt_check = (
         ('Atm. Num.', (slice(6, 11), re.compile(r'[\d\s]+'))),
@@ -161,12 +169,15 @@ def check_pdb_format(fhandle):
         return 0
 
 
+check_pdb_format = run
+
+
 def main():
     # Check Input
     pdbfh = check_input(sys.argv[1:])
 
     # Do the job
-    retcode = check_pdb_format(pdbfh)
+    retcode = run(pdbfh)
 
     # last line of the script
     # We can close it even if it is sys.stdin

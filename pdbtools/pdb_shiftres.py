@@ -104,11 +104,26 @@ def check_input(args):
     return (option, fh)
 
 
-def renumber_residues(fhandle, shifting_factor):
-    """Renumbers residues by adding/subtracting a factor from the original
-    numbering.
+def run(fhandle, shifting_factor):
     """
+    Renumber residues by a factor.
 
+    Adds/subtracts a factor from the original numbering.
+
+    This function is a generator.
+
+    Parameters
+    ----------
+    fhandle : an iterable given PDB file line-by-line
+
+    shifting_factor : int
+        The shifting factor.
+
+    Yields
+    ------
+    str (line-by-line)
+        The modified (or not) PDB line.
+    """
     records = ('ATOM', 'HETATM', 'TER', 'ANISOU')
     for line in fhandle:
         if line.startswith(records):
@@ -123,12 +138,15 @@ def renumber_residues(fhandle, shifting_factor):
             yield line
 
 
+renumber_residues = run
+
+
 def main():
     # Check Input
     shifting_factor, pdbfh = check_input(sys.argv[1:])
 
     # Do the job
-    new_pdb = renumber_residues(pdbfh, shifting_factor)
+    new_pdb = run(pdbfh, shifting_factor)
 
     # Output results
     try:

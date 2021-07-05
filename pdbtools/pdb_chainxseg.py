@@ -79,8 +79,22 @@ def pad_line(line):
     return line[:81]  # 80 + newline character
 
 
-def place_chain_on_seg(fhandle):
-    """Replaces the segment identifier with the contents of the chain identifier.
+def run(fhandle):
+    """
+    Replace the segment identifier with the contents of the chain identifier.
+
+    Acts on ATOM/HETATM/ANISOU.
+
+    This function is a generator.
+
+    Parameters
+    ----------
+    fhandle : an iterable given PDB file line-by-line
+
+    Yields
+    ------
+    str (line-by-line)
+        The modified (or not) PDB line.
     """
 
     _pad_line = pad_line
@@ -94,12 +108,15 @@ def place_chain_on_seg(fhandle):
             yield line
 
 
+def place_chain_on_seg = run
+
+
 def main():
     # Check Input
     pdbfh = check_input(sys.argv[1:])
 
     # Do the job
-    new_pdb = place_chain_on_seg(pdbfh)
+    new_pdb = run(pdbfh)
 
     try:
         _buffer = []

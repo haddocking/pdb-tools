@@ -69,8 +69,20 @@ def check_input(args):
     return fh
 
 
-def remove_hetatm(fhandle):
-    """Removes all HETATM and associated records from the PDB file.
+def run(fhandle):
+    """
+    Remove all HETATM and associated records from the PDB file.
+
+    This function is a generator.
+
+    Parameters
+    ----------
+    fhandle : an iterable given PDB file line-by-line
+
+    Yields
+    ------
+    str (line-by-line)
+        The modified (or not) PDB line.
     """
 
     # CONECT 1179  746 1184 1195 1203
@@ -92,12 +104,15 @@ def remove_hetatm(fhandle):
         yield line
 
 
+remove_hetatm = run
+
+
 def main():
     # Check Input
     pdbfh = check_input(sys.argv[1:])
 
     # Do the job
-    new_pdb = remove_hetatm(pdbfh)
+    new_pdb = run(pdbfh)
 
     try:
         _buffer = []

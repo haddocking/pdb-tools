@@ -126,10 +126,21 @@ def check_input(args):
     return (option, fh)
 
 
-def sort_file(fhandle, sorting_keys):
-    """Sorts the contents of the PDB file.
+def run(fhandle, sorting_keys):
     """
+    Sort the contents of the PDB file.
 
+    This function is a generator.
+
+    Parameters
+    ----------
+    fhandle : an iterable given PDB file line-by-line
+
+    Yields
+    ------
+    str (line-by-line)
+        The sorted PDB lines.
+    """
     # Sort keys
     chain_key = lambda x: x[21]  # chain id
     resid_key = lambda x: (int(x[22:26]), x[26])  # resid, icode
@@ -216,6 +227,9 @@ def sort_file(fhandle, sorting_keys):
         anisou_record = anisou_data.get(atom_uid)
         if anisou_record:
             yield anisou_record
+
+
+sort_file = run
 
 
 def main():

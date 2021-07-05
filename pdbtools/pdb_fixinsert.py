@@ -112,11 +112,28 @@ def check_input(args):
     return (option_list, fh)
 
 
-def fix_insertions(fhandle, option_list):
-    """Deletes insertion codes (at specific residues).
+def run(fhandle, option_list):
+    """
+    Delete insertion codes (at specific residues).
 
-    By default, removes ALL insertion codes on ALL residues. Also bumps the
-    residue numbering of residues downstream of each insertion.
+    By default, removes ALL insertion codes on ALL residues. Also bumps
+    the residue numbering of residues downstream of each insertion.
+
+    This function is a generator.
+
+    Parameters
+    ----------
+    fhandle : an iterable given PDB file line-by-line
+
+    option_list : list
+        List of insertion options to act on.
+        Example ["A9", "B12"]. An empty list performs the default
+        action.
+
+    Yields
+    ------
+    str (line-by-line)
+        The modified (or not) PDB line.
     """
 
     option_set = set(option_list)  # empty if option_list is empty
@@ -172,12 +189,15 @@ def fix_insertions(fhandle, option_list):
         yield line
 
 
+fix_insertions = run
+
+
 def main():
     # Check Input
     option_list, pdbfh = check_input(sys.argv[1:])
 
     # Do the job
-    new_pdb = fix_insertions(pdbfh, option_list)
+    new_pdb = run(pdbfh, option_list)
 
     try:
         _buffer = []

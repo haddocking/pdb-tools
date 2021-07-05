@@ -115,8 +115,31 @@ def check_input(args):
     return (option, fh)
 
 
-def summarize_file(fhandle, option):
-    """Returns summary of models, chains, residue, and atoms.
+def run(fhandle, option):
+    """
+    Report on PDB  models, chains, residue, and atoms.
+
+    Parameters
+    ----------
+    fhandle : an iterable given PDB file line-by-line
+
+    option : str
+        String with the characters of the options.
+        By default, this tool produces a general summary, but you can
+        use several options to produce focused but more detailed
+        summaries:
+            [m] - no. of models.
+            [c] - no. of chains (plus per-model if multi-model file).
+            [r] - no. of residues (plus per-model if multi-model file).
+            [a] - no. of atoms (plus per-model if multi-model file).
+            [h] - no. of HETATM (plus per-model if multi-model file).
+            [o] - presence of disordered atoms (altloc).
+            [i] - presence of insertion codes.
+
+    Returns
+    -------
+    None
+        Writes to `sys.stdout`.
     """
 
     models = set()
@@ -242,12 +265,15 @@ def summarize_file(fhandle, option):
         )
 
 
+summarize_file = run
+
+
 def main():
     # Check Input
     option, pdbfh = check_input(sys.argv[1:])
 
     # Do the job
-    summarize_file(pdbfh, option)
+    run(pdbfh, option)
 
     # last line of the script
     # We can close it even if it is sys.stdin

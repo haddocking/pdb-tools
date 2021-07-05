@@ -103,8 +103,23 @@ def check_input(args):
     return (option, fh)
 
 
-def alter_occupancy(fhandle, occupancy):
-    """Sets the occupancy column in all ATOM/HETATM records to a given value.
+def run(fhandle, occupancy):
+    """
+    Set the occupancy column in all ATOM/HETATM records to a given value.
+
+    Non-ATOM/HETATM lines are give as are. This function is a generator.
+
+    Parameters
+    ----------
+    fhandle : an iterable given PDB file line-by-line
+
+    occupancy : float
+        The desired occupancy value
+
+    Yields
+    ------
+    str (line-by-line)
+        The modified (or not) PDB line.
     """
 
     records = ('ATOM', 'HETATM')
@@ -116,12 +131,15 @@ def alter_occupancy(fhandle, occupancy):
             yield line
 
 
+alter_occupancy = run
+
+
 def main():
     # Check Input
     occupancy, pdbfh = check_input(sys.argv[1:])
 
     # Do the job
-    new_pdb = alter_occupancy(pdbfh, occupancy)
+    new_pdb = run(pdbfh, occupancy)
 
     # Output results
     try:

@@ -112,10 +112,24 @@ def check_input(args):
     return (option_set, fh)
 
 
-def delete_residue_by_name(fhandle, resname_set):
-    """Removes specific residue that match a given name.
+def run(fhandle, resname_set):
     """
+    Remove specific residue that match a given name.
 
+    Non-coords lines are maintained.
+
+    This function is a generator.
+
+    Parameters
+    ----------
+    fhandle : an iterable given PDB file line-by-line
+
+    Yields
+    ------
+    str (line-by-line)
+        The PDB lines not matching the residues selected.
+        Non-coord lines are yielded as well.
+    """
     records = ('ATOM', 'HETATM', 'ANISOU', 'TER')
     for line in fhandle:
         if line.startswith(records):
@@ -124,12 +138,15 @@ def delete_residue_by_name(fhandle, resname_set):
         yield line
 
 
+delete_residue_by_name = run
+
+
 def main():
     # Check Input
     resname_set, pdbfh = check_input(sys.argv[1:])
 
     # Do the job
-    new_pdb = delete_residue_by_name(pdbfh, resname_set)
+    new_pdb = run(pdbfh, resname_set)
 
     try:
         _buffer = []

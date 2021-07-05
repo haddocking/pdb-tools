@@ -71,10 +71,21 @@ def check_input(args):
     return fh
 
 
-def rename_atoms(fhandle):
-    """Renames HETATM atoms on each residue based on their element.
+def run(fhandle):
     """
+    Rename HETATM atoms on each residue based on their element.
 
+    This function is a generator.
+
+    Parameters
+    ----------
+    fhandle : an iterable given PDB file line-by-line
+
+    Yields
+    ------
+    str (line-by-line)
+        The modified (or not) PDB line.
+    """
     prev_res = None
     for line_idx, line in enumerate(fhandle):
         if line.startswith('HETATM'):
@@ -101,12 +112,15 @@ def rename_atoms(fhandle):
         yield line
 
 
+rename_atoms = run
+
+
 def main():
     # Check Input
     pdbfh = check_input(sys.argv[1:])
 
     # Do the job
-    new_pdb = rename_atoms(pdbfh)
+    new_pdb = run(pdbfh)
 
     try:
         _buffer = []

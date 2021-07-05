@@ -111,10 +111,24 @@ def check_input(args):
     return (option_set, fh)
 
 
-def select_segment_id(fhandle, segment_set):
-    """Filters the PDB file for specific segment identifiers.
+def run(fhandle, segment_set):
     """
+    Filter the PDB file for specific segment identifiers.
 
+    This function is a generator.
+
+    Parameters
+    ----------
+    fhandle : an iterable given PDB file line-by-line
+
+    segment_set : set, list, or tuple
+        The set of segment identifiers.
+
+    Yields
+    ------
+    str (line-by-line)
+        The lines only from the segment set.
+    """
     records = ('ATOM', 'HETATM', 'ANISOU')
     for line in fhandle:
         if line.startswith(records):
@@ -123,12 +137,15 @@ def select_segment_id(fhandle, segment_set):
         yield line
 
 
+select_segment_id = run
+
+
 def main():
     # Check Input
     segment_set, pdbfh = check_input(sys.argv[1:])
 
     # Do the job
-    new_pdb = select_segment_id(pdbfh, segment_set)
+    new_pdb = run(pdbfh, segment_set)
 
     try:
         _buffer = []

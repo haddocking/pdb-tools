@@ -114,9 +114,24 @@ def check_input(args):
 
 
 def delete_elements(fhandle, element_set):
-    """Removes specific atoms matching the given element(s).
     """
+    Remove specific atoms matching the given element(s).
 
+    This function is a generator.
+
+    Parameters
+    ----------
+    fhandle : an iterable given PDB file line-by-line
+
+    element_set : set, or list, or tuple
+        The group of chains to remove.
+        Example: ('N', 'C'), removes nitrogens and carbons.
+
+    Yields
+    ------
+    str (line-by-line)
+        The PDB lines except for those matching the elements to remove.
+    """
     records = ('ATOM', 'HETATM', 'ANISOU')
     for line in fhandle:
         if line.startswith(records):
@@ -125,12 +140,15 @@ def delete_elements(fhandle, element_set):
         yield line
 
 
+delete_elements = run
+
+
 def main():
     # Check Input
     element_set, pdbfh = check_input(sys.argv[1:])
 
     # Do the job
-    new_pdb = delete_elements(pdbfh, element_set)
+    new_pdb = run(pdbfh, element_set)
 
     try:
         _buffer = []

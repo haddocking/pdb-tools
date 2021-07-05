@@ -72,13 +72,22 @@ def check_input(args):
     return fh
 
 
-def check_ensemble(fhandle):
-    """Checks if the ensemble is valid.
+def run(fhandle):
+    """
+    Check if the ensemble is valid.
 
     - Same atoms in each model
     - Paired MODEL/ENDMDL tags
-    """
 
+    Parameters
+    ----------
+    fhandle : an iterable given PDB file line-by-line
+
+    Returns
+    -------
+    int
+        1 if an error was found. 0 if no errors are found.
+    """
     model_open = False
     model_no = None
     model_data = {}  # list of sets
@@ -151,6 +160,9 @@ def check_ensemble(fhandle):
         return 0
 
     return 1
+
+
+check_ensemble = run
 
 
 def main():

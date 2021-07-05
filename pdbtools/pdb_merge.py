@@ -66,8 +66,19 @@ def check_input(args):
     return fl
 
 
-def concatenate_files(flist):
-    """Iterates over a list of files and yields each line sequentially.
+def run(flist):
+    """
+    Iterate over a list of files and yields each line sequentially.
+
+    Parameters
+    ----------
+    flist : list of file-like objects
+        Must handle `.close()` attribute.
+
+    Yields
+    ------
+    str (line-by-line)
+        Lines from the concatenated PDB files.
     """
 
     for fhandle in flist:
@@ -76,12 +87,15 @@ def concatenate_files(flist):
         fhandle.close()
 
 
+concatenate_files = run
+
+
 def main():
     # Check Input
     pdbfh = check_input(sys.argv[1:])
 
     # Do the job
-    new_pdb = concatenate_files(pdbfh)
+    new_pdb = run(pdbfh)
 
     try:
         _buffer = []
