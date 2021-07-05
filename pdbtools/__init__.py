@@ -16,9 +16,9 @@
 # limitations under the License.
 """The pdb-tools library.
 
-A swiss army knife for manipulating and editing PDB files.
+A Swiss army knife for manipulating and editing PDB files.
 
-You can use pdb-tools as a library or as a series of covenient
+You can use pdb-tools as a library or as a series of convenient
 command-line applications. The complete documentation is available at:
 
 http://www.bonvinlab.org/pdb-tools/
@@ -34,28 +34,42 @@ $ pdb_selchain -A,D 1brs.pdb | pdb_delhetatm | pdb_tidy > 1brs_AD_noHET.pdb
 Examples using pdb-tools as library
 -----------------------------------
 
-You can use one of the following according to your needs:
+You can import according to your needs:
 
 >>> import pdbtools
 >>> from pdbtools import *
->>> from pdbtools import PACKAGE
+>>> from pdbtools import MODULE
+>>> from pdbtools import pdb_selchain
 
-The list of PACKAGEs is specified bellow.
+Chain the different functionalities conveniently:
+
+>>> from pdbtools import pdb_selchain, pdb_selatom, pdb_keepcoord
+>>> with open('dummy.pdb') as fh:
+>>>     chain_a = pdb_selchain.run(fh, ['A'])
+>>>     only_N = pdb_selatom.run(chain_a, ['N'])
+>>>     coords = pdb_keepcoord.run(only_N)
+>>>     final = pdb_reres.run(coords, 5)
+>>>     print(''.join(final))
+
+The list of MODULEs is specified bellow.
 
 All packages have three functions: `check_input`, `main`, and `run`.
-The latter executes the logic of each package. `check_input`, checks and
-prepares potential input to run in case your are not sure the received
-input is correct. You can chain both functions:
+The latter executes the logic of each package. `check_input` checks and
+prepares potential input parameters to feed `run`. Use `check_input` in
+case you are not sure the received input is correct. You can chain both
+functions:
 
->>> PACKAGE.run(**PACKAGE.check_input(*args, **kwargs))
+>>> MODULE.run(**MODULE.check_input(*args))
 
 If you control the input parameters use `run` directly. In general,
-`run` are generators yielding the modified PDB data line-by-line.
+`run` functions are generators yielding the modified PDB data
+line-by-line. `main` is used solely in the context of the command-line
+interface.
 
-All PACKAGEs and `run` functions provide comprehensive docstrings:
+All MODULEs and `run` functions provide comprehensive documentation.
 
->>> help(PACKAGE)
->>> help(PACKAGE.run)
+>>> help(MODULE)
+>>> help(MODULE.run)
 """
 
 __all__ = [
