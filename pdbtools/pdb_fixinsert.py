@@ -109,7 +109,7 @@ def check_input(args):
                 fh.close()
                 sys.exit(1)
 
-    return (option_list, fh)
+    return (fh, option_list)
 
 
 def run(fhandle, option_list):
@@ -194,7 +194,7 @@ fix_insertions = run
 
 def main():
     # Check Input
-    option_list, pdbfh = check_input(sys.argv[1:])
+    pdbfh, option_list = check_input(sys.argv[1:])
 
     # Do the job
     new_pdb = run(pdbfh, option_list)

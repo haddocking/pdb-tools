@@ -108,7 +108,7 @@ def check_input(args):
                 sys.stderr.write(__doc__)
                 sys.exit(1)
 
-    return (option_set, fh)
+    return (fh, option_set)
 
 
 def run(fhandle, segment_set):
@@ -142,7 +142,7 @@ select_segment_id = run
 
 def main():
     # Check Input
-    segment_set, pdbfh = check_input(sys.argv[1:])
+    pdbfh, segment_set = check_input(sys.argv[1:])
 
     # Do the job
     new_pdb = run(pdbfh, segment_set)

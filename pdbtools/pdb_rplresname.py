@@ -101,7 +101,7 @@ def check_input(args):
         sys.stderr.write(emsg.format(name_to))
         sys.exit(1)
 
-    return (name_from, name_to, fh)
+    return (fh, name_from, name_to)
 
 
 def run(fhandle, name_from, name_to):
@@ -141,7 +141,7 @@ rename_residues = run
 
 def main():
     # Check Input
-    name_from, name_to, pdbfh = check_input(sys.argv[1:])
+    pdbfh, name_from, name_to = check_input(sys.argv[1:])
 
     # Do the job
     new_pdb = run(pdbfh, name_from, name_to)

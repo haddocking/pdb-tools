@@ -203,7 +203,7 @@ def check_input(args):
             singleres = _validate_opt_numeric(entry)
             residue_range.add(singleres)
 
-    return (residue_range, fh)
+    return (fh, residue_range)
 
 
 def run(fhandle, residue_range):
@@ -245,7 +245,7 @@ select_residuese = run
 
 def main():
     # Check Input
-    resrange, pdbfh = check_input(sys.argv[1:])
+    pdbfh, resrange = check_input(sys.argv[1:])
 
     # Do the job
     new_pdb = run(pdbfh, resrange)

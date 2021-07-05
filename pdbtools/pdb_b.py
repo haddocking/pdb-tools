@@ -100,7 +100,7 @@ def check_input(args):
         sys.stderr.write(emsg.format(option))
         sys.exit(1)
 
-    return (option, fh)
+    return (fh, option)
 
 
 def pad_line(line):
@@ -147,7 +147,7 @@ alter_bfactor = run
 def main():
 
     # Check Input
-    bfactor, pdbfh = check_input(sys.argv[1:])
+    pdbfh, bfactor = check_input(sys.argv[1:])
 
     # Do the job
     new_pdb = run(pdbfh, bfactor)

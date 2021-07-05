@@ -103,7 +103,7 @@ def check_input(args):
         sys.stderr.write(__doc__)
         sys.exit(1)
 
-    return (option, fh)
+    return (fh, option)
 
 
 def run(fhandle, strict=False):
@@ -236,7 +236,7 @@ tidy_pdbfile = run
 
 def main():
     # Check Input
-    strict, pdbfh = check_input(sys.argv[1:])
+    pdbfh, strict = check_input(sys.argv[1:])
 
     # Do the job
     new_pdb = run(pdbfh, strict)

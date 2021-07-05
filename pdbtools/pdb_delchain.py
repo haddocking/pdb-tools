@@ -108,7 +108,7 @@ def check_input(args):
                 sys.stderr.write(__doc__)
                 sys.exit(1)
 
-    return (option_set, fh)
+    return (fh, option_set)
 
 
 def run(fhandle, chain_set):
@@ -144,7 +144,7 @@ delete_chain = run
 
 def main():
     # Check Input
-    element, pdbfh = check_input(sys.argv[1:])
+    pdbfh, element = check_input(sys.argv[1:])
 
     # Do the job
     new_pdb = run(pdbfh, element)

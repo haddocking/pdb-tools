@@ -101,7 +101,7 @@ def check_input(args):
         sys.stderr.write(emsg.format(option))
         sys.exit(1)
 
-    return (option, fh)
+    return (fh, option)
 
 
 def run(fhandle, shifting_factor):
@@ -143,7 +143,7 @@ renumber_residues = run
 
 def main():
     # Check Input
-    shifting_factor, pdbfh = check_input(sys.argv[1:])
+    pdbfh, shifting_factor = check_input(sys.argv[1:])
 
     # Do the job
     new_pdb = run(pdbfh, shifting_factor)

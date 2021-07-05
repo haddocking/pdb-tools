@@ -100,7 +100,7 @@ def check_input(args):
         sys.stderr.write(emsg.format(option))
         sys.exit(1)
 
-    return (option, fh)
+    return (fh, option)
 
 
 def run(fhandle, occupancy):
@@ -136,7 +136,7 @@ alter_occupancy = run
 
 def main():
     # Check Input
-    occupancy, pdbfh = check_input(sys.argv[1:])
+    pdbfh, occupancy = check_input(sys.argv[1:])
 
     # Do the job
     new_pdb = run(pdbfh, occupancy)

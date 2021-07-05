@@ -98,7 +98,7 @@ def check_input(args):
         sys.stderr.write(emsg.format(option))
         sys.exit(1)
 
-    return (option, fh)
+    return (fh, option)
 
 
 def pad_line(line):
@@ -143,7 +143,7 @@ alter_segid = run
 
 def main():
     # Check Input
-    segment_id, pdbfh = check_input(sys.argv[1:])
+    pdbfh, segment_id = check_input(sys.argv[1:])
 
     # Do the job
     new_pdb = run(pdbfh, segment_id)

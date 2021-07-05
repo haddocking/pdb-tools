@@ -110,7 +110,7 @@ def check_input(args):
                 sys.stderr.write(__doc__)
                 sys.exit(1)
 
-    return (option_set, fh)
+    return (fh, option_set)
 
 
 def run(fhandle, atomname_set):
@@ -145,7 +145,7 @@ filter_atoms = run
 
 def main():
     # Check Input
-    atomname_set, pdbfh = check_input(sys.argv[1:])
+    pdbfh, atomname_set = check_input(sys.argv[1:])
 
     # Do the job
     new_pdb = run(pdbfh, atomname_set)

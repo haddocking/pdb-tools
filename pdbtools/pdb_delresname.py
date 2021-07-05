@@ -109,7 +109,7 @@ def check_input(args):
                 sys.stderr.write(__doc__)
                 sys.exit(1)
 
-    return (option_set, fh)
+    return (fh, option_set)
 
 
 def run(fhandle, resname_set):
@@ -143,7 +143,7 @@ delete_residue_by_name = run
 
 def main():
     # Check Input
-    resname_set, pdbfh = check_input(sys.argv[1:])
+    pdbfh, resname_set = check_input(sys.argv[1:])
 
     # Do the job
     new_pdb = run(pdbfh, resname_set)

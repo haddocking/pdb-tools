@@ -112,7 +112,7 @@ def check_input(args):
             sys.stderr.write(emsg.format(diff))
             sys.exit(1)
 
-    return (option, fh)
+    return (fh, option)
 
 
 def run(fhandle, option):
@@ -270,7 +270,7 @@ summarize_file = run
 
 def main():
     # Check Input
-    option, pdbfh = check_input(sys.argv[1:])
+    pdbfh, option = check_input(sys.argv[1:])
 
     # Do the job
     run(pdbfh, option)

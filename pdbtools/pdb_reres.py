@@ -101,7 +101,7 @@ def check_input(args):
         sys.stderr.write(emsg.format(option))
         sys.exit(1)
 
-    return (option, fh)
+    return (fh, option)
 
 
 def pad_line(line):
@@ -163,7 +163,7 @@ renumber_residues = run
 
 def main():
     # Check Input
-    starting_resid, pdbfh = check_input(sys.argv[1:])
+    pdbfh, starting_resid = check_input(sys.argv[1:])
 
     # Do the job
     new_pdb = run(pdbfh, starting_resid)

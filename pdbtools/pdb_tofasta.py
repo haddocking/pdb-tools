@@ -105,7 +105,7 @@ def check_input(args):
         sys.stderr.write(__doc__)
         sys.exit(1)
 
-    return (option, fh)
+    return (fh, option)
 
 
 def run(fhandle, multi):
@@ -189,7 +189,7 @@ pdb_to_fasta = run
 
 def main():
     # Check Input
-    multi, pdbfh = check_input(sys.argv[1:])
+    pdbfh, multi = check_input(sys.argv[1:])
 
     # Do the job
     fasta = run(pdbfh, multi)

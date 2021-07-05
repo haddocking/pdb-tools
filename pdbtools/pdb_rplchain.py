@@ -111,7 +111,7 @@ def check_input(args):
     if chain_to == '':
         chain_to = ' '
 
-    return ((chain_from, chain_to), fh)
+    return (fh, (chain_from, chain_to))
 
 
 def run(fhandle, chain_ids):
@@ -149,7 +149,7 @@ replace_chain_identifiers = run
 
 def main():
     # Check Input
-    chain_ids, pdbfh = check_input(sys.argv[1:])
+    pdbfh, chain_ids = check_input(sys.argv[1:])
 
     # Do the job
     new_pdb = run(pdbfh, chain_ids)

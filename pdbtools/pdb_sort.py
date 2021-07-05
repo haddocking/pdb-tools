@@ -123,7 +123,7 @@ def check_input(args):
             sys.stderr.write(__doc__)
             sys.exit(1)
 
-    return (option, fh)
+    return (fh, option)
 
 
 def run(fhandle, sorting_keys):
@@ -234,7 +234,7 @@ sort_file = run
 
 def main():
     # Check Input
-    chain, pdbfh = check_input(sys.argv[1:])
+    pdbfh, chain = check_input(sys.argv[1:])
 
     # Do the job
     new_pdb = sort_file(pdbfh, chain)

@@ -172,7 +172,7 @@ def check_input(args):
         sys.exit(1)
 
     resrange = set(range(start, end + 1))
-    return (resrange, step, fh)
+    return (fh, resrange, step)
 
 
 def run(fhandle, residue_range, step):
@@ -218,7 +218,7 @@ delete_residues = run
 
 def main():
     # Check Input
-    resrange, step, pdbfh = check_input(sys.argv[1:])
+    pdbfh, resrange, step = check_input(sys.argv[1:])
 
     # Do the job
     new_pdb = run(pdbfh, resrange, step)
