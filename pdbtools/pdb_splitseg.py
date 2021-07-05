@@ -107,7 +107,7 @@ def run(fhandle):
             fh.write(''.join(lines))
 
 
-run = split_segment
+split_segment = run
 
 
 def main():

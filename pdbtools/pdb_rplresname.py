@@ -104,7 +104,7 @@ def check_input(args):
     return (name_from, name_to, fh)
 
 
-def rename_residues(fhandle, name_from, name_to):
+def run(fhandle, name_from, name_to):
     """
     Change the residue name of residues matching a pattern to another.
 

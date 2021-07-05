@@ -108,7 +108,7 @@ def run(fhandle):
             yield line
 
 
-def place_chain_on_seg = run
+place_chain_on_seg = run
 
 
 def main():

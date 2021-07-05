@@ -113,7 +113,7 @@ def check_input(args):
     return (option_set, fh)
 
 
-def delete_elements(fhandle, element_set):
+def run(fhandle, element_set):
     """
     Remove specific atoms matching the given element(s).
 
