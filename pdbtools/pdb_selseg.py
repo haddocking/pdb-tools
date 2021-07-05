@@ -119,7 +119,7 @@ def run(fhandle, segment_set):
 
     Parameters
     ----------
-    fhandle : an iterable given PDB file line-by-line
+    fhandle : a line-by-line iterator of the original PDB file.
 
     segment_set : set, list, or tuple
         The set of segment identifiers.

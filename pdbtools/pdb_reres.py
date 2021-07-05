@@ -121,7 +121,7 @@ def run(fhandle, starting_resid):
 
     Parameters
     ----------
-    fhandle : an iterable given PDB file line-by-line
+    fhandle : a line-by-line iterator of the original PDB file.
 
     starting_resid : int
         The starting residue number.

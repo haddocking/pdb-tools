@@ -121,7 +121,7 @@ def delete_elements(fhandle, element_set):
 
     Parameters
     ----------
-    fhandle : an iterable given PDB file line-by-line
+    fhandle : a line-by-line iterator of the original PDB file.
 
     element_set : set, or list, or tuple
         The group of chains to remove.

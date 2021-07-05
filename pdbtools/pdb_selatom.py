@@ -121,7 +121,7 @@ def run(fhandle, atomname_set):
 
     Parameters
     ----------
-    fhandle : an iterable given PDB file line-by-line
+    fhandle : a line-by-line iterator of the original PDB file.
 
     atomname_set : set, list, or tuple
         The names of the desired atoms.

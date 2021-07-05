@@ -80,7 +80,7 @@ def run(fhandle):
 
     Parameters
     ----------
-    fhandle : an iterable given PDB file line-by-line
+    fhandle : a line-by-line iterator of the original PDB file.
     """
     fname_root = fhandle.name[:-4] if fhandle.name != '<stdin>' else 'output'
     basename = os.path.basename(fname_root)

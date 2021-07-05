@@ -114,7 +114,7 @@ def run(fhandle, strict=False):
 
     Parameters
     ----------
-    fhandle : an iterable given PDB file line-by-line
+    fhandle : a line-by-line iterator of the original PDB file.
 
     strict : bool
         If True, does not add TER statements at intra-chain breaks.

@@ -183,7 +183,7 @@ def run(fhandle, residue_range, step):
 
     Parameters
     ----------
-    fhandle : an iterable given PDB file line-by-line
+    fhandle : a line-by-line iterator of the original PDB file.
 
     residue_range : set, list, or tuple
         The residues describing the range.

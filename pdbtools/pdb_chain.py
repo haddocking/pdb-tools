@@ -118,7 +118,7 @@ def run(fhandle, chain_id):
 
     Parameters
     ----------
-    fhandle : an iterable given PDB file line-by-line
+    fhandle : a line-by-line iterator of the original PDB file.
 
     chain_id : str
         The new chain ID.

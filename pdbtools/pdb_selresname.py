@@ -122,7 +122,7 @@ def run(fhandle, resname_set):
 
     Parameters
     ----------
-    fhandle : an iterable given PDB file line-by-line
+    fhandle : a line-by-line iterator of the original PDB file.
 
     resname_set : set, list, or tuple
         The name of the residues to keep.

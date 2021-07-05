@@ -122,7 +122,7 @@ def run(fhandle, chain_ids):
 
     Parameters
     ----------
-    fhandle : an iterable given PDB file line-by-line
+    fhandle : a line-by-line iterator of the original PDB file.
 
     chain_ids : tuple
         Two element tuple, where first item is the original chain id

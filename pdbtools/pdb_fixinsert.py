@@ -123,7 +123,7 @@ def run(fhandle, option_list):
 
     Parameters
     ----------
-    fhandle : an iterable given PDB file line-by-line
+    fhandle : a line-by-line iterator of the original PDB file.
 
     option_list : list
         List of insertion options to act on.

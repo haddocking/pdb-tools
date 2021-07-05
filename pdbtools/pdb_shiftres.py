@@ -114,7 +114,7 @@ def run(fhandle, shifting_factor):
 
     Parameters
     ----------
-    fhandle : an iterable given PDB file line-by-line
+    fhandle : a line-by-line iterator of the original PDB file.
 
     shifting_factor : int
         The shifting factor.

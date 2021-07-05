@@ -111,7 +111,7 @@ def run(fhandle, occupancy):
 
     Parameters
     ----------
-    fhandle : an iterable given PDB file line-by-line
+    fhandle : a line-by-line iterator of the original PDB file.
 
     occupancy : float
         The desired occupancy value

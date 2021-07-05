@@ -117,7 +117,7 @@ def run(fhandle, multi):
 
     Parameters
     ----------
-    fhandle : an iterable given PDB file line-by-line
+    fhandle : a line-by-line iterator of the original PDB file.
 
     multi : bool
         Whether to concatenate FASTA of multiple chains.

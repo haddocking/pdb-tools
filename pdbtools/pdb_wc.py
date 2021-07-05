@@ -121,7 +121,7 @@ def run(fhandle, option):
 
     Parameters
     ----------
-    fhandle : an iterable given PDB file line-by-line
+    fhandle : a line-by-line iterator of the original PDB file.
 
     option : str
         String with the characters of the options.

@@ -124,7 +124,7 @@ def run(fhandle, num_lines):
 
     Parameters
     ----------
-    fhandle : an iterable given PDB file line-by-line
+    fhandle : a line-by-line iterator of the original PDB file.
 
     num_lines : int
         The number of lines to yield.

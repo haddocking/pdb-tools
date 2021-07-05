@@ -120,7 +120,7 @@ def run(fhandle, bfactor):
 
     Parameters
     ----------
-    fhandle : an iterable given PDB file line-by-line
+    fhandle : a line-by-line iterator of the original PDB file.
 
     bfactor : float
         The desired bfactor.

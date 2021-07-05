@@ -112,7 +112,7 @@ def rename_residues(fhandle, name_from, name_to):
 
     Parameters
     ----------
-    fhandle : an iterable given PDB file line-by-line
+    fhandle : a line-by-line iterator of the original PDB file.
 
     name_from : str
         The original name of the residue to change.

@@ -214,7 +214,7 @@ def run(fhandle, residue_range):
 
     Parameters
     ----------
-    fhandle : an iterable given PDB file line-by-line.
+    fhandle : a line-by-line iterator of the original PDB file..
 
     residue_range : list of ints
         The residues to consider. Residues outside this range are

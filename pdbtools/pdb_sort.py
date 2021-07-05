@@ -134,7 +134,7 @@ def run(fhandle, sorting_keys):
 
     Parameters
     ----------
-    fhandle : an iterable given PDB file line-by-line
+    fhandle : a line-by-line iterator of the original PDB file.
 
     Yields
     ------
