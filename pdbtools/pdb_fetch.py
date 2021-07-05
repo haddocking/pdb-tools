@@ -92,8 +92,24 @@ def check_input(args):
     return (pdb_code, option)
 
 
-def fetch_structure(pdbid, biounit=False):
-    """Downloads the structure in PDB format from the RCSB PDB website.
+def run(pdbid, biounit=False):
+    """
+    Download the structure in PDB format from the RCSB PDB website.
+
+    This function is a generator.
+
+    Parameters
+    ----------
+    pdbid : str
+        The alpha-numeric code of the PBDID.
+
+    biounit : bool
+        Whether to download biounit version.
+
+    Yield
+    -----
+    str (line-by-line)
+        The original PBD data.
     """
 
     base_url = 'https://files.rcsb.org/download/'
@@ -127,12 +143,15 @@ def fetch_structure(pdbid, biounit=False):
             gz_handle.close()
 
 
+fetch_structure = run
+
+
 def main():
     # Check Input
     pdb_code, biounit = check_input(sys.argv[1:])
 
     # Do the job
-    new_pdb = fetch_structure(pdb_code, biounit)
+    new_pdb = run(pdb_code, biounit)
 
     try:
         _buffer = []

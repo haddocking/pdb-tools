@@ -113,10 +113,25 @@ def check_input(args):
     return (option_set, fh)
 
 
-def filter_atoms(fhandle, atomname_set):
-    """Removes specific atoms that do not match a given atom name.
+def run(fhandle, atomname_set):
     """
+    Filter to selected atoms.
 
+    This function is a generator.
+
+    Parameters
+    ----------
+    fhandle : an iterable given PDB file line-by-line
+
+    atomname_set : set, list, or tuple
+        The names of the desired atoms.
+
+    Yields
+    ------
+    str (line-by-line)
+        All non-RECORD lines and RECORD lines within the selected atom
+        names.
+    """
     records = ('ATOM', 'HETATM', 'ANISOU')
     for line in fhandle:
         if line.startswith(records):
@@ -125,12 +140,15 @@ def filter_atoms(fhandle, atomname_set):
         yield line
 
 
+filter_atoms = run
+
+
 def main():
     # Check Input
     atomname_set, pdbfh = check_input(sys.argv[1:])
 
     # Do the job
-    new_pdb = filter_atoms(pdbfh, atomname_set)
+    new_pdb = run(pdbfh, atomname_set)
 
     try:
         _buffer = []

@@ -175,10 +175,27 @@ def check_input(args):
     return (resrange, step, fh)
 
 
-def delete_residues(fhandle, residue_range, step):
-    """Deletes residues within a certain numbering range.
+def run(fhandle, residue_range, step):
     """
+    Delete residues within a certain numbering range.
 
+    This function is a generator.
+
+    Parameters
+    ----------
+    fhandle : an iterable given PDB file line-by-line
+
+    residue_range : set, list, or tuple
+        The residues describing the range.
+
+    step : int
+        The step at which delete.
+
+    Yields
+    ------
+    str (line-by-line)
+        All lines except RECORDS within the residue range.
+    """
     prev_res = None
     res_counter = -1
     records = ('ATOM', 'HETATM', 'TER', 'ANISOU')
@@ -196,12 +213,15 @@ def delete_residues(fhandle, residue_range, step):
         yield line
 
 
+delete_residues = run
+
+
 def main():
     # Check Input
     resrange, step, pdbfh = check_input(sys.argv[1:])
 
     # Do the job
-    new_pdb = delete_residues(pdbfh, resrange, step)
+    new_pdb = run(pdbfh, resrange, step)
 
     try:
         _buffer = []

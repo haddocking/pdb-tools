@@ -80,10 +80,21 @@ def pad_line(line):
     return line[:81]  # 80 + newline character
 
 
-def convert_to_mmcif(fhandle):
-    """Converts a structure in PDB format to mmCIF format.
+def run(fhandle):
     """
+    Convert a structure in PDB format to mmCIF format.
 
+    This function is a generator.
+
+    Parameters
+    ----------
+    fhandle : an iterable giving the PDB file line-by-line.
+
+    Yields
+    ------
+    str (line-by-line)
+        The structure in mmCIF format.
+    """
     _pad_line = pad_line
 
     # The spacing here is just aesthetic purposes when printing the file
@@ -183,12 +194,15 @@ def convert_to_mmcif(fhandle):
     yield '#'  # close block
 
 
+convert_to_mmcif = run
+
+
 def main():
     # Check Input
     pdbfh = check_input(sys.argv[1:])
 
     # Do the job
-    new_cif = convert_to_mmcif(pdbfh)
+    new_cif = run(pdbfh)
 
     try:
         _buffer = []
