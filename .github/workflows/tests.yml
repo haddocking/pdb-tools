@@ -28,7 +28,7 @@ jobs:
         pip install coverage[toml]
 
     - name: Test
-      run: python setup test
+      run: python setup.py test
 
     # from https://github.com/codecov/codecov-action
     - name: Upload coverage to Codecov
