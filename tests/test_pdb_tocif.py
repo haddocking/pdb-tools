@@ -53,6 +53,86 @@ class TestTool(unittest.TestCase):
 
         return
 
+    def test_single_model_run_iterable(self):
+        """$ pdb_tocif.run(iterable)"""
+        from pdbtools import pdb_tocif
+
+        fpath = os.path.join(data_dir, 'dummy.pdb')
+        with open(fpath, 'r') as fin:
+            lines = fin.readlines()
+
+        newlines = list(pdb_tocif.run(lines))
+
+        # Check no of records
+        n_ATOM = sum(1 for l in newlines if l.startswith('ATOM'))
+        n_HETATM = sum(1 for l in newlines if l.startswith('HETATM'))
+        n_coord = n_ATOM + n_HETATM
+        self.assertEqual(n_ATOM, 176)
+        self.assertEqual(n_HETATM, 9)
+        self.assertEqual(n_coord, 185)
+
+        # check name
+        self.assertEqual(newlines[2], 'data_output\n')
+
+    def test_single_model_run_iterable_with_name(self):
+        """$ pdb_tocif.run(iterable)"""
+        from pdbtools import pdb_tocif
+
+        fpath = os.path.join(data_dir, 'dummy.pdb')
+        with open(fpath, 'r') as fin:
+            lines = fin.readlines()
+
+        newlines = list(pdb_tocif.run(lines, outname='newcif'))
+
+        # Check no of records
+        n_ATOM = sum(1 for l in newlines if l.startswith('ATOM'))
+        n_HETATM = sum(1 for l in newlines if l.startswith('HETATM'))
+        n_coord = n_ATOM + n_HETATM
+        self.assertEqual(n_ATOM, 176)
+        self.assertEqual(n_HETATM, 9)
+        self.assertEqual(n_coord, 185)
+
+        # check name
+        self.assertEqual(newlines[2], 'data_newcif\n')
+
+    def test_single_model_run_fhandler(self):
+        """$ pdb_tocif.run(fhandler)"""
+        from pdbtools import pdb_tocif
+
+        fpath = os.path.join(data_dir, 'dummy.pdb')
+        with open(fpath, 'r') as fin:
+            newlines = list(pdb_tocif.run(fin))
+
+        # Check no of records
+        n_ATOM = sum(1 for l in newlines if l.startswith('ATOM'))
+        n_HETATM = sum(1 for l in newlines if l.startswith('HETATM'))
+        n_coord = n_ATOM + n_HETATM
+        self.assertEqual(n_ATOM, 176)
+        self.assertEqual(n_HETATM, 9)
+        self.assertEqual(n_coord, 185)
+
+        # check name
+        self.assertEqual(newlines[2], 'data_dummy\n')
+
+    def test_single_model_run_fhandler_name(self):
+        """$ pdb_tocif.run(fhandler)"""
+        from pdbtools import pdb_tocif
+
+        fpath = os.path.join(data_dir, 'dummy.pdb')
+        with open(fpath, 'r') as fin:
+            newlines = list(pdb_tocif.run(fin, outname='newname'))
+
+        # Check no of records
+        n_ATOM = sum(1 for l in newlines if l.startswith('ATOM'))
+        n_HETATM = sum(1 for l in newlines if l.startswith('HETATM'))
+        n_coord = n_ATOM + n_HETATM
+        self.assertEqual(n_ATOM, 176)
+        self.assertEqual(n_HETATM, 9)
+        self.assertEqual(n_coord, 185)
+
+        # check name
+        self.assertEqual(newlines[2], 'data_newname\n')
+
     def test_single_model(self):
         """$ pdb_tocif data/dummy.pdb"""
 

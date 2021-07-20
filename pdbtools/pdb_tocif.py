@@ -83,7 +83,7 @@ def pad_line(line):
     return line[:81]  # 80 + newline character
 
 
-def run(fhandle):
+def run(fhandle, outname=None):
     """
     Convert a structure in PDB format to mmCIF format.
 
@@ -109,8 +109,8 @@ def run(fhandle):
     yield '#\n'
 
     # Headers
-    fhandle_name = get_fname(fhandle)
-    fname, _ = os.path.splitext(get_fname(fhandle))
+    fhandle_name = get_fname(fhandle, outname)
+    fname, _ = os.path.splitext(fhandle_name)
     if fname == '<stdin>':
         fname = 'cell'
     yield 'data_{}\n'.format(fname)
