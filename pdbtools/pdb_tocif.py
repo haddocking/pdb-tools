@@ -36,6 +36,9 @@ effort to maintain and compile. RIP.
 import os
 import sys
 
+from pdbtools import get_fname
+
+
 __author__ = "Joao Rodrigues"
 __email__ = "j.p.g.l.m.rodrigues@gmail.com"
 
@@ -106,7 +109,8 @@ def run(fhandle):
     yield '#\n'
 
     # Headers
-    fname, _ = os.path.splitext(os.path.basename(fhandle.name))
+    fhandle_name = get_fname(fhandle)
+    fname, _ = os.path.splitext(get_fname(fhandle))
     if fname == '<stdin>':
         fname = 'cell'
     yield 'data_{}\n'.format(fname)

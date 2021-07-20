@@ -34,6 +34,9 @@ effort to maintain and compile. RIP.
 import os
 import sys
 
+from pdbtools import get_fname
+
+
 __author__ = "Joao Rodrigues"
 __email__ = "j.p.g.l.m.rodrigues@gmail.com"
 
@@ -71,7 +74,7 @@ def check_input(args):
     return fh
 
 
-def run(fhandle):
+def run(fhandle, outname=None):
     """
     Split PDB into segments.
 
@@ -81,9 +84,11 @@ def run(fhandle):
     Parameters
     ----------
     fhandle : a line-by-line iterator of the original PDB file.
+
+    outname : str
+        The base name of the output files.
     """
-    fname_root = fhandle.name[:-4] if fhandle.name != '<stdin>' else 'output'
-    basename = os.path.basename(fname_root)
+    basename = get_fname(fhandle, outname)
 
     segment_data = {}  # {segment_id: lines}
 
