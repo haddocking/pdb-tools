@@ -84,7 +84,9 @@ def run(fhandle, outname=None):
     fhandle : a line-by-line iterator of the original PDB file.
 
     outname : str
-        The base name of the output files.
+        The base name of the output files. If None is given, tries to
+        extract a name from the `.name` attribute of `fhandler`. If
+        `fhandler` has no attribute name, assigns `splitsegs`.
     """
     _defname = 'splitsegs'
     if outname is None:
