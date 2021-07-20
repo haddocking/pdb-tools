@@ -69,10 +69,21 @@ def check_input(args):
     return fh
 
 
-def select_hetatm(fhandle):
-    """Selects all HETATM and associated records from the PDB file.
+def run(fhandle):
     """
+    Select all HETATM and associated records from the PDB file.
 
+    This function is a generator.
+
+    Parameters
+    ----------
+    fhandle : a line-by-line iterator of the original PDB file.
+
+    Yields
+    ------
+    str (line-by-line)
+        The HETATM lines.
+    """
     # CONECT 1179  746 1184 1195 1203
     char_ranges = (slice(6, 11), slice(11, 16),
                    slice(16, 21), slice(21, 26), slice(26, 31))
@@ -90,12 +101,15 @@ def select_hetatm(fhandle):
                 yield line
 
 
+select_hetatm = run
+
+
 def main():
     # Check Input
     pdbfh = check_input(sys.argv[1:])
 
     # Do the job
-    new_pdb = select_hetatm(pdbfh)
+    new_pdb = run(pdbfh)
 
     try:
         _buffer = []

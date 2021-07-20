@@ -71,11 +71,17 @@ def check_input(args):
     return fh
 
 
-def split_segment(fhandle):
-    """Splits the contents of the PDB file into new files, each containing a
-    segment of the original file.
+def run(fhandle):
     """
+    Split PDB into segments.
 
+    Each segment is saved to a different file. Non-records lines are
+    ignored.
+
+    Parameters
+    ----------
+    fhandle : a line-by-line iterator of the original PDB file.
+    """
     fname_root = fhandle.name[:-4] if fhandle.name != '<stdin>' else 'output'
     basename = os.path.basename(fname_root)
 
@@ -101,12 +107,15 @@ def split_segment(fhandle):
             fh.write(''.join(lines))
 
 
+split_segment = run
+
+
 def main():
     # Check Input
     pdbfh = check_input(sys.argv[1:])
 
     # Do the job
-    split_segment(pdbfh)
+    run(pdbfh)
 
     # last line of the script
     # We can close it even if it is sys.stdin

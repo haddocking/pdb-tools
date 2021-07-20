@@ -103,15 +103,27 @@ def check_input(args):
         sys.stderr.write(__doc__)
         sys.exit(1)
 
-    return (option, fh)
+    return (fh, option)
 
 
-def tidy_pdbfile(fhandle, strict=False):
-    """Adds TER/END statements and pads all lines to 80 characters.
-
-    If strict is True, does not add TER statements at intra-chain breaks.
+def run(fhandle, strict=False):
     """
+    Add TER/END statements and pads all lines to 80 characters.
 
+    This function is a generator.
+
+    Parameters
+    ----------
+    fhandle : a line-by-line iterator of the original PDB file.
+
+    strict : bool
+        If True, does not add TER statements at intra-chain breaks.
+
+    Yields
+    ------
+    str (line-by-line)
+        The modified (or not) PDB line.
+    """
     not_strict = not strict
 
     def make_TER(prev_line):
@@ -219,12 +231,15 @@ def tidy_pdbfile(fhandle, strict=False):
     yield "{:<80}\n".format("END")
 
 
+tidy_pdbfile = run
+
+
 def main():
     # Check Input
-    strict, pdbfh = check_input(sys.argv[1:])
+    pdbfh, strict = check_input(sys.argv[1:])
 
     # Do the job
-    new_pdb = tidy_pdbfile(pdbfh, strict)
+    new_pdb = run(pdbfh, strict)
 
     try:
         _buffer = []

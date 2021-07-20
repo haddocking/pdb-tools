@@ -71,11 +71,17 @@ def check_input(args):
     return fh
 
 
-def split_chain(fhandle):
-    """Splits the contents of the PDB file into new files, each containing a chain
-    of the original file
+def run(fhandle):
     """
+    Split the PDB into its different chains.
 
+    Writes a new file to the disk for each chain. Non-record lines are
+    ignored.
+
+    Parameters
+    ----------
+    fhandle : an iterable giving the PDB file line-by-line
+    """
     fname_root = fhandle.name[:-4] if fhandle.name != '<stdin>' else 'output'
     basename = os.path.basename(fname_root)
 
@@ -98,12 +104,15 @@ def split_chain(fhandle):
             fh.write(''.join(lines))
 
 
+split_chain = run
+
+
 def main():
     # Check Input
     pdbfh = check_input(sys.argv[1:])
 
     # Do the job
-    split_chain(pdbfh)
+    run(pdbfh)
 
     # last line of the script
     # We can close it even if it is sys.stdin

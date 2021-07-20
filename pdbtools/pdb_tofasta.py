@@ -105,14 +105,28 @@ def check_input(args):
         sys.stderr.write(__doc__)
         sys.exit(1)
 
-    return (option, fh)
+    return (fh, option)
 
 
-def pdb_to_fasta(fhandle, multi):
-    """Reads residue names of ATOM/HETATM records and exports them to a FASTA
-    file.
+def run(fhandle, multi):
     """
+    Read residue names of ATOM/HETATM records and exports them to a FASTA
+    file.
 
+    This function is a generator.
+
+    Parameters
+    ----------
+    fhandle : a line-by-line iterator of the original PDB file.
+
+    multi : bool
+        Whether to concatenate FASTA of multiple chains.
+
+    Yields
+    ------
+    str
+        The different FASTA contents.
+    """
     res_codes = [
         # 20 canonical amino acids
         ('CYS', 'C'), ('ASP', 'D'), ('SER', 'S'), ('GLN', 'Q'),
@@ -170,12 +184,15 @@ def pdb_to_fasta(fhandle, multi):
         yield ''.join(fmt_seq)
 
 
+pdb_to_fasta = run
+
+
 def main():
     # Check Input
-    multi, pdbfh = check_input(sys.argv[1:])
+    pdbfh, multi = check_input(sys.argv[1:])
 
     # Do the job
-    fasta = pdb_to_fasta(pdbfh, multi)
+    fasta = run(pdbfh, multi)
 
     # Output results
     try:

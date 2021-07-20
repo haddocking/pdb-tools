@@ -108,13 +108,28 @@ def check_input(args):
                 sys.stderr.write(__doc__)
                 sys.exit(1)
 
-    return (option_set, fh)
+    return (fh, option_set)
 
 
-def select_chain(fhandle, chain_set):
-    """Filters the PDB file for specific chain identifiers.
+def run(fhandle, chain_set):
     """
+    Filter the PDB file for specific chain identifiers.
 
+    This function is a generator.
+
+    Parameters
+    ----------
+    fhandle : a line-by-line iterator of the original PDB file.
+
+    chain_set : set, or list, or tuple
+        The group of chains to kepp.
+        Example: ('A', 'B'), keeps only atoms from chains A and B.
+
+    Yields
+    ------
+    str (line-by-line)
+        The PDB lines for those matching the selected chains.
+    """
     records = ('ATOM', 'HETATM', 'TER', 'ANISOU')
     for line in fhandle:
         if line.startswith(records):
@@ -123,12 +138,15 @@ def select_chain(fhandle, chain_set):
         yield line
 
 
+select_chain = run
+
+
 def main():
     # Check Input
-    chain, pdbfh = check_input(sys.argv[1:])
+    pdbfh, chain = check_input(sys.argv[1:])
 
     # Do the job
-    new_pdb = select_chain(pdbfh, chain)
+    new_pdb = run(pdbfh, chain)
 
     try:
         _buffer = []

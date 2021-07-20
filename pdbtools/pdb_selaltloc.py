@@ -109,13 +109,24 @@ def check_input(args):
         sys.stderr.write(emsg.format(option))
         sys.exit(1)
 
-    return (option, fh)
+    return (fh, option)
 
 
 def select_by_occupancy(fhandle):
-    """Picks the altloc with the highest occupancy.
     """
+    Pick the altloc with the highest occupancy.
 
+    This function is a generator.
+
+    Parameters
+    ----------
+    fhandle : an iterable giving the PDB file line-by-line.
+
+    Yields
+    ------
+    str (line-by-line)
+        The PDB file with altlocs of highest occupancy only.
+    """
     atom_prop = {}
     atom_prop_setd = atom_prop.setdefault
     atom_data = []
@@ -174,14 +185,25 @@ def select_by_occupancy(fhandle):
 
 
 def select_by_altloc(fhandle, selloc):
-    """Picks one altloc when atoms have more than one.
-
-    If the specified altloc (selloc) is not present for this particular atom,
-    outputs all altlocs. For instance, if atom X has altlocs A and B but the
-    user picked C, we return A and B anyway. If atom Y has altlocs A, B, and C,
-    then we only return C.
     """
+    Pick one altloc when atoms have more than one.
 
+    If the specified altloc (selloc) is not present for this particular
+    atom, outputs all altlocs. For instance, if atom X has altlocs A and
+    B but the user picked C, we return A and B anyway. If atom Y has
+    altlocs A, B, and C, then we only return C.
+
+    This function is a generator.
+
+    Parameters
+    ----------
+    fhandle : an iterable giving the PDB file line-by-line.
+
+    Yields
+    ------
+    str (line-by-line)
+        The PDB file with altlocs according to selection.
+    """
     # We have to iterate multiple times
     atom_prop = {}
     atom_prop_setd = atom_prop.setdefault
@@ -232,15 +254,35 @@ def select_by_altloc(fhandle, selloc):
         yield line
 
 
+def run(fhandle, option=None):
+    """
+    Selects altloc labels for the entire PDB file.
+
+    Parameters
+    ----------
+    fhandle : an iterable giving PDB file line-by-line.
+
+    Returns
+    -------
+    generator
+        If option is None, return `select_by_occupancy` generator.
+        If option is given, return `select_by_altloc` generator.
+        See `pdb_selaltloc.select_by_occupancy` and
+        `pdb_selaltloc.select_by_altloc` for more details.
+    """
+    if option is None:
+        return select_by_occupancy(fhandle)
+
+    else:
+        return select_by_altloc(fhandle, option)
+
+
 def main():
     # Check Input
-    option, pdbfh = check_input(sys.argv[1:])
+    pdbfh, option = check_input(sys.argv[1:])
 
     # Do the job
-    if option is None:
-        new_pdb = select_by_occupancy(pdbfh)
-    else:
-        new_pdb = select_by_altloc(pdbfh, option)
+    new_pdb = run(pdbfh, option)
 
     try:
         _buffer = []

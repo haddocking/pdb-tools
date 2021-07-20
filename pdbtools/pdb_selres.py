@@ -203,13 +203,28 @@ def check_input(args):
             singleres = _validate_opt_numeric(entry)
             residue_range.add(singleres)
 
-    return (residue_range, fh)
+    return (fh, residue_range)
 
 
-def select_residues(fhandle, residue_range):
-    """Outputs residues within a certain numbering range.
+def run(fhandle, residue_range):
     """
+    Filter residues within a certain numbering range.
 
+    This function is a generator.
+
+    Parameters
+    ----------
+    fhandle : a line-by-line iterator of the original PDB file..
+
+    residue_range : list of ints
+        The residues to consider. Residues outside this range are
+        not yield.
+
+    Yields
+    ------
+    str (line-by-line)
+        All non-RECORDS lines plus RECORDS within the residue range.
+    """
     prev_res = None
     records = ('ATOM', 'HETATM', 'TER', 'ANISOU')
     for line in fhandle:
@@ -225,12 +240,15 @@ def select_residues(fhandle, residue_range):
         yield line
 
 
+select_residuese = run
+
+
 def main():
     # Check Input
-    resrange, pdbfh = check_input(sys.argv[1:])
+    pdbfh, resrange = check_input(sys.argv[1:])
 
     # Do the job
-    new_pdb = select_residues(pdbfh, resrange)
+    new_pdb = run(pdbfh, resrange)
 
     try:
         _buffer = []

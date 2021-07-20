@@ -101,11 +101,29 @@ def check_input(args):
         sys.stderr.write(emsg.format(name_to))
         sys.exit(1)
 
-    return (name_from, name_to, fh)
+    return (fh, name_from, name_to)
 
 
-def rename_residues(fhandle, name_from, name_to):
-    """Changes the residue name of residues matching a pattern to another.
+def run(fhandle, name_from, name_to):
+    """
+    Change the residue name of residues matching a pattern to another.
+
+    This function is a generator.
+
+    Parameters
+    ----------
+    fhandle : a line-by-line iterator of the original PDB file.
+
+    name_from : str
+        The original name of the residue to change.
+
+    name_to : str
+        The name to change to.
+
+    Yields
+    ------
+    str (line-by-line)
+        The modified (or not) PDB line.
     """
 
     records = ('ATOM', 'HETATM', 'TER', 'ANISOU')
@@ -118,12 +136,15 @@ def rename_residues(fhandle, name_from, name_to):
         yield line
 
 
+rename_residues = run
+
+
 def main():
     # Check Input
-    name_from, name_to, pdbfh = check_input(sys.argv[1:])
+    pdbfh, name_from, name_to = check_input(sys.argv[1:])
 
     # Do the job
-    new_pdb = rename_residues(pdbfh, name_from, name_to)
+    new_pdb = run(pdbfh, name_from, name_to)
 
     # Output results
     try:

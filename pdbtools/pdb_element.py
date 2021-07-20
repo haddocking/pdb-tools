@@ -78,15 +78,26 @@ def pad_line(line):
     return line[:81]  # 80 + newline character
 
 
-def assign_element(fhandle):
-    """Assigns each atom's element based on the atom name field.
+def run(fhandle):
+    """
+    Assign each atom's element based on the atom name field.
 
     Rules specified in the format specification:
         - Alignment of one-letter atom name such as C starts at column 14,
           while two-letter atom name such as FE starts at column 13.
         - Atom nomenclature begins with atom type.
-    """
 
+    This function is a generator.
+
+    Parameters
+    ----------
+    fhandle : a line-by-line iterator of the original PDB file.
+
+    Yields
+    ------
+    str (line-by-line)
+        The modified (or not) PDB line.
+    """
     _pad_line = pad_line
 
     elements = set(('H', 'D', 'HE', 'LI', 'BE', 'B', 'C', 'N', 'O', 'F', 'NE',
@@ -124,12 +135,15 @@ def assign_element(fhandle):
         yield line
 
 
+assign_element = run
+
+
 def main():
     # Check Input
     pdbfh = check_input(sys.argv[1:])
 
     # Do the job
-    new_pdb = assign_element(pdbfh)
+    new_pdb = run(pdbfh)
 
     try:
         _buffer = []

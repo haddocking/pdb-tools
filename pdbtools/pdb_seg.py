@@ -98,7 +98,7 @@ def check_input(args):
         sys.stderr.write(emsg.format(option))
         sys.exit(1)
 
-    return (option, fh)
+    return (fh, option)
 
 
 def pad_line(line):
@@ -110,10 +110,24 @@ def pad_line(line):
     return line[:81]  # 80 + newline character
 
 
-def alter_segid(fhandle, segment_id):
-    """Sets the segment identifier column in all ATOM/HETATM records to a value.
+def run(fhandle, segment_id):
     """
+    Set the segment identifier column in all ATOM/HETATM records to a value.
 
+    This function is a generator.
+
+    Parameters
+    ----------
+    fhandle : an iterable giving the PDB file line-by-line.
+
+    segment_id : str
+        The new segment ID.
+
+    Yields
+    ------
+    str (line-by-line)
+        The modified (or not) PDB line.
+    """
     _pad_line = pad_line
     records = ('ATOM', 'HETATM')
     for line in fhandle:
@@ -124,12 +138,15 @@ def alter_segid(fhandle, segment_id):
             yield line
 
 
+alter_segid = run
+
+
 def main():
     # Check Input
-    segment_id, pdbfh = check_input(sys.argv[1:])
+    pdbfh, segment_id = check_input(sys.argv[1:])
 
     # Do the job
-    new_pdb = alter_segid(pdbfh, segment_id)
+    new_pdb = run(pdbfh, segment_id)
 
     try:
         _buffer = []

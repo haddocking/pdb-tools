@@ -98,7 +98,7 @@ def check_input(args):
         sys.stderr.write(emsg.format(option))
         sys.exit(1)
 
-    return (option, fh)
+    return (fh, option)
 
 
 def pad_line(line):
@@ -110,8 +110,23 @@ def pad_line(line):
     return line[:81]  # 80 + newline character
 
 
-def alter_chain(fhandle, chain_id):
-    """Sets the chain identifier column in all ATOM/HETATM records to a value.
+def run(fhandle, chain_id):
+    """
+    Set the chain identifier column in all ATOM/HETATM records to a value.
+
+    This function is a generator.
+
+    Parameters
+    ----------
+    fhandle : a line-by-line iterator of the original PDB file.
+
+    chain_id : str
+        The new chain ID.
+
+    Yields
+    ------
+    str (line-by-line)
+        The modified (or not) PDB line.
     """
 
     _pad_line = pad_line
@@ -124,12 +139,15 @@ def alter_chain(fhandle, chain_id):
             yield line
 
 
+alter_chain = run
+
+
 def main():
     # Check Input
-    chain, pdbfh = check_input(sys.argv[1:])
+    pdbfh, chain = check_input(sys.argv[1:])
 
     # Do the job
-    new_pdb = alter_chain(pdbfh, chain)
+    new_pdb = run(pdbfh, chain)
 
     try:
         _buffer = []

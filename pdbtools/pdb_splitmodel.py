@@ -71,11 +71,17 @@ def check_input(args):
     return fh
 
 
-def split_model(fhandle):
-    """Splits the contents of the PDB file into new files, each containing a
-    MODEL in the original file
+def run(fhandle):
     """
+    Split PDB into MODELS.
 
+    Each MODELS is saved to a different file. Non-records lines are
+    ignored.
+
+    Parameters
+    ----------
+    fhandle : a line-by-line iterator of the original PDB file.
+    """
     fname_root = fhandle.name[:-4] if fhandle.name != '<stdin>' else 'pdbfile'
     basename = os.path.basename(fname_root)
 
@@ -95,12 +101,15 @@ def split_model(fhandle):
             model_lines.append(line)
 
 
+split_model = run
+
+
 def main():
     # Check Input
     pdbfh = check_input(sys.argv[1:])
 
     # Do the job
-    split_model(pdbfh)
+    run(pdbfh)
 
     # last line of the script
     # We can close it even if it is sys.stdin
