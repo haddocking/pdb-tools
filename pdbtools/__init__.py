@@ -123,19 +123,3 @@ __all__ = [
     'pdb_validate',
     'pdb_wc',
     ]
-
-
-def get_fname(fhandle, output=None):
-
-    if output:
-        return os.path.basename(output)
-
-    else:
-        try:
-            fn = fhandle.name
-            fname_root = fn[:-4] if fn != '<stdin>' else 'output'
-        except AttributeError:
-            print('got attribute error')
-            fname_root = 'output'
-
-        return os.path.basename(fname_root)

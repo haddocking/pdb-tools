@@ -111,7 +111,7 @@ class TestTool(unittest.TestCase):
 
         # Read files created by script
         ofiles = [f for f in os.listdir(self.tempdir)
-                  if f.startswith('output')]
+                  if f.startswith('splitmodels')]
         self.assertEqual(len(ofiles), 2)
 
         for fpath in ofiles:

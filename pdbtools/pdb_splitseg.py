@@ -34,8 +34,6 @@ effort to maintain and compile. RIP.
 import os
 import sys
 
-from pdbtools import get_fname
-
 
 __author__ = "Joao Rodrigues"
 __email__ = "j.p.g.l.m.rodrigues@gmail.com"
@@ -88,7 +86,15 @@ def run(fhandle, outname=None):
     outname : str
         The base name of the output files.
     """
-    basename = get_fname(fhandle, outname)
+    _defname = 'splitsegs'
+    if outname is None:
+        try:
+            fn = fhandle.name
+            outname = fn[:-4] if fn != '<stdin>' else _defname
+        except AttributeError:
+            outname = _defname
+
+    basename = os.path.basename(outname)
 
     segment_data = {}  # {segment_id: lines}
 

@@ -139,7 +139,10 @@ class TestTool(unittest.TestCase):
         pdb_splitseg.run(lines)
 
         # Read files created by script and then delete
-        ofiles = [f for f in os.listdir(self.tempdir) if f.startswith('output')]
+        ofiles = [
+            f
+            for f in os.listdir(self.tempdir)
+            if f.startswith('splitsegs')]
         self.assertEqual(len(ofiles), 2)
 
         # Make sure each file has the chain it should have

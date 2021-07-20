@@ -72,7 +72,7 @@ class TestTool(unittest.TestCase):
         self.assertEqual(n_coord, 185)
 
         # check name
-        self.assertEqual(newlines[2], 'data_output\n')
+        self.assertEqual(newlines[2], 'data_cell\n')
 
     def test_single_model_run_iterable_with_name(self):
         """$ pdb_tocif.run(iterable)"""
