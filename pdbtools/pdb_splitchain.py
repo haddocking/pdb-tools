@@ -34,6 +34,7 @@ effort to maintain and compile. RIP.
 import os
 import sys
 
+
 __author__ = "Joao Rodrigues"
 __email__ = "j.p.g.l.m.rodrigues@gmail.com"
 
@@ -71,7 +72,7 @@ def check_input(args):
     return fh
 
 
-def run(fhandle):
+def run(fhandle, outname=None):
     """
     Split the PDB into its different chains.
 
@@ -81,9 +82,21 @@ def run(fhandle):
     Parameters
     ----------
     fhandle : an iterable giving the PDB file line-by-line
+
+    outname : str
+        The base name of the output files. If None is given, tries to
+        extract a name from the `.name` attribute of `fhandler`. If
+        `fhandler` has no attribute name, assigns `splitchains`.
     """
-    fname_root = fhandle.name[:-4] if fhandle.name != '<stdin>' else 'output'
-    basename = os.path.basename(fname_root)
+    _defname = 'splitchains'
+    if outname is None:
+        try:
+            fn = fhandle.name
+            outname = fn[:-4] if fn != '<stdin>' else _defname
+        except AttributeError:
+            outname = _defname
+
+    basename = os.path.basename(outname)
 
     chain_data = {}  # {chain_id: lines}
 

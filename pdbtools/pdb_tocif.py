@@ -36,6 +36,7 @@ effort to maintain and compile. RIP.
 import os
 import sys
 
+
 __author__ = "Joao Rodrigues"
 __email__ = "j.p.g.l.m.rodrigues@gmail.com"
 
@@ -80,7 +81,7 @@ def pad_line(line):
     return line[:81]  # 80 + newline character
 
 
-def run(fhandle):
+def run(fhandle, outname=None):
     """
     Convert a structure in PDB format to mmCIF format.
 
@@ -89,6 +90,11 @@ def run(fhandle):
     Parameters
     ----------
     fhandle : an iterable giving the PDB file line-by-line.
+
+    outname : str
+        The base name of the output files. If None is given, tries to
+        extract a name from the `.name` attribute of `fhandler`. If
+        `fhandler` has no attribute name, assigns `cell`.
 
     Yields
     ------
@@ -106,10 +112,17 @@ def run(fhandle):
     yield '#\n'
 
     # Headers
-    fname, _ = os.path.splitext(os.path.basename(fhandle.name))
-    if fname == '<stdin>':
-        fname = 'cell'
-    yield 'data_{}\n'.format(fname)
+    _defname = 'cell'
+    if outname is None:
+        try:
+            fn = fhandle.name
+            outname = fn[:-4] if fn != '<stdin>' else _defname
+        except AttributeError:
+            outname = _defname
+
+    fname_root = os.path.basename(outname)
+
+    yield 'data_{}\n'.format(fname_root)
 
     yield '#\n'
     yield 'loop_\n'

@@ -61,6 +61,7 @@ class TestTool(unittest.TestCase):
 
         return
 
+
     def test_default(self):
         """$ pdb_splitchain data/dummy.pdb"""
 
@@ -89,6 +90,91 @@ class TestTool(unittest.TestCase):
         for fpath in ofiles:
             if fpath == 'dummy.pdb':
                 continue
+
+            with open(os.path.join(self.tempdir, fpath), 'r') as handle:
+                fname_chain = fpath.split('_')[1][:-4]  # xxx_(X).pdb
+                pdb_chains = [l[21] for l in handle if l.startswith(records)]
+
+                self.assertEqual(fname_chain, list(set(pdb_chains))[0])
+
+    def test_run_fhandler(self):
+        """pdb_splitchain.run(fhandler)"""
+        from pdbtools import pdb_splitchain
+
+        src = os.path.join(data_dir, 'dummy.pdb')
+        dst = os.path.join(self.tempdir, 'dummy.pdb')
+        shutil.copy(src, dst)
+
+        with open(dst, 'r') as fin:
+            pdb_splitchain.run(fin)
+
+        # Read files created by script and then delete
+        ofiles = [f for f in os.listdir(self.tempdir) if f.startswith('dummy')]
+        self.assertEqual(len(ofiles), 4 + 1)  # ori + 4 chains
+
+        # Make sure each file has the chain it should have
+        records = (('ATOM', 'HETATM', 'TER', 'ANISOU'))
+        for fpath in ofiles:
+            if fpath == 'dummy.pdb':
+                continue
+
+            with open(os.path.join(self.tempdir, fpath), 'r') as handle:
+                fname_chain = fpath.split('_')[1][:-4]  # xxx_(X).pdb
+                pdb_chains = [l[21] for l in handle if l.startswith(records)]
+
+                self.assertEqual(fname_chain, list(set(pdb_chains))[0])
+
+    def test_run_iterable(self):
+        """pdb_splitchain.run(iterable)"""
+        from pdbtools import pdb_splitchain
+
+        src = os.path.join(data_dir, 'dummy.pdb')
+        dst = os.path.join(self.tempdir, 'dummy.pdb')
+        shutil.copy(src, dst)
+
+        with open(dst, 'r') as fin:
+            lines = fin.readlines()
+
+        pdb_splitchain.run(lines)
+
+        # Read files created by script and then delete
+        ofiles = [
+            f
+            for f in os.listdir(self.tempdir)
+            if f.startswith('splitchains')
+            ]
+        self.assertEqual(len(ofiles), 4)  # 4 chains
+
+        # Make sure each file has the chain it should have
+        records = (('ATOM', 'HETATM', 'TER', 'ANISOU'))
+        for fpath in ofiles:
+
+            with open(os.path.join(self.tempdir, fpath), 'r') as handle:
+                fname_chain = fpath.split('_')[1][:-4]  # xxx_(X).pdb
+                pdb_chains = [l[21] for l in handle if l.startswith(records)]
+
+                self.assertEqual(fname_chain, list(set(pdb_chains))[0])
+
+    def test_run_iterable_with_name(self):
+        """pdb_splitchain.run(iterable)"""
+        from pdbtools import pdb_splitchain
+
+        src = os.path.join(data_dir, 'dummy.pdb')
+        dst = os.path.join(self.tempdir, 'dummy.pdb')
+        shutil.copy(src, dst)
+
+        with open(dst, 'r') as fin:
+            lines = fin.readlines()
+
+        pdb_splitchain.run(lines, outname='newname')
+
+        # Read files created by script and then delete
+        ofiles = [f for f in os.listdir(self.tempdir) if f.startswith('newname')]
+        self.assertEqual(len(ofiles), 4)  # 4 chains
+
+        # Make sure each file has the chain it should have
+        records = (('ATOM', 'HETATM', 'TER', 'ANISOU'))
+        for fpath in ofiles:
 
             with open(os.path.join(self.tempdir, fpath), 'r') as handle:
                 fname_chain = fpath.split('_')[1][:-4]  # xxx_(X).pdb
