@@ -71,7 +71,6 @@ All MODULEs and `run` functions provide comprehensive documentation.
 >>> help(MODULE)
 >>> help(MODULE.run)
 """
-import os
 
 
 __all__ = [
