@@ -25,7 +25,7 @@ Usage:
     python pdb_selatom.py -<option> <pdb file>
 
 Example:
-    python pdb_renameatom.py -1HB,HB2 1CTF.pdb  # renames '1HB' to 'HB2'
+    python pdb_renameatom.py -HB3,2HB 2M9Y.pdb  # renames 'HB3' to '2HB'
 
 This program is part of the `pdb-tools` suite of utilities and should not be
 distributed isolatedly. The `pdb-tools` were created to quickly manipulate PDB

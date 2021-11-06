@@ -490,7 +490,7 @@ Usage:
     python pdb_renameatom.py -&lt;AT1&gt;:&lt;AT2&gt; &lt;pdb-file&gt;
 
 Example:
-    python pdb_renameatom.py -HB2,2HB 1CTF.pdb  # Renames HB2 to 2HB
+    python pdb_renameatom.py -HB3,2HB 2M9Y.pdb  # Renames HB3 to 2HB
 </span>
 </details>
 </div>
