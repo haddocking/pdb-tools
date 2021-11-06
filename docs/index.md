@@ -484,6 +484,18 @@ Example:
 </div>
 <div style="margin-bottom: 1em;">
 <details>
+<summary><b>pdb_renameatom</b><p>Renames atom.</p></summary>
+<span style="font-family: monospace; white-space: pre;">
+Usage:
+    python pdb_renameatom.py -&lt;AT1&gt;:&lt;AT2&gt; &lt;pdb-file&gt;
+
+Example:
+    python pdb_renameatom.py -HB2,2HB 1CTF.pdb  # Renames HB2 to 2HB
+</span>
+</details>
+</div>
+<div style="margin-bottom: 1em;">
+<details>
 <summary><b>pdb_reres</b><p>Renumbers the residues of the PDB file starting from a given number (default 1).</p></summary>
 <span style="font-family: monospace; white-space: pre;">
 Usage:
