@@ -69,6 +69,15 @@ class TestTool(unittest.TestCase):
         xxx_count = sum(1 for l in self.stdout if l[12:16].strip() == 'XXX')
         self.assertEqual(xxx_count, 6)
 
+        with open(os.path.join(data_dir, 'dummy.pdb'), 'r') as fin:
+            lines = fin.readlines()
+            diff_lines = sum(
+                1
+                for i, j in zip(lines, self.stdout)
+                if i.strip() != j.strip())
+
+        self.assertEqual(diff_lines, 6)
+
     def test_DNA_example(self):
         """$ pdb_renameatom -O5',O6' data/dummy.pdb"""
 
@@ -87,6 +96,15 @@ class TestTool(unittest.TestCase):
         self.assertEqual(hg2_count, 0)
         xxx_count = sum(1 for l in self.stdout if l[12:16].strip() == "O6'")
         self.assertEqual(xxx_count, 1)
+
+        with open(os.path.join(data_dir, 'dummy.pdb'), 'r') as fin:
+            lines = fin.readlines()
+            diff_lines = sum(
+                1
+                for i, j in zip(lines, self.stdout)
+                if i.strip() != j.strip())
+
+        self.assertEqual(diff_lines, 1)
 
     def test_no_input_provided(self):
         """$ pdb_renameatom """
