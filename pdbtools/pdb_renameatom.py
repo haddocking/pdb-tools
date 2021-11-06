@@ -44,8 +44,14 @@ def check_input(args):
     """Checks whether to read from stdin/file and validates user input/options.
     """
     if not args:
-        emsg = 'ERROR! No option nor input provided{}'
+        emsg = 'ERROR! No input provided{}'
         sys.stderr.write(emsg.format(os.linesep))
+        sys.stderr.write(__doc__)
+        sys.exit(1)
+
+    if len(args) > 2:
+        emsg = 'ERROR! Too many arguments.'
+        sys.stderr.write(emsg)
         sys.stderr.write(__doc__)
         sys.exit(1)
 
@@ -72,9 +78,16 @@ def check_input(args):
 
     # Pipe or file
     if sys.stdin.isatty():  # ensure the PDB data is streamed in
-        if not os.path.isfile(args[0]):
+        if len(args) == 1:
+            emsg = 'ERROR!! No file provided.'
+            sys.stderr.write(emsg)
+            sys.stderr.write(__doc__)
+            sys.exit(1)
+
+        if not os.path.isfile(args[1]):
             emsg = 'ERROR!! File not found or not readable: \'{}\'{}'
-            sys.stderr.write(emsg.format(args[0], os.linesep))
+            emsg = emsg.format(args[1], os.linesep)
+            sys.stderr.write(emsg)
             sys.stderr.write(__doc__)
             sys.exit(1)
 
@@ -82,7 +95,7 @@ def check_input(args):
     return fh, option
 
 
-def run(fhandler, source, target):
+def run(fhandle, source, target):
     """
     Rename selected atoms
 
@@ -114,9 +127,8 @@ def run(fhandler, source, target):
                 atom_source = line[12:16].strip()
                 element = line[76:78].strip()
                 if atom_source == source:
-                    new_name = format_atom(atom_source, element)
-                    line = line[:13] + new_name + line[16:]
-                yield _line
+                    new_name = format_atom_name(target, element)
+                    line = line[:12] + new_name + line[16:]
             yield line
 
     except KeyError as err:
@@ -128,6 +140,7 @@ def run(fhandler, source, target):
 _3 = ' {:<3s}'
 _4 = '{:<4s}'
 _atom_format_dict = {
+    0: { 1: _4, 2: _4, 3: _4, 4: _4},  # uses for spaces if element not present
     1: { 1: _3, 2: _3, 3: _3, 4: _4},
     2: { 1: _4, 2: _4, 3: _4, 4: _4},
     }
@@ -154,7 +167,7 @@ def format_atom_name(atom, element, AFD=_atom_format_dict):
     str
         Formatted atom name.
     """
-    len_atm = len(atm)
+    len_atm = len(atom)
     len_ele = len(element)
     return AFD[len_ele][len_atm].format(atom)
 
