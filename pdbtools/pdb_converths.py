@@ -164,9 +164,6 @@ convert_table = {
     }
 
 
-for key in bmrb.keys():
-    assert len(bmrb[key]) == len(xplor[key]) == len(old_pdb[key]) == len(ucsf[key]), key
-
 
 def check_input(args):
     """Checks whether to read from stdin/file and validates user input/options.
@@ -255,8 +252,16 @@ def run(fhandle, option):
                     idx = convention[residue].index(atom_source)
                 except ValueError:
                     continue
-
-            new_atom = convert_table[option][residue][idx]
+                else:
+                    new_atom = convert_table[option][residue][idx]
+                    break
+            else:
+                _warn = (
+                    'WARNING! No conversion was found for this atom: {}. '
+                    'Using same name.{}'
+                    )
+                sys.stderr.write(_warn.format(atom_source, os.linesep))
+                new_atom = atom_source
 
             if 1 <= len(new_atom) <= 3:
                 new_atom = ' {:<3s}'.format(new_atom)
