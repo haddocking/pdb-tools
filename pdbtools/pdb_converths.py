@@ -47,10 +47,7 @@ bmrb = {
     'GLN': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'OE1', 'NE2', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HG2', 'HG3', 'HE21', 'HE22'],
     'GLU': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'OE1', 'OE2', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HG2', 'HG3', 'HE2'],
     'GLY': ['N', 'CA', 'C', 'O', 'H', 'H1', 'H2', 'H3', 'HA2', 'HA3'],
-    'HID': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'ND1', 'CD2', 'CE1', 'NE2', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HD1', 'HD2', 'HE1'],
-    'HIE': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'ND1', 'CD2', 'CE1', 'NE2', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HD2', 'HE1', 'HE2'],
-    'HIP': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'ND1', 'CD2', 'CE1', 'NE2', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HD1', 'HD2', 'HE1', 'HE2'],
-    'HIS': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'ND1', 'CD2', 'CE1', 'NE2', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HD2', 'HE1'],
+    'HIS': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'ND1', 'CD2', 'CE1', 'NE2', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HD1', 'HD2', 'HE1', 'HE2'],
     'ILE': ['N', 'CA', 'C', 'O', 'CB', 'CG1', 'CG2', 'CD1', 'H', 'H1', 'H2', 'H3', 'HA', 'HB', 'HG12', 'HG13', 'HG21', 'HG22', 'HG23', 'HD11', 'HD12', 'HD13'],
     'LEU': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HG', 'HD11', 'HD12', 'HD13', 'HD21', 'HD22', 'HD23'],
     'LYS': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'CE', 'NZ', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HG2', 'HG3', 'HD2', 'HD3', 'HE2', 'HE3', 'HZ1', 'HZ2', 'HZ3'],
@@ -74,10 +71,7 @@ old_pdb = {
     'GLN': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'OE1', 'NE2', 'H', '1H', '2H', '3H', 'HA', '1HB', '2HB', '1HG', '2HG', '1HE2', '2HE2'],
     'GLU': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'OE1', 'OE2', 'H', '1H', '2H', '3H', 'HA', '1HB', '2HB', '1HG', '2HG', '1HE'],
     'GLY': ['N', 'CA', 'C', 'O', 'H', '1H', '2H', '3H', '1HA', '2HA'],
-    'HID': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'ND1', 'CD2', 'CE1', 'NE2', 'H', '1H', '2H', '3H', 'HA', '1HB', '2HB', 'HD1', 'HD2', 'HE1'],
-    'HIE': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'ND1', 'CD2', 'CE1', 'NE2', 'H', '1H', '2H', '3H', 'HA', '1HB', '2HB', 'HD2', 'HE1', 'HE2'],
-    'HIP': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'ND1', 'CD2', 'CE1', 'NE2', 'H', '1H', '2H', '3H', 'HA', '1HB', '2HB', 'HD1', 'HD2', 'HE1', 'HE2'],
-    'HIS': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'ND1', 'CD2', 'CE1', 'NE2', 'H', '1H', '2H', '3H', 'HA', '1HB', '2HB', 'HD2', 'HE1'],
+    'HIS': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'ND1', 'CD2', 'CE1', 'NE2', 'H', '1H', '2H', '3H', 'HA', '1HB', '2HB', 'HD1', 'HD2', 'HE1', 'HE2'],
     'ILE': ['N', 'CA', 'C', 'O', 'CB', 'CG1', 'CG2', 'CD1', 'H', '1H', '2H', '3H', 'HA', 'HB', '1HG1', '2HG1', '1HG2', '2HG2', '3HG2', '1HD1', '2HD1', '3HD1'],
     'LEU': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'H', '1H', '2H', '3H', 'HA', '1HB', '2HB', 'HG', '1HD1', '2HD1', '3HD1', '1HD2', '2HD2', '3HD2'],
     'LYS': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'CE', 'NZ', 'H', '1H', '2H', '3H', 'HA', '1HB', '2HB', '1HG', '2HG', '1HD', '2HD', '1HE', '2HE', '1HZ', '2HZ', '3HZ'],
@@ -100,10 +94,7 @@ xplor = {
     'GLN': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'OE1', 'NE2', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB2', 'HB1', 'HG2', 'HG1', 'HE21', 'HE22'],
     'GLU': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'OE1', 'OE2', 'HN', 'HT1', 'HT2', 'HT3', 'HA', '1HB', '2HB', '1HG', '2HG', '1HE'],
     'GLY': ['N', 'CA', 'C', 'O', 'HN', 'HT1', 'HT2', 'HT3', 'HA2', 'HA1'],
-    'HID': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'ND1', 'CD2', 'CE1', 'NE2', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB2', 'HB1', 'HD1', 'HD2', 'HE1'],
-    'HIE': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'ND1', 'CD2', 'CE1', 'NE2', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB2', 'HB1', 'HD2', 'HE1', 'HE2'],
-    'HIP': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'ND1', 'CD2', 'CE1', 'NE2', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB2', 'HB1', 'HD1', 'HD2', 'HE1', 'HE2'],
-    'HIS': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'ND1', 'CD2', 'CE1', 'NE2', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB2', 'HB1', 'HD2', 'HE1'],
+    'HIS': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'ND1', 'CD2', 'CE1', 'NE2', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB2', 'HB1', 'HD1', 'HD2', 'HE1', 'HE2'],
     'ILE': ['N', 'CA', 'C', 'O', 'CB', 'CG1', 'CG2', 'CD1', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB', 'HG12', 'HG11', 'HG21', 'HG22', 'HG23', 'HD11', 'HD12', 'HD13'],
     'LEU': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB2', 'HB1', 'HG', 'HD11', 'HD12', 'HD13', 'HD21', 'HD22', 'HD23'],
     'LYS': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'CE', 'NZ', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB2', 'HB1', 'HG2', 'HG1', 'HD2', 'HD1', 'HE2', 'HE1', 'HZ1', 'HZ2', 'HZ3'],
@@ -127,7 +118,6 @@ convert_table = {
 
 for key in bmrb.keys():
     assert len(bmrb[key]) == len(xplor[key]) == len(old_pdb[key]), key
-
 
 
 def check_input(args):
