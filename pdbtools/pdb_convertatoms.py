@@ -102,7 +102,7 @@ biopython = {
     'ILE': ['N', 'CA', 'C', 'O', 'CB', 'CG1', 'CG2', 'CD1', 'H', '1H', '2H', '3H', 'HA', 'HB', '2HG1', '3HG1', '2HG2', '3HG2', '1HG2', '1HD1', '2HD1', '3HD1', "O''"],
     'LEU': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'H', '1H', '2H', '3H', 'HA', '2HB', '3HB', 'HG', '1HD1', '2HD1', '3HD1', '1HD2', '2HD2', '3HD2', "O''"],
     'LYS': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'CE', 'NZ', 'H', '1H', '2H', '3H', 'HA', '2HB', '3HB', '2HG', '3HG', '2HD', '3HD', '2HE', '3HE', '1HZ', '2HZ', '3HZ', "O''"],
-    'MET': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'SD', 'CE', 'H', '1H', '2H', '3H', 'HA', '2HB', '3HB', '2HG', '3H', '1HE', '2HE', '3HE', "O''"],
+    'MET': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'SD', 'CE', 'H', '1H', '2H', '3H', 'HA', '2HB', '3HB', '2HG', '3HG', '1HE', '2HE', '3HE', "O''"],
     'PHE': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'CE1', 'CE2', 'CZ', 'H', '1H', '2H', '3H', 'HA', '2HB', '3HB', '1HD', '2HD', '1HE', '2HE', 'HZ', "O''"],
     'PRO': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'H2', 'H3', 'HA', '2HB', '3HB', '2HG', '3HG', '2HD', '3HD', "O''"],
     'SER': ['N', 'CA', 'C', 'O', 'CB', 'OG', 'H', '1H', '2H', '3H', 'HA', '2HB', '3HB', 'HG', "O''"],
