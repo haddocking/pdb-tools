@@ -15,20 +15,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """
-Renames hydrogen according to the communitie's conversion tables.
+Renames atoms according to the communitie's conversion tables.
 
 Available conversions:
-    - bmrb/iupac/pdbv3/amber
-    - xplor
+    - bmrb
+    - iupac/pdbv3/amber
+    - msi
     - pdbv2
     - ucsf
-    - msi
+    - xplor
 
 Usage:
-    python pdb_selatom.py -<option> <pdb file>
+    python pdb_converths.py -<option> <pdb file>
 
 Example:
-    python pdb_renameatom.py -xplor 2M9Y.pdb
+    python pdb_converths.py -xplor 2M9Y.pdb
 
 This program is part of the `pdb-tools` suite of utilities and should not be
 distributed isolatedly. The `pdb-tools` were created to quickly manipulate PDB
@@ -61,6 +62,29 @@ bmrb = {
     'TRP': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'NE1', 'CE2', 'CE3', 'CZ2', 'CZ3', 'CH2', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HD1', 'HE1', 'HE3', 'HZ2', 'HZ3', 'HH2', "O''"],
     'TYR': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'CE1', 'CE2', 'CZ', 'OH', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HD1', 'HD2', 'HE1', 'HE2', 'HH', "O''"],
     'VAL': ['N', 'CA', 'C', 'O', 'CB', 'CG1', 'CG2', 'H', 'H1', 'H2', 'H3', 'HA', 'HB', 'HG11', 'HG12', 'HG13', 'HG21', 'HG22', 'HG23', "O''"],
+    }
+
+pdbv3 = {
+    'ALA': ['N', 'CA', 'C', 'O', 'CB', 'H', 'H1', 'H2', 'H3', 'HA', 'HB1', 'HB2', 'HB3', "OXT"],
+    'ARG': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'NE', 'CZ', 'NH1', 'NH2', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HG2', 'HG3', 'HD2', 'HD3', 'HE', 'HH11', 'HH12', 'HH21', 'HH22', "OXT"],
+    'ASN': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'OD1', 'ND2', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HD21', 'HD22', "OXT"],
+    'ASP': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'OD1', 'OD2', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HD2', "OXT"],
+    'CYS': ['N', 'CA', 'C', 'O', 'CB', 'SG', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HG', "OXT"],
+    'GLN': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'OE1', 'NE2', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HG2', 'HG3', 'HE21', 'HE22', "OXT"],
+    'GLU': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'OE1', 'OE2', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HG2', 'HG3', 'HE2', "OXT"],
+    'GLY': ['N', 'CA', 'C', 'O', 'H', 'H1', 'H2', 'H3', 'HA2', 'HA3', "OXT"],
+    'HIS': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'ND1', 'CD2', 'CE1', 'NE2', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HD1', 'HD2', 'HE1', 'HE2', "OXT"],
+    'ILE': ['N', 'CA', 'C', 'O', 'CB', 'CG1', 'CG2', 'CD1', 'H', 'H1', 'H2', 'H3', 'HA', 'HB', 'HG12', 'HG13', 'HG21', 'HG22', 'HG23', 'HD11', 'HD12', 'HD13', "OXT"],
+    'LEU': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HG', 'HD11', 'HD12', 'HD13', 'HD21', 'HD22', 'HD23', "OXT"],
+    'LYS': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'CE', 'NZ', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HG2', 'HG3', 'HD2', 'HD3', 'HE2', 'HE3', 'HZ1', 'HZ2', 'HZ3', "OXT"],
+    'MET': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'SD', 'CE', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HG2', 'HG3', 'HE1', 'HE2', 'HE3', "OXT"],
+    'PHE': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'CE1', 'CE2', 'CZ', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HD1', 'HD2', 'HE1', 'HE2', 'HZ', "OXT"],
+    'PRO': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HG2', 'HG3', 'HD2', 'HD3', "OXT"],
+    'SER': ['N', 'CA', 'C', 'O', 'CB', 'OG', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HG', "OXT"],
+    'THR': ['N', 'CA', 'C', 'O', 'CB', 'OG1', 'CG2', 'H', 'H1', 'H2', 'H3', 'HA', 'HB', 'HG1', 'HG21', 'HG22', 'HG23', "OXT"],
+    'TRP': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'NE1', 'CE2', 'CE3', 'CZ2', 'CZ3', 'CH2', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HD1', 'HE1', 'HE3', 'HZ2', 'HZ3', 'HH2', "OXT"],
+    'TYR': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'CE1', 'CE2', 'CZ', 'OH', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HD1', 'HD2', 'HE1', 'HE2', 'HH', "OXT"],
+    'VAL': ['N', 'CA', 'C', 'O', 'CB', 'CG1', 'CG2', 'H', 'H1', 'H2', 'H3', 'HA', 'HB', 'HG11', 'HG12', 'HG13', 'HG21', 'HG22', 'HG23', "OXT"],
     }
 
 diana = {
@@ -180,8 +204,8 @@ xplor = {
 
 convert_table = {
     'bmrb': bmrb,
-    'amber': bmrb,
-    'pdbv3': bmrb,
+    'amber': pdbv3,
+    'pdbv3': pdbv3,
     'pdbv2': pdbv2,
     'xplor': xplor,
     'ucsf': ucsf,
@@ -271,32 +295,47 @@ def run(fhandle, option):
             atom_source = line[12:16].strip()
             residue = line[17:20].strip().upper()
 
-            for convention in convert_table.values():
-                try:
-                    idx = convention[residue].index(atom_source)
-                except ValueError:
-                    continue
+            # non-canonical residue or other element
+            if residue not in bmrb:
+                yield line
+                continue
+
+            else:
+                for convention in convert_table.values():
+                    try:
+                        idx = convention[residue].index(atom_source)
+
+                    except ValueError:
+                        continue
+
+                    except KeyError:
+                        yield line
+                        break
+
+                    else:
+                        new_atom = convert_table[option][residue][idx]
+                        break
                 else:
-                    new_atom = convert_table[option][residue][idx]
-                    break
-            else:
-                _warn = (
-                    'WARNING! No conversion was found for this atom: {}. '
-                    'Using same name.{}'
-                    )
-                sys.stderr.write(_warn.format(atom_source, os.linesep))
-                new_atom = atom_source
+                    _warn = (
+                        'WARNING! No conversion was found for this atom: {}. '
+                        'Using same name.{}'
+                        )
+                    sys.stderr.write(_warn.format(atom_source, os.linesep))
+                    new_atom = atom_source
 
-            if 1 <= len(new_atom) <= 3:
-                new_atom = ' {:<3s}'.format(new_atom)
-            elif len(new_atom) == 4:
-                new_atom  = '{:<4s}'.format(new_atom)
-            else:
-                raise ValueError('Something went very badly')
+                if 1 <= len(new_atom) <= 3:
+                    new_atom = ' {:<3s}'.format(new_atom)
+                elif len(new_atom) == 4:
+                    new_atom  = '{:<4s}'.format(new_atom)
+                else:
+                    raise ValueError('Something went very badly')
 
-            line = line[:12] + new_atom + line[16:]
+                line = line[:12] + new_atom + line[16:]
 
         yield line
+
+
+converths = run
 
 
 def main():
