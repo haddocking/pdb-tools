@@ -239,7 +239,7 @@ def check_input(args):
     option = args[0][1:]
     if option not in convert_table.keys():
         emsg = 'ERROR! The option provided {!r} is not within the possible options: {}. {}'
-        sys.stderr.write(emsg.format(option, list(convert_table.keys()), os.linesep))
+        sys.stderr.write(emsg.format(args[0], list(convert_table.keys()), os.linesep))
         sys.stderr.write(__doc__)
         sys.exit(1)
 
