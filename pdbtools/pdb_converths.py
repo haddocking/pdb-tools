@@ -108,7 +108,7 @@ ucsf = {
     }
 
 old_pdb = {
-    'ALA': ['N', 'CA', 'C', 'O', 'CB', 'HN', '1H', '2H', '3H', 'HA', '1HB', '2HB', '3HB'],
+    'ALA': ['N', 'CA', 'C', 'O', 'CB', 'H', '1H', '2H', '3H', 'HA', '1HB', '2HB', '3HB'],
     'ARG': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'NE', 'CZ', 'NH1', 'NH2', 'H', '1H', '2H', '3H', 'HA', '1HB', '2HB', '1HG', '2HG', '1HD', '2HD', 'HE', '1HH1', '2HH1', '1HH2', '2HH2'],
     'ASN': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'OD1', 'ND2', 'H', '1H', '2H', '3H', 'HA', '1HB', '2HB', '1HD2', '2HD2'],
     'ASP': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'OD1', 'OD2', 'H', '1H', '2H', '3H', 'HA', '1HB', '2HB', '1HD'],
