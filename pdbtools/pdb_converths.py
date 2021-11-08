@@ -88,7 +88,7 @@ ucsf = {
     'ALA': ['N', 'CA', 'C', 'O', 'CB', 'HN', 'HN1', 'HN2', 'HN3', 'HA', 'HB1', 'HB2', 'HB3'],
     'ARG': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'NE', 'CZ', 'NH1', 'NH2', 'HN', 'HN1', 'HN2', 'HN3', 'HA', 'HB1', 'HB2', 'HG1', 'HG2', 'HD1', 'HD2', 'HNE', 'HN11', 'HN12', 'HN21', 'HN22'],
     'ASN': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'OD1', 'ND2', 'HN', 'HN1', 'HN2', 'HN3', 'HA', 'HB1', 'HB2', 'HN21', 'HN22'],
-    'ASP': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'OD1', 'OD2', 'HN', 'HN1', 'HN2', 'HN3', 'HA', 'HB1', 'HB2', 'HOG'],
+    'ASP': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'OD1', 'OD2', 'HN', 'HN1', 'HN2', 'HN3', 'HA', 'HB1', 'HB2', 'HOD'],
     'CYS': ['N', 'CA', 'C', 'O', 'CB', 'SG', 'HN', 'HN1', 'HN2', 'HN3', 'HA', 'HB1', 'HB2', 'HSG'],
     'GLN': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'OE1', 'NE2', 'HN', 'HN1', 'HN2', 'HN3', 'HA', 'HB1', 'HB2', 'HG1', 'HG2', 'HN21', 'HN22'],
     'GLU': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'OE1', 'OE2', 'HN', 'HN1', 'HN2', 'HN3', 'HA', 'HB1', 'HB2', 'HG1', 'HG2', 'HOE'],
@@ -99,7 +99,7 @@ ucsf = {
     'LYS': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'CE', 'NZ', 'HN', 'HN1', 'HN2', 'HN3', 'HA', 'HB1', 'HB2', 'HG1', 'HG2', 'HD1', 'HD2', 'HE1', 'HE2', 'HNZ1', 'HNZ2', 'HNZ3'],
     'MET': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'SD', 'CE', 'HN', 'HN1', 'HN2', 'HN3', 'HA', 'HB1', 'HB2', 'HG1', 'HG2', 'HE1', 'HE2', 'HE3'],
     'PHE': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'CE1', 'CE2', 'CZ', 'HN', 'HN1', 'HN2', 'HN3', 'HA', 'HB1', 'HB2', 'HD1', 'HD2', 'HE1', 'HE2', 'HZ'],
-    'PRO': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'HN2', 'HN3', 'HA', 'HB1', 'HB2', 'HG1', 'HG2', 'HD2', 'HD1'],
+    'PRO': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'HN1', 'HN2', 'HA', 'HB1', 'HB2', 'HG1', 'HG2', 'HD2', 'HD1'],
     'SER': ['N', 'CA', 'C', 'O', 'CB', 'OG', 'HN', 'HN1', 'HN2', 'HN3', 'HA', 'HB1', 'HB2', 'HOG'],
     'THR': ['N', 'CA', 'C', 'O', 'CB', 'OG1', 'CG2', 'HN', 'HN1', 'HN2', 'HN3', 'HA', 'HB', 'HOG1', 'HG21', 'HG22', 'HG23'],
     'TRP': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'NE1', 'CE2', 'CE3', 'CZ2', 'CZ3', 'CH2', 'HN', 'HN1', 'HN2', 'HN3', 'HA', 'HB1', 'HB2', 'HD1', 'HNE1', 'HE3', 'HZ2', 'HZ3', 'HH2'],
@@ -107,7 +107,30 @@ ucsf = {
     'VAL': ['N', 'CA', 'C', 'O', 'CB', 'CG1', 'CG2', 'HN', 'HN1', 'HN2', 'HN3', 'HA', 'HB', 'HG11', 'HG12', 'HG13', 'HG21', 'HG22', 'HG23'],
     }
 
-old_pdb = {
+msi = {
+    'ALA': ['N', 'CA', 'C', 'O', 'CB', 'HN', 'HN1', 'HN2', 'HN3', 'HA', 'HB1', 'HB2', 'HB3' 'OXT'],
+    'ARG': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'NE', 'CZ', 'NH1', 'NH2', 'HN', 'HN1', 'HN2', 'HN3', 'HA', 'HB1', 'HB2', 'HG1', 'HG2', 'HD1', 'HD2', 'HE', 'HH11', 'HH12', 'HH22', 'HH21' 'OXT'],
+    'ASN': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'OD1', 'ND2', 'HN', 'HN1', 'HN2', 'HN3', 'HA', 'HB1', 'HB2', 'HD21', 'HD22' 'OXT'],
+    'ASP': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'OD1', 'OD2', 'HN', 'HN1', 'HN2', 'HN3', 'HA', 'HB1', 'HB2', 'HD2' 'OXT'],
+    'CYS': ['N', 'CA', 'C', 'O', 'CB', 'SG', 'HN', 'HN1', 'HN2', 'HN3', 'HA', 'HB1', 'HB2', 'HG' 'OXT'],
+    'GLN': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'OE1', 'NE2', 'HN', 'HN1', 'HN2', 'HN3', 'HA', 'HB1', 'HB2', 'HG1', 'HG2', 'HE21', 'HE22' 'OXT'],
+    'GLU': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'OE1', 'OE2', 'HN', 'HN1', 'HN2', 'HN3', 'HA', 'HB1', 'HB2', 'HG1', 'HG2', 'HE2' 'OXT'],
+    'GLY': ['N', 'CA', 'C', 'O', 'HN', 'HN1', 'HN2', 'HN3', 'HA1', 'HA2' 'OXT'],
+    'HIS': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'ND1', 'CD2', 'CE1', 'NE2', 'HN', 'HN1', 'HN2', 'HN3', 'HA', 'HB1', 'HB2', 'HD1', 'HD2', 'HE1', 'HE2' 'OXT'],
+    'ILE': ['N', 'CA', 'C', 'O', 'CB', 'CG1', 'CG2', 'CD1', 'HN', 'HN1', 'HN2', 'HN3', 'HA', 'HB', 'HG11', 'HG12', 'HG21', 'HG22', 'HG23', 'HD11', 'HD12', 'HD13' 'OXT'],
+    'LEU': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'HN', 'HN1', 'HN2', 'HN3', 'HA', 'HB1', 'HB2', 'HG', 'HD11', 'HD12', 'HD13', 'HD21', 'HD22', 'HD23' 'OXT'],
+    'LYS': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'CE', 'NZ', 'HN', 'HN1', 'HN2', 'HN3', 'HA', 'HB1', 'HB2', 'HG1', 'HG2', 'HD1', 'HD2', 'HE1', 'HE2', 'HZ1', 'HZ2', 'HZ3' 'OXT'],
+    'MET': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'SD', 'CE', 'HN', 'HN1', 'HN2', 'HN3', 'HA', 'HB1', 'HB2', 'HG1', 'HG2', 'HE1', 'HE2', 'HE3' 'OXT'],
+    'PHE': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'CE1', 'CE2', 'CZ', 'HN', 'HN1', 'HN2', 'HN3', 'HA', 'HB1', 'HB2', 'HD1', 'HD2', 'HE1', 'HE2', 'HZ' 'OXT'],
+    'PRO': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'HN2', 'HN1', 'HA', 'HB1', 'HB2', 'HG1', 'HG2', 'HD2', 'HD1' 'OXT'],
+    'SER': ['N', 'CA', 'C', 'O', 'CB', 'OG', 'HN', 'HN1', 'HN2', 'HN3', 'HA', 'HB1', 'HB2', 'HG' 'OXT'],
+    'THR': ['N', 'CA', 'C', 'O', 'CB', 'OG1', 'CG2', 'HN', 'HN1', 'HN2', 'HN3', 'HA', 'HB', 'HG1', 'HG21', 'HG22', 'HG23' 'OXT'],
+    'TRP': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'NE1', 'CE2', 'CE3', 'CZ2', 'CZ3', 'CH2', 'HN', 'HN1', 'HN2', 'HN3', 'HA', 'HB1', 'HB2', 'HD1', 'HE1', 'HE3', 'HZ2', 'HZ3', 'HH2' 'OXT'],
+    'TYR': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'CE1', 'CE2', 'CZ', 'OH', 'HN', 'HN1', 'HN2', 'HN3', 'HA', 'HB1', 'HB2', 'HD1', 'HD2', 'HE1', 'HE2', 'HH' 'OXT'],
+    'VAL': ['N', 'CA', 'C', 'O', 'CB', 'CG1', 'CG2', 'HN', 'HN1', 'HN2', 'HN3', 'HA', 'HB', 'HG11', 'HG12', 'HG13', 'HG21', 'HG22', 'HG23' 'OXT'],
+    }
+
+pdbv2 = {
     'ALA': ['N', 'CA', 'C', 'O', 'CB', 'H', '1H', '2H', '3H', 'HA', '1HB', '2HB', '3HB', "OXT"],
     'ARG': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'NE', 'CZ', 'NH1', 'NH2', 'H', '1H', '2H', '3H', 'HA', '1HB', '2HB', '1HG', '2HG', '1HD', '2HD', 'HE', '1HH1', '2HH1', '1HH2', '2HH2', "OXT"],
     'ASN': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'OD1', 'ND2', 'H', '1H', '2H', '3H', 'HA', '1HB', '2HB', '1HD2', '2HD2', "OXT"],
@@ -154,11 +177,12 @@ xplor = {
     }
 
 
+
 convert_table = {
     'bmrb': bmrb,
     'amber': bmrb,
     'pdbv3': bmrb,
-    'oldpdb': old_pdb,
+    'pdbv2': pdbv2,
     'xplor': xplor,
     'ucsf': ucsf,
     }
