@@ -91,7 +91,11 @@ def check_input(args):
             sys.stderr.write(__doc__)
             sys.exit(1)
 
-    fh = open(args[1], 'r')
+        fh = open(args[1], 'r')
+
+    else:  # input comes from pipe
+        fh = sys.stdin
+
     return fh, option
 
 
