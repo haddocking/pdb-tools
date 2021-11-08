@@ -91,6 +91,33 @@ old_pdb = {
     'VAL': ['N', 'CA', 'C', 'O', 'CB', 'CG1', 'CG2', 'H', 'HA', 'HB', '1HG1', '2HG1', '3HG1', '1HG2', '2HG2', '3HG2'],
     }
 
+xplor = {
+    'ALA': ['N', 'CA', 'C', 'O', 'CB', 'HN', 'HA', '1HB', '2HB', '3HB'],
+    'ARG': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'NE', 'CZ', 'NH1', 'NH2', 'HN', 'HA', 'HB2', 'HB1', 'HG2', 'HG1', 'HD2', 'HD1', 'HE', 'HH11', 'HH12', 'HH21', 'HH22'],
+    'ASN': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'OD1', 'ND2', 'HN', 'HA', 'HB2', 'HB1', 'HD21', 'HD22'],
+    'ASP': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'OD1', 'OD2', 'HN', 'HA', 'HB2', 'HB1', 'HD1'],
+    'CYS': ['N', 'CA', 'C', 'O', 'CB', 'SG', 'HN', 'HA', 'HB2', 'HB1', 'HG'],
+    'GLN': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'OE1', 'NE2', 'HN', 'HA', 'HB2', 'HB1', 'HG2', 'HG1', 'HE21', 'HE22'],
+    'GLU': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'OE1', 'OE2', 'HN', 'HA', '1HB', '2HB', '1HG', '2HG', '1HE'],
+    'GLY': ['N', 'CA', 'C', 'O', 'HN', 'HA2', 'HA1'],
+    'HID': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'ND1', 'CD2', 'CE1', 'NE2', 'HN', 'HA', 'HB2', 'HB1', 'HD1', 'HD2', 'HE1'],
+    'HIE': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'ND1', 'CD2', 'CE1', 'NE2', 'HN', 'HA', 'HB2', 'HB1', 'HD2', 'HE1', 'HE2'],
+    'HIP': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'ND1', 'CD2', 'CE1', 'NE2', 'HN', 'HA', 'HB2', 'HB1', 'HD1', 'HD2', 'HE1', 'HE2'],
+    'HIS': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'ND1', 'CD2', 'CE1', 'NE2', 'HN', 'HA', 'HB2', 'HB1', 'HD2', 'HE1'],
+    'ILE': ['N', 'CA', 'C', 'O', 'CB', 'CG1', 'CG2', 'CD1', 'HN', 'HA', 'HB', 'HG12', 'HG11', 'HG21', 'HG22', 'HG23', 'HD11', 'HD12', 'HD13'],
+    'LEU': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'HN', 'HA', 'HB2', 'HB1', 'HG', 'HD11', 'HD12', 'HD13', 'HD21', 'HD22', 'HD23'],
+    'LYS': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'CE', 'NZ', 'HN', 'HA', 'HB2', 'HB1', 'HG2', 'HG1', 'HD2', 'HD1', 'HE2', 'HE1', 'HZ1', 'HZ2', 'HZ3'],
+    'MET': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'SD', 'CE', 'HN', 'HA', 'HB2', 'HB1', 'HG2', 'HG1', 'HE1', 'HE2', 'HE3'],
+    'PHE': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'CE1', 'CE2', 'CZ', 'HN', 'HA', 'HB2', 'HB1', 'HD1', 'HD2', 'HE1', 'HE2', 'HZ'],
+    'PRO': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'HA', 'HB2', 'HB1', 'HG2', 'HG1', 'HD2', 'HD1'],
+    'SER': ['N', 'CA', 'C', 'O', 'CB', 'OG', 'HN', 'HA', 'HB2', 'HB1', 'HG'],
+    'THR': ['N', 'CA', 'C', 'O', 'CB', 'OG1', 'CG2', 'HN', 'HA', 'HB', 'HG1', 'HG21', 'HG22', 'HG23'],
+    'TRP': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'NE1', 'CE2', 'CE3', 'CZ2', 'CZ3', 'CH2', 'HN', 'HA', 'HB2', 'HB1', 'HD1', 'HE1', 'HE3', 'HZ2', 'HZ3', 'HH2'],
+    'TYR': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'CE1', 'CE2', 'CZ', 'OH', 'HN', 'HA', 'HB2', 'HB1', 'HD1', 'HD2', 'HE1', 'HE2', 'HH'],
+    'VAL': ['N', 'CA', 'C', 'O', 'CB', 'CG1', 'CG2', 'HN', 'HA', 'HB', 'HG11', 'HG12', 'HG13', 'HG21', 'HG22', 'HG23'],
+    }
+
+
 convert_table = {
     'brmb': bmrb,
     'amber': bmrb,
