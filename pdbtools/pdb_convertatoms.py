@@ -18,6 +18,7 @@
 Renames atoms according to the communitie's conversion tables.
 
 Available conversions:
+    - biopython (GSOC2010 Joao)
     - bmrb
     - iupac/pdbv3/amber
     - msi
@@ -26,10 +27,11 @@ Available conversions:
     - xplor
 
 Usage:
-    python pdb_converths.py -<option> <pdb file>
+    python pdb_convertatoms.py -<option> <pdb file>
 
-Example:
-    python pdb_converths.py -xplor 2M9Y.pdb
+Examples:
+    python pdb_convertatoms.py -xplor 2M9Y.pdb
+    python pdb_convertatoms.py -msi 2M9Y.pdb
 
 This program is part of the `pdb-tools` suite of utilities and should not be
 distributed isolatedly. The `pdb-tools` were created to quickly manipulate PDB
@@ -85,6 +87,29 @@ pdbv3 = {
     'TRP': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'NE1', 'CE2', 'CE3', 'CZ2', 'CZ3', 'CH2', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HD1', 'HE1', 'HE3', 'HZ2', 'HZ3', 'HH2', "OXT"],
     'TYR': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'CE1', 'CE2', 'CZ', 'OH', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HD1', 'HD2', 'HE1', 'HE2', 'HH', "OXT"],
     'VAL': ['N', 'CA', 'C', 'O', 'CB', 'CG1', 'CG2', 'H', 'H1', 'H2', 'H3', 'HA', 'HB', 'HG11', 'HG12', 'HG13', 'HG21', 'HG22', 'HG23', "OXT"],
+    }
+
+biopython = {
+    'ALA': ['N', 'CA', 'C', 'O', 'CB', 'H', '1H', '2H', '3H', 'HA', '1HB', '2HB', '3HB', "O''"],
+    'ARG': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'NE', 'CZ', 'NH1', 'NH2', 'H', '1H', '2H', '3H', 'HA', '2HB', '3HB', '2HG', '3HG', '2HD', '3HD', 'HE', '2HH1', '1HH1', '1HH2', '2HH2', "O''"],
+    'ASN': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'OD1', 'ND2', 'H', '1H', '2H', '3H', 'HA', '2HB', '3HB', '1HD2', '2HD2', "O''"],
+    'ASP': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'OD1', 'OD2', 'H', '1H', '2H', '3H', 'HA', '2HB', '3HB', 'HD2', "O''"],
+    'CYS': ['N', 'CA', 'C', 'O', 'CB', 'SG', 'H', '1H', '2H', '3H', 'HA', '2HB', '3HB', 'HG', "O''"],
+    'GLN': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'OE1', 'NE2', 'H', '1H', '2H', '3H', 'HA', '2HB', '3HB', '2HG', '3HG', '1HE2', '2HE2', "O''"],
+    'GLU': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'OE1', 'OE2', 'H', '1H', '2H', '3H', 'HA', '2HB', '3HB', '2HG', '3HG', 'HE2', "O''"],
+    'GLY': ['N', 'CA', 'C', 'O', 'H', '1H', '2H', '3H', 'HA', '3HA', "O''"],
+    'HIS': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'ND1', 'CD2', 'CE1', 'NE2', 'H', '1H', '2H', '3H', 'HA', '2HB', '3HB', '1HD', '2HD', '1HE', '2HE', "O''"],
+    'ILE': ['N', 'CA', 'C', 'O', 'CB', 'CG1', 'CG2', 'CD1', 'H', '1H', '2H', '3H', 'HA', 'HB', '2HG1', '3HG1', '2HG2', '3HG2', '1HG2', '1HD1', '2HD1', '3HD1', "O''"],
+    'LEU': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'H', '1H', '2H', '3H', 'HA', '2HB', '3HB', 'HG', '1HD1', '2HD1', '3HD1', '1HD2', '2HD2', '3HD2', "O''"],
+    'LYS': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'CE', 'NZ', 'H', '1H', '2H', '3H', 'HA', '2HB', '3HB', '2HG', '3HG', '2HD', '3HD', '2HE', '3HE', '1HZ', '2HZ', '3HZ', "O''"],
+    'MET': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'SD', 'CE', 'H', '1H', '2H', '3H', 'HA', '2HB', '3HB', '2HG', '3H', '1HE', '2HE', '3HE', "O''"],
+    'PHE': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'CE1', 'CE2', 'CZ', 'H', '1H', '2H', '3H', 'HA', '2HB', '3HB', '1HD', '2HD', '1HE', '2HE', 'HZ', "O''"],
+    'PRO': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'H2', 'H3', 'HA', '2HB', '3HB', '2HG', '3HG', '2HD', '3HD', "O''"],
+    'SER': ['N', 'CA', 'C', 'O', 'CB', 'OG', 'H', '1H', '2H', '3H', 'HA', '2HB', '3HB', 'HG', "O''"],
+    'THR': ['N', 'CA', 'C', 'O', 'CB', 'OG1', 'CG2', 'H', '1H', '2H', '3H', 'HA', 'HB', '1HG', '1HG2', '2HG2', '3HG2', "O''"],
+    'TRP': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'NE1', 'CE2', 'CE3', 'CZ2', 'CZ3', 'CH2', 'H', '1H', '2H', '3H', 'HA', '2HB', '3HB', '1HD', '1HE', '3HE', '2HZ', '3HZ', '2HH', "O''"],
+    'TYR': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'CE1', 'CE2', 'CZ', 'OH', 'H', '1H', '2H', '3H', 'HA', '2HB', '3HB', '1HD', '2HD', '1HE', '2HE', 'HH', "O''"],
+    'VAL': ['N', 'CA', 'C', 'O', 'CB', 'CG1', 'CG2', 'H', '1H', '2H', '3H', 'HA', 'HB', '1HG1', '2HG1', '3HG1', '1HG2', '2HG2', '3HG3', "O''"],
     }
 
 diana = {
@@ -210,6 +235,7 @@ convert_table = {
     'xplor': xplor,
     'ucsf': ucsf,
     'msi': msi,
+    'biopython': biopython,
     }
 
 
