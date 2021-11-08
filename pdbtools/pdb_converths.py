@@ -18,9 +18,11 @@
 Renames hydrogen according to the communitie's conversion tables.
 
 Available conversions:
-    - bmrb/iupac/pdbv3/xplor
-    - pdb old format
+    - bmrb/iupac/pdbv3/amber
+    - xplor
+    - pdbv2
     - ucsf
+    - msi
 
 Usage:
     python pdb_selatom.py -<option> <pdb file>
@@ -176,8 +178,6 @@ xplor = {
     'VAL': ['N', 'CA', 'C', 'O', 'CB', 'CG1', 'CG2', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB', 'HG11', 'HG12', 'HG13', 'HG21', 'HG22', 'HG23', "OT2"],
     }
 
-
-
 convert_table = {
     'bmrb': bmrb,
     'amber': bmrb,
@@ -185,8 +185,8 @@ convert_table = {
     'pdbv2': pdbv2,
     'xplor': xplor,
     'ucsf': ucsf,
+    'msi': msi,
     }
-
 
 
 def check_input(args):
