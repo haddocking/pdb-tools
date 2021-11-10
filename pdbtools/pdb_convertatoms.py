@@ -15,16 +15,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """
-Renames atoms according to the communitie's conversion tables.
+Renames atoms according to the community's conversion tables.
 
 Available conversions:
     - biopython (GSOC2010 Joao)
     - bmrb
+    - cns
     - iupac/pdbv3/amber
     - msi
     - pdbv2
     - ucsf
     - xplor
+
+Some exceptions apply for terminal oxygen atoms (O, OXT, OT1, OT2, O',
+O''). For example, O' will be converted to O, but O won't be converted
+to OT1. This is intrinsic to the loss of information adopted by some
+nomenclatures. Plus, some nomenclatures don't have special cases for
+terminal oxygen atoms. When this is such, the nomenclature of the source
+file is kept and a warning issued.
 
 Usage:
     python pdb_convertatoms.py -<option> <pdb file>
@@ -44,72 +52,72 @@ import os
 
 
 bmrb = {
-    'ALA': ['N', 'CA', 'C', 'O', 'CB', 'H', 'H1', 'H2', 'H3', 'HA', 'HB1', 'HB2', 'HB3', "O''"],
-    'ARG': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'NE', 'CZ', 'NH1', 'NH2', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HG2', 'HG3', 'HD2', 'HD3', 'HE', 'HH11', 'HH12', 'HH21', 'HH22', "O''"],
-    'ASN': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'OD1', 'ND2', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HD21', 'HD22', "O''"],
-    'ASP': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'OD1', 'OD2', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HD2', "O''"],
-    'CYS': ['N', 'CA', 'C', 'O', 'CB', 'SG', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HG', "O''"],
-    'GLN': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'OE1', 'NE2', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HG2', 'HG3', 'HE21', 'HE22', "O''"],
-    'GLU': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'OE1', 'OE2', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HG2', 'HG3', 'HE2', "O''"],
-    'GLY': ['N', 'CA', 'C', 'O', 'H', 'H1', 'H2', 'H3', 'HA2', 'HA3', "O''"],
-    'HIS': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'ND1', 'CD2', 'CE1', 'NE2', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HD1', 'HD2', 'HE1', 'HE2', "O''"],
-    'ILE': ['N', 'CA', 'C', 'O', 'CB', 'CG1', 'CG2', 'CD1', 'H', 'H1', 'H2', 'H3', 'HA', 'HB', 'HG12', 'HG13', 'HG21', 'HG22', 'HG23', 'HD11', 'HD12', 'HD13', "O''"],
-    'LEU': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HG', 'HD11', 'HD12', 'HD13', 'HD21', 'HD22', 'HD23', "O''"],
-    'LYS': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'CE', 'NZ', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HG2', 'HG3', 'HD2', 'HD3', 'HE2', 'HE3', 'HZ1', 'HZ2', 'HZ3', "O''"],
-    'MET': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'SD', 'CE', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HG2', 'HG3', 'HE1', 'HE2', 'HE3', "O''"],
-    'PHE': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'CE1', 'CE2', 'CZ', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HD1', 'HD2', 'HE1', 'HE2', 'HZ', "O''"],
-    'PRO': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HG2', 'HG3', 'HD2', 'HD3', "O''"],
-    'SER': ['N', 'CA', 'C', 'O', 'CB', 'OG', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HG', "O''"],
-    'THR': ['N', 'CA', 'C', 'O', 'CB', 'OG1', 'CG2', 'H', 'H1', 'H2', 'H3', 'HA', 'HB', 'HG1', 'HG21', 'HG22', 'HG23', "O''"],
-    'TRP': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'NE1', 'CE2', 'CE3', 'CZ2', 'CZ3', 'CH2', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HD1', 'HE1', 'HE3', 'HZ2', 'HZ3', 'HH2', "O''"],
-    'TYR': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'CE1', 'CE2', 'CZ', 'OH', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HD1', 'HD2', 'HE1', 'HE2', 'HH', "O''"],
-    'VAL': ['N', 'CA', 'C', 'O', 'CB', 'CG1', 'CG2', 'H', 'H1', 'H2', 'H3', 'HA', 'HB', 'HG11', 'HG12', 'HG13', 'HG21', 'HG22', 'HG23', "O''"],
+    'ALA': ['N', 'CA', 'C', 'O', 'CB', 'H', 'H1', 'H2', 'H3', 'HA', 'HB1', 'HB2', 'HB3', "O'", "O''"],
+    'ARG': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'NE', 'CZ', 'NH1', 'NH2', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HG2', 'HG3', 'HD2', 'HD3', 'HE', 'HH11', 'HH12', 'HH21', 'HH22', "O'", "O''"],
+    'ASN': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'OD1', 'ND2', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HD21', 'HD22', "O'", "O''"],
+    'ASP': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'OD1', 'OD2', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HD2', "O'", "O''"],
+    'CYS': ['N', 'CA', 'C', 'O', 'CB', 'SG', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HG', "O'", "O''"],
+    'GLN': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'OE1', 'NE2', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HG2', 'HG3', 'HE21', 'HE22', "O'", "O''"],
+    'GLU': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'OE1', 'OE2', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HG2', 'HG3', 'HE2', "O'", "O''"],
+    'GLY': ['N', 'CA', 'C', 'O', 'H', 'H1', 'H2', 'H3', 'HA2', 'HA3', "O'", "O''"],
+    'HIS': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'ND1', 'CD2', 'CE1', 'NE2', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HD1', 'HD2', 'HE1', 'HE2', "O'", "O''"],
+    'ILE': ['N', 'CA', 'C', 'O', 'CB', 'CG1', 'CG2', 'CD1', 'H', 'H1', 'H2', 'H3', 'HA', 'HB', 'HG12', 'HG13', 'HG21', 'HG22', 'HG23', 'HD11', 'HD12', 'HD13', "O'", "O''"],
+    'LEU': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HG', 'HD11', 'HD12', 'HD13', 'HD21', 'HD22', 'HD23', "O'", "O''"],
+    'LYS': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'CE', 'NZ', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HG2', 'HG3', 'HD2', 'HD3', 'HE2', 'HE3', 'HZ1', 'HZ2', 'HZ3', "O'", "O''"],
+    'MET': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'SD', 'CE', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HG2', 'HG3', 'HE1', 'HE2', 'HE3', "O'", "O''"],
+    'PHE': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'CE1', 'CE2', 'CZ', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HD1', 'HD2', 'HE1', 'HE2', 'HZ', "O'", "O''"],
+    'PRO': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HG2', 'HG3', 'HD2', 'HD3', "O'", "O''"],
+    'SER': ['N', 'CA', 'C', 'O', 'CB', 'OG', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HG', "O'", "O''"],
+    'THR': ['N', 'CA', 'C', 'O', 'CB', 'OG1', 'CG2', 'H', 'H1', 'H2', 'H3', 'HA', 'HB', 'HG1', 'HG21', 'HG22', 'HG23', "O'", "O''"],
+    'TRP': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'NE1', 'CE2', 'CE3', 'CZ2', 'CZ3', 'CH2', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HD1', 'HE1', 'HE3', 'HZ2', 'HZ3', 'HH2', "O'", "O''"],
+    'TYR': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'CE1', 'CE2', 'CZ', 'OH', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HD1', 'HD2', 'HE1', 'HE2', 'HH', "O'", "O''"],
+    'VAL': ['N', 'CA', 'C', 'O', 'CB', 'CG1', 'CG2', 'H', 'H1', 'H2', 'H3', 'HA', 'HB', 'HG11', 'HG12', 'HG13', 'HG21', 'HG22', 'HG23', "O'", "O''"],
     }
 
 pdbv3 = {
-    'ALA': ['N', 'CA', 'C', 'O', 'CB', 'H', 'H1', 'H2', 'H3', 'HA', 'HB1', 'HB2', 'HB3', "OXT"],
-    'ARG': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'NE', 'CZ', 'NH1', 'NH2', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HG2', 'HG3', 'HD2', 'HD3', 'HE', 'HH11', 'HH12', 'HH21', 'HH22', "OXT"],
-    'ASN': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'OD1', 'ND2', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HD21', 'HD22', "OXT"],
-    'ASP': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'OD1', 'OD2', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HD2', "OXT"],
-    'CYS': ['N', 'CA', 'C', 'O', 'CB', 'SG', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HG', "OXT"],
-    'GLN': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'OE1', 'NE2', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HG2', 'HG3', 'HE21', 'HE22', "OXT"],
-    'GLU': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'OE1', 'OE2', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HG2', 'HG3', 'HE2', "OXT"],
-    'GLY': ['N', 'CA', 'C', 'O', 'H', 'H1', 'H2', 'H3', 'HA2', 'HA3', "OXT"],
-    'HIS': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'ND1', 'CD2', 'CE1', 'NE2', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HD1', 'HD2', 'HE1', 'HE2', "OXT"],
-    'ILE': ['N', 'CA', 'C', 'O', 'CB', 'CG1', 'CG2', 'CD1', 'H', 'H1', 'H2', 'H3', 'HA', 'HB', 'HG12', 'HG13', 'HG21', 'HG22', 'HG23', 'HD11', 'HD12', 'HD13', "OXT"],
-    'LEU': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HG', 'HD11', 'HD12', 'HD13', 'HD21', 'HD22', 'HD23', "OXT"],
-    'LYS': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'CE', 'NZ', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HG2', 'HG3', 'HD2', 'HD3', 'HE2', 'HE3', 'HZ1', 'HZ2', 'HZ3', "OXT"],
-    'MET': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'SD', 'CE', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HG2', 'HG3', 'HE1', 'HE2', 'HE3', "OXT"],
-    'PHE': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'CE1', 'CE2', 'CZ', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HD1', 'HD2', 'HE1', 'HE2', 'HZ', "OXT"],
-    'PRO': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HG2', 'HG3', 'HD2', 'HD3', "OXT"],
-    'SER': ['N', 'CA', 'C', 'O', 'CB', 'OG', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HG', "OXT"],
-    'THR': ['N', 'CA', 'C', 'O', 'CB', 'OG1', 'CG2', 'H', 'H1', 'H2', 'H3', 'HA', 'HB', 'HG1', 'HG21', 'HG22', 'HG23', "OXT"],
-    'TRP': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'NE1', 'CE2', 'CE3', 'CZ2', 'CZ3', 'CH2', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HD1', 'HE1', 'HE3', 'HZ2', 'HZ3', 'HH2', "OXT"],
-    'TYR': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'CE1', 'CE2', 'CZ', 'OH', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HD1', 'HD2', 'HE1', 'HE2', 'HH', "OXT"],
-    'VAL': ['N', 'CA', 'C', 'O', 'CB', 'CG1', 'CG2', 'H', 'H1', 'H2', 'H3', 'HA', 'HB', 'HG11', 'HG12', 'HG13', 'HG21', 'HG22', 'HG23', "OXT"],
+    'ALA': ['N', 'CA', 'C', 'O', 'CB', 'H', 'H1', 'H2', 'H3', 'HA', 'HB1', 'HB2', 'HB3', "O", "OXT"],
+    'ARG': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'NE', 'CZ', 'NH1', 'NH2', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HG2', 'HG3', 'HD2', 'HD3', 'HE', 'HH11', 'HH12', 'HH21', 'HH22', "O", "OXT"],
+    'ASN': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'OD1', 'ND2', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HD21', 'HD22', "O", "OXT"],
+    'ASP': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'OD1', 'OD2', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HD2', "O", "OXT"],
+    'CYS': ['N', 'CA', 'C', 'O', 'CB', 'SG', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HG', "O", "OXT"],
+    'GLN': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'OE1', 'NE2', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HG2', 'HG3', 'HE21', 'HE22', "O", "OXT"],
+    'GLU': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'OE1', 'OE2', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HG2', 'HG3', 'HE2', "O", "OXT"],
+    'GLY': ['N', 'CA', 'C', 'O', 'H', 'H1', 'H2', 'H3', 'HA2', 'HA3', "O", "OXT"],
+    'HIS': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'ND1', 'CD2', 'CE1', 'NE2', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HD1', 'HD2', 'HE1', 'HE2', "O", "OXT"],
+    'ILE': ['N', 'CA', 'C', 'O', 'CB', 'CG1', 'CG2', 'CD1', 'H', 'H1', 'H2', 'H3', 'HA', 'HB', 'HG12', 'HG13', 'HG21', 'HG22', 'HG23', 'HD11', 'HD12', 'HD13', "O", "OXT"],
+    'LEU': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HG', 'HD11', 'HD12', 'HD13', 'HD21', 'HD22', 'HD23', "O", "OXT"],
+    'LYS': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'CE', 'NZ', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HG2', 'HG3', 'HD2', 'HD3', 'HE2', 'HE3', 'HZ1', 'HZ2', 'HZ3', "O", "OXT"],
+    'MET': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'SD', 'CE', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HG2', 'HG3', 'HE1', 'HE2', 'HE3', "O", "OXT"],
+    'PHE': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'CE1', 'CE2', 'CZ', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HD1', 'HD2', 'HE1', 'HE2', 'HZ', "O", "OXT"],
+    'PRO': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HG2', 'HG3', 'HD2', 'HD3', "O", "OXT"],
+    'SER': ['N', 'CA', 'C', 'O', 'CB', 'OG', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HG', "O", "OXT"],
+    'THR': ['N', 'CA', 'C', 'O', 'CB', 'OG1', 'CG2', 'H', 'H1', 'H2', 'H3', 'HA', 'HB', 'HG1', 'HG21', 'HG22', 'HG23', "O", "OXT"],
+    'TRP': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'NE1', 'CE2', 'CE3', 'CZ2', 'CZ3', 'CH2', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HD1', 'HE1', 'HE3', 'HZ2', 'HZ3', 'HH2', "O", "OXT"],
+    'TYR': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'CE1', 'CE2', 'CZ', 'OH', 'H', 'H1', 'H2', 'H3', 'HA', 'HB2', 'HB3', 'HD1', 'HD2', 'HE1', 'HE2', 'HH', "O", "OXT"],
+    'VAL': ['N', 'CA', 'C', 'O', 'CB', 'CG1', 'CG2', 'H', 'H1', 'H2', 'H3', 'HA', 'HB', 'HG11', 'HG12', 'HG13', 'HG21', 'HG22', 'HG23', "O", "OXT"],
     }
 
 biopython = {
-    'ALA': ['N', 'CA', 'C', 'O', 'CB', 'H', '1H', '2H', '3H', 'HA', '1HB', '2HB', '3HB', "O''"],
-    'ARG': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'NE', 'CZ', 'NH1', 'NH2', 'H', '1H', '2H', '3H', 'HA', '2HB', '3HB', '2HG', '3HG', '2HD', '3HD', 'HE', '2HH1', '1HH1', '1HH2', '2HH2', "O''"],
-    'ASN': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'OD1', 'ND2', 'H', '1H', '2H', '3H', 'HA', '2HB', '3HB', '1HD2', '2HD2', "O''"],
-    'ASP': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'OD1', 'OD2', 'H', '1H', '2H', '3H', 'HA', '2HB', '3HB', 'HD2', "O''"],
-    'CYS': ['N', 'CA', 'C', 'O', 'CB', 'SG', 'H', '1H', '2H', '3H', 'HA', '2HB', '3HB', 'HG', "O''"],
-    'GLN': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'OE1', 'NE2', 'H', '1H', '2H', '3H', 'HA', '2HB', '3HB', '2HG', '3HG', '1HE2', '2HE2', "O''"],
-    'GLU': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'OE1', 'OE2', 'H', '1H', '2H', '3H', 'HA', '2HB', '3HB', '2HG', '3HG', 'HE2', "O''"],
-    'GLY': ['N', 'CA', 'C', 'O', 'H', '1H', '2H', '3H', 'HA', '3HA', "O''"],
-    'HIS': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'ND1', 'CD2', 'CE1', 'NE2', 'H', '1H', '2H', '3H', 'HA', '2HB', '3HB', '1HD', '2HD', '1HE', '2HE', "O''"],
-    'ILE': ['N', 'CA', 'C', 'O', 'CB', 'CG1', 'CG2', 'CD1', 'H', '1H', '2H', '3H', 'HA', 'HB', '2HG1', '3HG1', '2HG2', '3HG2', '1HG2', '1HD1', '2HD1', '3HD1', "O''"],
-    'LEU': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'H', '1H', '2H', '3H', 'HA', '2HB', '3HB', 'HG', '1HD1', '2HD1', '3HD1', '1HD2', '2HD2', '3HD2', "O''"],
-    'LYS': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'CE', 'NZ', 'H', '1H', '2H', '3H', 'HA', '2HB', '3HB', '2HG', '3HG', '2HD', '3HD', '2HE', '3HE', '1HZ', '2HZ', '3HZ', "O''"],
-    'MET': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'SD', 'CE', 'H', '1H', '2H', '3H', 'HA', '2HB', '3HB', '2HG', '3HG', '1HE', '2HE', '3HE', "O''"],
-    'PHE': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'CE1', 'CE2', 'CZ', 'H', '1H', '2H', '3H', 'HA', '2HB', '3HB', '1HD', '2HD', '1HE', '2HE', 'HZ', "O''"],
-    'PRO': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'H2', 'H3', 'HA', '2HB', '3HB', '2HG', '3HG', '2HD', '3HD', "O''"],
-    'SER': ['N', 'CA', 'C', 'O', 'CB', 'OG', 'H', '1H', '2H', '3H', 'HA', '2HB', '3HB', 'HG', "O''"],
-    'THR': ['N', 'CA', 'C', 'O', 'CB', 'OG1', 'CG2', 'H', '1H', '2H', '3H', 'HA', 'HB', '1HG', '1HG2', '2HG2', '3HG2', "O''"],
-    'TRP': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'NE1', 'CE2', 'CE3', 'CZ2', 'CZ3', 'CH2', 'H', '1H', '2H', '3H', 'HA', '2HB', '3HB', '1HD', '1HE', '3HE', '2HZ', '3HZ', '2HH', "O''"],
-    'TYR': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'CE1', 'CE2', 'CZ', 'OH', 'H', '1H', '2H', '3H', 'HA', '2HB', '3HB', '1HD', '2HD', '1HE', '2HE', 'HH', "O''"],
-    'VAL': ['N', 'CA', 'C', 'O', 'CB', 'CG1', 'CG2', 'H', '1H', '2H', '3H', 'HA', 'HB', '1HG1', '2HG1', '3HG1', '1HG2', '2HG2', '3HG3', "O''"],
+    'ALA': ['N', 'CA', 'C', 'O', 'CB', 'H', '1H', '2H', '3H', 'HA', '1HB', '2HB', '3HB', "O'", "O''"],
+    'ARG': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'NE', 'CZ', 'NH1', 'NH2', 'H', '1H', '2H', '3H', 'HA', '2HB', '3HB', '2HG', '3HG', '2HD', '3HD', 'HE', '2HH1', '1HH1', '1HH2', '2HH2', "O'", "O''"],
+    'ASN': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'OD1', 'ND2', 'H', '1H', '2H', '3H', 'HA', '2HB', '3HB', '1HD2', '2HD2', "O'", "O''"],
+    'ASP': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'OD1', 'OD2', 'H', '1H', '2H', '3H', 'HA', '2HB', '3HB', 'HD2', "O'", "O''"],
+    'CYS': ['N', 'CA', 'C', 'O', 'CB', 'SG', 'H', '1H', '2H', '3H', 'HA', '2HB', '3HB', 'HG', "O'", "O''"],
+    'GLN': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'OE1', 'NE2', 'H', '1H', '2H', '3H', 'HA', '2HB', '3HB', '2HG', '3HG', '1HE2', '2HE2', "O'", "O''"],
+    'GLU': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'OE1', 'OE2', 'H', '1H', '2H', '3H', 'HA', '2HB', '3HB', '2HG', '3HG', 'HE2', "O'", "O''"],
+    'GLY': ['N', 'CA', 'C', 'O', 'H', '1H', '2H', '3H', 'HA', '3HA', "O'", "O''"],
+    'HIS': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'ND1', 'CD2', 'CE1', 'NE2', 'H', '1H', '2H', '3H', 'HA', '2HB', '3HB', '1HD', '2HD', '1HE', '2HE', "O'", "O''"],
+    'ILE': ['N', 'CA', 'C', 'O', 'CB', 'CG1', 'CG2', 'CD1', 'H', '1H', '2H', '3H', 'HA', 'HB', '2HG1', '3HG1', '2HG2', '3HG2', '1HG2', '1HD1', '2HD1', '3HD1', "O'", "O''"],
+    'LEU': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'H', '1H', '2H', '3H', 'HA', '2HB', '3HB', 'HG', '1HD1', '2HD1', '3HD1', '1HD2', '2HD2', '3HD2', "O'", "O''"],
+    'LYS': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'CE', 'NZ', 'H', '1H', '2H', '3H', 'HA', '2HB', '3HB', '2HG', '3HG', '2HD', '3HD', '2HE', '3HE', '1HZ', '2HZ', '3HZ', "O'", "O''"],
+    'MET': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'SD', 'CE', 'H', '1H', '2H', '3H', 'HA', '2HB', '3HB', '2HG', '3HG', '1HE', '2HE', '3HE', "O'", "O''"],
+    'PHE': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'CE1', 'CE2', 'CZ', 'H', '1H', '2H', '3H', 'HA', '2HB', '3HB', '1HD', '2HD', '1HE', '2HE', 'HZ', "O'", "O''"],
+    'PRO': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'H2', 'H3', 'HA', '2HB', '3HB', '2HG', '3HG', '2HD', '3HD', "O'", "O''"],
+    'SER': ['N', 'CA', 'C', 'O', 'CB', 'OG', 'H', '1H', '2H', '3H', 'HA', '2HB', '3HB', 'HG', "O'", "O''"],
+    'THR': ['N', 'CA', 'C', 'O', 'CB', 'OG1', 'CG2', 'H', '1H', '2H', '3H', 'HA', 'HB', '1HG', '1HG2', '2HG2', '3HG2', "O'", "O''"],
+    'TRP': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'NE1', 'CE2', 'CE3', 'CZ2', 'CZ3', 'CH2', 'H', '1H', '2H', '3H', 'HA', '2HB', '3HB', '1HD', '1HE', '3HE', '2HZ', '3HZ', '2HH', "O'", "O''"],
+    'TYR': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'CE1', 'CE2', 'CZ', 'OH', 'H', '1H', '2H', '3H', 'HA', '2HB', '3HB', '1HD', '2HD', '1HE', '2HE', 'HH', "O'", "O''"],
+    'VAL': ['N', 'CA', 'C', 'O', 'CB', 'CG1', 'CG2', 'H', '1H', '2H', '3H', 'HA', 'HB', '1HG1', '2HG1', '3HG1', '1HG2', '2HG2', '3HG3', "O'", "O''"],
     }
 
 diana = {
@@ -159,95 +167,95 @@ ucsf = {
     }
 
 msi = {
-    'ALA': ['N', 'CA', 'C', 'O', 'CB', 'HN', 'HN1', 'HN2', 'HN3', 'HA', 'HB1', 'HB2', 'HB3' 'OXT'],
-    'ARG': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'NE', 'CZ', 'NH1', 'NH2', 'HN', 'HN1', 'HN2', 'HN3', 'HA', 'HB1', 'HB2', 'HG1', 'HG2', 'HD1', 'HD2', 'HE', 'HH11', 'HH12', 'HH22', 'HH21' 'OXT'],
-    'ASN': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'OD1', 'ND2', 'HN', 'HN1', 'HN2', 'HN3', 'HA', 'HB1', 'HB2', 'HD21', 'HD22' 'OXT'],
-    'ASP': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'OD1', 'OD2', 'HN', 'HN1', 'HN2', 'HN3', 'HA', 'HB1', 'HB2', 'HD2' 'OXT'],
-    'CYS': ['N', 'CA', 'C', 'O', 'CB', 'SG', 'HN', 'HN1', 'HN2', 'HN3', 'HA', 'HB1', 'HB2', 'HG' 'OXT'],
-    'GLN': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'OE1', 'NE2', 'HN', 'HN1', 'HN2', 'HN3', 'HA', 'HB1', 'HB2', 'HG1', 'HG2', 'HE21', 'HE22' 'OXT'],
-    'GLU': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'OE1', 'OE2', 'HN', 'HN1', 'HN2', 'HN3', 'HA', 'HB1', 'HB2', 'HG1', 'HG2', 'HE2' 'OXT'],
-    'GLY': ['N', 'CA', 'C', 'O', 'HN', 'HN1', 'HN2', 'HN3', 'HA1', 'HA2' 'OXT'],
-    'HIS': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'ND1', 'CD2', 'CE1', 'NE2', 'HN', 'HN1', 'HN2', 'HN3', 'HA', 'HB1', 'HB2', 'HD1', 'HD2', 'HE1', 'HE2' 'OXT'],
-    'ILE': ['N', 'CA', 'C', 'O', 'CB', 'CG1', 'CG2', 'CD1', 'HN', 'HN1', 'HN2', 'HN3', 'HA', 'HB', 'HG11', 'HG12', 'HG21', 'HG22', 'HG23', 'HD11', 'HD12', 'HD13' 'OXT'],
-    'LEU': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'HN', 'HN1', 'HN2', 'HN3', 'HA', 'HB1', 'HB2', 'HG', 'HD11', 'HD12', 'HD13', 'HD21', 'HD22', 'HD23' 'OXT'],
-    'LYS': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'CE', 'NZ', 'HN', 'HN1', 'HN2', 'HN3', 'HA', 'HB1', 'HB2', 'HG1', 'HG2', 'HD1', 'HD2', 'HE1', 'HE2', 'HZ1', 'HZ2', 'HZ3' 'OXT'],
-    'MET': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'SD', 'CE', 'HN', 'HN1', 'HN2', 'HN3', 'HA', 'HB1', 'HB2', 'HG1', 'HG2', 'HE1', 'HE2', 'HE3' 'OXT'],
-    'PHE': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'CE1', 'CE2', 'CZ', 'HN', 'HN1', 'HN2', 'HN3', 'HA', 'HB1', 'HB2', 'HD1', 'HD2', 'HE1', 'HE2', 'HZ' 'OXT'],
-    'PRO': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'HN2', 'HN1', 'HA', 'HB1', 'HB2', 'HG1', 'HG2', 'HD2', 'HD1' 'OXT'],
-    'SER': ['N', 'CA', 'C', 'O', 'CB', 'OG', 'HN', 'HN1', 'HN2', 'HN3', 'HA', 'HB1', 'HB2', 'HG' 'OXT'],
-    'THR': ['N', 'CA', 'C', 'O', 'CB', 'OG1', 'CG2', 'HN', 'HN1', 'HN2', 'HN3', 'HA', 'HB', 'HG1', 'HG21', 'HG22', 'HG23' 'OXT'],
-    'TRP': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'NE1', 'CE2', 'CE3', 'CZ2', 'CZ3', 'CH2', 'HN', 'HN1', 'HN2', 'HN3', 'HA', 'HB1', 'HB2', 'HD1', 'HE1', 'HE3', 'HZ2', 'HZ3', 'HH2' 'OXT'],
-    'TYR': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'CE1', 'CE2', 'CZ', 'OH', 'HN', 'HN1', 'HN2', 'HN3', 'HA', 'HB1', 'HB2', 'HD1', 'HD2', 'HE1', 'HE2', 'HH' 'OXT'],
-    'VAL': ['N', 'CA', 'C', 'O', 'CB', 'CG1', 'CG2', 'HN', 'HN1', 'HN2', 'HN3', 'HA', 'HB', 'HG11', 'HG12', 'HG13', 'HG21', 'HG22', 'HG23' 'OXT'],
+    'ALA': ['N', 'CA', 'C', 'O', 'CB', 'HN', 'HN1', 'HN2', 'HN3', 'HA', 'HB1', 'HB2', 'HB3' "O", "OXT"],
+    'ARG': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'NE', 'CZ', 'NH1', 'NH2', 'HN', 'HN1', 'HN2', 'HN3', 'HA', 'HB1', 'HB2', 'HG1', 'HG2', 'HD1', 'HD2', 'HE', 'HH11', 'HH12', 'HH22', 'HH21' "O", "OXT"],
+    'ASN': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'OD1', 'ND2', 'HN', 'HN1', 'HN2', 'HN3', 'HA', 'HB1', 'HB2', 'HD21', 'HD22' "O", "OXT"],
+    'ASP': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'OD1', 'OD2', 'HN', 'HN1', 'HN2', 'HN3', 'HA', 'HB1', 'HB2', 'HD2' "O", "OXT"],
+    'CYS': ['N', 'CA', 'C', 'O', 'CB', 'SG', 'HN', 'HN1', 'HN2', 'HN3', 'HA', 'HB1', 'HB2', 'HG' "O", "OXT"],
+    'GLN': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'OE1', 'NE2', 'HN', 'HN1', 'HN2', 'HN3', 'HA', 'HB1', 'HB2', 'HG1', 'HG2', 'HE21', 'HE22' "O", "OXT"],
+    'GLU': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'OE1', 'OE2', 'HN', 'HN1', 'HN2', 'HN3', 'HA', 'HB1', 'HB2', 'HG1', 'HG2', 'HE2' "O", "OXT"],
+    'GLY': ['N', 'CA', 'C', 'O', 'HN', 'HN1', 'HN2', 'HN3', 'HA1', 'HA2' "O", "OXT"],
+    'HIS': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'ND1', 'CD2', 'CE1', 'NE2', 'HN', 'HN1', 'HN2', 'HN3', 'HA', 'HB1', 'HB2', 'HD1', 'HD2', 'HE1', 'HE2' "O", "OXT"],
+    'ILE': ['N', 'CA', 'C', 'O', 'CB', 'CG1', 'CG2', 'CD1', 'HN', 'HN1', 'HN2', 'HN3', 'HA', 'HB', 'HG11', 'HG12', 'HG21', 'HG22', 'HG23', 'HD11', 'HD12', 'HD13' "O", "OXT"],
+    'LEU': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'HN', 'HN1', 'HN2', 'HN3', 'HA', 'HB1', 'HB2', 'HG', 'HD11', 'HD12', 'HD13', 'HD21', 'HD22', 'HD23' "O", "OXT"],
+    'LYS': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'CE', 'NZ', 'HN', 'HN1', 'HN2', 'HN3', 'HA', 'HB1', 'HB2', 'HG1', 'HG2', 'HD1', 'HD2', 'HE1', 'HE2', 'HZ1', 'HZ2', 'HZ3' "O", "OXT"],
+    'MET': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'SD', 'CE', 'HN', 'HN1', 'HN2', 'HN3', 'HA', 'HB1', 'HB2', 'HG1', 'HG2', 'HE1', 'HE2', 'HE3' "O", "OXT"],
+    'PHE': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'CE1', 'CE2', 'CZ', 'HN', 'HN1', 'HN2', 'HN3', 'HA', 'HB1', 'HB2', 'HD1', 'HD2', 'HE1', 'HE2', 'HZ' "O", "OXT"],
+    'PRO': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'HN2', 'HN1', 'HA', 'HB1', 'HB2', 'HG1', 'HG2', 'HD2', 'HD1' "O", "OXT"],
+    'SER': ['N', 'CA', 'C', 'O', 'CB', 'OG', 'HN', 'HN1', 'HN2', 'HN3', 'HA', 'HB1', 'HB2', 'HG' "O", "OXT"],
+    'THR': ['N', 'CA', 'C', 'O', 'CB', 'OG1', 'CG2', 'HN', 'HN1', 'HN2', 'HN3', 'HA', 'HB', 'HG1', 'HG21', 'HG22', 'HG23' "O", "OXT"],
+    'TRP': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'NE1', 'CE2', 'CE3', 'CZ2', 'CZ3', 'CH2', 'HN', 'HN1', 'HN2', 'HN3', 'HA', 'HB1', 'HB2', 'HD1', 'HE1', 'HE3', 'HZ2', 'HZ3', 'HH2' "O", "OXT"],
+    'TYR': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'CE1', 'CE2', 'CZ', 'OH', 'HN', 'HN1', 'HN2', 'HN3', 'HA', 'HB1', 'HB2', 'HD1', 'HD2', 'HE1', 'HE2', 'HH' "O", "OXT"],
+    'VAL': ['N', 'CA', 'C', 'O', 'CB', 'CG1', 'CG2', 'HN', 'HN1', 'HN2', 'HN3', 'HA', 'HB', 'HG11', 'HG12', 'HG13', 'HG21', 'HG22', 'HG23' "O", "OXT"],
     }
 
 pdbv2 = {
-    'ALA': ['N', 'CA', 'C', 'O', 'CB', 'H', '1H', '2H', '3H', 'HA', '1HB', '2HB', '3HB', "OXT"],
-    'ARG': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'NE', 'CZ', 'NH1', 'NH2', 'H', '1H', '2H', '3H', 'HA', '1HB', '2HB', '1HG', '2HG', '1HD', '2HD', 'HE', '1HH1', '2HH1', '1HH2', '2HH2', "OXT"],
-    'ASN': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'OD1', 'ND2', 'H', '1H', '2H', '3H', 'HA', '1HB', '2HB', '1HD2', '2HD2', "OXT"],
-    'ASP': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'OD1', 'OD2', 'H', '1H', '2H', '3H', 'HA', '1HB', '2HB', '1HD', "OXT"],
-    'CYS': ['N', 'CA', 'C', 'O', 'CB', 'SG', 'H', '1H', '2H', '3H', 'HA', '1HB', '2HB', 'HG', "OXT"],
-    'GLN': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'OE1', 'NE2', 'H', '1H', '2H', '3H', 'HA', '1HB', '2HB', '1HG', '2HG', '1HE2', '2HE2', "OXT"],
-    'GLU': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'OE1', 'OE2', 'H', '1H', '2H', '3H', 'HA', '1HB', '2HB', '1HG', '2HG', '1HE', "OXT"],
-    'GLY': ['N', 'CA', 'C', 'O', 'H', '1H', '2H', '3H', '1HA', '2HA', "OXT"],
-    'HIS': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'ND1', 'CD2', 'CE1', 'NE2', 'H', '1H', '2H', '3H', 'HA', '1HB', '2HB', 'HD1', 'HD2', 'HE1', 'HE2', "OXT"],
-    'ILE': ['N', 'CA', 'C', 'O', 'CB', 'CG1', 'CG2', 'CD1', 'H', '1H', '2H', '3H', 'HA', 'HB', '1HG1', '2HG1', '1HG2', '2HG2', '3HG2', '1HD1', '2HD1', '3HD1', "OXT"],
-    'LEU': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'H', '1H', '2H', '3H', 'HA', '1HB', '2HB', 'HG', '1HD1', '2HD1', '3HD1', '1HD2', '2HD2', '3HD2', "OXT"],
-    'LYS': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'CE', 'NZ', 'H', '1H', '2H', '3H', 'HA', '1HB', '2HB', '1HG', '2HG', '1HD', '2HD', '1HE', '2HE', '1HZ', '2HZ', '3HZ', "OXT"],
-    'MET': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'SD', 'CE', 'H', '1H', '2H', '3H', 'HA', '1HB', '2HB', '1HG', '2HG', '1HE', '2HE', '3HE', "OXT"],
-    'PHE': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'CE1', 'CE2', 'CZ', 'H', '1H', '2H', '3H', 'HA', '1HB', '2HB', 'HD1', 'HD2', 'HE1', 'HE2', 'HZ', "OXT"],
-    'PRO': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'HA', 'H2', 'H1', '1HB', '2HB', '1HG', '2HG', '1HD', '2HD', "OXT"],
-    'SER': ['N', 'CA', 'C', 'O', 'CB', 'OG', 'H', '1H', '2H', '3H', 'HA', '1HB', '2HB', 'HG', "OXT"],
-    'THR': ['N', 'CA', 'C', 'O', 'CB', 'OG1', 'CG2', 'H', '1H', '2H', '3H', 'HA', 'HB', 'HG1', '1HG2', '2HG2', '3HG2', "OXT"],
-    'TRP': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'NE1', 'CE2', 'CE3', 'CZ2', 'CZ3', 'CH2', 'H', '1H', '2H', '3H', 'HA', '1HB', '2HB', 'HD1', 'HE1', 'HE3', 'HZ2', 'HZ3', 'HH2', "OXT"],
-    'TYR': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'CE1', 'CE2', 'CZ', 'OH', 'H', '1H', '2H', '3H', 'HA', '1HB', '2HB', 'HD1', 'HD2', 'HE1', 'HE2', 'HH', "OXT"],
-    'VAL': ['N', 'CA', 'C', 'O', 'CB', 'CG1', 'CG2', 'H', '1H', '2H', '3H', 'HA', 'HB', '1HG1', '2HG1', '3HG1', '1HG2', '2HG2', '3HG2', "OXT"],
+    'ALA': ['N', 'CA', 'C', 'O', 'CB', 'H', '1H', '2H', '3H', 'HA', '1HB', '2HB', '3HB', "O", "OXT"],
+    'ARG': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'NE', 'CZ', 'NH1', 'NH2', 'H', '1H', '2H', '3H', 'HA', '1HB', '2HB', '1HG', '2HG', '1HD', '2HD', 'HE', '1HH1', '2HH1', '1HH2', '2HH2', "O", "OXT"],
+    'ASN': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'OD1', 'ND2', 'H', '1H', '2H', '3H', 'HA', '1HB', '2HB', '1HD2', '2HD2', "O", "OXT"],
+    'ASP': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'OD1', 'OD2', 'H', '1H', '2H', '3H', 'HA', '1HB', '2HB', '1HD', "O", "OXT"],
+    'CYS': ['N', 'CA', 'C', 'O', 'CB', 'SG', 'H', '1H', '2H', '3H', 'HA', '1HB', '2HB', 'HG', "O", "OXT"],
+    'GLN': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'OE1', 'NE2', 'H', '1H', '2H', '3H', 'HA', '1HB', '2HB', '1HG', '2HG', '1HE2', '2HE2', "O", "OXT"],
+    'GLU': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'OE1', 'OE2', 'H', '1H', '2H', '3H', 'HA', '1HB', '2HB', '1HG', '2HG', '1HE', "O", "OXT"],
+    'GLY': ['N', 'CA', 'C', 'O', 'H', '1H', '2H', '3H', '1HA', '2HA', "O", "OXT"],
+    'HIS': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'ND1', 'CD2', 'CE1', 'NE2', 'H', '1H', '2H', '3H', 'HA', '1HB', '2HB', 'HD1', 'HD2', 'HE1', 'HE2', "O", "OXT"],
+    'ILE': ['N', 'CA', 'C', 'O', 'CB', 'CG1', 'CG2', 'CD1', 'H', '1H', '2H', '3H', 'HA', 'HB', '1HG1', '2HG1', '1HG2', '2HG2', '3HG2', '1HD1', '2HD1', '3HD1', "O", "OXT"],
+    'LEU': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'H', '1H', '2H', '3H', 'HA', '1HB', '2HB', 'HG', '1HD1', '2HD1', '3HD1', '1HD2', '2HD2', '3HD2', "O", "OXT"],
+    'LYS': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'CE', 'NZ', 'H', '1H', '2H', '3H', 'HA', '1HB', '2HB', '1HG', '2HG', '1HD', '2HD', '1HE', '2HE', '1HZ', '2HZ', '3HZ', "O", "OXT"],
+    'MET': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'SD', 'CE', 'H', '1H', '2H', '3H', 'HA', '1HB', '2HB', '1HG', '2HG', '1HE', '2HE', '3HE', "O", "OXT"],
+    'PHE': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'CE1', 'CE2', 'CZ', 'H', '1H', '2H', '3H', 'HA', '1HB', '2HB', 'HD1', 'HD2', 'HE1', 'HE2', 'HZ', "O", "OXT"],
+    'PRO': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'HA', 'H2', 'H1', '1HB', '2HB', '1HG', '2HG', '1HD', '2HD', "O", "OXT"],
+    'SER': ['N', 'CA', 'C', 'O', 'CB', 'OG', 'H', '1H', '2H', '3H', 'HA', '1HB', '2HB', 'HG', "O", "OXT"],
+    'THR': ['N', 'CA', 'C', 'O', 'CB', 'OG1', 'CG2', 'H', '1H', '2H', '3H', 'HA', 'HB', 'HG1', '1HG2', '2HG2', '3HG2', "O", "OXT"],
+    'TRP': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'NE1', 'CE2', 'CE3', 'CZ2', 'CZ3', 'CH2', 'H', '1H', '2H', '3H', 'HA', '1HB', '2HB', 'HD1', 'HE1', 'HE3', 'HZ2', 'HZ3', 'HH2', "O", "OXT"],
+    'TYR': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'CE1', 'CE2', 'CZ', 'OH', 'H', '1H', '2H', '3H', 'HA', '1HB', '2HB', 'HD1', 'HD2', 'HE1', 'HE2', 'HH', "O", "OXT"],
+    'VAL': ['N', 'CA', 'C', 'O', 'CB', 'CG1', 'CG2', 'H', '1H', '2H', '3H', 'HA', 'HB', '1HG1', '2HG1', '3HG1', '1HG2', '2HG2', '3HG2', "O", "OXT"],
     }
 
 xplor = {
-    'ALA': ['N', 'CA', 'C', 'O', 'CB', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB1', 'HB3', 'HB3', "OT2"],
-    'ARG': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'NE', 'CZ', 'NH1', 'NH2', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB2', 'HB1', 'HG2', 'HG1', 'HD2', 'HD1', 'HE', 'HH11', 'HH12', 'HH21', 'HH22', "OT2"],
-    'ASN': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'OD1', 'ND2', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB2', 'HB1', 'HD21', 'HD22', "OT2"],
-    'ASP': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'OD1', 'OD2', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB2', 'HB1', 'HD2', "OT2"],
-    'CYS': ['N', 'CA', 'C', 'O', 'CB', 'SG', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB2', 'HB1', 'HG', "OT2"],
-    'GLN': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'OE1', 'NE2', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB2', 'HB1', 'HG2', 'HG1', 'HE21', 'HE22', "OT2"],
-    'GLU': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'OE1', 'OE2', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB2', 'HB1', 'HG2', 'HG1', 'HE2', "OT2"],
-    'GLY': ['N', 'CA', 'C', 'O', 'HN', 'HT1', 'HT2', 'HT3', 'HA2', 'HA1', "OT2"],
-    'HIS': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'ND1', 'CD2', 'CE1', 'NE2', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB2', 'HB1', 'HD2', 'HD1', 'HE1', 'HE2', "OT2"],
-    'ILE': ['N', 'CA', 'C', 'O', 'CB', 'CG1', 'CG2', 'CD1', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB', 'HG12', 'HG11', 'HG21', 'HG22', 'HG23', 'HD11', 'HD12', 'HD13', "OT2"],
-    'LEU': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB2', 'HB1', 'HG', 'HD11', 'HD12', 'HD13', 'HD21', 'HD22', 'HD23', "OT2"],
-    'LYS': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'CE', 'NZ', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB2', 'HB1', 'HG2', 'HG1', 'HD2', 'HD1', 'HE2', 'HE1', 'HZ1', 'HZ2', 'HZ3', "OT2"],
-    'MET': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'SD', 'CE', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB2', 'HB1', 'HG2', 'HG1', 'HE1', 'HE2', 'HE3', "OT2"],
-    'PHE': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'CE1', 'CE2', 'CZ', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB2', 'HB1', 'HD2', 'HD1', 'HE1', 'HE2', 'HZ', "OT2"],
-    'PRO': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'HA', 'HT2', 'HT1', 'HB2', 'HB1', 'HG2', 'HG1', 'HD2', 'HD1', "OT2"],
-    'SER': ['N', 'CA', 'C', 'O', 'CB', 'OG', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB2', 'HB1', 'HG', "OT2"],
-    'THR': ['N', 'CA', 'C', 'O', 'CB', 'OG1', 'CG2', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB', 'HG1', 'HG21', 'HG22', 'HG23', "OT2"],
-    'TRP': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'NE1', 'CE2', 'CE3', 'CZ2', 'CZ3', 'CH2', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB2', 'HB1', 'HD1', 'HE1', 'HE3', 'HZ2', 'HZ3', 'HH2', "OT2"],
-    'TYR': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'CE1', 'CE2', 'CZ', 'OH', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB2', 'HB1', 'HD2', 'HD1', 'HE1', 'HE2', 'HH', "OT2"],
-    'VAL': ['N', 'CA', 'C', 'O', 'CB', 'CG1', 'CG2', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB', 'HG11', 'HG12', 'HG13', 'HG21', 'HG22', 'HG23', "OT2"],
+    'ALA': ['N', 'CA', 'C', 'O', 'CB', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB1', 'HB3', 'HB3', "OT1", "OT2"],
+    'ARG': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'NE', 'CZ', 'NH1', 'NH2', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB2', 'HB1', 'HG2', 'HG1', 'HD2', 'HD1', 'HE', 'HH11', 'HH12', 'HH21', 'HH22', "OT1", "OT2"],
+    'ASN': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'OD1', 'ND2', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB2', 'HB1', 'HD21', 'HD22', "OT1", "OT2"],
+    'ASP': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'OD1', 'OD2', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB2', 'HB1', 'HD2', "OT1", "OT2"],
+    'CYS': ['N', 'CA', 'C', 'O', 'CB', 'SG', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB2', 'HB1', 'HG', "OT1", "OT2"],
+    'GLN': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'OE1', 'NE2', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB2', 'HB1', 'HG2', 'HG1', 'HE21', 'HE22', "OT1", "OT2"],
+    'GLU': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'OE1', 'OE2', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB2', 'HB1', 'HG2', 'HG1', 'HE2', "OT1", "OT2"],
+    'GLY': ['N', 'CA', 'C', 'O', 'HN', 'HT1', 'HT2', 'HT3', 'HA2', 'HA1', "OT1", "OT2"],
+    'HIS': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'ND1', 'CD2', 'CE1', 'NE2', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB2', 'HB1', 'HD2', 'HD1', 'HE1', 'HE2', "OT1", "OT2"],
+    'ILE': ['N', 'CA', 'C', 'O', 'CB', 'CG1', 'CG2', 'CD1', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB', 'HG12', 'HG11', 'HG21', 'HG22', 'HG23', 'HD11', 'HD12', 'HD13', "OT1", "OT2"],
+    'LEU': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB2', 'HB1', 'HG', 'HD11', 'HD12', 'HD13', 'HD21', 'HD22', 'HD23', "OT1", "OT2"],
+    'LYS': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'CE', 'NZ', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB2', 'HB1', 'HG2', 'HG1', 'HD2', 'HD1', 'HE2', 'HE1', 'HZ1', 'HZ2', 'HZ3', "OT1", "OT2"],
+    'MET': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'SD', 'CE', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB2', 'HB1', 'HG2', 'HG1', 'HE1', 'HE2', 'HE3', "OT1", "OT2"],
+    'PHE': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'CE1', 'CE2', 'CZ', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB2', 'HB1', 'HD2', 'HD1', 'HE1', 'HE2', 'HZ', "OT1", "OT2"],
+    'PRO': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'HA', 'HT2', 'HT1', 'HB2', 'HB1', 'HG2', 'HG1', 'HD2', 'HD1', "OT1", "OT2"],
+    'SER': ['N', 'CA', 'C', 'O', 'CB', 'OG', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB2', 'HB1', 'HG', "OT1", "OT2"],
+    'THR': ['N', 'CA', 'C', 'O', 'CB', 'OG1', 'CG2', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB', 'HG1', 'HG21', 'HG22', 'HG23', "OT1", "OT2"],
+    'TRP': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'NE1', 'CE2', 'CE3', 'CZ2', 'CZ3', 'CH2', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB2', 'HB1', 'HD1', 'HE1', 'HE3', 'HZ2', 'HZ3', 'HH2', "OT1", "OT2"],
+    'TYR': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'CE1', 'CE2', 'CZ', 'OH', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB2', 'HB1', 'HD2', 'HD1', 'HE1', 'HE2', 'HH', "OT1", "OT2"],
+    'VAL': ['N', 'CA', 'C', 'O', 'CB', 'CG1', 'CG2', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB', 'HG11', 'HG12', 'HG13', 'HG21', 'HG22', 'HG23', "OT1", "OT2"],
     }
 
 cns = {
-    'ALA': ['N', 'CA', 'C', 'O', 'CB', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB1', 'HB2', 'HB3', "OXT"],
-    'ARG': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'NE', 'CZ', 'NH1', 'NH2', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB1', 'HB2', 'HG1', 'HG2', 'HD1', 'HD2', 'HE', 'HH11', 'HH12', 'HH21', 'HH22', "OXT"],
-    'ASN': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'OD1', 'ND2', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB1', 'HB2', 'HD21', 'HD22', "OXT"],
-    'ASP': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'OD1', 'OD2', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB1', 'HB2', 'HD2', "OXT"],
-    'CYS': ['N', 'CA', 'C', 'O', 'CB', 'SG', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB1', 'HB2', 'HG', "OXT"],
-    'GLN': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'OE1', 'NE2', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB1', 'HB2', 'HG1', 'HG2', 'HE21', 'HE22', "OXT"],
-    'GLU': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'OE1', 'OE2', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB1', 'HB2', 'HG1', 'HG2', 'HE2', "OXT"],
-    'GLY': ['N', 'CA', 'C', 'O', 'HN', 'HT1', 'HT2', 'HT3', 'HA2', 'HA1', "OXT"],
-    'HIS': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'ND1', 'CD2', 'CE1', 'NE2', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB1', 'HB2', 'HD1', 'HD2', 'HE1', 'HE2', "OXT"],
-    'ILE': ['N', 'CA', 'C', 'O', 'CB', 'CG1', 'CG2', 'CD1', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB', 'HG12', 'HG11', 'HG21', 'HG22', 'HG23', 'HD11', 'HD12', 'HD13', "OXT"],
-    'LEU': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB1', 'HB2', 'HG', 'HD11', 'HD12', 'HD13', 'HD21', 'HD22', 'HD23', "OXT"],
-    'LYS': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'CE', 'NZ', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB1', 'HB2', 'HG1', 'HG2', 'HD1', 'HD2', 'HE2', 'HE1', 'HZ1', 'HZ2', 'HZ3', "OXT"],
-    'MET': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'SD', 'CE', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB1', 'HB2', 'HG1', 'HG2', 'HE1', 'HE2', 'HE3', "OXT"],
-    'PHE': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'CE1', 'CE2', 'CZ', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB1', 'HB2', 'HD1', 'HD2', 'HE1', 'HE2', 'HZ', "OXT"],
-    'PRO': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'HA', 'HT2', 'HT1', 'HB1', 'HB2', 'HG1', 'HG2', 'HD1', 'HD2', "OXT"],
-    'SER': ['N', 'CA', 'C', 'O', 'CB', 'OG', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB1', 'HB2', 'HG', "OXT"],
-    'THR': ['N', 'CA', 'C', 'O', 'CB', 'OG1', 'CG2', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB', 'HG1', 'HG21', 'HG22', 'HG23', "OXT"],
-    'TRP': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'NE1', 'CE2', 'CE3', 'CZ2', 'CZ3', 'CH2', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB1', 'HB2', 'HD1', 'HE1', 'HE3', 'HZ2', 'HZ3', 'HH2', "OXT"],
-    'TYR': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'CE1', 'CE2', 'CZ', 'OH', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB1', 'HB2', 'HD1', 'HD2', 'HE1', 'HE2', 'HH', "OXT"],
-    'VAL': ['N', 'CA', 'C', 'O', 'CB', 'CG1', 'CG2', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB', 'HG11', 'HG12', 'HG13', 'HG21', 'HG22', 'HG23', "OXT"],
+    'ALA': ['N', 'CA', 'C', 'O', 'CB', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB1', 'HB2', 'HB3', "O", "OXT"],
+    'ARG': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'NE', 'CZ', 'NH1', 'NH2', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB1', 'HB2', 'HG1', 'HG2', 'HD1', 'HD2', 'HE', 'HH11', 'HH12', 'HH21', 'HH22', "O", "OXT"],
+    'ASN': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'OD1', 'ND2', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB1', 'HB2', 'HD21', 'HD22', "O", "OXT"],
+    'ASP': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'OD1', 'OD2', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB1', 'HB2', 'HD2', "O", "OXT"],
+    'CYS': ['N', 'CA', 'C', 'O', 'CB', 'SG', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB1', 'HB2', 'HG', "O", "OXT"],
+    'GLN': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'OE1', 'NE2', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB1', 'HB2', 'HG1', 'HG2', 'HE21', 'HE22', "O", "OXT"],
+    'GLU': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'OE1', 'OE2', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB1', 'HB2', 'HG1', 'HG2', 'HE2', "O", "OXT"],
+    'GLY': ['N', 'CA', 'C', 'O', 'HN', 'HT1', 'HT2', 'HT3', 'HA2', 'HA1', "O", "OXT"],
+    'HIS': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'ND1', 'CD2', 'CE1', 'NE2', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB1', 'HB2', 'HD1', 'HD2', 'HE1', 'HE2', "O", "OXT"],
+    'ILE': ['N', 'CA', 'C', 'O', 'CB', 'CG1', 'CG2', 'CD1', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB', 'HG12', 'HG11', 'HG21', 'HG22', 'HG23', 'HD11', 'HD12', 'HD13', "O", "OXT"],
+    'LEU': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB1', 'HB2', 'HG', 'HD11', 'HD12', 'HD13', 'HD21', 'HD22', 'HD23', "O", "OXT"],
+    'LYS': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'CE', 'NZ', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB1', 'HB2', 'HG1', 'HG2', 'HD1', 'HD2', 'HE2', 'HE1', 'HZ1', 'HZ2', 'HZ3', "O", "OXT"],
+    'MET': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'SD', 'CE', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB1', 'HB2', 'HG1', 'HG2', 'HE1', 'HE2', 'HE3', "O", "OXT"],
+    'PHE': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'CE1', 'CE2', 'CZ', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB1', 'HB2', 'HD1', 'HD2', 'HE1', 'HE2', 'HZ', "O", "OXT"],
+    'PRO': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'HA', 'HT2', 'HT1', 'HB1', 'HB2', 'HG1', 'HG2', 'HD1', 'HD2', "O", "OXT"],
+    'SER': ['N', 'CA', 'C', 'O', 'CB', 'OG', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB1', 'HB2', 'HG', "O", "OXT"],
+    'THR': ['N', 'CA', 'C', 'O', 'CB', 'OG1', 'CG2', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB', 'HG1', 'HG21', 'HG22', 'HG23', "O", "OXT"],
+    'TRP': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'NE1', 'CE2', 'CE3', 'CZ2', 'CZ3', 'CH2', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB1', 'HB2', 'HD1', 'HE1', 'HE3', 'HZ2', 'HZ3', 'HH2', "O", "OXT"],
+    'TYR': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'CE1', 'CE2', 'CZ', 'OH', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB1', 'HB2', 'HD1', 'HD2', 'HE1', 'HE2', 'HH', "O", "OXT"],
+    'VAL': ['N', 'CA', 'C', 'O', 'CB', 'CG1', 'CG2', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB', 'HG11', 'HG12', 'HG13', 'HG21', 'HG22', 'HG23', "O", "OXT"],
     }
 
 convert_table = {
@@ -256,6 +264,7 @@ convert_table = {
     'biopython': biopython,
     'bmrb': bmrb,
     'cns': cns,
+    'iupac': pdbv3,
     'msi': msi,
     'pdbv2': pdbv2,
     'pdbv3': pdbv3,
@@ -323,10 +332,21 @@ def run(fhandle, option):
     Renames hydrogen according to the communitie's conversion tables.
 
     Available conversions:
-        - bmrb/iupac/pdbv3
-        - xplor
-        - pdb old format
+        - biopython (GSOC2010 Joao)
+        - bmrb
+        - cns
+        - iupac/pdbv3/amber
+        - msi
+        - pdbv2
         - ucsf
+        - xplor
+
+    Some exceptions apply for terminal oxygen atoms (O, OXT, OT1, OT2, O',
+    O''). For example, O' will be converted to O, but O won't be converted
+    to OT1. This is intrinsic to the loss of information adopted by some
+    nomenclatures. Plus, some nomenclatures don't have special cases for
+    terminal oxygen atoms. When this is such, the nomenclature of the source
+    file is kept and a warning issued.
 
     This function is a generator.
 
@@ -357,14 +377,14 @@ def run(fhandle, option):
                     try:
                         idx = convention[residue].index(atom_source)
 
-                    except ValueError:
+                    except ValueError:  # atom not found in convention
                         continue
 
-                    except KeyError:
+                    except KeyError:  # residue not from the 20 natural aa
                         yield line
                         break
 
-                    else:
+                    else:  # atom found
                         new_atom = convert_table[option][residue][idx]
                         break
                 else:
