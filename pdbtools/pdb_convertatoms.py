@@ -205,13 +205,13 @@ pdbv2 = {
     }
 
 xplor = {
-    'ALA': ['N', 'CA', 'C', 'O', 'CB', 'HN', 'HT1', 'HT2', 'HT3', 'HA', '1HB', '2HB', '3HB', "OT2"],
+    'ALA': ['N', 'CA', 'C', 'O', 'CB', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB2', 'HB1', '3HB', "OT2"],
     'ARG': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'NE', 'CZ', 'NH1', 'NH2', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB2', 'HB1', 'HG2', 'HG1', 'HD2', 'HD1', 'HE', 'HH11', 'HH12', 'HH21', 'HH22', "OT2"],
     'ASN': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'OD1', 'ND2', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB2', 'HB1', 'HD21', 'HD22', "OT2"],
-    'ASP': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'OD1', 'OD2', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB2', 'HB1', 'HD1', "OT2"],
+    'ASP': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'OD1', 'OD2', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB2', 'HB1', 'HD2', "OT2"],
     'CYS': ['N', 'CA', 'C', 'O', 'CB', 'SG', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB2', 'HB1', 'HG', "OT2"],
     'GLN': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'OE1', 'NE2', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB2', 'HB1', 'HG2', 'HG1', 'HE21', 'HE22', "OT2"],
-    'GLU': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'OE1', 'OE2', 'HN', 'HT1', 'HT2', 'HT3', 'HA', '1HB', '2HB', '1HG', '2HG', '1HE', "OT2"],
+    'GLU': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'OE1', 'OE2', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB2', 'HB1', 'HG2', 'HG1', 'HE2', "OT2"],
     'GLY': ['N', 'CA', 'C', 'O', 'HN', 'HT1', 'HT2', 'HT3', 'HA2', 'HA1', "OT2"],
     'HIS': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'ND1', 'CD2', 'CE1', 'NE2', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB2', 'HB1', 'HD1', 'HD2', 'HE1', 'HE2', "OT2"],
     'ILE': ['N', 'CA', 'C', 'O', 'CB', 'CG1', 'CG2', 'CD1', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB', 'HG12', 'HG11', 'HG21', 'HG22', 'HG23', 'HD11', 'HD12', 'HD13', "OT2"],
@@ -227,15 +227,41 @@ xplor = {
     'VAL': ['N', 'CA', 'C', 'O', 'CB', 'CG1', 'CG2', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB', 'HG11', 'HG12', 'HG13', 'HG21', 'HG22', 'HG23', "OT2"],
     }
 
+cns = {
+    'ALA': ['N', 'CA', 'C', 'O', 'CB', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB2', 'HB1', '3HB', "OXT"],
+    'ARG': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'NE', 'CZ', 'NH1', 'NH2', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB2', 'HB1', 'HG2', 'HG1', 'HD2', 'HD1', 'HE', 'HH11', 'HH12', 'HH21', 'HH22', "OXT"],
+    'ASN': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'OD1', 'ND2', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB2', 'HB1', 'HD21', 'HD22', "OXT"],
+    'ASP': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'OD1', 'OD2', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB2', 'HB1', 'HD2', "OXT"],
+    'CYS': ['N', 'CA', 'C', 'O', 'CB', 'SG', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB2', 'HB1', 'HG', "OXT"],
+    'GLN': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'OE1', 'NE2', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB2', 'HB1', 'HG2', 'HG1', 'HE21', 'HE22', "OXT"],
+    'GLU': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'OE1', 'OE2', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB2', 'HB1', 'HG2', 'HG1', 'HE2', "OXT"],
+    'GLY': ['N', 'CA', 'C', 'O', 'HN', 'HT1', 'HT2', 'HT3', 'HA2', 'HA1', "OXT"],
+    'HIS': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'ND1', 'CD2', 'CE1', 'NE2', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB2', 'HB1', 'HD1', 'HD2', 'HE1', 'HE2', "OXT"],
+    'ILE': ['N', 'CA', 'C', 'O', 'CB', 'CG1', 'CG2', 'CD1', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB', 'HG12', 'HG11', 'HG21', 'HG22', 'HG23', 'HD11', 'HD12', 'HD13', "OXT"],
+    'LEU': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB2', 'HB1', 'HG', 'HD11', 'HD12', 'HD13', 'HD21', 'HD22', 'HD23', "OXT"],
+    'LYS': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'CE', 'NZ', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB2', 'HB1', 'HG2', 'HG1', 'HD2', 'HD1', 'HE2', 'HE1', 'HZ1', 'HZ2', 'HZ3', "OXT"],
+    'MET': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'SD', 'CE', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB2', 'HB1', 'HG2', 'HG1', 'HE1', 'HE2', 'HE3', "OXT"],
+    'PHE': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'CE1', 'CE2', 'CZ', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB2', 'HB1', 'HD1', 'HD2', 'HE1', 'HE2', 'HZ', "OXT"],
+    'PRO': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD', 'HA', 'HT2', 'HT1', 'HB2', 'HB1', 'HG2', 'HG1', 'HD2', 'HD1', "OXT"],
+    'SER': ['N', 'CA', 'C', 'O', 'CB', 'OG', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB2', 'HB1', 'HG', "OXT"],
+    'THR': ['N', 'CA', 'C', 'O', 'CB', 'OG1', 'CG2', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB', 'HG1', 'HG21', 'HG22', 'HG23', "OXT"],
+    'TRP': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'NE1', 'CE2', 'CE3', 'CZ2', 'CZ3', 'CH2', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB2', 'HB1', 'HD1', 'HE1', 'HE3', 'HZ2', 'HZ3', 'HH2', "OXT"],
+    'TYR': ['N', 'CA', 'C', 'O', 'CB', 'CG', 'CD1', 'CD2', 'CE1', 'CE2', 'CZ', 'OH', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB2', 'HB1', 'HD1', 'HD2', 'HE1', 'HE2', 'HH', "OXT"],
+    'VAL': ['N', 'CA', 'C', 'O', 'CB', 'CG1', 'CG2', 'HN', 'HT1', 'HT2', 'HT3', 'HA', 'HB', 'HG11', 'HG12', 'HG13', 'HG21', 'HG22', 'HG23', "OXT"],
+    }
+
 convert_table = {
-    'bmrb': bmrb,
+
     'amber': pdbv3,
-    'pdbv3': pdbv3,
-    'pdbv2': pdbv2,
-    'xplor': xplor,
-    'ucsf': ucsf,
-    'msi': msi,
     'biopython': biopython,
+    'bmrb': bmrb,
+    'cns': cns,
+    'msi': msi,
+    'pdbv2': pdbv2,
+    'pdbv3': pdbv3,
+    'ucsf': ucsf,
+    'xplor': xplor,
+
     }
 
 
