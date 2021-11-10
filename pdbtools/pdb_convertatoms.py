@@ -368,6 +368,7 @@ def run(fhandle, option):
             residue = line[17:20].strip().upper()
 
             # non-canonical residue or other element
+            # we wrote 'bmrb' but it could be any other
             if residue not in bmrb:
                 yield line
                 continue
@@ -393,14 +394,19 @@ def run(fhandle, option):
                         'Using same name.{}'
                         )
                     sys.stderr.write(_warn.format(atom_source, os.linesep))
-                    new_atom = atom_source
+                    yield line
+                    continue
 
                 if 1 <= len(new_atom) <= 3:
                     new_atom = ' {:<3s}'.format(new_atom)
                 elif len(new_atom) == 4:
                     new_atom  = '{:<4s}'.format(new_atom)
                 else:
-                    raise ValueError('Something went very badly')
+                    raise ValueError(
+                        'Something went very badly. '
+                        'Contact us: '
+                        'http://github.com/haddocking/pdb-tools/issues.'
+                        )
 
                 line = line[:12] + new_atom + line[16:]
 
