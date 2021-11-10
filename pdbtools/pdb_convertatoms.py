@@ -395,7 +395,7 @@ def run(fhandle, option):
                         )
                     sys.stderr.write(_warn.format(atom_source, os.linesep))
                     yield line
-                    continue
+                    continue  # go back to the main for loop
 
                 if 1 <= len(new_atom) <= 3:
                     new_atom = ' {:<3s}'.format(new_atom)
