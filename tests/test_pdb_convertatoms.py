@@ -51,8 +51,128 @@ class TestTool(unittest.TestCase):
 
         return
 
-    def test_one_option(self):
-        """$ pdb_convertatoms -HG2,XXX data/dummy.pdb"""
+    def test_atom_max_4_chars(self):
+        """Test if all atoms have at most 4 chars."""
+        for name, convention in convert_table.items():
+            for residue, list_of_atoms in convention.items():
+                for atom in list_of_atoms:
+                    self.assertTrue(1 <= len(atom) <= 4, msg=atom)
+
+
+    def test_amber(self):
+        """$ pdb_convertatoms -amber data/dummy.pdb"""
+
+        # Simulate input
+        sys.argv = ['', '-amber', os.path.join(data_dir, 'dummy.pdb')]
+
+        # Execute the script
+        self.exec_module()
+
+        # Validate results
+        self.assertEqual(self.retcode, 0)  # ensure the program exited OK.
+        self.assertEqual(len(self.stdout), 204)  # all file lines
+        self.assertEqual(len(self.stderr), 0)  # no errors
+
+    def test_biopython(self):
+        """$ pdb_convertatoms -biopython data/dummy.pdb"""
+
+        # Simulate input
+        sys.argv = ['', '-biopython', os.path.join(data_dir, 'dummy.pdb')]
+
+        # Execute the script
+        self.exec_module()
+
+        # Validate results
+        self.assertEqual(self.retcode, 0)  # ensure the program exited OK.
+        self.assertEqual(len(self.stdout), 204)  # all file lines
+        self.assertEqual(len(self.stderr), 0)  # no errors
+
+    def test_bmrb(self):
+        """$ pdb_convertatoms -bmrb data/dummy.pdb"""
+
+        # Simulate input
+        sys.argv = ['', '-bmrb', os.path.join(data_dir, 'dummy.pdb')]
+
+        # Execute the script
+        self.exec_module()
+
+        # Validate results
+        self.assertEqual(self.retcode, 0)  # ensure the program exited OK.
+        self.assertEqual(len(self.stdout), 204)  # all file lines
+        self.assertEqual(len(self.stderr), 0)  # no errors
+
+    def test_cns(self):
+        """$ pdb_convertatoms -cns data/dummy.pdb"""
+
+        # Simulate input
+        sys.argv = ['', '-cns', os.path.join(data_dir, 'dummy.pdb')]
+
+        # Execute the script
+        self.exec_module()
+
+        # Validate results
+        self.assertEqual(self.retcode, 0)  # ensure the program exited OK.
+        self.assertEqual(len(self.stdout), 204)  # all file lines
+        self.assertEqual(len(self.stderr), 0)  # no errors
+
+    def test_iupac(self):
+        """$ pdb_convertatoms -iupac data/dummy.pdb"""
+
+        # Simulate input
+        sys.argv = ['', '-iupac', os.path.join(data_dir, 'dummy.pdb')]
+
+        # Execute the script
+        self.exec_module()
+
+        # Validate results
+        self.assertEqual(self.retcode, 0)  # ensure the program exited OK.
+        self.assertEqual(len(self.stdout), 204)  # all file lines
+        self.assertEqual(len(self.stderr), 0)  # no errors
+
+    def test_msi(self):
+        """$ pdb_convertatoms -msi data/dummy.pdb"""
+
+        # Simulate input
+        sys.argv = ['', '-msi', os.path.join(data_dir, 'dummy.pdb')]
+
+        # Execute the script
+        self.exec_module()
+
+        # Validate results
+        self.assertEqual(self.retcode, 0)  # ensure the program exited OK.
+        self.assertEqual(len(self.stdout), 204)  # all file lines
+        self.assertEqual(len(self.stderr), 0)  # no errors
+
+    def test_pdbv2(self):
+        """$ pdb_convertatoms -pdbv2 data/dummy.pdb"""
+
+        # Simulate input
+        sys.argv = ['', '-pdbv2', os.path.join(data_dir, 'dummy.pdb')]
+
+        # Execute the script
+        self.exec_module()
+
+        # Validate results
+        self.assertEqual(self.retcode, 0)  # ensure the program exited OK.
+        self.assertEqual(len(self.stdout), 204)  # all file lines
+        self.assertEqual(len(self.stderr), 0)  # no errors
+
+    def test_pdbv3(self):
+        """$ pdb_convertatoms -pdbv3 data/dummy.pdb"""
+
+        # Simulate input
+        sys.argv = ['', '-pdbv3', os.path.join(data_dir, 'dummy.pdb')]
+
+        # Execute the script
+        self.exec_module()
+
+        # Validate results
+        self.assertEqual(self.retcode, 0)  # ensure the program exited OK.
+        self.assertEqual(len(self.stdout), 204)  # all file lines
+        self.assertEqual(len(self.stderr), 0)  # no errors
+
+    def test_ucsf(self):
+        """$ pdb_convertatoms -ucsf data/dummy.pdb"""
 
         # Simulate input
         sys.argv = ['', '-ucsf', os.path.join(data_dir, 'dummy.pdb')]
@@ -65,14 +185,29 @@ class TestTool(unittest.TestCase):
         self.assertEqual(len(self.stdout), 204)  # all file lines
         self.assertEqual(len(self.stderr), 0)  # no errors
 
-        with open(os.path.join(data_dir, 'dummy.pdb'), 'r') as fin:
-            lines = fin.readlines()
-            diff_lines = sum(
-                1
-                for i, j in zip(lines, self.stdout)
-                if i.strip() != j.strip())
+    def test_xplor(self):
+        """$ pdb_convertatoms -xplor data/dummy.pdb"""
 
-        self.assertEqual(diff_lines, 53)
+        # Simulate input
+        sys.argv = ['', '-xplor', os.path.join(data_dir, 'dummy.pdb')]
+
+        # Execute the script
+        self.exec_module()
+
+        # Validate results
+        self.assertEqual(self.retcode, 0)  # ensure the program exited OK.
+        self.assertEqual(len(self.stdout), 204)  # all file lines
+        self.assertEqual(len(self.stderr), 0)  # no errors
+
+
+        #with open(os.path.join(data_dir, 'dummy.pdb'), 'r') as fin:
+        #    lines = fin.readlines()
+        #    diff_lines = sum(
+        #        1
+        #        for i, j in zip(lines, self.stdout)
+        #        if i.strip() != j.strip())
+
+        #self.assertEqual(diff_lines, 53)
 
     def test_no_input_provided(self):
         """$ pdb_convertatoms """
@@ -94,7 +229,7 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.stderr[0].split(os.linesep)[0], emsg)
         return
 
-    def test_invalid_option(self):
+    def test_first_not_an_option(self):
         """$ pdb_convertatoms data/dummy.pdb"""
 
         _file = os.path.join(data_dir, 'dummy.pdb')
@@ -108,7 +243,7 @@ class TestTool(unittest.TestCase):
         emsg = emsg.format(_file)
         self.assertEqual(self.stderr[0].split(os.linesep)[0], emsg)
 
-    def test_atoms_at_most_4_chars(self):
+    def test_bad_option(self):
         """$ pdb_convertatoms -blabla data/dummy.pdb"""
 
         sys.argv = ['', '-blabla', os.path.join(data_dir, 'dummy.pdb')]
@@ -134,7 +269,7 @@ class TestTool(unittest.TestCase):
         emsg = 'ERROR!! No file provided.'
         self.assertEqual(self.stderr[0].split(os.linesep)[0], emsg)
 
-    def test_file_not_provided(self):
+    def test_file_not_exist(self):
         """$ pdb_convertatoms -ucsf not_existing.pdb"""
 
         sys.argv = ['', '-ucsf', 'not_existing.pdb']
