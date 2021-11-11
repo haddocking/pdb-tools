@@ -47,8 +47,8 @@ files using the terminal, and can be used sequentially, with one tool streaming
 data to another. They are based on old FORTRAN77 code that was taking too much
 effort to maintain and compile. RIP.
 """
-import sys
 import os
+import sys
 
 
 bmrb = {
@@ -366,22 +366,25 @@ def run(fhandle, option):
             residue = line[17:20].strip().upper()
 
             # non-canonical residue or other element
-            # we wrote 'bmrb' but it could be any other
+            # we inspect in 'bmrb' but it could be any other dictionary
+            # because residue names are the same in all of them
             if residue not in bmrb:
                 yield line
                 continue
 
+            # line belong to one of the 20 natural aa.
             else:
+                # search for the original PDB convention
+                # this is performed every line to allow convention homogenization
                 for convention in convert_table.values():
                     try:
+                        # gets the index where the atom name is found
                         idx = convention[residue].index(atom_source)
 
-                    except ValueError:  # atom not found in convention
+                    # if atom is not found in convention,
+                    # continue searching in the next convention
+                    except ValueError:
                         continue
-
-                    except KeyError:  # residue not from the 20 natural aa
-                        yield line
-                        break
 
                     else:  # atom found
                         new_atom = convert_table[option][residue][idx]

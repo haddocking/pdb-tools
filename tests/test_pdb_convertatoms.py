@@ -51,6 +51,16 @@ class TestTool(unittest.TestCase):
 
         return
 
+    def inspect_lines_are_same(self, stdout):
+        """Test if line information outside atom name is kept constant."""
+
+        with open(os.path.join(data_dir, 'dummy.pdb'), 'r') as fin:
+            lines = (l.strip(os.linesep) for l in fin.readlines())
+
+            for i, (l1, l2) in enumerate(zip(lines, stdout)):
+                self.assertTrue(l1[:12] == l2[:12], msg=(i, l1[:12], l2[:12]))
+                self.assertTrue(l1[16:] == l2[16:], msg=(i, l1[16:], l2[16:]))
+
     def test_atom_max_4_chars(self):
         """Test if all atoms have at most 4 chars."""
         for name, convention in convert_table.items():
@@ -58,10 +68,13 @@ class TestTool(unittest.TestCase):
                 for atom in list_of_atoms:
                     self.assertTrue(1 <= len(atom) <= 4, msg=atom)
 
+    def test_convert_table_all_okay(self):
+        """Test if convention dictionaries have same keys in same order."""
+        keys = [sorted(list(d.keys())) for d in convert_table.values()]
+        self.assertTrue(all(keys[0] == k for k in keys[1:]))
 
     def test_amber(self):
         """$ pdb_convertatoms -amber data/dummy.pdb"""
-
         # Simulate input
         sys.argv = ['', '-amber', os.path.join(data_dir, 'dummy.pdb')]
 
@@ -72,10 +85,10 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.retcode, 0)  # ensure the program exited OK.
         self.assertEqual(len(self.stdout), 204)  # all file lines
         self.assertEqual(len(self.stderr), 0)  # no errors
+        self.inspect_lines_are_same(self.stdout)
 
     def test_biopython(self):
         """$ pdb_convertatoms -biopython data/dummy.pdb"""
-
         # Simulate input
         sys.argv = ['', '-biopython', os.path.join(data_dir, 'dummy.pdb')]
 
@@ -86,10 +99,10 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.retcode, 0)  # ensure the program exited OK.
         self.assertEqual(len(self.stdout), 204)  # all file lines
         self.assertEqual(len(self.stderr), 0)  # no errors
+        self.inspect_lines_are_same(self.stdout)
 
     def test_bmrb(self):
         """$ pdb_convertatoms -bmrb data/dummy.pdb"""
-
         # Simulate input
         sys.argv = ['', '-bmrb', os.path.join(data_dir, 'dummy.pdb')]
 
@@ -100,10 +113,10 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.retcode, 0)  # ensure the program exited OK.
         self.assertEqual(len(self.stdout), 204)  # all file lines
         self.assertEqual(len(self.stderr), 0)  # no errors
+        self.inspect_lines_are_same(self.stdout)
 
     def test_cns(self):
         """$ pdb_convertatoms -cns data/dummy.pdb"""
-
         # Simulate input
         sys.argv = ['', '-cns', os.path.join(data_dir, 'dummy.pdb')]
 
@@ -114,10 +127,10 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.retcode, 0)  # ensure the program exited OK.
         self.assertEqual(len(self.stdout), 204)  # all file lines
         self.assertEqual(len(self.stderr), 0)  # no errors
+        self.inspect_lines_are_same(self.stdout)
 
     def test_iupac(self):
         """$ pdb_convertatoms -iupac data/dummy.pdb"""
-
         # Simulate input
         sys.argv = ['', '-iupac', os.path.join(data_dir, 'dummy.pdb')]
 
@@ -128,10 +141,10 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.retcode, 0)  # ensure the program exited OK.
         self.assertEqual(len(self.stdout), 204)  # all file lines
         self.assertEqual(len(self.stderr), 0)  # no errors
+        self.inspect_lines_are_same(self.stdout)
 
     def test_msi(self):
         """$ pdb_convertatoms -msi data/dummy.pdb"""
-
         # Simulate input
         sys.argv = ['', '-msi', os.path.join(data_dir, 'dummy.pdb')]
 
@@ -142,10 +155,10 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.retcode, 0)  # ensure the program exited OK.
         self.assertEqual(len(self.stdout), 204)  # all file lines
         self.assertEqual(len(self.stderr), 0)  # no errors
+        self.inspect_lines_are_same(self.stdout)
 
     def test_pdbv2(self):
         """$ pdb_convertatoms -pdbv2 data/dummy.pdb"""
-
         # Simulate input
         sys.argv = ['', '-pdbv2', os.path.join(data_dir, 'dummy.pdb')]
 
@@ -156,10 +169,10 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.retcode, 0)  # ensure the program exited OK.
         self.assertEqual(len(self.stdout), 204)  # all file lines
         self.assertEqual(len(self.stderr), 0)  # no errors
+        self.inspect_lines_are_same(self.stdout)
 
     def test_pdbv3(self):
         """$ pdb_convertatoms -pdbv3 data/dummy.pdb"""
-
         # Simulate input
         sys.argv = ['', '-pdbv3', os.path.join(data_dir, 'dummy.pdb')]
 
@@ -170,10 +183,10 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.retcode, 0)  # ensure the program exited OK.
         self.assertEqual(len(self.stdout), 204)  # all file lines
         self.assertEqual(len(self.stderr), 0)  # no errors
+        self.inspect_lines_are_same(self.stdout)
 
     def test_ucsf(self):
         """$ pdb_convertatoms -ucsf data/dummy.pdb"""
-
         # Simulate input
         sys.argv = ['', '-ucsf', os.path.join(data_dir, 'dummy.pdb')]
 
@@ -184,10 +197,10 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.retcode, 0)  # ensure the program exited OK.
         self.assertEqual(len(self.stdout), 204)  # all file lines
         self.assertEqual(len(self.stderr), 0)  # no errors
+        self.inspect_lines_are_same(self.stdout)
 
     def test_xplor(self):
         """$ pdb_convertatoms -xplor data/dummy.pdb"""
-
         # Simulate input
         sys.argv = ['', '-xplor', os.path.join(data_dir, 'dummy.pdb')]
 
@@ -198,16 +211,7 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.retcode, 0)  # ensure the program exited OK.
         self.assertEqual(len(self.stdout), 204)  # all file lines
         self.assertEqual(len(self.stderr), 0)  # no errors
-
-
-        #with open(os.path.join(data_dir, 'dummy.pdb'), 'r') as fin:
-        #    lines = fin.readlines()
-        #    diff_lines = sum(
-        #        1
-        #        for i, j in zip(lines, self.stdout)
-        #        if i.strip() != j.strip())
-
-        #self.assertEqual(diff_lines, 53)
+        self.inspect_lines_are_same(self.stdout)
 
     def test_no_input_provided(self):
         """$ pdb_convertatoms """
