@@ -34,7 +34,7 @@ class TestTool(unittest.TestCase):
 
     def setUp(self):
         # Dynamically import the module
-        name = 'pdbtools.pdb_addter'
+        name = 'pdbtools.pdb_add_manual_ter'
         self.module = __import__(name, fromlist=[''])
 
     def exec_module(self):
@@ -54,66 +54,122 @@ class TestTool(unittest.TestCase):
         return
 
     def test_range_1(self):
-        """$ pdb_addter -1:5 data/addter_test.pdb"""
+        """$ pdb_add_manual_ter -1:5 data/add_manual_ter_test_regular.pdb"""
 
         # Simulate input
-        sys.argv = ['', '-1:5', os.path.join(data_dir, 'addter_test.pdb')]
+        sys.argv = ['', '-1:5', os.path.join(data_dir, 'add_manual_ter_test_regular.pdb')]
 
         # Execute the script
         self.exec_module()
 
         # Validate results
         self.assertEqual(self.retcode, 0)
-        self.assertEqual(len(self.stdout), 46596)
+        self.assertEqual(len(self.stdout), 79)
         self.assertEqual(len(self.stderr), 0)
 
     def test_range_2(self):
-        """$ pdb_delres -1: data/addter_test.pdb"""
+        """$ pdb_add_manual_ter -1: data/add_manual_ter_test_regular.pdb"""
 
         # Simulate input
-        sys.argv = ['', '-1:', os.path.join(data_dir, 'addter_test.pdb')]
+        sys.argv = ['', '-1:', os.path.join(data_dir, 'add_manual_ter_test_regular.pdb')]
 
         # Execute the script
         self.exec_module()
 
         # Validate results
         self.assertEqual(self.retcode, 0)
-        self.assertEqual(len(self.stdout), 47283)
+        self.assertEqual(len(self.stdout), 81)
         self.assertEqual(len(self.stderr), 0)
 
     def test_range_3(self):
-        """$ pdb_delres -1:441:440 data/addter_test.pdb"""
+        """$ pdb_add_manual_ter -1:7:3 data/add_manual_ter_test_regular.pdb"""
 
         # Simulate input
-        sys.argv = ['', '-1:441:440', os.path.join(data_dir, 'addter_test.pdb')]
+        sys.argv = ['', '-1:7:3', os.path.join(data_dir, 'add_manual_ter_test_regular.pdb')]
 
         # Execute the script
         self.exec_module()
 
         # Validate results
         self.assertEqual(self.retcode, 0)
-        self.assertEqual(len(self.stdout), 46593)
+        self.assertEqual(len(self.stdout), 76)
         self.assertEqual(len(self.stderr), 0)
 
     def test_range_4(self):
-        """$ pdb_addter -1::5 data/addter_test.pdb"""
+        """$ pdb_add_manual_ter -1::5 data/add_manual_ter_test_regular.pdb"""
 
         # Simulate input
-        sys.argv = ['', '-1::5', os.path.join(data_dir, 'addter_test.pdb')]
+        sys.argv = ['', '-1::5', os.path.join(data_dir, 'add_manual_ter_test_regular.pdb')]
 
         # Execute the script
         self.exec_module()
 
         # Validate results
         self.assertEqual(self.retcode, 0)
-        self.assertEqual(len(self.stdout), 46730)
+        self.assertEqual(len(self.stdout), 75)
+        self.assertEqual(len(self.stderr), 0)
+
+    def test_range_5(self):
+        """$ pdb_add_manual_ter -1:: data/add_manual_ter_test_existingTER.pdb"""
+
+        # Simulate input
+        sys.argv = ['', '-1:', os.path.join(data_dir, 'add_manual_ter_existingTER.pdb')]
+
+        # Execute the script
+        self.exec_module()
+
+        # Validate results
+        self.assertEqual(self.retcode, 0)
+        self.assertEqual(len(self.stdout), 81)
+        self.assertEqual(len(self.stderr), 0)
+
+    def test_range_6(self):
+        """$ pdb_add_manual_ter -1::2 data/add_manual_ter_existingTER.pdb"""
+
+        # Simulate input
+        sys.argv = ['', '-1::2', os.path.join(data_dir, 'add_manual_ter_existingTER.pdb')]
+
+        # Execute the script
+        self.exec_module()
+
+        # Validate results
+        self.assertEqual(self.retcode, 0)
+        self.assertEqual(len(self.stdout), 78)
+        self.assertEqual(len(self.stderr), 0)
+
+    def test_range_7(self):
+        """$ pdb_add_manual_ter -1: data/dummy.pdb"""
+
+        # Simulate input
+        sys.argv = ['', '-1:', os.path.join(data_dir, 'dummy.pdb')]
+
+        # Execute the script
+        self.exec_module()
+
+        # Validate results
+        self.assertEqual(self.retcode, 0)
+        self.assertEqual(len(self.stdout), 220)
+        self.assertEqual(len(self.stderr), 0)
+
+    def test_range_8(self):
+        """$ pdb_add_manual_ter -1:18:3 data/dummy.pdb"""
+
+        # Simulate input
+        sys.argv = ['', '-1:17:3', os.path.join(data_dir, 'dummy.pdb')]
+
+        # Execute the script
+        self.exec_module()
+
+        # Validate results
+        self.assertEqual(self.retcode, 0)
+        self.assertEqual(len(self.stdout), 206)
         self.assertEqual(len(self.stderr), 0)
 
     def test_invalid_range_1(self):
-        """$ pdb_addter --9998:: data/addter_test.pdb"""
+        """$ pdb_add_manual_ter --9998:: data/add_manual_ter_test_regular.pdb"""
 
         # Simulate input
-        sys.argv = ['', '--9998::', os.path.join(data_dir, 'addter_test.pdb')]
+        sys.argv = ['', '--9998::', os.path.join(data_dir, 'add_manual_ter_test_regular.pdb')]
 
         # Execute the script
         self.exec_module()
@@ -125,10 +181,10 @@ class TestTool(unittest.TestCase):
                          "ERROR!! Starting value")
 
     def test_invalid_range_2(self):
-        """$ pdb_delres -:10000: data/addter_test.pdb"""
+        """$ pdb_add_manual_ter -:10000: data/add_manual_ter_test_regular.pdb"""
 
         # Simulate input
-        sys.argv = ['', '-:10000:', os.path.join(data_dir, 'addter_test.pdb')]
+        sys.argv = ['', '-:10000:', os.path.join(data_dir, 'add_manual_ter_test_regular.pdb')]
 
         # Execute the script
         self.exec_module()
@@ -140,10 +196,10 @@ class TestTool(unittest.TestCase):
                          "ERROR!! Please specify")
 
     def test_invalid_range_3(self):
-        """$ pdb_addter -::: data/addter_test.pdb"""
+        """$ pdb_add_manual_ter -::: data/add_manual_ter_test_regular.pdb"""
 
         # Simulate input
-        sys.argv = ['', '-:::', os.path.join(data_dir, 'addter_test.pdb')]
+        sys.argv = ['', '-:::', os.path.join(data_dir, 'add_manual_ter_test_regular.pdb')]
 
         # Execute the script
         self.exec_module()
@@ -155,10 +211,10 @@ class TestTool(unittest.TestCase):
                          "ERROR!! Residue range")
 
     def test_invalid_range_4(self):
-        """$ pdb_addter -5:1:: data/addter_test.pdb"""
+        """$ pdb_add_manual_ter -5:1:: data/add_manual_ter_test_regular.pdb"""
 
         # Simulate input
-        sys.argv = ['', '-5:1::', os.path.join(data_dir, 'addter_test.pdb')]
+        sys.argv = ['', '-5:1::', os.path.join(data_dir, 'add_manual_ter_test_regular.pdb')]
 
         # Execute the script
         self.exec_module()
@@ -170,7 +226,7 @@ class TestTool(unittest.TestCase):
                          "ERROR!! Residue range")
 
     def test_file_not_found(self):
-        """$ pdb_addter not_existing.pdb"""
+        """$ pdb_add_manual_ter not_existing.pdb"""
 
         afile = os.path.join(data_dir, 'not_existing.pdb')
         sys.argv = ['', afile]
@@ -183,7 +239,7 @@ class TestTool(unittest.TestCase):
                          "ERROR!! File not found")  # proper error message
 
     def test_file_missing(self):
-        """$ pdb_addter -1:10"""
+        """$ pdb_add_manual_ter -1:10"""
 
         sys.argv = ['', '-1:10']
 
@@ -195,7 +251,7 @@ class TestTool(unittest.TestCase):
                          "ERROR!! No data to process!")
 
     def test_helptext(self):
-        """$ pdb_addter"""
+        """$ pdb_add_manual_ter"""
 
         sys.argv = ['']
 
@@ -206,21 +262,21 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.stderr, self.module.__doc__.split("\n")[:-1])
 
     def test_invalid_option(self):
-        """$ pdb_addter -A:B data/addter_test.pdb"""
+        """$ pdb_add_manual_ter -A:B data/add_manual_ter_test_regular.pdb"""
 
-        sys.argv = ['', '-A:B', os.path.join(data_dir, 'addter_test.pdb')]
+        sys.argv = ['', '-A:B', os.path.join(data_dir, 'add_manual_ter_test_regular.pdb')]
 
         self.exec_module()
 
         self.assertEqual(self.retcode, 1)
         self.assertEqual(len(self.stdout), 0)
-        self.assertEqual(self.stderr[0][:39],
-                         "ERROR!! Starting value must be numerica")
+        self.assertEqual(self.stderr[0][:],
+                         "ERROR!! Range values must be integers!")
 
     def test_not_an_option(self):
-        """$ pdb_addter 20 data/addter_test.pdb"""
+        """$ pdb_add_manual_ter 20 data/add_manual_ter_test_regular.pdb"""
 
-        sys.argv = ['', '20', os.path.join(data_dir, 'addter_test.pdb')]
+        sys.argv = ['', '20', os.path.join(data_dir, 'add_manual_ter_test_regular.pdb')]
 
         self.exec_module()
 

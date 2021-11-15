@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Copyright 2020 João Pedro Rodrigues
+# Copyright 2021 Brian Andrews
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,13 +16,14 @@
 # limitations under the License.
 
 """
-Adds TER lines at designated locations in pdb. Modified from pdb_delres.py
-for syntax consistency... and convenience. Starting residue must be specified
-to avoid inconsistent behavior. A TER record will not be added to the end of
-the file (but usually is already there) or after the last residue in the range.
+Adds TER entries at locations in pdb designated by the user. Starting residue
+must be specified to avoid inconsistent behavior. This program is agnostic to
+residue numbers in the pdb file. The first residue of the pdb file will be
+considered residue one (1) and TER entries will be entered at specified intervals
+using that convention. Existing TER entries will not be affected.
 
 Usage:
-    python pdb_addter.py -[first residue]:[last residue + 1]:[frequency] <pdb file>
+    python pdb_addter.py -[first residue]:[last residue]:[frequency] <pdb file>
 
 Example:
     python pdb_addter.py -1:10 1CTF.pdb # Adds TER after every residue starting with the end of residue 1 to before residue 10
@@ -48,13 +49,13 @@ def check_input(args):
     """Checks whether to read from stdin/file and validates user input/options.
     """
 
-    def is_integer(string):
-        """Returns True if the string contains *any* integer"""
+    def return_integer(string):
         try:
-            int(string)
-            return True
-        except ValueError:
-            return False
+            return int(string)
+        except:
+            emsg = 'ERROR!! Range values must be integers!\n'
+            sys.stderr.write(emsg.format(string))
+            sys.exit(1)
 
     # Defaults
     option = ':::'
@@ -126,49 +127,42 @@ def check_input(args):
         elif option.endswith(':'):
             start = slices[0]
 
+    #residue range start
     if start is None:
         emsg = 'ERROR!! Please specify starting value: \'{}\'\n'
         sys.stderr.write(emsg.format(start))
         sys.exit(1)
-    elif not is_integer(start):
-        emsg = 'ERROR!! Starting value must be numerical: \'{}\'\n'
-        sys.stderr.write(emsg.format(start))
-        sys.exit(1)
-    elif not (-999 <= int(start) < 9999):
-        emsg = 'ERROR!! Starting value must be between -999 and 9998: \'{}\'\n'
+    else:
+        start = return_integer(start)
+
+    if  start < 1:
+        emsg = 'ERROR!! Starting value must be 1 or greater: \'{}\'\n'
         sys.stderr.write(emsg.format(start))
         sys.exit(1)
 
+    #residue range end
     if end is None:
-        end = 10000  # residues cannot reach this value (max 4 char)
-    elif not is_integer(end):
-        emsg = 'ERROR!! End value must be numerical: \'{}\'\n'
-        sys.stderr.write(emsg.format(end))
-        sys.exit(1)
-    elif not (-999 <= int(end) < 9999):
-        emsg = 'ERROR!! End value must be between -999 and 9998: \'{}\'\n'
-        sys.stderr.write(emsg.format(end))
-        sys.exit(1)
-
-    if step is None:
-        step = 1
-    elif not is_integer(step):
-        emsg = 'ERROR!! Step value must be numerical: \'{}\'\n'
-        sys.stderr.write(emsg.format(step))
-        sys.exit(1)
-    elif int(step) <= 0:
-        emsg = 'ERROR!! Step value must be a positive number: \'{}\'\n'
-        sys.stderr.write(emsg.format(step))
-        sys.exit(1)
-
-    start, end, step = int(start), int(end), int(step)
+        end = 1000000  # a value that presumably will not be reached
+    else:
+        end = return_integer(end)
 
     if start >= end:
         emsg = 'ERROR!! Start ({}) cannot be larger than end ({})\n'
         sys.stderr.write(emsg.format(start, end))
         sys.exit(1)
 
-    resrange = set(range(start, end + 1))
+    #residue range step
+    if step is None:
+        step = 1
+    else:
+        step = return_integer(step)
+
+    if step <= 0:
+        emsg = 'ERROR!! Step value must be a positive number: \'{}\'\n'
+        sys.stderr.write(emsg.format(step))
+        sys.exit(1)
+
+    resrange = set(range(start, end + 2)) #plus 2 here is necessary
     return (fh, resrange, step)
 
 
@@ -193,9 +187,31 @@ def run(fhandle, residue_range, step):
     str (line-by-line)
         All lines with added TER lines designated by inputs.
     """
+
+    def make_TER(prev_line):
+        """Creates a TER statement based on the last ATOM/HETATM line.
+        """
+
+        # Add last TER statement
+        serial = int(prev_line[6:11]) + 1
+        rname = prev_line[17:20]
+        chain = prev_line[21]
+        resid = prev_line[22:26]
+        icode = prev_line[26]
+
+        return fmt_TER.format(serial, rname, chain, resid, icode)
+
+    # TER     606      LEU A  75
+    fmt_TER = "TER   {:>5d}      {:3s} {:1s}{:>4s}{:1s}" + " " * 53 + "\n"
+
+    prev_line = None
     prev_res = None
     res_counter = 0
-    records = ('ATOM')
+    no_more_atoms = False
+    min_residue = min(residue_range)
+    records = ('ATOM', 'HETATM', 'ANISOU') #added END* for cases where TER added after last residue
+    ignored = ('TER')
+    end = ('END', 'ENDMDL', 'CONECT')
     for line in fhandle:
         if line.startswith(records):
 
@@ -204,14 +220,26 @@ def run(fhandle, residue_range, step):
 
                 prev_res = res_id
                 res_counter += 1
-                if res_counter - min(residue_range) != 0 and (res_counter - min(residue_range)) % step == 0 and int(line[22:26]) in residue_range:
-                    yield "TER\n"
+                if res_counter - min_residue != 0 \
+                  and (res_counter - min_residue) % step == 0 \
+                  and res_counter in residue_range \
+                  and not prev_line.startswith(ignored): #does not add TER record if one exists
+                    yield make_TER(prev_line)
 
+        # sees record that indicates end of ATOMS records, checks if TER record should be
+        # added based on user input only once.
+        if line.startswith(end) \
+          and res_counter in residue_range \
+          and res_counter % step == 0 \
+          and not prev_line.startswith(ignored) \
+          and not no_more_atoms:
+            no_more_atoms = True
+            yield make_TER(prev_line)
+
+        prev_line = line
         yield line
 
-
-add_ter = run
-
+add_manual_ter = run
 
 def main():
     # Check Input
