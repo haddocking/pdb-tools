@@ -39,7 +39,7 @@ files using the terminal, and can be used sequentially, with one tool streaming
 data to another. They are based on old FORTRAN77 code that was taking too much
 effort to maintain and compile. RIP.
 """
-
+from pprint import pprint
 import operator
 import os
 import sys
@@ -204,54 +204,113 @@ def select_by_altloc(fhandle, selloc):
     str (line-by-line)
         The PDB file with altlocs according to selection.
     """
-    # We have to iterate multiple times
-    atom_prop = {}
-    atom_prop_setd = atom_prop.setdefault
-    atom_data = []
-    atom_data_append = atom_data.append
+    residue_loc = {}  # dict to capture the lines from a altloc group
+    prev_altloc = ''
+    prev_resname = ''
+    prev_resnum = ''
 
-    # Iterate over file and store atom_uid
     records = ('ATOM', 'HETATM', 'ANISOU')
-    editable = set()
-    editable_add = editable.add
-    for lineno, line in enumerate(fhandle):
+    terminators = ('TER', 'END')
 
-        atom_data_append(line)
+    for line in fhandle:
 
         if line.startswith(records):
-            # Sometimes altlocs are used between different residue names.
-            # See 3u7t (residue 22 of chain A). So we ignore the resname below.
-            atom_uid = (line[12:16], line[20:26])
-
+            # captures the relevant parameters
             altloc = line[16]
-            atom_prop_l = atom_prop_setd(atom_uid, [])
-            atom_prop_l.append((altloc, lineno))
+            resname = line[17:20]
+            resnum = line[22:26].strip()
 
-            if altloc == selloc:  # flag as editable
-                editable_add(lineno)
+            if is_another_altloc_group(
+                    altloc, prev_altloc, resnum, prev_resnum,
+                    resname, prev_resname, residue_loc):
 
-    # Reduce editable indexes to atom_uid entries
-    editable = {
-        (atom_data[i][12:16], atom_data[i][20:26]) for i in editable
-    }
+                if residue_loc: # flushes only of there is something in the dict
+                    # flush altloc dictionary from previous lines.
+                    # avoiding using "yield from" for backwards compatibility
+                    # hence we need this for-loop
+                    for __line in flush_resloc(selloc, residue_loc):
+                        yield __line
 
-    # Now define lines to ignore in the output
-    ignored = set()
-    for atom_uid in editable:
-        for altloc, lineno in atom_prop[atom_uid]:
-            if altloc != selloc:
-                ignored.add(lineno)
+                if altloc != ' ':
+                    # this case correct for two consecutive altloc groups
+                    current_loc = residue_loc.setdefault(altloc, [])
+                    current_loc.append(line)
+                else:
+                    yield line
+
             else:
-                # Edit altloc field
-                line = atom_data[lineno]
-                atom_data[lineno] = line[:16] + ' ' + line[17:]
+                # this line belongs to the same altloc group as the previous line
+                current_loc = residue_loc.setdefault(altloc, [])
+                current_loc.append(line)
 
-    # Iterate again and yield the correct lines.
-    for lineno, line in enumerate(atom_data):
-        if lineno in ignored:
-            continue
+            # registers the parameters for the next line
+            prev_altloc = altloc
+            prev_resnum = resnum
+            prev_resname = resname
 
-        yield line
+        elif line.startswith(terminators):
+            for __line in flush_resloc(selloc, residue_loc):
+                yield __line
+
+            yield line  # the terminator line
+
+        else:
+            yield line
+
+    # end of for loop
+    # flush altloc residues in case the last residue was an altloc
+    for __line in flush_resloc(selloc, residue_loc):
+        yield __line
+
+
+def is_another_altloc_group(
+        altloc,
+        prev_altloc,
+        resnum,
+        prev_resnum,
+        resname,
+        prev_resname,
+        residue_loc):
+    """
+    Detect if current line because to another altloc group.
+
+    True if:
+        * altloc is a blank-char it is always a new group
+          a.k.a. ignore
+        * altloc equals and either the resnum or resname changes
+        * altloc differs and altloc already in altloc group dict
+        * altloc equals and renum and resname differs and altloc in
+          altloc group dict
+
+    False otherwise.
+    """
+    is_another = \
+        # a.k.a. we ignore this check
+        altloc == ' ' \
+        or altloc == prev_altloc and (resnum != prev_resnum or resname != prev_resname) \
+        # for example, ACA altloc sequence
+        or altloc != prev_altloc and altloc in residue_loc \
+        # two consecutive altloc groups
+        or altloc == prev_altloc and resnum != prev_resnum and resname != prev_resname and altloc in residue_loc
+
+    return is_another
+
+
+def flush_resloc(selloc, residue_loc):
+    """Flush the captured altloc lines."""
+    # only the selected altloc is yieled
+    if selloc in residue_loc:
+        for line2flush in residue_loc[selloc]:
+            yield line2flush[:16] + ' ' + line2flush[17:]
+    # the altloc group does not contain the selected altloc
+    # therefore, all members should be yielded
+    else:
+        for key, lines2flush in residue_loc.items():
+            for line2flush in lines2flush:
+                yield line2flush
+
+    # clears the altloc group dictionary. Ready for the next one!
+    residue_loc.clear()
 
 
 def run(fhandle, option=None):
