@@ -178,7 +178,7 @@ def select_altloc(fhandle, selloc=None, byocc=False):
                 else:
                     flush_func = flush_func_multi_residues
 
-                for __line in flush_func(selloc, altloc_lines, res_per_loc):
+                for __line in flush_func(selloc=selloc, altloc_lines=altloc_lines, res_per_loc=res_per_loc):
                     yield __line
 
             # saves the line per altloc identifier
@@ -201,7 +201,7 @@ def select_altloc(fhandle, selloc=None, byocc=False):
                     flush_func = flush_func_single_residues
                 else:
                     flush_func = flush_func_multi_residues
-                for __line in flush_func(selloc, altloc_lines, res_per_loc):
+                for __line in flush_func(selloc=selloc, altloc_lines=altloc_lines, res_per_loc=res_per_loc):
                     yield __line
 
             prev_altloc = ''
@@ -225,7 +225,7 @@ def select_altloc(fhandle, selloc=None, byocc=False):
         else:
             flush_func = flush_func_multi_residues
 
-        for __line in flush_func(selloc, altloc_lines, res_per_loc):
+        for __line in flush_func(selloc=selloc, altloc_lines=altloc_lines, res_per_loc=res_per_loc):
             yield __line
 
 
@@ -286,7 +286,7 @@ def flush_resloc(selloc, altloc_lines, res_per_loc):
     res_per_loc.clear()
 
 
-def flush_resloc_occ(selloc, altloc_lines, res_per_loc):
+def flush_resloc_occ(altloc_lines, res_per_loc, **kw):
     """Flush the captured altloc lines by highest occupancy."""
     # only the selected altloc is yieled
     highest = 0.00
@@ -343,7 +343,7 @@ def flush_resloc_id_same_residue(selloc, altloc_lines, res_per_loc):
     res_per_loc.clear()
 
 
-def flush_resloc_occ_same_residue(selloc, altloc_lines, res_per_loc):
+def flush_resloc_occ_same_residue(altloc_lines, res_per_loc, **kw):
     """Flush altloc if altloc are atoms in the same residue - by occ."""
     # places all lines in a single list
     all_lines = []
@@ -389,7 +389,7 @@ def all_same_residue(altloc_lines):
 
 
 def partial_altloc(altloc_lines):
-    """."""
+    """Detect if the altloc positions are atoms in a single residue."""
     return ' ' in altloc_lines and all_same_residue(altloc_lines)
 
 
