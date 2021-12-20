@@ -150,10 +150,12 @@ def select_altloc(fhandle, selloc=None, byocc=False):
     prev_resname = ''
     prev_resnum = ''
 
-    flush_func = flush_resloc_occ if byocc else flush_resloc
+    flush_func_multi_residues = flush_resloc_occ if byocc else flush_resloc
+    flush_func_single_residues = \
+        flush_resloc_occ_same_residue if byocc else flush_resloc_id_same_residue
 
     records = ('ATOM', 'HETATM', 'ANISOU')
-    terminators = ('TER', 'END')
+    terminators = ('TER', 'END', 'CONECT', 'END', 'ENDMDL')
 
     for line in fhandle:
 
@@ -171,6 +173,11 @@ def select_altloc(fhandle, selloc=None, byocc=False):
 
                 # uses for loop instead of "yield from" to maintain compatibility
                 # with older python version
+                if partial_altloc(altloc_lines):
+                    flush_func = flush_func_single_residues
+                else:
+                    flush_func = flush_func_multi_residues
+
                 for __line in flush_func(selloc, altloc_lines, res_per_loc):
                     yield __line
 
@@ -189,17 +196,35 @@ def select_altloc(fhandle, selloc=None, byocc=False):
         elif line.startswith(terminators):
             # before flushing the terminator line
             # we should flush the previous altloc group
-            for __line in flush_func(selloc, altloc_lines, res_per_loc):
-                yield __line
+            if altloc_lines:
+                if partial_altloc(altloc_lines):
+                    flush_func = flush_func_single_residues
+                else:
+                    flush_func = flush_func_multi_residues
+                for __line in flush_func(selloc, altloc_lines, res_per_loc):
+                    yield __line
+
+            prev_altloc = ''
+            prev_resname = ''
+            prev_resnum = ''
 
             yield line  # the terminator line
 
         else:
+            prev_altloc = ''
+            prev_resname = ''
+            prev_resnum = ''
             yield line
 
     # end of for loop
     # flush altloc residues in case the last residue was an altloc
     if altloc_lines:
+
+        if partial_altloc(altloc_lines):
+            flush_func = flush_func_single_residues
+        else:
+            flush_func = flush_func_multi_residues
+
         for __line in flush_func(selloc, altloc_lines, res_per_loc):
             yield __line
 
@@ -282,6 +307,90 @@ def flush_resloc_occ(selloc, altloc_lines, res_per_loc):
     # clears the altloc group dictionary. Ready for the next one!
     altloc_lines.clear()
     res_per_loc.clear()
+
+
+def flush_resloc_id_same_residue(selloc, altloc_lines, res_per_loc):
+    """Flush altloc if altloc are atoms in the same residue - by ID."""
+    # places all lines in a single list
+    all_lines = []
+    for altloc, lines in altloc_lines.items():
+        all_lines.extend(lines)
+
+    # organize by atoms
+    atoms = {}
+    for line in all_lines:
+        atom_number = int(line[6:11])
+        atom = line[12:16]
+        alist = atoms.setdefault((atom_number, atom), [])
+        alist.append(line)
+
+    sorted_atoms = sorted(list(atoms.items()), key=lambda x: x[0][0])
+
+    to_yield = []
+    for atom, lines in sorted_atoms:
+        for line in lines:
+            if line[16] == selloc:
+                to_yield.append(line)
+
+        if to_yield:
+            for line in to_yield:
+                yield line[:16] + ' ' + line[17:]
+        else:
+            for line in lines:
+                yield line
+
+    altloc_lines.clear()
+    res_per_loc.clear()
+
+
+def flush_resloc_occ_same_residue(selloc, altloc_lines, res_per_loc):
+    """Flush altloc if altloc are atoms in the same residue - by occ."""
+    # places all lines in a single list
+    all_lines = []
+    for altloc, lines in altloc_lines.items():
+        all_lines.extend(lines)
+
+    # organize by atoms
+    atoms = {}
+    for line in all_lines:
+        atom_number = int(line[6:11])
+        atom = line[12:16]
+        alist = atoms.setdefault((atom_number, atom), [])
+        alist.append(line)
+
+    sorted_atoms = sorted(list(atoms.items()), key=lambda x: x[0][0])
+
+    A = {
+        'ATOM': 1,
+        'HETA': 1,
+        'ANIS': 0,
+        }
+
+    for atom, lines in sorted_atoms:
+        lines.sort(key=lambda x: (A[x[:4]], float(x[54:60])), reverse=True)
+        yield lines[0][:16] + ' ' + lines[0][17:]
+        if lines[1:] and lines[1].startswith('ANISOU'):
+            yield lines[1][:16] + ' ' + lines[1][17:]
+
+    altloc_lines.clear()
+    res_per_loc.clear()
+
+
+def all_same_residue(altloc_lines):
+    """Assert all lines are from same residue."""
+    residues = set()
+    for key, val in altloc_lines.items():
+        for line in val:
+            resname = line[17:20]
+            resnum = line[22:26].strip()
+            residues.add((resname, resnum))
+
+    return len(residues) == 1
+
+
+def partial_altloc(altloc_lines):
+    """."""
+    return ' ' in altloc_lines and all_same_residue(altloc_lines)
 
 
 def run(fhandle, option=None):
