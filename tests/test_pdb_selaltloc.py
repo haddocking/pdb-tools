@@ -53,58 +53,157 @@ class TestTool(unittest.TestCase):
 
         return
 
-    def test_is_another_group_1(self):
-        """Test if is_another_altloc_group altloc is ' '."""
+    def test_is_same_group_1(self):
+        """
+        Test if from the same group.
+
+        Exemple of a starting line with empty strings.
+        """
+        result = self.module.is_another_altloc_group(
+            ' ', '', '1', '', 'ALA', '', {' ': ['line']})
+
+        self.assertFalse(result)
+
+    def test_is_same_group_2(self):
+        """
+        Test if from the same group.
+
+        Example of a starting line with Nones.
+        """
         result = self.module.is_another_altloc_group(
             ' ', None, None, None, None, None, {})
 
-        self.assertTrue(result)
+        self.assertFalse(result)
 
-    def test_is_another_group_2(self):
-        """Test if is_another_altloc_group second with residue number."""
-        result = self.module.is_another_altloc_group(
-            'A', 'A', '12', '11', 'ALA', 'ALA', {})
-        self.assertTrue(result)
+    def test_is_same_group_3(self):
+        """
+        Test if from the same group.
 
-    def test_is_another_group_3(self):
-        """Test if is_another_altloc_group second with residue name."""
-        result = self.module.is_another_altloc_group(
-            'A', 'A', '12', '12', 'PRO', 'ALA', {})
-        self.assertTrue(result)
-
-    def test_is_another_group_4(self):
-        """Test if is_another_altloc_group third with residueloc."""
-        result = self.module.is_another_altloc_group(
-            'B', 'A', None, None, None, None, {'B': None, 'A': None})
-        self.assertTrue(result)
-
-    def test_is_another_group_5(self):
-        """Test if is_another_altloc_group."""
+        Example of all parameters are the same as previous line.
+        """
         result = self.module.is_another_altloc_group(
             'B', 'B', '12', '12', 'ALA', 'ALA', {'B': None}
             )
         self.assertFalse(result)
 
-    def test_is_another_group_6(self):
-        """Test if is_another_altloc_group."""
-        result = self.module.is_another_altloc_group(
-            'B', 'A', '12', '13', 'ALA', 'PRO', {'A': None}
-            )
-        self.assertFalse(result)
 
-    def test_is_another_group_7(self):
-        """Test if is_another_altloc_group."""
-        result = self.module.is_another_altloc_group(
-            'A', ' ', '26', '25', 'LEU', 'GLU', {}
-            )
-        self.assertFalse(result)
+    def test_is_same_group_4(self):
+        """
+        Test if line is from another group.
 
-    def test_is_another_group_8(self):
-        """Test if is_another_altloc_group."""
+        Multiple residue altloc.
+
+        This considers altloc spanning several residues. See example
+        dummy_altloc2.pdb.
+        """
         result = self.module.is_another_altloc_group(
             'A', 'A', '26', '25', 'LEU', 'GLU', {'A': None}
             )
         self.assertTrue(result)
+
+    def test_is_same_group_5(self):
+        """
+        Test if line is from another group.
+
+        Multiple residue altloc.
+
+        This considers altloc spanning several residues. See example
+        dummy_altloc2.pdb.
+        """
+        result = self.module.is_another_altloc_group(
+            'A', ' ', '26', '25', 'GLU', 'GLU', {' ': ['lines']}
+            )
+        self.assertTrue(result)
+
+    def test_is_same_group_6(self):
+        """
+        Test if line is from another group.
+
+        Multiple residue altloc.
+
+        This considers altloc spanning several residues. See example
+        dummy_altloc2.pdb.
+        """
+        result = self.module.is_another_altloc_group(
+            'A', ' ', '25', '25', 'ALA', 'GLU', {' ': ['lines']}
+            )
+        self.assertTrue(result)
+
+    def test_is_another_group_1(self):
+        result = self.module.is_another_altloc_group(
+            ' ', 'B', '2', '1', 'ALA', 'PRO', {'B': ['lines']}
+            )
+        self.assertTrue(result)
+
+    #def test_is_same_group_7(self):
+    #    """Test if is_another_altloc_group."""
+    #    result = self.module.is_another_altloc_group(
+    #        'A', ' ', '25', '25', 'LEU', 'GLY', {' ': ['lines']}
+    #        )
+    #    self.assertTrue(result)
+
+    #def test_is_another_group_1(self):
+    #    """
+    #    Test if line is from another altloc group.
+
+    #    Same all params but resnum different.
+    #    """
+    #    result = self.module.is_another_altloc_group(
+    #        'A', 'A', '12', '11', 'ALA', 'ALA', {'A': ['lines']})
+    #    self.assertTrue(result)
+
+    #def test_is_another_group_2(self):
+    #    """
+    #    Test if line is from another altloc group.
+
+    #    All same parameters except resname.
+    #    """
+    #    result = self.module.is_another_altloc_group(
+    #        'A', 'A', '12', '12', 'PRO', 'ALA', {'A': ['lines']})
+    #    self.assertTrue(result)
+
+    #def test_is_another_group_3(self):
+    #    """
+    #    Test if line is from another altloc group.
+
+    #    Altloc changes but it was already in the altloc dictionary.
+    #    """
+    #    result = self.module.is_another_altloc_group(
+    #        'B', 'A', '12', '12', 'ALA', 'ALA', {'B': ['lines'], 'A': ['lines']})
+    #    self.assertTrue(result)
+
+
+    #def test_is_another_group_5(self):
+    #    """Test if is_another_altloc_group."""
+    #    result = self.module.is_another_altloc_group(
+    #        ' ', ' ', '2', '1', 'LEU', 'GLY', {' ': ['lines']}
+    #        )
+    #    self.assertTrue(result)
+
+    #def test_is_another_group_6(self):
+    #    """Test if is_another_altloc_group."""
+    #    result = self.module.is_another_altloc_group(
+    #        'A', ' ', '26', '25', 'LEU', 'GLU', {}
+    #        )
+    #    self.assertTrue(result)
+
+    #def test_is_another_group_7(self):
+    #    """
+    #    Test if from the same group.
+    #    """
+    #    result = self.module.is_another_altloc_group(
+    #        'B', 'A', '12', '13', 'ALA', 'PRO', {'A': None}
+    #        )
+    #    self.assertTrue(result)
+
+    #def test_is_another_group_8(self):
+    #    """
+    #    Test if from the same group.
+    #    """
+    #    result = self.module.is_another_altloc_group(
+    #        'A', ' ', '12', '13', 'ALA', 'PRO', {' ': None}
+    #        )
+    #    self.assertTrue(result)
 
     def test_default(self):
         """$ pdb_selaltloc data/dummy_altloc.pdb"""

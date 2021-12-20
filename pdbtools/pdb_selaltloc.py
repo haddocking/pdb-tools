@@ -113,7 +113,7 @@ def check_input(args):
 
 
 def select_by_occupancy(fhandle):
-    return select_by_altloc(fhandle, selloc=None, byocc=True)
+    return select_altloc(fhandle, selloc=None, byocc=True)
 
 
 def select_by_altloc(fhandle, selloc):
@@ -143,7 +143,9 @@ def select_altloc(fhandle, selloc=None, byocc=False):
     if selloc is None and not byocc:
         raise ValueError('Provide either `selloc` or `byocc`.')
 
-    residue_loc = {}  # dict to capture the lines from a altloc group
+    altloc_lines = {}  # dict to capture the lines from a altloc group
+    res_per_loc = {}
+
     prev_altloc = ''
     prev_resname = ''
     prev_resnum = ''
@@ -160,37 +162,40 @@ def select_altloc(fhandle, selloc=None, byocc=False):
             altloc = line[16]
             resname = line[17:20]
             resnum = line[22:26].strip()
+            #chain = line[21]
 
             if is_another_altloc_group(
                     altloc, prev_altloc, resnum, prev_resnum,
-                    resname, prev_resname, residue_loc):
+                    resname, prev_resname, altloc_lines, res_per_loc):
 
-                if residue_loc: # flushes only of there is something in the dict
-                    # flush altloc dictionary from previous lines.
-                    # avoiding using "yield from" for backwards compatibility
-                    # hence we need this for-loop
-                    for __line in flush_func(selloc, residue_loc):
-                        yield __line
+                for __line in flush_func(selloc, altloc_lines, res_per_loc):
+                    yield __line
 
-                if altloc != ' ':
-                    # this case correct for two consecutive altloc groups
-                    current_loc = residue_loc.setdefault(altloc, [])
-                    current_loc.append(line)
-                else:
-                    yield line
+                #if altloc != ' ':
+                #    # this case corrects for two consecutive altloc groups
+                #    current_loc = altloc_lines.setdefault(altloc, [])
+                #    current_loc.append(line)
+                #else:
+                #    yield line
 
-            else:
-                # this line belongs to the same altloc group as the previous line
-                current_loc = residue_loc.setdefault(altloc, [])
-                current_loc.append(line)
+            #else:
+            #    # this line belongs to the same altloc group as the previous line
+            #    current_loc = altloc_lines.setdefault(altloc, [])
+            #    current_loc.append(line)
 
             # registers the parameters for the next line
+            current_loc = altloc_lines.setdefault(altloc, [])
+            current_loc.append(line)
+
+            rploc = res_per_loc.setdefault(altloc, set())
+            rploc.add((resname, resnum))
+
             prev_altloc = altloc
             prev_resnum = resnum
             prev_resname = resname
 
         elif line.startswith(terminators):
-            for __line in flush_func(selloc, residue_loc):
+            for __line in flush_func(selloc, altloc_lines, res_per_loc):
                 yield __line
 
             yield line  # the terminator line
@@ -200,8 +205,10 @@ def select_altloc(fhandle, selloc=None, byocc=False):
 
     # end of for loop
     # flush altloc residues in case the last residue was an altloc
-    for __line in flush_func(selloc, residue_loc):
-        yield __line
+    #print('before')
+    if altloc_lines:
+        for __line in flush_func(selloc, altloc_lines, res_per_loc):
+            yield __line
 
 
 def is_another_altloc_group(
@@ -211,7 +218,8 @@ def is_another_altloc_group(
         prev_resnum,
         resname,
         prev_resname,
-        residue_loc):
+        altloc_lines,
+        rploc):
     """
     Detect if current line because to another altloc group.
 
@@ -225,48 +233,86 @@ def is_another_altloc_group(
 
     False otherwise.
     """
-    is_another = \
-        altloc == ' ' \
-        or altloc == prev_altloc and (resnum != prev_resnum or resname != prev_resname) \
-        or altloc != prev_altloc and altloc in residue_loc \
-        or altloc == prev_altloc and resnum != prev_resnum and resname != prev_resname and altloc in residue_loc
+    a0 = prev_altloc
+    a1 = altloc
+    ra0 = prev_resname
+    ra1 = resname
+    ru0 = prev_resnum
+    ru1 = resnum
+    rl = altloc_lines
+    rv = list(rploc.values())
 
+    ##print('#')
+    #print(altloc, resname, resnum)
+    #print(rploc)
+    #print(rv)
+    #print('all', all(len(v) == len(rv[0]) for v in rv[1:]))
+
+    is_another = (
+        all((a0, ra0, ru0)) and (
+               (a0 != a1 and a1 == ' ' and ru1 > ru0)
+            or (a0 == ' ' and a1 == ' ' and (ru1 != ru0 or ra1 != ra0))
+            or (a0 == a1 and a0 != ' ' and a1 in rl and ru1 > ru0 and len(rl) > 1 and all(len(v) == len(rv[0]) for v in rv[1:]))
+        #or (a0 == a1 and (ra0 != ra1 and ru0 == ru1 or ra0 == ra1 and ru0 != ru1 or ra0 != ra1 and ru0 != ru1))
+        #(a0 == a1 and ra0 != ra1 and ru0 != ru1 and a1 in rl)
+        #or (a0 == a1 and (ra0 != ra1 and ru0 == ru1 or ra0 == ra1 and ru0 != ru1) and a1 in rl)
+        #or (a1 != a0 and ra1 == ra0 and ru1 == ru0 and a0 in rl and a1 in rl)
+        ##or (a1 != a0 and a0 == ' ' and (ra0 != ra1 and ru0 == ru1 or ra0 == ra1 and ru0 != ru1) and ' ' in rl)
+        #or (a0 == ' ' and a1 == ' ' and ra0 != ra1 and ru0 != ru1)
+        #or (a0 == ' ' and a1 == ' ' and ra0 != ra1 and ru0 == ru1)
+        #or (a0 == ' ' and a1 != a0 and ra0 != ra1 and ru0 != ru1)
+        #or (a1 == ' ' and a1 != a0 and a0 != '' and ra0 != ra1 and ru0 != ru1)
+        #or (a0 != a1 and ra0 != ra1 and ru0 != ru1 and a0 in rl)
+        ))
+
+        #not all((prev_altloc, prev_resnum, prev_resname)) \
+        #and (
+        #    or altloc == prev_altloc and (resnum != prev_resnum or resname != prev_resname)
+        #    or altloc != prev_altloc and altloc in altloc_lines
+        #    or altloc == prev_altloc and resnum != prev_resnum and resname != prev_resname and altloc in altloc_lines
+        #)
+    #print(is_another)
     return is_another
 
 
-def flush_resloc(selloc, residue_loc):
+def flush_resloc(selloc, altloc_lines, res_per_loc):
     """Flush the captured altloc lines."""
     # only the selected altloc is yieled
-    if selloc in residue_loc:
-        for line2flush in residue_loc[selloc]:
+    #pprint(altloc_lines)
+    if selloc in altloc_lines:
+        for line2flush in altloc_lines[selloc]:
             yield line2flush[:16] + ' ' + line2flush[17:]
     # the altloc group does not contain the selected altloc
     # therefore, all members should be yielded
     else:
-        for key, lines2flush in residue_loc.items():
+        for key, lines2flush in altloc_lines.items():
             for line2flush in lines2flush:
                 yield line2flush
 
     # clears the altloc group dictionary. Ready for the next one!
-    residue_loc.clear()
+    altloc_lines.clear()
+    res_per_loc.clear()
 
 
-def flush_resloc_occ(selloc, residue_loc):
+def flush_resloc_occ(selloc, altloc_lines, res_per_loc):
     """Flush the captured altloc lines."""
     # only the selected altloc is yieled
+    #pprint(altloc_lines)
     highest = 0.00
-    altloc = None
-    for key, lines2flush in residue_loc.items():
+    altloc = ' '
+    for key, lines2flush in altloc_lines.items():
         # all atoms in a altloc location (should) have the same occupancy
-        if float(lines2flush[0][54:60]) > highest:
+        occ = float(lines2flush[0][54:60])
+        if occ > highest:
             altloc = key
+            highest = occ
 
-    for line2flush in residue_loc[altloc]:
+    for line2flush in altloc_lines[altloc]:
         yield line2flush[:16] + ' ' + line2flush[17:]
 
     # clears the altloc group dictionary. Ready for the next one!
-    residue_loc.clear()
-
+    altloc_lines.clear()
+    res_per_loc.clear()
 
 def run(fhandle, option=None):
     """
