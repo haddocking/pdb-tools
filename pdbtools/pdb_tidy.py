@@ -150,15 +150,15 @@ def run(fhandle, strict=False):
     in_model = False
     for line in fhandle:
 
-        if line.strip().startswith('MODEL'):
+        line = line.strip()  # We will pad/add \n later to make uniform
+
+        if line.startswith('MODEL'):
             line = "MODEL " + "    " + str(num_models).rjust(4)
             num_models += 1
             in_model = True
 
         if line.startswith(ignored):  # to avoid matching END _and_ ENDMDL
             continue
-
-        line = line.strip()  # We will pad/add \n later to make uniform
 
         # Check line length
         line = "{:<80}\n".format(line)
@@ -174,10 +174,10 @@ def run(fhandle, strict=False):
     serial_offset = 0  # To offset after adding TER records
     for line in fhandle:
 
+        line = line.strip()
+
         if line.startswith(ignored):
             continue
-
-        line = line.strip()
 
         # Treat ATOM/HETATM differently
         #   - no TER in HETATM
