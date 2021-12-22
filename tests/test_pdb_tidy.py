@@ -181,6 +181,49 @@ class TestTool(unittest.TestCase):
         # Check if we added END statements correctly
         self.assertTrue(self.stdout[-1].startswith('END'))
 
+    def test_corrects_model_format_and_numbers(self):
+        """Correct MODEL lines."""
+        fpath = os.path.join(data_dir, 'ensemble_error_MODEL.pdb')
+        sys.argv = ['', fpath]
+        self.exec_module()
+        self.assertEqual(self.retcode, 0)
+        self.assertEqual(len(self.stdout), 16)
+        self.assertEqual(len(self.stderr), 0)
+        self.assertEqual(len(self.stdout[5].strip()), 14)
+        self.assertEqual(len(self.stdout[5]), 80)
+        self.assertEqual(len(self.stdout[10].strip()), 14)
+        self.assertEqual(len(self.stdout[10]), 80)
+        self.assertEqual(self.stdout[5].strip(), "MODEL        1")
+        self.assertEqual(self.stdout[10].strip(), "MODEL        2")
+
+    def test_corrects_model_ENDMDL(self):
+        """Correct MODEL lines."""
+        fpath = os.path.join(data_dir, 'ensemble_error_4.pdb')
+        sys.argv = ['', fpath]
+        self.exec_module()
+        self.assertEqual(self.retcode, 0)
+        self.assertEqual(len(self.stdout), 14)
+        self.assertEqual(len(self.stderr), 0)
+
+        # MODEL lines
+        self.assertEqual(len(self.stdout[3].strip()), 14)
+        self.assertEqual(len(self.stdout[3]), 80)
+        self.assertEqual(len(self.stdout[3].strip()), 14)
+        self.assertEqual(len(self.stdout[8]), 80)
+        self.assertEqual(self.stdout[3].strip(), "MODEL        1")
+        self.assertEqual(self.stdout[8].strip(), "MODEL        2")
+
+        # ENDMDL LINES
+        self.assertEqual(len(self.stdout[7]), 80)
+        self.assertEqual(len(self.stdout[12]), 80)
+        self.assertEqual(self.stdout[7].strip(), "ENDMDL")
+        self.assertEqual(self.stdout[12].strip(), "ENDMDL")
+
+        # END LINES
+        self.assertEqual(self.stdout[-1].strip(), "END")
+        self.assertEqual(len(self.stdout[-1]), 80)
+
+
     def test_file_not_found(self):
         """$ pdb_tidy not_existing.pdb"""
 

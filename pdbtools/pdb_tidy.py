@@ -143,10 +143,17 @@ def run(fhandle, strict=False):
     fmt_TER = "TER   {:>5d}      {:3s} {:1s}{:>4s}{:1s}" + " " * 53 + "\n"
 
     records = ('ATOM', 'HETATM')
-    ignored = ('TER', 'END ', 'END\n', 'CONECT', 'MASTER')
+    ignored = ('TER', 'END', 'CONECT', 'MASTER', 'ENDMDL')
     # Iterate up to the first ATOM/HETATM line
     prev_line = None
+    num_models = 1
+    in_model = False
     for line in fhandle:
+
+        if line.strip().startswith('MODEL'):
+            line = "MODEL " + "    " + str(num_models).rjust(4)
+            num_models += 1
+            in_model = True
 
         if line.startswith(ignored):  # to avoid matching END _and_ ENDMDL
             continue
@@ -206,9 +213,16 @@ def run(fhandle, strict=False):
             if atom_section:
                 atom_section = False
                 yield make_TER(prev_line)
+                if in_model:
+                    yield "{:<80}\n".format("ENDMDL")
+                    in_model = False
 
             if line.startswith('MODEL'):
+                line = "MODEL " + "    " + str(num_models).rjust(4)
+                num_models += 1
+                in_model = True
                 serial_offset = 0
+
 
         if serial > 99999:
             emsg = 'ERROR!! Structure contains more than 99.999 atoms.\n'
@@ -226,6 +240,9 @@ def run(fhandle, strict=False):
             # Add last TER statement
             atom_section = False
             yield make_TER(prev_line)
+            if in_model:
+                yield "{:<80}\n".format("ENDMDL")
+                in_model = False
 
     # Add END statement
     yield "{:<80}\n".format("END")
