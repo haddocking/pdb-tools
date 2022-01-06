@@ -67,6 +67,17 @@ class TestTool(unittest.TestCase):
         self.assertEqual(len(self.stdout), 79)
         self.assertEqual(len(self.stderr), 0)
 
+        records = ('TER')
+        ter_locations = [l[0:80] for l in self.stdout if l.startswith(records)]
+
+        expected = ["TER      12      ALA X   1" + " " * 54,
+                    "TER      23      ALA X   2" + " " * 54,
+                    "TER      34      ALA X   3" + " " * 54,
+                    "TER      45      ALA X   4" + " " * 54,
+                    "TER      56      ALA X   5" + " " * 54]
+
+        self.assertEqual(ter_locations, expected)
+
     def test_range_2(self):
         """$ pdb_add_manual_ter -1: data/add_manual_ter_test_regular.pdb"""
 
@@ -80,6 +91,19 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.retcode, 0)
         self.assertEqual(len(self.stdout), 81)
         self.assertEqual(len(self.stderr), 0)
+
+        records = ('TER')
+        ter_locations = [l[0:80] for l in self.stdout if l.startswith(records)]
+
+        expected = ["TER      12      ALA X   1" + " " * 54,
+                    "TER      23      ALA X   2" + " " * 54,
+                    "TER      34      ALA X   3" + " " * 54,
+                    "TER      45      ALA X   4" + " " * 54,
+                    "TER      56      ALA X   5" + " " * 54,
+                    "TER      67      ALA X   6" + " " * 54,
+                    "TER      79      ALA X   7" + " " * 54]
+
+        self.assertEqual(ter_locations, expected)
 
     def test_range_3(self):
         """$ pdb_add_manual_ter -1:7:3 data/add_manual_ter_test_regular.pdb"""
@@ -95,6 +119,14 @@ class TestTool(unittest.TestCase):
         self.assertEqual(len(self.stdout), 76)
         self.assertEqual(len(self.stderr), 0)
 
+        records = ('TER')
+        ter_locations = [l[0:80] for l in self.stdout if l.startswith(records)]
+
+        expected = ["TER      32      ALA X   3" + " " * 54,
+                    "TER      63      ALA X   6" + " " * 54]
+
+        self.assertEqual(ter_locations, expected)
+
     def test_range_4(self):
         """$ pdb_add_manual_ter -1::5 data/add_manual_ter_test_regular.pdb"""
 
@@ -108,6 +140,13 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.retcode, 0)
         self.assertEqual(len(self.stdout), 75)
         self.assertEqual(len(self.stderr), 0)
+
+        records = ('TER')
+        ter_locations = [l[0:80] for l in self.stdout if l.startswith(records)]
+
+        expected = ["TER      52      ALA X   5" + " " * 54]
+
+        self.assertEqual(ter_locations, expected)
 
     def test_range_5(self):
         """$ pdb_add_manual_ter -1:: data/add_manual_ter_test_existingTER.pdb"""
@@ -123,6 +162,19 @@ class TestTool(unittest.TestCase):
         self.assertEqual(len(self.stdout), 81)
         self.assertEqual(len(self.stderr), 0)
 
+        records = ('TER')
+        ter_locations = [l[0:80] for l in self.stdout if l.startswith(records)]
+
+        expected = ["TER      12      ALA X   1" + " " * 54,
+                    "TER      23      ALA X   2" + " " * 54,
+                    "TER      34      ALA X   3" + " " * 54,
+                    "TER      45      ALA X   4" + " " * 54,
+                    "TER      56      ALA X   5" + " " * 54,
+                    "TER      67      ALA X   6" + " " * 54,
+                    "TER      79      ALA X   7" + " " * 54]
+
+        self.assertEqual(ter_locations, expected)
+
     def test_range_6(self):
         """$ pdb_add_manual_ter -1::2 data/add_manual_ter_existingTER.pdb"""
 
@@ -136,6 +188,16 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.retcode, 0)
         self.assertEqual(len(self.stdout), 78)
         self.assertEqual(len(self.stderr), 0)
+
+        records = ('TER')
+        ter_locations = [l[0:80] for l in self.stdout if l.startswith(records)]
+
+        expected = ["TER      12      ALA X   1" + " " * 54,
+                    "TER      23      ALA X   2" + " " * 54,
+                    "TER      44      ALA X   4" + " " * 54,
+                    "TER      65      ALA X   6" + " " * 54]
+
+        self.assertEqual(ter_locations, expected)
 
     def test_range_7(self):
         """$ pdb_add_manual_ter -1: data/dummy.pdb"""
@@ -151,8 +213,34 @@ class TestTool(unittest.TestCase):
         self.assertEqual(len(self.stdout), 220)
         self.assertEqual(len(self.stderr), 0)
 
+        records = ('TER')
+        ter_locations = [l[0:80] for l in self.stdout if l.startswith(records)]
+
+        #issue where TER automatically increments line number needs to be resolved
+        expected = ["TER      27      ARG B   4" + " " * 54,
+                    "TER      43      GLU B   6" + " " * 54,
+                    "TER      54      ALA B   7" + " " * 54,
+                    "TER      72      ASN A   1" + " " * 54,
+                    "TER      97      ARG A   2" + " " * 54,
+                    "TER     113      GLU A   3" + " " * 54,
+                    "TER     140      ARG C   5" + " " * 54,
+                    "TER     156      GLU C   2" + " " * 54,
+                    "TER     165      MET C  -1" + " " * 54,
+                    "TER     186       DT D   2" + " " * 54,
+                    "TER     188       CA A 301" + " " * 54,
+                    "TER     190      HOH A 302" + " " * 54,
+                    "TER     192      HOH A 303" + " " * 54,
+                    "TER     194      HOH B 301" + " " * 54,
+                    "TER     196      HOH C 301" + " " * 54,
+                    "TER     198      HOH C 302" + " " * 54,
+                    "TER     200      HOH C 303" + " " * 54,
+                    "TER     202      HOH C 304" + " " * 54,
+                    "TER     204      HOH C 305" + " " * 54]
+
+        self.assertEqual(ter_locations, expected)
+
     def test_range_8(self):
-        """$ pdb_add_manual_ter -1:18:3 data/dummy.pdb"""
+        """$ pdb_add_manual_ter -1:17:3 data/dummy.pdb"""
 
         # Simulate input
         sys.argv = ['', '-1:17:3', os.path.join(data_dir, 'dummy.pdb')]
@@ -164,6 +252,8 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.retcode, 0)
         self.assertEqual(len(self.stdout), 206)
         self.assertEqual(len(self.stderr), 0)
+
+        #add TER location asserts for dummy pdb
 
     def test_invalid_range_1(self):
         """$ pdb_add_manual_ter --9998:: data/add_manual_ter_test_regular.pdb"""

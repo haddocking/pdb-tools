@@ -208,8 +208,9 @@ def run(fhandle, residue_range, step):
     prev_res = None
     res_counter = 0
     no_more_atoms = False
+    atom_counter = 0
     min_residue = min(residue_range)
-    records = ('ATOM', 'HETATM', 'ANISOU') #added END* for cases where TER added after last residue
+    records = ('ATOM', 'HETATM', 'ANISOU')
     ignored = ('TER')
     end = ('END', 'ENDMDL', 'CONECT')
     for line in fhandle:
@@ -224,7 +225,17 @@ def run(fhandle, residue_range, step):
                   and (res_counter - min_residue) % step == 0 \
                   and res_counter in residue_range \
                   and not prev_line.startswith(ignored): #does not add TER record if one exists
+                    atom_counter += 1
                     yield make_TER(prev_line)
+
+            #adjusts atom numbers for added TER entries
+            atom_counter += 1
+            line = line[:6] + str(atom_counter).rjust(5) + line[11:]
+
+        #modifies atom number of existing TER entries - also changes 'TER\n' to full 'TER' entries
+        if line.startswith(ignored):
+            atom_counter += 1
+            yield make_TER(prev_line)
 
         # sees record that indicates end of ATOMS records, checks if TER record should be
         # added based on user input only once.
@@ -234,10 +245,12 @@ def run(fhandle, residue_range, step):
           and not prev_line.startswith(ignored) \
           and not no_more_atoms:
             no_more_atoms = True
+            atom_counter += 1
             yield make_TER(prev_line)
 
         prev_line = line
-        yield line
+        if not line.startswith(ignored):
+            yield line
 
 add_manual_ter = run
 
