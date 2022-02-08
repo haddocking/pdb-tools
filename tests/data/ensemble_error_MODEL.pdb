@@ -1,0 +1,14 @@
+HEADER    THIS A DUMMY PDB FOR PDB-TOOLS TESTING                                
+TITLE     A RANDOM PDB                                                          
+REMARK MODEL 1 HAS A BAD FORMATTED LINE
+REMARK MODEL 2 HAS NO NUMBER
+REMARK PDB_TIDY SHOULD ADD AND CORRECT THE MODEL NUMBERS
+MODEL 1                                                                  
+ATOM      1  N   ASN A   1      22.066  40.557   0.420  1.00  0.00           N  
+ATOM      2  H   ASN A   1      21.629  41.305  -0.098  1.00  0.00           H  
+ENDMDL                                                                          
+MODEL                                                                  
+ATOM      1  N   ASN A   1      22.066  40.557   0.420  1.00  0.00           N  
+ATOM      2  H   ASN A   1      21.629  41.305  -0.098  1.00  0.00           H  
+ENDMDL                                                                          
+END                                                                             
