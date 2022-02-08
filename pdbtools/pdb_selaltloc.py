@@ -39,7 +39,6 @@ files using the terminal, and can be used sequentially, with one tool streaming
 data to another. They are based on old FORTRAN77 code that was taking too much
 effort to maintain and compile. RIP.
 """
-from pprint import pprint
 import operator
 import os
 import sys
