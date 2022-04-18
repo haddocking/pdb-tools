@@ -1,0 +1,22 @@
+graft pdbtools
+
+include LICENSE
+include README.md
+include citation.tex
+
+exclude .appveyor.yml
+exclude .bumpversion.cfg
+exclude .coveragerc
+exclude .travis.yml
+exclude CODE_OF_CONDUCT.md
+exclude CONTRIBUTING.md
+exclude MANIFEST.in
+exclude PACKING.md
+exclude tox.ini
+
+prune docs
+prune tests
+
+global-exclude *.py[cod] __pycache__/* *.so *.dylib
+global-exclude *.swp
+global-exclude tags
