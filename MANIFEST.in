@@ -1,0 +1,27 @@
+graft pdbtools
+
+exclude docs/assets/*
+exclude docs/doctools.py
+exclude docs/index.md.template
+
+include docs/logo/*
+include docs/cookbook.md
+include docs/index.md
+
+exclude .bumpversion.cfg
+exclude .travis.yml
+exclude .appveyor.yml
+exclude .coveragerc
+exclude tox.ini
+
+include CODE_OF_CONDUCT.md
+include CONTRIBUTING.md
+include LICENSE
+include README.md
+include citation.tex
+
+prune tests
+
+global-exclude *.py[cod] __pycache__/* *.so *.dylib
+global-exclude tags
+global-exclude *.swp
