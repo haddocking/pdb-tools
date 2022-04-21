@@ -462,7 +462,7 @@ class TestTool(unittest.TestCase):
             )
 
     def test_vu7_maxocc(self):
-        """Test dummy.pdb is not altered because there are not altlocs."""
+        """Test vu7.pdb properly selects highest altloc."""
         sys.argv = ['', os.path.join(data_dir, 'vu7.pdb')]
         self.exec_module()
         self.assertEqual(self.retcode, 0)
@@ -486,8 +486,8 @@ class TestTool(unittest.TestCase):
             )
 
     def test_vu7_maxocc_B(self):
-        """Test dummy.pdb is not altered because there are not altlocs."""
-        sys.argv = ['', os.path.join(data_dir, 'vu7.pdb')]
+        """Test vu7.pdb properly selects altloc B."""
+        sys.argv = ['', '-B', os.path.join(data_dir, 'vu7.pdb')]
         self.exec_module()
         self.assertEqual(self.retcode, 0)
         self.assertEqual(len(self.stdout), 30)
@@ -510,7 +510,7 @@ class TestTool(unittest.TestCase):
             )
 
     def test_vu7_maxocc_A(self):
-        """Test dummy.pdb is not altered because there are not altlocs."""
+        """Test vu7.pdb properly selects altloc A."""
         sys.argv = ['', '-A', os.path.join(data_dir, 'vu7.pdb')]
         self.exec_module()
         self.assertEqual(self.retcode, 0)
@@ -533,7 +533,7 @@ class TestTool(unittest.TestCase):
                 ]
             )
 
-    def test_vu7_anisou(self):
+    def test_anisou_lines(self):
         """
         Test anisou.pdb is not altered because there are not altlocs.
 
@@ -550,9 +550,9 @@ class TestTool(unittest.TestCase):
             expected_lines = [l.strip(os.linesep) for l in fin.readlines()]
         self.assertEqual(self.stdout, expected_lines)
 
-    def test_vu7_anisou_with_altloc_maxocc(self):
+    def test_anisou_with_altloc_maxocc(self):
         """
-        Test anisou.pdb is not altered because there are not altlocs.
+        Test anisou_altloc.pdb properly selects the highest altloc.
 
         anisou.pdb has ANISOU lines. Ensure bug reported in #130 is
         corrected.
@@ -593,9 +593,9 @@ class TestTool(unittest.TestCase):
                 ]
             )
 
-    def test_vu7_anisou_with_altloc_maxocc_A(self):
+    def test_anisou_with_altloc_maxocc_A(self):
         """
-        Test anisou.pdb is not altered because there are not altlocs.
+        Test anisou_altloc.pdb selects altloc -A.
 
         anisou.pdb has ANISOU lines. Ensure bug reported in #130 is
         corrected.
@@ -636,9 +636,9 @@ class TestTool(unittest.TestCase):
                 ]
             )
 
-    def test_vu7_anisou_with_altloc_maxocc_B(self):
+    def test_anisou_with_altloc_maxocc_B(self):
         """
-        Test anisou.pdb is not altered because there are not altlocs.
+        Test anisou_altloc.pdb selects altloc -B.
 
         anisou.pdb has ANISOU lines. Ensure bug reported in #130 is
         corrected.
@@ -679,7 +679,7 @@ class TestTool(unittest.TestCase):
                 ]
             )
 
-    def test_vu7_anisou_missing(self):
+    def test_anisou_missing(self):
         """Test raises error if there are missing anisou lines."""
         infile = os.path.join(data_dir, 'anisou_missing.pdb')
         sys.argv = ['', infile]
