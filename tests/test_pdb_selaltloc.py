@@ -533,6 +533,23 @@ class TestTool(unittest.TestCase):
                 ]
             )
 
+    def test_vu7_anisou(self):
+        """
+        Test anisou.pdb is not altered because there are not altlocs.
+
+        anisou.pdb has ANISOU lines. Ensure bug reported in #130 is
+        corrected.
+        """
+        infile = os.path.join(data_dir, 'anisou.pdb')
+        sys.argv = ['', infile]
+        self.exec_module()
+        self.assertEqual(self.retcode, 0)
+        self.assertEqual(len(self.stdout), 24)
+        self.assertEqual(len(self.stderr), 0)
+        with open(infile, "r") as fin:
+            expected_lines = [l.strip(os.linesep) for l in fin.readlines()]
+        self.assertEqual(self.stdout, expected_lines)
+
     def test_file_not_found(self):
         """$ pdb_selaltloc not_existing.pdb"""
 
