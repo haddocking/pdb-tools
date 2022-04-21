@@ -322,6 +322,11 @@ def flush_resloc_id_same_residue(selloc, altloc_lines, res_per_loc):
     for atom, linet in sorted_atoms:
         # remember linet is a tuple, where the first item is the atom number
         lines = linet[1]
+
+        # here we don't need to care about anisou lines as in
+        # `flush_resloc_occ_same_residue` because ATOM/HETATM and ANISOU
+        # are already sorted by definition and lines are yieled from the
+        # altloc record
         for line in lines:
             if line[16] == selloc:
                 to_yield.append(line)
@@ -344,19 +349,39 @@ def flush_resloc_occ_same_residue(altloc_lines, res_per_loc, **kw):
     """Flush altloc if altloc are atoms in the same residue - by occ."""
     sorted_atoms = _get_sort_atoms(altloc_lines)
 
-    # helper dictionary to sort lines inside the for loop
-    A = {
-        'ATOM': 1,
-        'HETA': 1,
-        'ANIS': 0,
-        }
-
     for atom, linest in sorted_atoms:
         lines = linest[1]
-        lines.sort(key=lambda x: (A[x[:4]], _sort_with_anisou(x)), reverse=True)
-        yield lines[0][:16] + ' ' + lines[0][17:]
-        if lines[1:] and lines[1].startswith('ANISOU'):
-            yield lines[1][:16] + ' ' + lines[1][17:]
+
+        atom_lines = [l for l in lines if l.startswith(("ATOM", "HETATM"))]
+        anisou_lines = [l for l in lines if l.startswith(("ANISOU"))]
+
+        if anisou_lines:
+            new = []
+
+            if len(atom_lines) != len(anisou_lines):
+                emsg = (
+                    "There is an error with this PDB. "
+                    "We expect one ANISOU line per ATOM/HETATM lines. "
+                    "But the number of ATOM/HETATM and ANISOU lines differ."
+                    )
+                raise ValueError(emsg)
+
+            for _a, _b in zip(atom_lines, anisou_lines):
+                new.append((_a, _b))
+
+            new.sort(key=lambda x: float(x[0][54:60]), reverse=True)
+
+            # ATOM/HETATM
+            yield new[0][0][:16] + ' ' + new[0][0][17:]
+            # ANISOU
+            yield new[0][1][:16] + ' ' + new[0][1][17:]
+
+            new.clear()
+
+        else:
+            atom_lines.sort(key=lambda x: float(x[54:60]), reverse=True)
+            yield atom_lines[0][:16] + ' ' + atom_lines[0][17:]
+
 
     altloc_lines.clear()
     res_per_loc.clear()
@@ -388,14 +413,6 @@ def _get_sort_atoms(altloc_lines):
     # number followed by atom number
     sorted_atoms = sorted(list(atoms.items()), key=lambda x: (x[0][0], x[1][0]))
     return sorted_atoms
-
-
-def _sort_with_anisou(line):
-    if line.startswith('ANISOU'):
-        # ANISOU lines have not information about occ
-        return -1
-    else:
-        return float(line[54:60])
 
 
 def all_same_residue(altloc_lines):
