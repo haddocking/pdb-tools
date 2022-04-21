@@ -352,9 +352,11 @@ def flush_resloc_occ_same_residue(altloc_lines, res_per_loc, **kw):
     # organize by atoms
     atoms = {}
     for line in all_lines:
-        atom_number = int(line[6:11])
-        atom = line[12:16]
-        alist = atoms.setdefault((atom_number, atom), [])
+        res_number = int(line[22:26])
+        res_name = line[17:20].strip()
+        #atom_number = int(line[6:11])
+        atom_name = line[12:16]
+        alist = atoms.setdefault((res_number, res_name, atom_name), [])
         alist.append(line)
 
     # sort by atom name
@@ -367,8 +369,7 @@ def flush_resloc_occ_same_residue(altloc_lines, res_per_loc, **kw):
         }
 
     for atom, lines in sorted_atoms:
-        # lines.sort(key=lambda x: (A[x[:4]], _sort_with_anisou), reverse=True)
-        lines.sort(key=lambda x: (A[x[:4]], float(x[54:60])), reverse=True)
+        lines.sort(key=lambda x: (A[x[:4]], _sort_with_anisou(x)), reverse=True)
         yield lines[0][:16] + ' ' + lines[0][17:]
         if lines[1:] and lines[1].startswith('ANISOU'):
             yield lines[1][:16] + ' ' + lines[1][17:]
@@ -377,7 +378,7 @@ def flush_resloc_occ_same_residue(altloc_lines, res_per_loc, **kw):
     res_per_loc.clear()
 
 
-def _sort_with_anisou():
+def _sort_with_anisou(x):
     try:
         return float(x[54:60])
     except ValueError:
