@@ -354,13 +354,15 @@ def flush_resloc_occ_same_residue(altloc_lines, res_per_loc, **kw):
     for line in all_lines:
         res_number = int(line[22:26])
         res_name = line[17:20].strip()
-        #atom_number = int(line[6:11])
         atom_name = line[12:16]
-        alist = atoms.setdefault((res_number, res_name, atom_name), [])
-        alist.append(line)
+        atom_number = int(line[6:11])
+        chain_id = line[21]
+        key = (res_number, res_name, atom_name, chain_id)
+        alist = atoms.setdefault(key, (atom_number, []))
+        alist[1].append(line)
 
     # sort by atom name
-    sorted_atoms = sorted(list(atoms.items()), key=lambda x: x[0][0])
+    sorted_atoms = sorted(list(atoms.items()), key=lambda x: (x[0][0], x[1][0]))
 
     A = {
         'ATOM': 1,
@@ -368,7 +370,8 @@ def flush_resloc_occ_same_residue(altloc_lines, res_per_loc, **kw):
         'ANIS': 0,
         }
 
-    for atom, lines in sorted_atoms:
+    for atom, linest in sorted_atoms:
+        lines = linest[1]
         lines.sort(key=lambda x: (A[x[:4]], _sort_with_anisou(x)), reverse=True)
         yield lines[0][:16] + ' ' + lines[0][17:]
         if lines[1:] and lines[1].startswith('ANISOU'):

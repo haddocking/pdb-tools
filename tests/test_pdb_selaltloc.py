@@ -461,6 +461,30 @@ class TestTool(unittest.TestCase):
             "ATOM      3  CA  ASN A   1      20.000  30.000   0.005  0.60  0.00           C  "
             )
 
+    def test__vu7_maxocc(self):
+        """Test dummy.pdb is not altered because there are not altlocs."""
+        sys.argv = ['', os.path.join(data_dir, 'vu7.pdb')]
+        self.exec_module()
+        self.assertEqual(self.retcode, 0)
+        self.assertEqual(len(self.stdout), 30)
+        self.assertEqual(len(self.stderr), 0)
+        self.assertEqual(
+            self.stdout[15],
+            "HETATM 2910  C27 VU7 A 403     -20.472  24.444  21.209  0.70 25.90           C  ",
+            )
+        self.assertEqual(
+            self.stdout[23:30],
+            [
+                "HETATM 2918  C20 VU7 A 403     -25.101  22.166  21.562  1.00 19.10           C  ",
+                "HETATM 2919  C22 VU7 A 403     -25.005  23.859  23.317  1.00 20.89           C  ",
+                "HETATM 2921  C25 VU7 A 403     -21.980  23.567  22.880  0.70 25.16           C  ",
+                "HETATM 2923  C26 VU7 A 403     -20.710  24.002  22.511  0.70 29.65           C  ",
+                "HETATM 2925  C28 VU7 A 403     -21.503  24.451  20.265  0.70 24.53           C  ",
+                "HETATM 2927  C29 VU7 A 403     -22.775  24.020  20.615  0.70 24.22           C  ",
+                "HETATM 2929  F30 VU7 A 403     -23.749  24.031  19.675  0.70 26.05           F  ",
+                ]
+            )
+
     def test_file_not_found(self):
         """$ pdb_selaltloc not_existing.pdb"""
 
