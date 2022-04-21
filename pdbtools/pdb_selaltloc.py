@@ -182,8 +182,11 @@ def select_altloc(fhandle, selloc=None, byocc=False):
                 else:
                     flush_func = flush_func_multi_residues
 
-                for __line in flush_func(selloc=selloc, altloc_lines=altloc_lines, res_per_loc=res_per_loc):
+                for __line in flush_func(selloc=selloc, altloc_lines=altloc_lines):
                     yield __line
+
+                altloc_lines = {}
+                res_per_loc = {}
 
             # saves the line per altloc identifier
             current_loc = altloc_lines.setdefault(altloc, [])
@@ -205,8 +208,11 @@ def select_altloc(fhandle, selloc=None, byocc=False):
                     flush_func = flush_func_single_residues
                 else:
                     flush_func = flush_func_multi_residues
-                for __line in flush_func(selloc=selloc, altloc_lines=altloc_lines, res_per_loc=res_per_loc):
+                for __line in flush_func(selloc=selloc, altloc_lines=altloc_lines):
                     yield __line
+
+                altloc_lines = {}
+                res_per_loc = {}
 
             prev_altloc = ''
             prev_resname = ''
@@ -229,8 +235,11 @@ def select_altloc(fhandle, selloc=None, byocc=False):
         else:
             flush_func = flush_func_multi_residues
 
-        for __line in flush_func(selloc=selloc, altloc_lines=altloc_lines, res_per_loc=res_per_loc):
+        for __line in flush_func(selloc=selloc, altloc_lines=altloc_lines):
             yield __line
+
+        altloc_lines = []
+        res_per_loc = {}
 
 
 def is_another_altloc_group(
@@ -271,7 +280,7 @@ def is_another_altloc_group(
     return is_another
 
 
-def flush_resloc(selloc, altloc_lines, res_per_loc):
+def flush_resloc(selloc, altloc_lines):
     """Flush the captured altloc lines."""
     # only the selected altloc is yieled
     if selloc in altloc_lines:
@@ -285,12 +294,8 @@ def flush_resloc(selloc, altloc_lines, res_per_loc):
             for line2flush in lines2flush:
                 yield line2flush
 
-    # clears the altloc group dictionary. Ready for the next one!
-    altloc_lines.clear()
-    res_per_loc.clear()
 
-
-def flush_resloc_occ(altloc_lines, res_per_loc, **kw):
+def flush_resloc_occ(altloc_lines, **kw):
     """Flush the captured altloc lines by highest occupancy."""
     # only the selected altloc is yieled
     highest = 0.00
@@ -308,18 +313,14 @@ def flush_resloc_occ(altloc_lines, res_per_loc, **kw):
     for line2flush in altloc_lines[altloc]:
         yield line2flush[:16] + ' ' + line2flush[17:]
 
-    # clears the altloc group dictionary. Ready for the next one!
-    altloc_lines.clear()
-    res_per_loc.clear()
 
-
-def flush_resloc_id_same_residue(selloc, altloc_lines, res_per_loc):
+def flush_resloc_id_same_residue(selloc, altloc_lines):
     """Flush altloc if altloc are atoms in the same residue - by ID."""
     # places all lines in a single list
     sorted_atoms = _get_sort_atoms(altloc_lines)
 
-    to_yield = []
     for atom, linet in sorted_atoms:
+        to_yield = []
         # remember linet is a tuple, where the first item is the atom number
         lines = linet[1]
 
@@ -338,14 +339,8 @@ def flush_resloc_id_same_residue(selloc, altloc_lines, res_per_loc):
             for line in lines:
                 yield line
 
-        # need to clear the list to avoid yield repeated lines
-        to_yield.clear()
 
-    altloc_lines.clear()
-    res_per_loc.clear()
-
-
-def flush_resloc_occ_same_residue(altloc_lines, res_per_loc, **kw):
+def flush_resloc_occ_same_residue(altloc_lines, **kw):
     """Flush altloc if altloc are atoms in the same residue - by occ."""
     sorted_atoms = _get_sort_atoms(altloc_lines)
 
@@ -376,15 +371,9 @@ def flush_resloc_occ_same_residue(altloc_lines, res_per_loc, **kw):
             # ANISOU
             yield new[0][1][:16] + ' ' + new[0][1][17:]
 
-            new.clear()
-
         else:
             atom_lines.sort(key=lambda x: float(x[54:60]), reverse=True)
             yield atom_lines[0][:16] + ' ' + atom_lines[0][17:]
-
-
-    altloc_lines.clear()
-    res_per_loc.clear()
 
 
 def _get_sort_atoms(altloc_lines):
