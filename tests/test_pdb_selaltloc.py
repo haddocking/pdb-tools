@@ -461,6 +461,231 @@ class TestTool(unittest.TestCase):
             "ATOM      3  CA  ASN A   1      20.000  30.000   0.005  0.60  0.00           C  "
             )
 
+    def test_vu7_maxocc(self):
+        """Test vu7.pdb properly selects highest altloc."""
+        sys.argv = ['', os.path.join(data_dir, 'vu7.pdb')]
+        self.exec_module()
+        self.assertEqual(self.retcode, 0)
+        self.assertEqual(len(self.stdout), 30)
+        self.assertEqual(len(self.stderr), 0)
+        self.assertEqual(
+            self.stdout[15],
+            "HETATM 2910  C27 VU7 A 403     -20.472  24.444  21.209  0.70 25.90           C  ",
+            )
+        self.assertEqual(
+            self.stdout[23:30],
+            [
+                "HETATM 2918  C20 VU7 A 403     -25.101  22.166  21.562  1.00 19.10           C  ",
+                "HETATM 2919  C22 VU7 A 403     -25.005  23.859  23.317  1.00 20.89           C  ",
+                "HETATM 2921  C25 VU7 A 403     -21.980  23.567  22.880  0.70 25.16           C  ",
+                "HETATM 2923  C26 VU7 A 403     -20.710  24.002  22.511  0.70 29.65           C  ",
+                "HETATM 2925  C28 VU7 A 403     -21.503  24.451  20.265  0.70 24.53           C  ",
+                "HETATM 2927  C29 VU7 A 403     -22.775  24.020  20.615  0.70 24.22           C  ",
+                "HETATM 2929  F30 VU7 A 403     -23.749  24.031  19.675  0.70 26.05           F  ",
+                ]
+            )
+
+    def test_vu7_maxocc_B(self):
+        """Test vu7.pdb properly selects altloc B."""
+        sys.argv = ['', '-B', os.path.join(data_dir, 'vu7.pdb')]
+        self.exec_module()
+        self.assertEqual(self.retcode, 0)
+        self.assertEqual(len(self.stdout), 30)
+        self.assertEqual(len(self.stderr), 0)
+        self.assertEqual(
+            self.stdout[15],
+            "HETATM 2910  C27 VU7 A 403     -20.472  24.444  21.209  0.70 25.90           C  ",
+            )
+        self.assertEqual(
+            self.stdout[23:30],
+            [
+                "HETATM 2918  C20 VU7 A 403     -25.101  22.166  21.562  1.00 19.10           C  ",
+                "HETATM 2919  C22 VU7 A 403     -25.005  23.859  23.317  1.00 20.89           C  ",
+                "HETATM 2921  C25 VU7 A 403     -21.980  23.567  22.880  0.70 25.16           C  ",
+                "HETATM 2923  C26 VU7 A 403     -20.710  24.002  22.511  0.70 29.65           C  ",
+                "HETATM 2925  C28 VU7 A 403     -21.503  24.451  20.265  0.70 24.53           C  ",
+                "HETATM 2927  C29 VU7 A 403     -22.775  24.020  20.615  0.70 24.22           C  ",
+                "HETATM 2929  F30 VU7 A 403     -23.749  24.031  19.675  0.70 26.05           F  ",
+                ]
+            )
+
+    def test_vu7_maxocc_A(self):
+        """Test vu7.pdb properly selects altloc A."""
+        sys.argv = ['', '-A', os.path.join(data_dir, 'vu7.pdb')]
+        self.exec_module()
+        self.assertEqual(self.retcode, 0)
+        self.assertEqual(len(self.stdout), 30)
+        self.assertEqual(len(self.stderr), 0)
+        self.assertEqual(
+            self.stdout[15],
+            "HETATM 2909  C27 VU7 A 403     -20.473  24.388  21.073  0.30 23.87           C  ",
+            )
+        self.assertEqual(
+            self.stdout[23:30],
+            [
+                "HETATM 2918  C20 VU7 A 403     -25.101  22.166  21.562  1.00 19.10           C  ",
+                "HETATM 2919  C22 VU7 A 403     -25.005  23.859  23.317  1.00 20.89           C  ",
+                "HETATM 2920  C25 VU7 A 403     -22.814  24.071  20.642  0.30 22.86           C  ",
+                "HETATM 2922  C26 VU7 A 403     -21.562  24.484  20.224  0.30 22.96           C  ",
+                "HETATM 2924  C28 VU7 A 403     -20.656  23.873  22.343  0.30 25.28           C  ",
+                "HETATM 2926  C29 VU7 A 403     -21.907  23.454  22.776  0.30 23.59           C  ",
+                "HETATM 2928  F30 VU7 A 403     -22.039  22.963  24.024  0.30 24.64           F  ",
+                ]
+            )
+
+    def test_anisou_lines(self):
+        """
+        Test anisou.pdb is not altered because there are not altlocs.
+
+        anisou.pdb has ANISOU lines. Ensure bug reported in #130 is
+        corrected.
+        """
+        infile = os.path.join(data_dir, 'anisou.pdb')
+        sys.argv = ['', infile]
+        self.exec_module()
+        self.assertEqual(self.retcode, 0)
+        self.assertEqual(len(self.stdout), 24)
+        self.assertEqual(len(self.stderr), 0)
+        with open(infile, "r") as fin:
+            expected_lines = [l.strip(os.linesep) for l in fin.readlines()]
+        self.assertEqual(self.stdout, expected_lines)
+
+    def test_anisou_with_altloc_maxocc(self):
+        """
+        Test anisou_altloc.pdb properly selects the highest altloc.
+
+        anisou.pdb has ANISOU lines. Ensure bug reported in #130 is
+        corrected.
+        """
+        infile = os.path.join(data_dir, 'anisou_altloc.pdb')
+        sys.argv = ['', infile]
+        self.exec_module()
+        self.assertEqual(self.retcode, 0)
+        self.assertEqual(len(self.stdout), 24)
+        self.assertEqual(len(self.stderr), 0)
+        self.assertEqual(
+            self.stdout,
+            [
+                "ATOM      1  N   ALA A  31     -12.806   6.423  23.735  0.60 70.81           N  ",
+                "ANISOU    1  N   ALA A  31     7836   7867  11203   2151   -675    -66       N  ",
+                "ATOM      2  CA  ALA A  31     -13.433   7.788  23.746  0.60 65.66           C  ",
+                "ANISOU    2  CA  ALA A  31     7296   7485  10167   1829   -642    -81       C  ",
+                "ATOM      3  C   ALA A  31     -12.448   8.891  24.124  1.00 63.44           C  ",
+                "ANISOU    3  C   ALA A  31     6818   7632   9654   1744   -656     20       C  ",
+                "ATOM      4  O   ALA A  31     -11.549   8.680  24.937  1.00 65.52           O  ",
+                "ANISOU    4  O   ALA A  31     6891   8010   9994   1853   -759    238       O  ",
+                "ATOM      5  CB  ALA A  31     -14.628   7.834  24.691  1.00 66.76           C  ",
+                "ANISOU    5  CB  ALA A  31     7636   7487  10242   1630   -748    143       C  ",
+                "ATOM      6  N   THR A  32     -12.659  10.075  23.550  1.00 58.59           N  ",
+                "ANISOU    6  N   THR A  32     6249   7244   8768   1532   -569   -122       N  ",
+                "ATOM      7  CA  THR A  32     -11.806  11.232  23.788  1.00 55.42           C  ",
+                "ANISOU    7  CA  THR A  32     5678   7217   8161   1398   -585    -53       C  ",
+                "ATOM      8  C   THR A  32     -12.119  11.857  25.148  1.00 52.59           C  ",
+                "ANISOU    8  C   THR A  32     5384   6947   7651   1206   -743    183       C  ",
+                "ATOM      9  O   THR A  32     -13.166  11.585  25.770  1.00 49.84           O  ",
+                "ANISOU    9  O   THR A  32     5232   6412   7293   1142   -803    278       O  ",
+                "ATOM     10  CB  THR A  32     -11.965  12.321  22.696  0.55 51.87           C  ",
+                "ANISOU   10  CB  THR A  32     5260   6948   7500   1220   -449   -254       C  ",
+                "ATOM     11  OG1 THR A  32     -13.294  12.844  22.720  1.00 48.11           O  ",
+                "ANISOU   11  OG1 THR A  32     5047   6344   6890   1015   -452   -282       O  ",
+                "ATOM     12  CG2 THR A  32     -11.660  11.781  21.303  1.00 54.23           C  ",
+                "ANISOU   12  CG2 THR A  32     5483   7248   7875   1398   -280   -508       C  ",
+                ]
+            )
+
+    def test_anisou_with_altloc_maxocc_A(self):
+        """
+        Test anisou_altloc.pdb selects altloc -A.
+
+        anisou.pdb has ANISOU lines. Ensure bug reported in #130 is
+        corrected.
+        """
+        infile = os.path.join(data_dir, 'anisou_altloc.pdb')
+        sys.argv = ['', '-A', infile]
+        self.exec_module()
+        self.assertEqual(self.retcode, 0)
+        self.assertEqual(len(self.stdout), 24)
+        self.assertEqual(len(self.stderr), 0)
+        self.assertEqual(
+            self.stdout,
+            [
+                "ATOM      1  N   ALA A  31     -12.806   6.423  23.735  0.40 70.81           N  ",
+                "ANISOU    1  N   ALA A  31     7836   7867  11203   2151   -675    -66       N  ",
+                "ATOM      2  CA  ALA A  31     -13.433   7.788  23.746  0.60 65.66           C  ",
+                "ANISOU    2  CA  ALA A  31     7296   7485  10167   1829   -642    -81       C  ",
+                "ATOM      3  C   ALA A  31     -12.448   8.891  24.124  1.00 63.44           C  ",
+                "ANISOU    3  C   ALA A  31     6818   7632   9654   1744   -656     20       C  ",
+                "ATOM      4  O   ALA A  31     -11.549   8.680  24.937  1.00 65.52           O  ",
+                "ANISOU    4  O   ALA A  31     6891   8010   9994   1853   -759    238       O  ",
+                "ATOM      5  CB  ALA A  31     -14.628   7.834  24.691  1.00 66.76           C  ",
+                "ANISOU    5  CB  ALA A  31     7636   7487  10242   1630   -748    143       C  ",
+                "ATOM      6  N   THR A  32     -12.659  10.075  23.550  1.00 58.59           N  ",
+                "ANISOU    6  N   THR A  32     6249   7244   8768   1532   -569   -122       N  ",
+                "ATOM      7  CA  THR A  32     -11.806  11.232  23.788  1.00 55.42           C  ",
+                "ANISOU    7  CA  THR A  32     5678   7217   8161   1398   -585    -53       C  ",
+                "ATOM      8  C   THR A  32     -12.119  11.857  25.148  1.00 52.59           C  ",
+                "ANISOU    8  C   THR A  32     5384   6947   7651   1206   -743    183       C  ",
+                "ATOM      9  O   THR A  32     -13.166  11.585  25.770  1.00 49.84           O  ",
+                "ANISOU    9  O   THR A  32     5232   6412   7293   1142   -803    278       O  ",
+                "ATOM     10  CB  THR A  32     -11.965  12.321  22.696  0.45 51.87           C  ",
+                "ANISOU   10  CB  THR A  32     5260   6948   7500   1220   -449   -254       C  ",
+                "ATOM     11  OG1 THR A  32     -13.294  12.844  22.720  1.00 48.11           O  ",
+                "ANISOU   11  OG1 THR A  32     5047   6344   6890   1015   -452   -282       O  ",
+                "ATOM     12  CG2 THR A  32     -11.660  11.781  21.303  1.00 54.23           C  ",
+                "ANISOU   12  CG2 THR A  32     5483   7248   7875   1398   -280   -508       C  ",
+                ]
+            )
+
+    def test_anisou_with_altloc_maxocc_B(self):
+        """
+        Test anisou_altloc.pdb selects altloc -B.
+
+        anisou.pdb has ANISOU lines. Ensure bug reported in #130 is
+        corrected.
+        """
+        infile = os.path.join(data_dir, 'anisou_altloc.pdb')
+        sys.argv = ['', '-B', infile]
+        self.exec_module()
+        self.assertEqual(self.retcode, 0)
+        self.assertEqual(len(self.stdout), 24)
+        self.assertEqual(len(self.stderr), 0)
+        self.assertEqual(
+            self.stdout,
+            [
+                "ATOM      1  N   ALA A  31     -12.806   6.423  23.735  0.60 70.81           N  ",
+                "ANISOU    1  N   ALA A  31     7836   7867  11203   2151   -675    -66       N  ",
+                "ATOM      2  CA  ALA A  31     -13.433   7.788  23.746  0.40 65.66           C  ",
+                "ANISOU    2  CA  ALA A  31     7296   7485  10167   1829   -642    -81       C  ",
+                "ATOM      3  C   ALA A  31     -12.448   8.891  24.124  1.00 63.44           C  ",
+                "ANISOU    3  C   ALA A  31     6818   7632   9654   1744   -656     20       C  ",
+                "ATOM      4  O   ALA A  31     -11.549   8.680  24.937  1.00 65.52           O  ",
+                "ANISOU    4  O   ALA A  31     6891   8010   9994   1853   -759    238       O  ",
+                "ATOM      5  CB  ALA A  31     -14.628   7.834  24.691  1.00 66.76           C  ",
+                "ANISOU    5  CB  ALA A  31     7636   7487  10242   1630   -748    143       C  ",
+                "ATOM      6  N   THR A  32     -12.659  10.075  23.550  1.00 58.59           N  ",
+                "ANISOU    6  N   THR A  32     6249   7244   8768   1532   -569   -122       N  ",
+                "ATOM      7  CA  THR A  32     -11.806  11.232  23.788  1.00 55.42           C  ",
+                "ANISOU    7  CA  THR A  32     5678   7217   8161   1398   -585    -53       C  ",
+                "ATOM      8  C   THR A  32     -12.119  11.857  25.148  1.00 52.59           C  ",
+                "ANISOU    8  C   THR A  32     5384   6947   7651   1206   -743    183       C  ",
+                "ATOM      9  O   THR A  32     -13.166  11.585  25.770  1.00 49.84           O  ",
+                "ANISOU    9  O   THR A  32     5232   6412   7293   1142   -803    278       O  ",
+                "ATOM     10  CB  THR A  32     -11.965  12.321  22.696  0.55 51.87           C  ",
+                "ANISOU   10  CB  THR A  32     5260   6948   7500   1220   -449   -254       C  ",
+                "ATOM     11  OG1 THR A  32     -13.294  12.844  22.720  1.00 48.11           O  ",
+                "ANISOU   11  OG1 THR A  32     5047   6344   6890   1015   -452   -282       O  ",
+                "ATOM     12  CG2 THR A  32     -11.660  11.781  21.303  1.00 54.23           C  ",
+                "ANISOU   12  CG2 THR A  32     5483   7248   7875   1398   -280   -508       C  ",
+                ]
+            )
+
+    def test_anisou_missing(self):
+        """Test raises error if there are missing anisou lines."""
+        infile = os.path.join(data_dir, 'anisou_missing.pdb')
+        sys.argv = ['', infile]
+        self.exec_module()
+        self.assertEqual(self.retcode, 0)
+
     def test_file_not_found(self):
         """$ pdb_selaltloc not_existing.pdb"""
 

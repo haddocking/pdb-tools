@@ -149,10 +149,15 @@ def select_altloc(fhandle, selloc=None, byocc=False):
     prev_resname = ''
     prev_resnum = ''
 
+    # uses the same function names in the loop below. However, depending
+    # on the input options, the functions used are different. One is
+    # specific for byocc=True, and other specific for occ char selection
     flush_func_multi_residues = flush_resloc_occ if byocc else flush_resloc
+
     flush_func_single_residues = \
         flush_resloc_occ_same_residue if byocc else flush_resloc_id_same_residue
 
+    # defines records and terminators
     records = ('ATOM', 'HETATM', 'ANISOU')
     terminators = ('TER', 'END', 'CONECT', 'END', 'ENDMDL')
 
@@ -170,15 +175,18 @@ def select_altloc(fhandle, selloc=None, byocc=False):
                 # if we see the altloc group has changed, we should flush
                 # the lines observed for the previous altloc group
 
-                # uses for loop instead of "yield from" to maintain compatibility
-                # with older python version
+                # uses "for loop" instead of "yield from" to maintain
+                # compatibility with older python version
                 if partial_altloc(altloc_lines):
                     flush_func = flush_func_single_residues
                 else:
                     flush_func = flush_func_multi_residues
 
-                for __line in flush_func(selloc=selloc, altloc_lines=altloc_lines, res_per_loc=res_per_loc):
+                for __line in flush_func(selloc=selloc, altloc_lines=altloc_lines):
                     yield __line
+
+                altloc_lines = {}
+                res_per_loc = {}
 
             # saves the line per altloc identifier
             current_loc = altloc_lines.setdefault(altloc, [])
@@ -200,8 +208,11 @@ def select_altloc(fhandle, selloc=None, byocc=False):
                     flush_func = flush_func_single_residues
                 else:
                     flush_func = flush_func_multi_residues
-                for __line in flush_func(selloc=selloc, altloc_lines=altloc_lines, res_per_loc=res_per_loc):
+                for __line in flush_func(selloc=selloc, altloc_lines=altloc_lines):
                     yield __line
+
+                altloc_lines = {}
+                res_per_loc = {}
 
             prev_altloc = ''
             prev_resname = ''
@@ -224,8 +235,11 @@ def select_altloc(fhandle, selloc=None, byocc=False):
         else:
             flush_func = flush_func_multi_residues
 
-        for __line in flush_func(selloc=selloc, altloc_lines=altloc_lines, res_per_loc=res_per_loc):
+        for __line in flush_func(selloc=selloc, altloc_lines=altloc_lines):
             yield __line
+
+        altloc_lines = []
+        res_per_loc = {}
 
 
 def is_another_altloc_group(
@@ -238,7 +252,7 @@ def is_another_altloc_group(
         altloc_lines,
         rploc,
         ):
-    """Detect if current line because to another altloc group."""
+    """Detect if current line belongs to a new altloc group."""
     a0 = prev_altloc
     a1 = altloc
     ra0 = prev_resname
@@ -266,7 +280,7 @@ def is_another_altloc_group(
     return is_another
 
 
-def flush_resloc(selloc, altloc_lines, res_per_loc):
+def flush_resloc(selloc, altloc_lines):
     """Flush the captured altloc lines."""
     # only the selected altloc is yieled
     if selloc in altloc_lines:
@@ -280,12 +294,8 @@ def flush_resloc(selloc, altloc_lines, res_per_loc):
             for line2flush in lines2flush:
                 yield line2flush
 
-    # clears the altloc group dictionary. Ready for the next one!
-    altloc_lines.clear()
-    res_per_loc.clear()
 
-
-def flush_resloc_occ(altloc_lines, res_per_loc, **kw):
+def flush_resloc_occ(altloc_lines, **kw):
     """Flush the captured altloc lines by highest occupancy."""
     # only the selected altloc is yieled
     highest = 0.00
@@ -303,30 +313,21 @@ def flush_resloc_occ(altloc_lines, res_per_loc, **kw):
     for line2flush in altloc_lines[altloc]:
         yield line2flush[:16] + ' ' + line2flush[17:]
 
-    # clears the altloc group dictionary. Ready for the next one!
-    altloc_lines.clear()
-    res_per_loc.clear()
 
-
-def flush_resloc_id_same_residue(selloc, altloc_lines, res_per_loc):
+def flush_resloc_id_same_residue(selloc, altloc_lines):
     """Flush altloc if altloc are atoms in the same residue - by ID."""
     # places all lines in a single list
-    all_lines = []
-    for altloc, lines in altloc_lines.items():
-        all_lines.extend(lines)
+    sorted_atoms = _get_sort_atoms(altloc_lines)
 
-    # organize by atoms
-    atoms = {}
-    for line in all_lines:
-        atom_number = int(line[6:11])
-        atom = line[12:16]
-        alist = atoms.setdefault((atom_number, atom), [])
-        alist.append(line)
+    for atom, linet in sorted_atoms:
+        to_yield = []
+        # remember linet is a tuple, where the first item is the atom number
+        lines = linet[1]
 
-    sorted_atoms = sorted(list(atoms.items()), key=lambda x: x[0][0])
-
-    to_yield = []
-    for atom, lines in sorted_atoms:
+        # here we don't need to care about anisou lines as in
+        # `flush_resloc_occ_same_residue` because ATOM/HETATM and ANISOU
+        # are already sorted by definition and lines are yieled from the
+        # altloc record
         for line in lines:
             if line[16] == selloc:
                 to_yield.append(line)
@@ -338,41 +339,69 @@ def flush_resloc_id_same_residue(selloc, altloc_lines, res_per_loc):
             for line in lines:
                 yield line
 
-    altloc_lines.clear()
-    res_per_loc.clear()
 
-
-def flush_resloc_occ_same_residue(altloc_lines, res_per_loc, **kw):
+def flush_resloc_occ_same_residue(altloc_lines, **kw):
     """Flush altloc if altloc are atoms in the same residue - by occ."""
-    # places all lines in a single list
+    sorted_atoms = _get_sort_atoms(altloc_lines)
+
+    for atom, linest in sorted_atoms:
+        lines = linest[1]
+
+        atom_lines = [l for l in lines if l.startswith(("ATOM", "HETATM"))]
+        anisou_lines = [l for l in lines if l.startswith(("ANISOU"))]
+
+        if anisou_lines:
+            new = []
+
+            if len(atom_lines) != len(anisou_lines):
+                emsg = (
+                    "There is an error with this PDB. "
+                    "We expect one ANISOU line per ATOM/HETATM lines. "
+                    "But the number of ATOM/HETATM and ANISOU lines differ."
+                    )
+                raise ValueError(emsg)
+
+            for _a, _b in zip(atom_lines, anisou_lines):
+                new.append((_a, _b))
+
+            new.sort(key=lambda x: float(x[0][54:60]), reverse=True)
+
+            # ATOM/HETATM
+            yield new[0][0][:16] + ' ' + new[0][0][17:]
+            # ANISOU
+            yield new[0][1][:16] + ' ' + new[0][1][17:]
+
+        else:
+            atom_lines.sort(key=lambda x: float(x[54:60]), reverse=True)
+            yield atom_lines[0][:16] + ' ' + atom_lines[0][17:]
+
+
+def _get_sort_atoms(altloc_lines):
+    # this function is used by both:
+    # flush_resloc_occ_same_residue
+    # flush_resloc_id_same_residue
     all_lines = []
     for altloc, lines in altloc_lines.items():
         all_lines.extend(lines)
 
     # organize by atoms
     atoms = {}
+    # key in the dictionary are unique identifiers of the same residue
     for line in all_lines:
+        res_number = int(line[22:26])
+        res_name = line[17:20].strip()
+        atom_name = line[12:16]
         atom_number = int(line[6:11])
-        atom = line[12:16]
-        alist = atoms.setdefault((atom_number, atom), [])
-        alist.append(line)
+        chain_id = line[21]
+        key = (res_number, res_name, atom_name, chain_id)
+        # the atom number is saved so that the original order can be kept
+        alist = atoms.setdefault(key, (atom_number, []))
+        alist[1].append(line)
 
-    sorted_atoms = sorted(list(atoms.items()), key=lambda x: x[0][0])
-
-    A = {
-        'ATOM': 1,
-        'HETA': 1,
-        'ANIS': 0,
-        }
-
-    for atom, lines in sorted_atoms:
-        lines.sort(key=lambda x: (A[x[:4]], float(x[54:60])), reverse=True)
-        yield lines[0][:16] + ' ' + lines[0][17:]
-        if lines[1:] and lines[1].startswith('ANISOU'):
-            yield lines[1][:16] + ' ' + lines[1][17:]
-
-    altloc_lines.clear()
-    res_per_loc.clear()
+    # entries at this point are not sorted. Sorts entries by residue
+    # number followed by atom number
+    sorted_atoms = sorted(list(atoms.items()), key=lambda x: (x[0][0], x[1][0]))
+    return sorted_atoms
 
 
 def all_same_residue(altloc_lines):
