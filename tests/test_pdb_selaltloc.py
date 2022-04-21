@@ -461,7 +461,7 @@ class TestTool(unittest.TestCase):
             "ATOM      3  CA  ASN A   1      20.000  30.000   0.005  0.60  0.00           C  "
             )
 
-    def test__vu7_maxocc(self):
+    def test_vu7_maxocc(self):
         """Test dummy.pdb is not altered because there are not altlocs."""
         sys.argv = ['', os.path.join(data_dir, 'vu7.pdb')]
         self.exec_module()
@@ -482,6 +482,54 @@ class TestTool(unittest.TestCase):
                 "HETATM 2925  C28 VU7 A 403     -21.503  24.451  20.265  0.70 24.53           C  ",
                 "HETATM 2927  C29 VU7 A 403     -22.775  24.020  20.615  0.70 24.22           C  ",
                 "HETATM 2929  F30 VU7 A 403     -23.749  24.031  19.675  0.70 26.05           F  ",
+                ]
+            )
+
+    def test_vu7_maxocc_B(self):
+        """Test dummy.pdb is not altered because there are not altlocs."""
+        sys.argv = ['', os.path.join(data_dir, 'vu7.pdb')]
+        self.exec_module()
+        self.assertEqual(self.retcode, 0)
+        self.assertEqual(len(self.stdout), 30)
+        self.assertEqual(len(self.stderr), 0)
+        self.assertEqual(
+            self.stdout[15],
+            "HETATM 2910  C27 VU7 A 403     -20.472  24.444  21.209  0.70 25.90           C  ",
+            )
+        self.assertEqual(
+            self.stdout[23:30],
+            [
+                "HETATM 2918  C20 VU7 A 403     -25.101  22.166  21.562  1.00 19.10           C  ",
+                "HETATM 2919  C22 VU7 A 403     -25.005  23.859  23.317  1.00 20.89           C  ",
+                "HETATM 2921  C25 VU7 A 403     -21.980  23.567  22.880  0.70 25.16           C  ",
+                "HETATM 2923  C26 VU7 A 403     -20.710  24.002  22.511  0.70 29.65           C  ",
+                "HETATM 2925  C28 VU7 A 403     -21.503  24.451  20.265  0.70 24.53           C  ",
+                "HETATM 2927  C29 VU7 A 403     -22.775  24.020  20.615  0.70 24.22           C  ",
+                "HETATM 2929  F30 VU7 A 403     -23.749  24.031  19.675  0.70 26.05           F  ",
+                ]
+            )
+
+    def test_vu7_maxocc_A(self):
+        """Test dummy.pdb is not altered because there are not altlocs."""
+        sys.argv = ['', '-A', os.path.join(data_dir, 'vu7.pdb')]
+        self.exec_module()
+        self.assertEqual(self.retcode, 0)
+        self.assertEqual(len(self.stdout), 30)
+        self.assertEqual(len(self.stderr), 0)
+        self.assertEqual(
+            self.stdout[15],
+            "HETATM 2909  C27 VU7 A 403     -20.473  24.388  21.073  0.30 23.87           C  ",
+            )
+        self.assertEqual(
+            self.stdout[23:30],
+            [
+                "HETATM 2918  C20 VU7 A 403     -25.101  22.166  21.562  1.00 19.10           C  ",
+                "HETATM 2919  C22 VU7 A 403     -25.005  23.859  23.317  1.00 20.89           C  ",
+                "HETATM 2920  C25 VU7 A 403     -22.814  24.071  20.642  0.30 22.86           C  ",
+                "HETATM 2922  C26 VU7 A 403     -21.562  24.484  20.224  0.30 22.96           C  ",
+                "HETATM 2924  C28 VU7 A 403     -20.656  23.873  22.343  0.30 25.28           C  ",
+                "HETATM 2926  C29 VU7 A 403     -21.907  23.454  22.776  0.30 23.59           C  ",
+                "HETATM 2928  F30 VU7 A 403     -22.039  22.963  24.024  0.30 24.64           F  ",
                 ]
             )
 

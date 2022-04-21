@@ -318,15 +318,20 @@ def flush_resloc_id_same_residue(selloc, altloc_lines, res_per_loc):
     # organize by atoms
     atoms = {}
     for line in all_lines:
+        res_number = int(line[22:26])
+        res_name = line[17:20].strip()
+        atom_name = line[12:16]
         atom_number = int(line[6:11])
-        atom = line[12:16]
-        alist = atoms.setdefault((atom_number, atom), [])
-        alist.append(line)
+        chain_id = line[21]
+        key = (res_number, res_name, atom_name, chain_id)
+        alist = atoms.setdefault(key, (atom_number, []))
+        alist[1].append(line)
 
-    sorted_atoms = sorted(list(atoms.items()), key=lambda x: x[0][0])
+    sorted_atoms = sorted(list(atoms.items()), key=lambda x: (x[0][0], x[1][0]))
 
     to_yield = []
-    for atom, lines in sorted_atoms:
+    for atom, linet in sorted_atoms:
+        lines = linet[1]
         for line in lines:
             if line[16] == selloc:
                 to_yield.append(line)
@@ -337,6 +342,8 @@ def flush_resloc_id_same_residue(selloc, altloc_lines, res_per_loc):
         else:
             for line in lines:
                 yield line
+
+        to_yield.clear()
 
     altloc_lines.clear()
     res_per_loc.clear()
