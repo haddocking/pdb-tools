@@ -109,13 +109,30 @@ def check_input(args):
                 sys.stderr.write(__doc__)
                 sys.exit(1)
 
-    return (option_set, fh)
+    return (fh, option_set)
 
 
-def filter_residue_by_name(fhandle, resname_set):
-    """Removes specific residue that do not match a given name.
+def run(fhandle, resname_set):
     """
+    Keep specified residue names, remove all others.
 
+    Non-coords lines are maintained.
+
+    This function is a generator.
+
+    Parameters
+    ----------
+    fhandle : a line-by-line iterator of the original PDB file.
+
+    resname_set : set, list, or tuple
+        The name of the residues to keep.
+
+    Yields
+    ------
+    str (line-by-line)
+        The PDB lines for the residues selected.
+        Non-coord lines are yielded as well.
+    """
     records = ('ATOM', 'HETATM', 'ANISOU', 'TER')
     for line in fhandle:
         if line.startswith(records):
@@ -124,12 +141,15 @@ def filter_residue_by_name(fhandle, resname_set):
         yield line
 
 
+filter_residue_by_name = run
+
+
 def main():
     # Check Input
-    resname_set, pdbfh = check_input(sys.argv[1:])
+    pdbfh, resname_set = check_input(sys.argv[1:])
 
     # Do the job
-    new_pdb = filter_residue_by_name(pdbfh, resname_set)
+    new_pdb = run(pdbfh, resname_set)
 
     try:
         _buffer = []

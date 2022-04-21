@@ -108,11 +108,27 @@ def check_input(args):
                 sys.stderr.write(__doc__)
                 sys.exit(1)
 
-    return (option_set, fh)
+    return (fh, option_set)
 
 
-def delete_chain(fhandle, chain_set):
-    """Removes specific chains from the structure.
+def run(fhandle, chain_set):
+    """
+    Remove specific chains from the structure.
+
+    This function is a generator.
+
+    Parameters
+    ----------
+    fhandle : a line-by-line iterator of the original PDB file.
+
+    chain_set : set, or list, or tuple
+        The group of chains to remove. Example: ('A', 'B').
+
+    Yields
+    ------
+    str (line-by-line)
+        The PDB lines that are not part of the chains selected to be
+        removed.
     """
 
     records = ('ATOM', 'HETATM', 'TER', 'ANISOU')
@@ -123,12 +139,15 @@ def delete_chain(fhandle, chain_set):
         yield line
 
 
+delete_chain = run
+
+
 def main():
     # Check Input
-    element, pdbfh = check_input(sys.argv[1:])
+    pdbfh, element = check_input(sys.argv[1:])
 
     # Do the job
-    new_pdb = delete_chain(pdbfh, element)
+    new_pdb = run(pdbfh, element)
 
     try:
         _buffer = []

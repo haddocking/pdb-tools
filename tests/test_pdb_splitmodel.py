@@ -93,6 +93,88 @@ class TestTool(unittest.TestCase):
                 n_lines = len(handle.readlines())
                 self.assertEqual(n_lines, 2)
 
+    def test_run_iterable(self):
+        """pdb_splitmodel.run(iterable)"""
+        from pdbtools import pdb_splitmodel
+
+        # Copy input file to tempdir
+
+        # Simulate input
+        src = os.path.join(data_dir, 'ensemble_OK.pdb')
+        dst = os.path.join(self.tempdir, 'ensemble_OK.pdb')
+        shutil.copy(src, dst)
+
+        with open(dst, 'r') as fin:
+            lines = fin.readlines()
+
+        pdb_splitmodel.run(lines)
+
+        # Read files created by script
+        ofiles = [f for f in os.listdir(self.tempdir)
+                  if f.startswith('splitmodels')]
+        self.assertEqual(len(ofiles), 2)
+
+        for fpath in ofiles:
+            if fpath == 'ensemble_OK.pdb':
+                continue
+
+            with open(os.path.join(self.tempdir, fpath), 'r') as handle:
+                n_lines = len(handle.readlines())
+                self.assertEqual(n_lines, 2)
+
+    def test_run_iterable_with_name(self):
+        """pdb_splitmodel.run(iterable)"""
+        from pdbtools import pdb_splitmodel
+
+        # Copy input file to tempdir
+
+        # Simulate input
+        src = os.path.join(data_dir, 'ensemble_OK.pdb')
+        dst = os.path.join(self.tempdir, 'ensemble_OK.pdb')
+        shutil.copy(src, dst)
+
+        with open(dst, 'r') as fin:
+            lines = fin.readlines()
+
+        pdb_splitmodel.run(lines, outname='newname')
+
+        # Read files created by script
+        ofiles = [f for f in os.listdir(self.tempdir)
+                  if f.startswith('newname')]
+        self.assertEqual(len(ofiles), 2)
+
+        for fpath in ofiles:
+            with open(os.path.join(self.tempdir, fpath), 'r') as handle:
+                n_lines = len(handle.readlines())
+                self.assertEqual(n_lines, 2)
+
+    def test_run_fhandler(self):
+        """pdb_splitmodel.run(fhandler)"""
+        from pdbtools import pdb_splitmodel
+
+        # Copy input file to tempdir
+
+        # Simulate input
+        src = os.path.join(data_dir, 'ensemble_OK.pdb')
+        dst = os.path.join(self.tempdir, 'ensemble_OK.pdb')
+        shutil.copy(src, dst)
+
+        with open(dst, 'r') as fin:
+            pdb_splitmodel.run(fin)
+
+        # Read files created by script
+        ofiles = [f for f in os.listdir(self.tempdir)
+                  if f.startswith('ensemble_OK')]
+        self.assertEqual(len(ofiles), 2 + 1)  # ori + 2 models
+
+        for fpath in ofiles:
+            if fpath == 'ensemble_OK.pdb':
+                continue
+
+            with open(os.path.join(self.tempdir, fpath), 'r') as handle:
+                n_lines = len(handle.readlines())
+                self.assertEqual(n_lines, 2)
+
     def test_file_not_found(self):
         """$ pdb_splitmodel not_existing.pdb"""
 

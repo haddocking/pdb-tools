@@ -73,10 +73,21 @@ def check_input(args):
     return fh
 
 
-def convert_to_pdb(fhandle):
-    """Converts a structure in mmCIF format to PDB format.
+def run(fhandle):
     """
+    Convert a structure in mmCIF format to PDB format.
 
+    This function is a generator.
+
+    Parameters
+    ----------
+    fhandle : a line-by-line iterator of the original PDB file.
+
+    Yields
+    ------
+    str (line-by-line)
+        New PDB lines.
+    """
     _a = "{:6s}{:5d} {:<4s}{:1s}{:3s} {:1s}{:4d}{:1s}   {:8.3f}{:8.3f}{:8.3f}"
     _a += "{:6.2f}{:6.2f}      {:<4s}{:<2s}{:2s}\n"
 
@@ -213,12 +224,15 @@ def convert_to_pdb(fhandle):
     yield "{:<80s}\n".format("END")
 
 
+convert_to_pdb = run
+
+
 def main():
     # Check Input
     pdbfh = check_input(sys.argv[1:])
 
     # Do the job
-    new_pdb = convert_to_pdb(pdbfh)
+    new_pdb = run(pdbfh)
 
     try:
         _buffer = []

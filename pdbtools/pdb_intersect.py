@@ -68,10 +68,24 @@ def check_input(args):
     return fl
 
 
-def intersect_pdb_files(flist):
-    """Returns atoms common to all input files.
+def run(flist):
     """
+    Returns atoms common to all input files.
 
+    This function is a generator.
+
+    Parameters
+    ----------
+    flist : list of file-obj
+        The first item is the reference PBD files to which others will
+        be compared to. Items in this list should handle `.close()`
+        attribute.
+
+    Yields
+    ------
+    str (line-by-line)
+        The modified (or not) PDB line.
+    """
     atom_data = collections.OrderedDict()  # atom_uid: line
     records = ('ATOM', 'HETATM', 'ANISOU', 'TER')
 
@@ -101,12 +115,15 @@ def intersect_pdb_files(flist):
             yield atom_data[atom]
 
 
+intersect_pdb_files = run
+
+
 def main():
     # Check Input
     pdbflist = check_input(sys.argv[1:])
 
     # Do the job
-    new_pdb = intersect_pdb_files(pdbflist)
+    new_pdb = run(pdbflist)
 
     try:
         _buffer = []

@@ -111,13 +111,28 @@ def check_input(args):
     if chain_to == '':
         chain_to = ' '
 
-    return ((chain_from, chain_to), fh)
+    return (fh, (chain_from, chain_to))
 
 
-def replace_chain_identifiers(fhandle, chain_ids):
-    """Replaces one chain identifier by another in the PDB file.
+def run(fhandle, chain_ids):
     """
+    Replace one chain identifier by another in the PDB file.
 
+    This function is a generator.
+
+    Parameters
+    ----------
+    fhandle : a line-by-line iterator of the original PDB file.
+
+    chain_ids : tuple
+        Two element tuple, where first item is the original chain id
+        and the second element is the modified chain id.
+
+    Yields
+    ------
+    str (line-by-line)
+        The modified (or not) PDB line.
+    """
     chain_from, chain_to = chain_ids
 
     records = ('ATOM', 'HETATM', 'TER', 'ANISOU')
@@ -129,12 +144,15 @@ def replace_chain_identifiers(fhandle, chain_ids):
         yield line
 
 
+replace_chain_identifiers = run
+
+
 def main():
     # Check Input
-    chain_ids, pdbfh = check_input(sys.argv[1:])
+    pdbfh, chain_ids = check_input(sys.argv[1:])
 
     # Do the job
-    new_pdb = replace_chain_identifiers(pdbfh, chain_ids)
+    new_pdb = run(pdbfh, chain_ids)
 
     try:
         _buffer = []

@@ -71,8 +71,20 @@ def check_input(args):
     return fh
 
 
-def keep_coordinates(fhandle):
-    """Keeps only coordinate records in the PDB file.
+def run(fhandle):
+    """
+    Keep only coordinate records in the PDB file.
+
+    This function is a generator.
+
+    Parameters
+    ----------
+    fhandle : a line-by-line iterator of the original PDB file.
+
+    Yields
+    ------
+    str (line-by-line)
+        Only the coordinate records in the PDB file.
     """
 
     records = ('MODEL ', 'ATOM  ', 'HETATM',
@@ -83,12 +95,15 @@ def keep_coordinates(fhandle):
             yield line
 
 
+keep_coordinates = run
+
+
 def main():
     # Check Input
     pdbfh = check_input(sys.argv[1:])
 
     # Do the job
-    new_pdb = keep_coordinates(pdbfh)
+    new_pdb = run(pdbfh)
 
     try:
         _buffer = []

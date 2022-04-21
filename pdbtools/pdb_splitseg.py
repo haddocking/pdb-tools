@@ -34,6 +34,7 @@ effort to maintain and compile. RIP.
 import os
 import sys
 
+
 __author__ = "Joao Rodrigues"
 __email__ = "j.p.g.l.m.rodrigues@gmail.com"
 
@@ -71,13 +72,31 @@ def check_input(args):
     return fh
 
 
-def split_segment(fhandle):
-    """Splits the contents of the PDB file into new files, each containing a
-    segment of the original file.
+def run(fhandle, outname=None):
     """
+    Split PDB into segments.
 
-    fname_root = fhandle.name[:-4] if fhandle.name != '<stdin>' else 'output'
-    basename = os.path.basename(fname_root)
+    Each segment is saved to a different file. Non-records lines are
+    ignored.
+
+    Parameters
+    ----------
+    fhandle : a line-by-line iterator of the original PDB file.
+
+    outname : str
+        The base name of the output files. If None is given, tries to
+        extract a name from the `.name` attribute of `fhandler`. If
+        `fhandler` has no attribute name, assigns `splitsegs`.
+    """
+    _defname = 'splitsegs'
+    if outname is None:
+        try:
+            fn = fhandle.name
+            outname = fn[:-4] if fn != '<stdin>' else _defname
+        except AttributeError:
+            outname = _defname
+
+    basename = os.path.basename(outname)
 
     segment_data = {}  # {segment_id: lines}
 
@@ -101,12 +120,15 @@ def split_segment(fhandle):
             fh.write(''.join(lines))
 
 
+split_segment = run
+
+
 def main():
     # Check Input
     pdbfh = check_input(sys.argv[1:])
 
     # Do the job
-    split_segment(pdbfh)
+    run(pdbfh)
 
     # last line of the script
     # We can close it even if it is sys.stdin

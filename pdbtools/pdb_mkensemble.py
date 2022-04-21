@@ -70,11 +70,22 @@ def pad_line(line):
     return line[:81]  # 80 + newline character
 
 
-def make_ensemble(f_name_list):
+def run(f_name_list):
     """
-    Combines several PDB files into a multi-model ensemble file.
-    """
+    Combine several PDB files into a multi-model ensemble file.
 
+    This function is a generator.
+
+    Parameters
+    ----------
+    f_name_list : list
+        List of paths to PDB files.
+
+    Yields
+    ------
+    str (line-by-line)
+        The new ensemble PDB file.
+    """
     _pad_line = pad_line
 
     # REMARK     THIS ENTRY
@@ -112,12 +123,15 @@ def make_ensemble(f_name_list):
     yield 'END\n'
 
 
+make_ensemble = run
+
+
 def main():
     # Check Input
     pdbfile_list = check_input(sys.argv[1:])
 
     # Do the job
-    new_pdb = make_ensemble(pdbfile_list)
+    new_pdb = run(pdbfile_list)
 
     try:
         _buffer = []

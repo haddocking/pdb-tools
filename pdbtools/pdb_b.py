@@ -100,11 +100,11 @@ def check_input(args):
         sys.stderr.write(emsg.format(option))
         sys.exit(1)
 
-    return (option, fh)
+    return (fh, option)
 
 
 def pad_line(line):
-    """Helper function to pad line to 80 characters in case it is shorter"""
+    """Pad line to 80 characters in case it is shorter."""
     size_of_line = len(line)
     if size_of_line < 80:
         padding = 80 - size_of_line + 1
@@ -112,10 +112,24 @@ def pad_line(line):
     return line[:81]  # 80 + newline character
 
 
-def alter_bfactor(fhandle, bfactor):
-    """Sets the temperature column in all ATOM/HETATM records to a given value.
+def run(fhandle, bfactor):
     """
+    Set the temperature column in all ATOM/HETATM records to a given value.
 
+    This function is a generator.
+
+    Parameters
+    ----------
+    fhandle : a line-by-line iterator of the original PDB file.
+
+    bfactor : float
+        The desired bfactor.
+
+    Yields
+    ------
+    str (line-by-line)
+        The modified (or not) PDB line.
+    """
     _pad_line = pad_line
     records = ('ATOM', 'HETATM')
     bfactor = "{0:>6.2f}".format(bfactor)
@@ -127,13 +141,16 @@ def alter_bfactor(fhandle, bfactor):
             yield line
 
 
+alter_bfactor = run
+
+
 def main():
 
     # Check Input
-    bfactor, pdbfh = check_input(sys.argv[1:])
+    pdbfh, bfactor = check_input(sys.argv[1:])
 
     # Do the job
-    new_pdb = alter_bfactor(pdbfh, bfactor)
+    new_pdb = run(pdbfh, bfactor)
 
     # Output results
     try:

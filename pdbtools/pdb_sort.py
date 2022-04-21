@@ -123,13 +123,24 @@ def check_input(args):
             sys.stderr.write(__doc__)
             sys.exit(1)
 
-    return (option, fh)
+    return (fh, option)
 
 
-def sort_file(fhandle, sorting_keys):
-    """Sorts the contents of the PDB file.
+def run(fhandle, sorting_keys):
     """
+    Sort the contents of the PDB file.
 
+    This function is a generator.
+
+    Parameters
+    ----------
+    fhandle : a line-by-line iterator of the original PDB file.
+
+    Yields
+    ------
+    str (line-by-line)
+        The sorted PDB lines.
+    """
     # Sort keys
     chain_key = lambda x: x[21]  # chain id
     resid_key = lambda x: (int(x[22:26]), x[26])  # resid, icode
@@ -218,9 +229,12 @@ def sort_file(fhandle, sorting_keys):
             yield anisou_record
 
 
+sort_file = run
+
+
 def main():
     # Check Input
-    chain, pdbfh = check_input(sys.argv[1:])
+    pdbfh, chain = check_input(sys.argv[1:])
 
     # Do the job
     new_pdb = sort_file(pdbfh, chain)

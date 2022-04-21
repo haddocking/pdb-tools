@@ -101,7 +101,7 @@ def check_input(args):
         sys.stderr.write(emsg.format(option))
         sys.exit(1)
 
-    return (option, fh)
+    return (fh, option)
 
 
 def pad_line(line):
@@ -113,8 +113,23 @@ def pad_line(line):
     return line[:81]  # 80 + newline character
 
 
-def renumber_residues(fhandle, starting_resid):
-    """Resets the residue number column to start from a specific number.
+def run(fhandle, starting_resid):
+    """
+    Reset the residue number column to start from a specific number.
+
+    This function is a generator.
+
+    Parameters
+    ----------
+    fhandle : a line-by-line iterator of the original PDB file.
+
+    starting_resid : int
+        The starting residue number.
+
+    Yields
+    ------
+    str (line-by-line)
+        The modified (or not) PDB line.
     """
     _pad_line = pad_line
     prev_resid = None  # tracks chain and resid
@@ -143,12 +158,15 @@ def renumber_residues(fhandle, starting_resid):
             yield line
 
 
+renumber_residues = run
+
+
 def main():
     # Check Input
-    starting_resid, pdbfh = check_input(sys.argv[1:])
+    pdbfh, starting_resid = check_input(sys.argv[1:])
 
     # Do the job
-    new_pdb = renumber_residues(pdbfh, starting_resid)
+    new_pdb = run(pdbfh, starting_resid)
 
     # Output results
     try:

@@ -18,7 +18,6 @@
 """
 Unit Tests for `pdb_selaltloc`.
 """
-
 import os
 import sys
 import unittest
@@ -52,6 +51,153 @@ class TestTool(unittest.TestCase):
         self.stderr = output.stderr
 
         return
+
+    def test_is_same_group_1(self):
+        """
+        Test if from the same group.
+
+        Exemple of a starting line with empty strings.
+        """
+        result = self.module.is_another_altloc_group(
+            ' ', '', '1', '', 'ALA', '', {}, {})
+
+        self.assertFalse(result)
+
+    def test_is_same_group_2(self):
+        """
+        Test if from the same group.
+
+        Example of a starting line with Nones.
+        """
+        result = self.module.is_another_altloc_group(
+            ' ', None, None, None, None, None, {}, {})
+
+        self.assertFalse(result)
+
+    def test_is_same_group_3(self):
+        """
+        Test if from the same group.
+
+        Example of all parameters are the same as previous line.
+        """
+        result = self.module.is_another_altloc_group(
+            'B', 'B', '12', '12', 'ALA', 'ALA', {'B': None},
+            {'B': {('ALA', '12')}}
+            )
+        self.assertFalse(result)
+
+
+    def test_is_same_group_4(self):
+        """
+        Test if line is from another group.
+
+        Multiple residue altloc.
+
+        This considers altloc spanning several residues. See example
+        dummy_altloc2.pdb.
+        """
+        result = self.module.is_another_altloc_group(
+            'A', 'A', '26', '25', 'LEU', 'GLU', {'A': ['lines']},
+            {'A': {('GLU', '25')}}
+            )
+        self.assertFalse(result)
+
+    def test_is_same_group_5(self):
+        """
+        Test if line is from another group.
+
+        Multiple residue altloc.
+
+        This considers altloc spanning several residues. See example
+        dummy_altloc2.pdb.
+        """
+        result = self.module.is_another_altloc_group(
+            'A', ' ', '26', '25', 'GLU', 'GLU', {' ': ['lines']},
+            {' ': {('GLU', '25')}}
+            )
+        self.assertFalse(result)
+
+    def test_is_same_group_6(self):
+        """
+        Test if line is from another group.
+
+        Multiple residue altloc.
+
+        This considers altloc spanning several residues. See example
+        dummy_altloc2.pdb.
+        """
+        result = self.module.is_another_altloc_group(
+            'A', ' ', '25', '25', 'ALA', 'GLU', {' ': ['lines']},
+            {' ': {('GLU', '25')}}
+            )
+        self.assertFalse(result)
+
+    def test_is_another_group_1(self):
+        result = self.module.is_another_altloc_group(
+            ' ', 'B', '2', '1', 'ALA', 'PRO', {'B': ['lines']},
+            {'B': {('PRO', '1')}}
+            )
+        self.assertTrue(result)
+
+    def test_is_another_group_2(self):
+        result = self.module.is_another_altloc_group(
+            ' ', ' ', '2', '1', 'ALA', 'ALA', {' ': ['lines']},
+            {' ': {('ALA', '1')}}
+            )
+        self.assertTrue(result)
+
+    def test_is_another_group_3(self):
+        result = self.module.is_another_altloc_group(
+            ' ', ' ', '1', '1', 'ALA', 'GLU', {' ': ['lines']},
+            {' ': {('GLU', '1')}}
+            )
+        self.assertTrue(result)
+
+    def test_is_another_group_4(self):
+        result = self.module.is_another_altloc_group(
+            'A', 'A', '26', '25', 'LEU', 'GLU', {' ': ['lines'], 'A': ['lines']},
+            {' ': {('LEU', '25')}, 'A': {('GLU', '26')}}
+            )
+        self.assertTrue(result)
+
+    def test_all_same_residue(self):
+        """Test all same residue."""
+        inp = {
+            ' ': [
+                    "ATOM      3  N   ASN A   1      22.066  40.557   0.420  1.00  0.00           N  ",
+                    "ATOM      3  H   ASN A   1      21.629  41.305  -0.098  1.00  0.00           H  ",
+                    "ATOM      3  H2  ASN A   1      23.236  40.798   0.369  1.00  0.00           H  ",
+                    "ATOM      3  H3  ASN A   1      21.866  40.736   1.590  1.00  0.00           H  ",
+                    ],
+            'B': ["ATOM      3  CA BASN A   1      20.000  30.000   0.005  0.60  0.00           C  "],
+            'A': ["ATOM      3  CA AASN A   1      21.411  39.311   0.054  0.40  0.00           C  "],
+            }
+
+        result = self.module.all_same_residue(inp)
+        self.assertTrue(result)
+
+    def test_all_same_residue_false(self):
+        """Test all same residue."""
+        inp = {
+            'B': ["ATOM      3  CA BSER A   2      20.000  30.000   0.005  0.60  0.00           C  "], 'A': ["ATOM      3  CA AASN A   1      21.411  39.311   0.054  0.40  0.00           C  "], } 
+        result = self.module.all_same_residue(inp)
+        self.assertFalse(result)
+
+    def test_partial_altloc(self):
+        inp = {
+            'A': [
+                    "ATOM    333  CA AGLU A  26     -10.000  -3.000 -12.000  0.50  4.89           C  ",
+                    "ANISOU  333  CA AGLU A  26      576    620    663     31     42     45       C  ",
+                 ],
+            'B':[
+                "ATOM    333  CA CGLU A  26     -10.679  -3.437 -12.387  1.00  4.89           C  ",
+                "ANISOU  333  CA CGLU A  26      576    620    663     31     42     45       C  ",
+                ],
+            }
+
+        result = self.module.partial_altloc(inp)
+        self.assertFalse(result)
+
 
     def test_default(self):
         """$ pdb_selaltloc data/dummy_altloc.pdb"""
@@ -279,6 +425,41 @@ class TestTool(unittest.TestCase):
         ]
 
         self.assertEqual(observed, expected)
+
+    def test_gives_same_dummy_A(self):
+        """Test dummy.pdb is not altered because there are not altlocs."""
+        sys.argv = ['', '-A', os.path.join(data_dir, 'dummy.pdb')]
+        self.exec_module()
+        self.assertEqual(self.retcode, 0)
+        self.assertEqual(len(self.stdout), 203)
+        self.assertEqual(len(self.stderr), 0)
+        self.assertEqual(
+            self.stdout[80],
+            "ATOM      3  CA  ASN A   1      21.411  39.311   0.054  0.40  0.00           C  ")
+
+    def test_gives_same_dummy_B(self):
+        """Test dummy.pdb is not altered because there are not altlocs."""
+        sys.argv = ['', '-B', os.path.join(data_dir, 'dummy.pdb')]
+        self.exec_module()
+        self.assertEqual(self.retcode, 0)
+        self.assertEqual(len(self.stdout), 203)
+        self.assertEqual(len(self.stderr), 0)
+        self.assertEqual(
+            self.stdout[80],
+            "ATOM      3  CA  ASN A   1      20.000  30.000   0.005  0.60  0.00           C  "
+            )
+
+    def test_gives_same_dummy_maxocc(self):
+        """Test dummy.pdb is not altered because there are not altlocs."""
+        sys.argv = ['', os.path.join(data_dir, 'dummy.pdb')]
+        self.exec_module()
+        self.assertEqual(self.retcode, 0)
+        self.assertEqual(len(self.stdout), 203)
+        self.assertEqual(len(self.stderr), 0)
+        self.assertEqual(
+            self.stdout[80],
+            "ATOM      3  CA  ASN A   1      20.000  30.000   0.005  0.60  0.00           C  "
+            )
 
     def test_file_not_found(self):
         """$ pdb_selaltloc not_existing.pdb"""

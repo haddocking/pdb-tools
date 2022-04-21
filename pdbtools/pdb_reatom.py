@@ -101,11 +101,23 @@ def check_input(args):
         sys.stderr.write(emsg.format(option))
         sys.exit(1)
 
-    return (option, fh)
+    return (fh, option)
 
 
-def renumber_atom_serials(fhandle, starting_value):
-    """Resets the atom serial number column to start from a specific number.
+def run(fhandle, starting_value):
+    """
+    Reset the atom serial number column to start from a specific number.
+
+    This function is a generator.
+
+    Parameters
+    ----------
+    fhandle : a line-by-line iterator of the original PDB file.
+
+    Yields
+    ------
+    str (line-by-line)
+        The modified (or not) PDB line.
     """
 
     # CONECT 1179  746 1184 1195 1203
@@ -154,12 +166,15 @@ def renumber_atom_serials(fhandle, starting_value):
             yield line
 
 
+renumber_atom_serials = run
+
+
 def main():
     # Check Input
-    starting_resid, pdbfh = check_input(sys.argv[1:])
+    pdbfh, starting_resid = check_input(sys.argv[1:])
 
     # Do the job
-    new_pdb = renumber_atom_serials(pdbfh, starting_resid)
+    new_pdb = run(pdbfh, starting_resid)
 
     # Output results
     try:

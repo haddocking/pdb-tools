@@ -72,8 +72,18 @@ def check_input(args):
     return fh
 
 
-def detect_gaps(fhandle):
-    """Detects gaps between residues in the PDB file.
+def run(fhandle):
+    """
+    Detect gaps between residues in the PDB file.
+
+    Parameters
+    ----------
+    fhandle : a line-by-line iterator of the original PDB file.
+
+    Returns
+    -------
+    None
+        Writes to the sys.stdout.
     """
 
     fmt_GAPd = "{0[1]}:{0[3]}{0[2]} < {2:7.2f}A > {1[1]}:{1[3]}{1[2]}\n"
@@ -123,12 +133,15 @@ def detect_gaps(fhandle):
     sys.stdout.write('Found {} gap(s) in the structure\n'.format(n_gaps))
 
 
+detect_gaps = run
+
+
 def main():
     # Check Input
     pdbfh = check_input(sys.argv[1:])
 
     # Do the job
-    detect_gaps(pdbfh)
+    run(pdbfh)
 
     # last line of the script
     # We can close it even if it is sys.stdin

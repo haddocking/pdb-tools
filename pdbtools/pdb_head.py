@@ -102,11 +102,11 @@ def check_input(args):
         sys.stderr.write(emsg.format(option))
         sys.exit(1)
 
-    return (option, fh)
+    return (fh, option)
 
 
 def pad_line(line):
-    """Helper function to pad line to 80 characters in case it is shorter"""
+    """Pad line to 80 characters in case it is shorter."""
     size_of_line = len(line)
     if size_of_line < 80:
         padding = 80 - size_of_line + 1
@@ -114,10 +114,26 @@ def pad_line(line):
     return line[:81]  # 80 + newline character
 
 
-def get_first_n_lines(fhandle, num_lines):
-    """Returns the first N (ATOM/HETATM) lines of the PDB file.
+def run(fhandle, num_lines):
     """
+    Filter the first N (ATOM/HETATM) lines of the PDB file.
 
+    Non-RECORD lines are ignored.
+
+    This function is a generator.
+
+    Parameters
+    ----------
+    fhandle : a line-by-line iterator of the original PDB file.
+
+    num_lines : int
+        The number of lines to yield.
+
+    Yields
+    ------
+    str (line-by-line)
+        The first N lines (ATOM/HETATM).
+    """
     counter = 0
 
     _pad_line = pad_line
@@ -132,12 +148,15 @@ def get_first_n_lines(fhandle, num_lines):
                 break
 
 
+get_first_n_lines = run
+
+
 def main():
     # Check Input
-    chain, pdbfh = check_input(sys.argv[1:])
+    pdbfh, chain = check_input(sys.argv[1:])
 
     # Do the job
-    new_pdb = get_first_n_lines(pdbfh, chain)
+    new_pdb = run(pdbfh, chain)
 
     try:
         _buffer = []

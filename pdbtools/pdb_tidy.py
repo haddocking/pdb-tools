@@ -103,15 +103,27 @@ def check_input(args):
         sys.stderr.write(__doc__)
         sys.exit(1)
 
-    return (option, fh)
+    return (fh, option)
 
 
-def tidy_pdbfile(fhandle, strict=False):
-    """Adds TER/END statements and pads all lines to 80 characters.
-
-    If strict is True, does not add TER statements at intra-chain breaks.
+def run(fhandle, strict=False):
     """
+    Add TER/END statements and pads all lines to 80 characters.
 
+    This function is a generator.
+
+    Parameters
+    ----------
+    fhandle : a line-by-line iterator of the original PDB file.
+
+    strict : bool
+        If True, does not add TER statements at intra-chain breaks.
+
+    Yields
+    ------
+    str (line-by-line)
+        The modified (or not) PDB line.
+    """
     not_strict = not strict
 
     def make_TER(prev_line):
@@ -131,15 +143,22 @@ def tidy_pdbfile(fhandle, strict=False):
     fmt_TER = "TER   {:>5d}      {:3s} {:1s}{:>4s}{:1s}" + " " * 53 + "\n"
 
     records = ('ATOM', 'HETATM')
-    ignored = ('TER', 'END ', 'END\n', 'CONECT', 'MASTER')
+    ignored = ('TER', 'END', 'CONECT', 'MASTER', 'ENDMDL')
     # Iterate up to the first ATOM/HETATM line
     prev_line = None
+    num_models = 1
+    in_model = False
     for line in fhandle:
+
+        line = line.strip()  # We will pad/add \n later to make uniform
+
+        if line.startswith('MODEL'):
+            line = "MODEL " + "    " + str(num_models).rjust(4)
+            num_models += 1
+            in_model = True
 
         if line.startswith(ignored):  # to avoid matching END _and_ ENDMDL
             continue
-
-        line = line.strip()  # We will pad/add \n later to make uniform
 
         # Check line length
         line = "{:<80}\n".format(line)
@@ -155,10 +174,10 @@ def tidy_pdbfile(fhandle, strict=False):
     serial_offset = 0  # To offset after adding TER records
     for line in fhandle:
 
+        line = line.strip()
+
         if line.startswith(ignored):
             continue
-
-        line = line.strip()
 
         # Treat ATOM/HETATM differently
         #   - no TER in HETATM
@@ -194,9 +213,16 @@ def tidy_pdbfile(fhandle, strict=False):
             if atom_section:
                 atom_section = False
                 yield make_TER(prev_line)
+                if in_model:
+                    yield "{:<80}\n".format("ENDMDL")
+                    in_model = False
 
             if line.startswith('MODEL'):
+                line = "MODEL " + "    " + str(num_models).rjust(4)
+                num_models += 1
+                in_model = True
                 serial_offset = 0
+
 
         if serial > 99999:
             emsg = 'ERROR!! Structure contains more than 99.999 atoms.\n'
@@ -214,17 +240,23 @@ def tidy_pdbfile(fhandle, strict=False):
             # Add last TER statement
             atom_section = False
             yield make_TER(prev_line)
+            if in_model:
+                yield "{:<80}\n".format("ENDMDL")
+                in_model = False
 
     # Add END statement
     yield "{:<80}\n".format("END")
 
 
+tidy_pdbfile = run
+
+
 def main():
     # Check Input
-    strict, pdbfh = check_input(sys.argv[1:])
+    pdbfh, strict = check_input(sys.argv[1:])
 
     # Do the job
-    new_pdb = tidy_pdbfile(pdbfh, strict)
+    new_pdb = run(pdbfh, strict)
 
     try:
         _buffer = []

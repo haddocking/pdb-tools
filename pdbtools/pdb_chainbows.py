@@ -75,9 +75,23 @@ def check_input(args):
     return fh
 
 
-def set_chain_sequence(fhandle):
-    """Sets chains sequentially based on existing TER records."""
+def run(fhandle):
+    """
+    Set chains sequentially based on existing TER records.
 
+    Follow sequence [ABC...abc...012...].
+
+    This function is a generator.
+
+    Parameters
+    ----------
+    fhandle : an iterable giving the PDB file line-by-line
+
+    Yields
+    ------
+    str (line-by-line)
+        The modified (or not) PDB line.
+    """
     chainlist = list(
         string.digits[::-1] + string.ascii_lowercase[::-1] + string.ascii_uppercase[::-1]
     )  # 987...zyx...cbaZYX...BCA.
@@ -108,12 +122,15 @@ def set_chain_sequence(fhandle):
         yield line
 
 
+set_chain_sequence = run
+
+
 def main():
     # Check Input
     pdbfh = check_input(sys.argv[1:])
 
     # Do the job
-    new_pdb = set_chain_sequence(pdbfh)
+    new_pdb = run(pdbfh)
 
     try:
         _buffer = []
