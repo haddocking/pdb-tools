@@ -357,6 +357,7 @@ def flush_resloc_occ_same_residue(altloc_lines, res_per_loc, **kw):
         alist = atoms.setdefault((atom_number, atom), [])
         alist.append(line)
 
+    # sort by atom name
     sorted_atoms = sorted(list(atoms.items()), key=lambda x: x[0][0])
 
     A = {
@@ -366,6 +367,7 @@ def flush_resloc_occ_same_residue(altloc_lines, res_per_loc, **kw):
         }
 
     for atom, lines in sorted_atoms:
+        # lines.sort(key=lambda x: (A[x[:4]], _sort_with_anisou), reverse=True)
         lines.sort(key=lambda x: (A[x[:4]], float(x[54:60])), reverse=True)
         yield lines[0][:16] + ' ' + lines[0][17:]
         if lines[1:] and lines[1].startswith('ANISOU'):
@@ -373,6 +375,13 @@ def flush_resloc_occ_same_residue(altloc_lines, res_per_loc, **kw):
 
     altloc_lines.clear()
     res_per_loc.clear()
+
+
+def _sort_with_anisou():
+    try:
+        return float(x[54:60])
+    except ValueError:
+        return -1
 
 
 def all_same_residue(altloc_lines):
