@@ -265,6 +265,7 @@ def is_another_altloc_group(
     is_another = (
         all((a0, ra0, ru0)) and (
                (a0 != a1 and a1 == ' ' and ru1 > ru0)
+            or (a0 == ' ' and a1 != ' ' and ru1 > ru0)
             or (a0 == ' ' and a1 == ' ' and (ru1 != ru0 or ra1 != ra0))
             or (
                 a0 == a1
