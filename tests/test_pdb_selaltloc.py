@@ -686,6 +686,136 @@ class TestTool(unittest.TestCase):
         self.exec_module()
         self.assertEqual(self.retcode, 0)
 
+    def test_captures_previous_residue_maxocc_A(self):
+        """
+        Test the previous residue is not lost.
+
+        In version 2.4.5 we realised that the residue previous to the
+        residues having alternative locations was missing. See dummy_altloc3.pdb.
+        """
+        sys.argv = ['', '-A', os.path.join(data_dir, 'dummy_altloc3.pdb')]
+        self.exec_module()
+        self.assertEqual(self.retcode, 0)
+        self.assertEqual(len(self.stdout), 25)
+        self.assertEqual(len(self.stderr), 0)
+        self.assertEqual(
+            self.stdout,
+            [
+                "ATOM    153  N   VAL A  18      -0.264 -17.574  22.788  0.00  0.00           N  ",
+                "ATOM    154  CA  VAL A  18      -0.201 -17.901  24.209  0.00  0.00           C  ",
+                "ATOM    155  C   VAL A  18      -1.047 -19.150  24.437  0.00  0.00           C  ",
+                "ATOM    156  O   VAL A  18      -2.260 -19.144  24.214  0.00  0.00           O  ",
+                "ATOM    157  CB  VAL A  18      -0.689 -16.724  25.084  0.00  0.00           C  ",
+                "ATOM    161  N   TRP A  19      -0.408 -20.230  24.882  0.00  0.00           N  ",
+                "ATOM    162  CA  TRP A  19      -1.091 -21.490  25.161  0.00  0.00           C  ",
+                "ATOM    163  C   TRP A  19      -1.303 -21.563  26.667  0.00  0.00           C  ",
+                "ATOM    164  O   TRP A  19      -0.357 -21.920  27.375  0.00  0.00           O  ",
+                "ATOM    165  CB  TRP A  19      -0.272 -22.670  24.635  0.00  0.00           C  ",
+                "ATOM    176  N   TYR A  20      -2.522 -21.226  27.083  0.00  0.00           N  ",
+                "ATOM    177  CA  TYR A  20      -2.898 -21.178  28.493  0.00  0.00           C  ",
+                "ATOM    178  C   TYR A  20      -3.718 -22.410  28.851  0.00  0.00           C  ",
+                "ATOM    179  O   TYR A  20      -4.629 -22.780  28.105  0.00  0.00           O  ",
+                "ATOM    180  CB  TYR A  20      -3.681 -19.898  28.795  0.00  0.00           C  ",
+                "ATOM    189  N   VAL A  21      -3.396 -23.034  29.982  0.40  0.00           N  ",
+                "ATOM    190  CA  VAL A  21      -4.121 -24.205  30.467  0.40  0.00           C  ",
+                "ATOM    191  C   VAL A  21      -4.530 -24.072  31.930  0.40  0.00           C  ",
+                "ATOM    192  O   VAL A  21      -3.835 -23.461  32.747  0.40  0.00           O  ",
+                "ATOM    193  CB  VAL A  21      -3.289 -25.497  30.298  0.40  0.00           C  ",
+                "ATOM    189  N   PRO A  22      -3.396 -23.034  29.982  0.40  0.00           N  ",
+                "ATOM    190  CA  PRO A  22      -4.121 -24.205  30.467  0.40  0.00           C  ",
+                "ATOM    191  C   PRO A  22      -4.530 -24.072  31.930  0.40  0.00           C  ",
+                "ATOM    192  O   PRO A  22      -3.835 -23.461  32.747  0.40  0.00           O  ",
+                "ATOM    193  CB  PRO A  22      -3.289 -25.497  30.298  0.40  0.00           C  ",
+                ]
+            )
+
+    def test_captures_previous_residue_maxocc(self):
+        """
+        Test the previous residue is not lost.
+
+        In version 2.4.5 we realised that the residue previous to the
+        residues having alternative locations was missing. See dummy_altloc3.pdb.
+        """
+        sys.argv = ['', os.path.join(data_dir, 'dummy_altloc3.pdb')]
+        self.exec_module()
+        self.assertEqual(self.retcode, 0)
+        self.assertEqual(len(self.stdout), 25)
+        self.assertEqual(len(self.stderr), 0)
+        self.assertEqual(
+            self.stdout,
+            [
+                "ATOM    153  N   VAL A  18      -0.264 -17.574  22.788  0.00  0.00           N  ",
+                "ATOM    154  CA  VAL A  18      -0.201 -17.901  24.209  0.00  0.00           C  ",
+                "ATOM    155  C   VAL A  18      -1.047 -19.150  24.437  0.00  0.00           C  ",
+                "ATOM    156  O   VAL A  18      -2.260 -19.144  24.214  0.00  0.00           O  ",
+                "ATOM    157  CB  VAL A  18      -0.689 -16.724  25.084  0.00  0.00           C  ",
+                "ATOM    161  N   TRP A  19      -0.408 -20.230  24.882  0.00  0.00           N  ",
+                "ATOM    162  CA  TRP A  19      -1.091 -21.490  25.161  0.00  0.00           C  ",
+                "ATOM    163  C   TRP A  19      -1.303 -21.563  26.667  0.00  0.00           C  ",
+                "ATOM    164  O   TRP A  19      -0.357 -21.920  27.375  0.00  0.00           O  ",
+                "ATOM    165  CB  TRP A  19      -0.272 -22.670  24.635  0.00  0.00           C  ",
+                "ATOM    176  N   TYR A  20      -2.522 -21.226  27.083  0.00  0.00           N  ",
+                "ATOM    177  CA  TYR A  20      -2.898 -21.178  28.493  0.00  0.00           C  ",
+                "ATOM    178  C   TYR A  20      -3.718 -22.410  28.851  0.00  0.00           C  ",
+                "ATOM    179  O   TYR A  20      -4.629 -22.780  28.105  0.00  0.00           O  ",
+                "ATOM    180  CB  TYR A  20      -3.681 -19.898  28.795  0.00  0.00           C  ",
+                "ATOM    197  N   ALA A  21      -5.676 -24.647  32.284  0.60  0.00           N  ",
+                "ATOM    198  CA  ALA A  21      -6.012 -24.814  33.696  0.60  0.00           C  ",
+                "ATOM    199  C   ALA A  21      -4.990 -25.677  34.426  0.60  0.00           C  ",
+                "ATOM    200  O   ALA A  21      -4.494 -26.675  33.897  0.60  0.00           O  ",
+                "ATOM    201  CB  ALA A  21      -7.405 -25.428  33.847  0.60  0.00           C  ",
+                "ATOM    197  N   GLY A  22      -5.676 -24.647  32.284  0.60  0.00           N  ",
+                "ATOM    198  CA  GLY A  22      -6.012 -24.814  33.696  0.60  0.00           C  ",
+                "ATOM    199  C   GLY A  22      -4.990 -25.677  34.426  0.60  0.00           C  ",
+                "ATOM    200  O   GLY A  22      -4.494 -26.675  33.897  0.60  0.00           O  ",
+                "ATOM    201  CB  GLY A  22      -7.405 -25.428  33.847  0.60  0.00           C  ",
+                ]
+            )
+
+    def test_captures_previous_residue_maxocc_B(self):
+        """
+        Test the previous residue is not lost.
+
+        In version 2.4.5 we realised that the residue previous to the
+        residues having alternative locations was missing. See dummy_altloc3.pdb.
+        """
+        sys.argv = ['', '-B', os.path.join(data_dir, 'dummy_altloc3.pdb')]
+        self.exec_module()
+        self.assertEqual(self.retcode, 0)
+        self.assertEqual(len(self.stdout), 25)
+        self.assertEqual(len(self.stderr), 0)
+        self.assertEqual(
+            self.stdout,
+            [
+                "ATOM    153  N   VAL A  18      -0.264 -17.574  22.788  0.00  0.00           N  ",
+                "ATOM    154  CA  VAL A  18      -0.201 -17.901  24.209  0.00  0.00           C  ",
+                "ATOM    155  C   VAL A  18      -1.047 -19.150  24.437  0.00  0.00           C  ",
+                "ATOM    156  O   VAL A  18      -2.260 -19.144  24.214  0.00  0.00           O  ",
+                "ATOM    157  CB  VAL A  18      -0.689 -16.724  25.084  0.00  0.00           C  ",
+                "ATOM    161  N   TRP A  19      -0.408 -20.230  24.882  0.00  0.00           N  ",
+                "ATOM    162  CA  TRP A  19      -1.091 -21.490  25.161  0.00  0.00           C  ",
+                "ATOM    163  C   TRP A  19      -1.303 -21.563  26.667  0.00  0.00           C  ",
+                "ATOM    164  O   TRP A  19      -0.357 -21.920  27.375  0.00  0.00           O  ",
+                "ATOM    165  CB  TRP A  19      -0.272 -22.670  24.635  0.00  0.00           C  ",
+                "ATOM    176  N   TYR A  20      -2.522 -21.226  27.083  0.00  0.00           N  ",
+                "ATOM    177  CA  TYR A  20      -2.898 -21.178  28.493  0.00  0.00           C  ",
+                "ATOM    178  C   TYR A  20      -3.718 -22.410  28.851  0.00  0.00           C  ",
+                "ATOM    179  O   TYR A  20      -4.629 -22.780  28.105  0.00  0.00           O  ",
+                "ATOM    180  CB  TYR A  20      -3.681 -19.898  28.795  0.00  0.00           C  ",
+                "ATOM    197  N   ALA A  21      -5.676 -24.647  32.284  0.60  0.00           N  ",
+                "ATOM    198  CA  ALA A  21      -6.012 -24.814  33.696  0.60  0.00           C  ",
+                "ATOM    199  C   ALA A  21      -4.990 -25.677  34.426  0.60  0.00           C  ",
+                "ATOM    200  O   ALA A  21      -4.494 -26.675  33.897  0.60  0.00           O  ",
+                "ATOM    201  CB  ALA A  21      -7.405 -25.428  33.847  0.60  0.00           C  ",
+                "ATOM    197  N   GLY A  22      -5.676 -24.647  32.284  0.60  0.00           N  ",
+                "ATOM    198  CA  GLY A  22      -6.012 -24.814  33.696  0.60  0.00           C  ",
+                "ATOM    199  C   GLY A  22      -4.990 -25.677  34.426  0.60  0.00           C  ",
+                "ATOM    200  O   GLY A  22      -4.494 -26.675  33.897  0.60  0.00           O  ",
+                "ATOM    201  CB  GLY A  22      -7.405 -25.428  33.847  0.60  0.00           C  ",
+                ]
+            )
+
+
     def test_file_not_found(self):
         """$ pdb_selaltloc not_existing.pdb"""
 
