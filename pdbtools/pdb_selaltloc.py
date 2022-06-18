@@ -39,7 +39,6 @@ files using the terminal, and can be used sequentially, with one tool streaming
 data to another. They are based on old FORTRAN77 code that was taking too much
 effort to maintain and compile. RIP.
 """
-import operator
 import os
 import sys
 
@@ -250,8 +249,8 @@ def is_another_altloc_group(
         resname,
         prev_resname,
         altloc_lines,
-        rploc,
-        ):
+        rploc
+):
     """Detect if current line belongs to a new altloc group."""
     a0 = prev_altloc
     a1 = altloc
@@ -264,7 +263,7 @@ def is_another_altloc_group(
 
     is_another = (
         all((a0, ra0, ru0)) and (
-               (a0 != a1 and a1 == ' ' and ru1 > ru0)
+            (a0 != a1 and a1 == ' ' and ru1 > ru0)
             or (a0 == ' ' and a1 != ' ' and ru1 > ru0)
             or (a0 == ' ' and a1 == ' ' and (ru1 != ru0 or ra1 != ra0))
             or (
@@ -274,9 +273,9 @@ def is_another_altloc_group(
                 and ru1 > ru0
                 and len(rl) > 1
                 and all(len(v) == len(rv[0]) for v in rv[1:])
-                )
             )
         )
+    )
 
     return is_another
 
@@ -348,8 +347,8 @@ def flush_resloc_occ_same_residue(altloc_lines, **kw):
     for atom, linest in sorted_atoms:
         lines = linest[1]
 
-        atom_lines = [l for l in lines if l.startswith(("ATOM", "HETATM"))]
-        anisou_lines = [l for l in lines if l.startswith(("ANISOU"))]
+        atom_lines = [ln for ln in lines if ln.startswith(("ATOM", "HETATM"))]
+        anisou_lines = [ln for ln in lines if ln.startswith(("ANISOU"))]
 
         if anisou_lines:
             new = []
@@ -359,7 +358,7 @@ def flush_resloc_occ_same_residue(altloc_lines, **kw):
                     "There is an error with this PDB. "
                     "We expect one ANISOU line per ATOM/HETATM lines. "
                     "But the number of ATOM/HETATM and ANISOU lines differ."
-                    )
+                )
                 raise ValueError(emsg)
 
             for _a, _b in zip(atom_lines, anisou_lines):

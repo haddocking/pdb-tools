@@ -223,7 +223,6 @@ def run(fhandle, strict=False):
                 in_model = True
                 serial_offset = 0
 
-
         if serial > 99999:
             emsg = 'ERROR!! Structure contains more than 99.999 atoms.\n'
             sys.stderr.write(emsg)
