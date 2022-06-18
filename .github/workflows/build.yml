@@ -16,7 +16,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - uses: Yuri6037/Action-FakeTTY@v1
 
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
@@ -39,7 +38,18 @@ jobs:
         bump2version --dry-run --verbose --allow-dirty major
 
     - name: Test
-      run: faketty python setup.py test
+      run: |
+        if [ "$RUNNER_OS" == "Linux" ]; then
+          script -q -e -c "python setup.py test"
+        elif [ "$RUNNER_OS" == "Windows" ]; then
+          Invoke-Expression "python setup.py test"
+        elif [ "$RUNNER_OS" == "macOS" ]; then
+          unbuffer python setup.py test
+        else
+          echo "$RUNNER_OS not supported"
+          exit 1
+        fi
+      shell: bash
 
     # from https://github.com/codecov/codecov-action
     - name: Upload coverage to Codecov
