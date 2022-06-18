@@ -1,8 +1,8 @@
 # pdb-tools
 
 [![PyPI version](https://badge.fury.io/py/pdb-tools.svg)](https://badge.fury.io/py/pdb-tools)
-[![Testing](https://github.com/haddocking/pdb-tools/workflows/tests/badge.svg?branch=master)](https://github.com/haddocking/pdb-tools/actions?workflow=build_and_test)
-[![Coverage](https://codecov.io/gh/haddocking/pdb-tools/branch/master/graph/badge.svg)](https://codecov.io/gh/haddocking/pdb-tools)
+[![tests](https://github.com/haddocking/pdb-tools/workflows/tests/badge.svg?branch=master)](https://github.com/haddocking/pdb-tools/actions?workflow=tests)
+[![codecov](https://codecov.io/gh/haddocking/pdb-tools/branch/master/graph/badge.svg)](https://codecov.io/gh/haddocking/pdb-tools)
 [![DOI](https://zenodo.org/badge/27217350.svg)](https://doi.org/10.12688/f1000research.17456.1)
 
 A swiss army knife for manipulating and editing PDB files.
