@@ -54,9 +54,14 @@ class TestTool(unittest.TestCase):
 
     def test_is_same_group_1(self):
         """
-        Test if from the same group.
+        Test function to identify we entered another altloc group.
 
-        Exemple of a starting line with empty strings.
+        This indicates we are in the SAME altloc group.
+
+        previous line: ""  # first line of the PDB file
+        current  line: " ALA    1"
+
+        The result of `is_another_altloc_group` should be False.
         """
         result = self.module.is_another_altloc_group(
             ' ', '', '1', '', 'ALA', '', {}, {})
@@ -65,9 +70,13 @@ class TestTool(unittest.TestCase):
 
     def test_is_same_group_2(self):
         """
-        Test if from the same group.
+        Test function to identify we entered another altloc group.
 
-        Example of a starting line with Nones.
+        This indicates we are in the SAME altloc group.
+
+        All `None` case.
+
+        The result of `is_another_altloc_group` should be False.
         """
         result = self.module.is_another_altloc_group(
             ' ', None, None, None, None, None, {}, {})
@@ -76,9 +85,16 @@ class TestTool(unittest.TestCase):
 
     def test_is_same_group_3(self):
         """
-        Test if from the same group.
+        Test function to identify we entered another altloc group.
 
-        Example of all parameters are the same as previous line.
+        This indicates we are in the SAME altloc group.
+
+        Example: all parameters are the same as the previous line.
+
+        previous line: "BALA   12"
+        current  line: "BALA   12"
+
+        The result of `is_another_altloc_group` should be False.
         """
         result = self.module.is_another_altloc_group(
             'B', 'B', '12', '12', 'ALA', 'ALA', {'B': None},
@@ -89,12 +105,19 @@ class TestTool(unittest.TestCase):
 
     def test_is_same_group_4(self):
         """
-        Test if line is from another group.
+        Test function to identify we entered another altloc group.
 
-        Multiple residue altloc.
+        This indicates we are in the SAME altloc group.
 
-        This considers altloc spanning several residues. See example
-        dummy_altloc2.pdb.
+        Example: Multiple residue altloc. This considers altloc spanning
+        several residues. See example dummy_altloc2.pdb.
+
+        previous line: "AGLU   25"
+        current  line: "ALEU   26"
+
+        It is important to note also the dictionary input.
+
+        The result of `is_another_altloc_group` should be False.
         """
         result = self.module.is_another_altloc_group(
             'A', 'A', '26', '25', 'LEU', 'GLU', {'A': ['lines']},
@@ -104,27 +127,19 @@ class TestTool(unittest.TestCase):
 
     def test_is_same_group_5(self):
         """
-        Test if line is from another group.
+        Test function to identify we entered another altloc group.
 
-        Multiple residue altloc.
+        This indicates we are in the SAME altloc group.
 
-        This considers altloc spanning several residues. See example
-        dummy_altloc2.pdb.
-        """
-        result = self.module.is_another_altloc_group(
-            'A', ' ', '26', '25', 'GLU', 'GLU', {' ': ['lines']},
-            {' ': {('GLU', '25')}}
-            )
-        self.assertFalse(result)
+        Example: Multiple residue altloc. This considers altloc spanning
+        several residues. See example dummy_altloc2.pdb.
 
-    def test_is_same_group_6(self):
-        """
-        Test if line is from another group.
+        previous line: " GLU   25"
+        current  line: "AALA   25"
 
-        Multiple residue altloc.
+        It is important to note also the dictionary input.
 
-        This considers altloc spanning several residues. See example
-        dummy_altloc2.pdb.
+        The result of `is_another_altloc_group` should be False.
         """
         result = self.module.is_another_altloc_group(
             'A', ' ', '25', '25', 'ALA', 'GLU', {' ': ['lines']},
@@ -133,6 +148,16 @@ class TestTool(unittest.TestCase):
         self.assertFalse(result)
 
     def test_is_another_group_1(self):
+        """
+        Test function to identify we entered another altloc group.
+
+        This indicates we entered another altloc group.
+
+        previous line: "BPRO    1"
+        current  line: " ALA    2"
+
+        The result of `is_another_altloc_group` should be True.
+        """
         result = self.module.is_another_altloc_group(
             ' ', 'B', '2', '1', 'ALA', 'PRO', {'B': ['lines']},
             {'B': {('PRO', '1')}}
@@ -140,6 +165,16 @@ class TestTool(unittest.TestCase):
         self.assertTrue(result)
 
     def test_is_another_group_2(self):
+        """
+        Test function to identify we entered another altloc group.
+
+        This indicates we entered another altloc group.
+
+        previous line: " ALA    1"
+        current  line: " ALA    2"
+
+        The result of `is_another_altloc_group` should be True.
+        """
         result = self.module.is_another_altloc_group(
             ' ', ' ', '2', '1', 'ALA', 'ALA', {' ': ['lines']},
             {' ': {('ALA', '1')}}
@@ -147,6 +182,16 @@ class TestTool(unittest.TestCase):
         self.assertTrue(result)
 
     def test_is_another_group_3(self):
+        """
+        Test function to identify we entered another altloc group.
+
+        This indicates we entered another altloc group.
+
+        previous line: " GLU    1"
+        current  line: " ALA    1"
+
+        The result of `is_another_altloc_group` should be True.
+        """
         result = self.module.is_another_altloc_group(
             ' ', ' ', '1', '1', 'ALA', 'GLU', {' ': ['lines']},
             {' ': {('GLU', '1')}}
@@ -154,6 +199,16 @@ class TestTool(unittest.TestCase):
         self.assertTrue(result)
 
     def test_is_another_group_4(self):
+        """
+        Test function to identify we entered another altloc group.
+
+        This indicates we entered another altloc group.
+
+        previous line: "AGLU   25"
+        current  line: "ALEU   26"
+
+        The result of `is_another_altloc_group` should be True.
+        """
         result = self.module.is_another_altloc_group(
             'A', 'A', '26', '25', 'LEU', 'GLU', {' ': ['lines'], 'A': ['lines']},
             {' ': {('LEU', '25')}, 'A': {('GLU', '26')}}
@@ -685,6 +740,136 @@ class TestTool(unittest.TestCase):
         sys.argv = ['', infile]
         self.exec_module()
         self.assertEqual(self.retcode, 0)
+
+    def test_captures_previous_residue_maxocc_A(self):
+        """
+        Test the previous residue is not lost.
+
+        In version 2.4.5 we realised that the residue previous to the
+        residues having alternative locations was missing. See dummy_altloc3.pdb.
+        """
+        sys.argv = ['', '-A', os.path.join(data_dir, 'dummy_altloc3.pdb')]
+        self.exec_module()
+        self.assertEqual(self.retcode, 0)
+        self.assertEqual(len(self.stdout), 25)
+        self.assertEqual(len(self.stderr), 0)
+        self.assertEqual(
+            self.stdout,
+            [
+                "ATOM    153  N   VAL A  18      -0.264 -17.574  22.788  0.00  0.00           N  ",
+                "ATOM    154  CA  VAL A  18      -0.201 -17.901  24.209  0.00  0.00           C  ",
+                "ATOM    155  C   VAL A  18      -1.047 -19.150  24.437  0.00  0.00           C  ",
+                "ATOM    156  O   VAL A  18      -2.260 -19.144  24.214  0.00  0.00           O  ",
+                "ATOM    157  CB  VAL A  18      -0.689 -16.724  25.084  0.00  0.00           C  ",
+                "ATOM    161  N   TRP A  19      -0.408 -20.230  24.882  0.00  0.00           N  ",
+                "ATOM    162  CA  TRP A  19      -1.091 -21.490  25.161  0.00  0.00           C  ",
+                "ATOM    163  C   TRP A  19      -1.303 -21.563  26.667  0.00  0.00           C  ",
+                "ATOM    164  O   TRP A  19      -0.357 -21.920  27.375  0.00  0.00           O  ",
+                "ATOM    165  CB  TRP A  19      -0.272 -22.670  24.635  0.00  0.00           C  ",
+                "ATOM    176  N   TYR A  20      -2.522 -21.226  27.083  0.00  0.00           N  ",
+                "ATOM    177  CA  TYR A  20      -2.898 -21.178  28.493  0.00  0.00           C  ",
+                "ATOM    178  C   TYR A  20      -3.718 -22.410  28.851  0.00  0.00           C  ",
+                "ATOM    179  O   TYR A  20      -4.629 -22.780  28.105  0.00  0.00           O  ",
+                "ATOM    180  CB  TYR A  20      -3.681 -19.898  28.795  0.00  0.00           C  ",
+                "ATOM    189  N   VAL A  21      -3.396 -23.034  29.982  0.40  0.00           N  ",
+                "ATOM    190  CA  VAL A  21      -4.121 -24.205  30.467  0.40  0.00           C  ",
+                "ATOM    191  C   VAL A  21      -4.530 -24.072  31.930  0.40  0.00           C  ",
+                "ATOM    192  O   VAL A  21      -3.835 -23.461  32.747  0.40  0.00           O  ",
+                "ATOM    193  CB  VAL A  21      -3.289 -25.497  30.298  0.40  0.00           C  ",
+                "ATOM    189  N   PRO A  22      -3.396 -23.034  29.982  0.40  0.00           N  ",
+                "ATOM    190  CA  PRO A  22      -4.121 -24.205  30.467  0.40  0.00           C  ",
+                "ATOM    191  C   PRO A  22      -4.530 -24.072  31.930  0.40  0.00           C  ",
+                "ATOM    192  O   PRO A  22      -3.835 -23.461  32.747  0.40  0.00           O  ",
+                "ATOM    193  CB  PRO A  22      -3.289 -25.497  30.298  0.40  0.00           C  ",
+                ]
+            )
+
+    def test_captures_previous_residue_maxocc(self):
+        """
+        Test the previous residue is not lost.
+
+        In version 2.4.5 we realised that the residue previous to the
+        residues having alternative locations was missing. See dummy_altloc3.pdb.
+        """
+        sys.argv = ['', os.path.join(data_dir, 'dummy_altloc3.pdb')]
+        self.exec_module()
+        self.assertEqual(self.retcode, 0)
+        self.assertEqual(len(self.stdout), 25)
+        self.assertEqual(len(self.stderr), 0)
+        self.assertEqual(
+            self.stdout,
+            [
+                "ATOM    153  N   VAL A  18      -0.264 -17.574  22.788  0.00  0.00           N  ",
+                "ATOM    154  CA  VAL A  18      -0.201 -17.901  24.209  0.00  0.00           C  ",
+                "ATOM    155  C   VAL A  18      -1.047 -19.150  24.437  0.00  0.00           C  ",
+                "ATOM    156  O   VAL A  18      -2.260 -19.144  24.214  0.00  0.00           O  ",
+                "ATOM    157  CB  VAL A  18      -0.689 -16.724  25.084  0.00  0.00           C  ",
+                "ATOM    161  N   TRP A  19      -0.408 -20.230  24.882  0.00  0.00           N  ",
+                "ATOM    162  CA  TRP A  19      -1.091 -21.490  25.161  0.00  0.00           C  ",
+                "ATOM    163  C   TRP A  19      -1.303 -21.563  26.667  0.00  0.00           C  ",
+                "ATOM    164  O   TRP A  19      -0.357 -21.920  27.375  0.00  0.00           O  ",
+                "ATOM    165  CB  TRP A  19      -0.272 -22.670  24.635  0.00  0.00           C  ",
+                "ATOM    176  N   TYR A  20      -2.522 -21.226  27.083  0.00  0.00           N  ",
+                "ATOM    177  CA  TYR A  20      -2.898 -21.178  28.493  0.00  0.00           C  ",
+                "ATOM    178  C   TYR A  20      -3.718 -22.410  28.851  0.00  0.00           C  ",
+                "ATOM    179  O   TYR A  20      -4.629 -22.780  28.105  0.00  0.00           O  ",
+                "ATOM    180  CB  TYR A  20      -3.681 -19.898  28.795  0.00  0.00           C  ",
+                "ATOM    197  N   ALA A  21      -5.676 -24.647  32.284  0.60  0.00           N  ",
+                "ATOM    198  CA  ALA A  21      -6.012 -24.814  33.696  0.60  0.00           C  ",
+                "ATOM    199  C   ALA A  21      -4.990 -25.677  34.426  0.60  0.00           C  ",
+                "ATOM    200  O   ALA A  21      -4.494 -26.675  33.897  0.60  0.00           O  ",
+                "ATOM    201  CB  ALA A  21      -7.405 -25.428  33.847  0.60  0.00           C  ",
+                "ATOM    197  N   GLY A  22      -5.676 -24.647  32.284  0.60  0.00           N  ",
+                "ATOM    198  CA  GLY A  22      -6.012 -24.814  33.696  0.60  0.00           C  ",
+                "ATOM    199  C   GLY A  22      -4.990 -25.677  34.426  0.60  0.00           C  ",
+                "ATOM    200  O   GLY A  22      -4.494 -26.675  33.897  0.60  0.00           O  ",
+                "ATOM    201  CB  GLY A  22      -7.405 -25.428  33.847  0.60  0.00           C  ",
+                ]
+            )
+
+    def test_captures_previous_residue_maxocc_B(self):
+        """
+        Test the previous residue is not lost.
+
+        In version 2.4.5 we realised that the residue previous to the
+        residues having alternative locations was missing. See dummy_altloc3.pdb.
+        """
+        sys.argv = ['', '-B', os.path.join(data_dir, 'dummy_altloc3.pdb')]
+        self.exec_module()
+        self.assertEqual(self.retcode, 0)
+        self.assertEqual(len(self.stdout), 25)
+        self.assertEqual(len(self.stderr), 0)
+        self.assertEqual(
+            self.stdout,
+            [
+                "ATOM    153  N   VAL A  18      -0.264 -17.574  22.788  0.00  0.00           N  ",
+                "ATOM    154  CA  VAL A  18      -0.201 -17.901  24.209  0.00  0.00           C  ",
+                "ATOM    155  C   VAL A  18      -1.047 -19.150  24.437  0.00  0.00           C  ",
+                "ATOM    156  O   VAL A  18      -2.260 -19.144  24.214  0.00  0.00           O  ",
+                "ATOM    157  CB  VAL A  18      -0.689 -16.724  25.084  0.00  0.00           C  ",
+                "ATOM    161  N   TRP A  19      -0.408 -20.230  24.882  0.00  0.00           N  ",
+                "ATOM    162  CA  TRP A  19      -1.091 -21.490  25.161  0.00  0.00           C  ",
+                "ATOM    163  C   TRP A  19      -1.303 -21.563  26.667  0.00  0.00           C  ",
+                "ATOM    164  O   TRP A  19      -0.357 -21.920  27.375  0.00  0.00           O  ",
+                "ATOM    165  CB  TRP A  19      -0.272 -22.670  24.635  0.00  0.00           C  ",
+                "ATOM    176  N   TYR A  20      -2.522 -21.226  27.083  0.00  0.00           N  ",
+                "ATOM    177  CA  TYR A  20      -2.898 -21.178  28.493  0.00  0.00           C  ",
+                "ATOM    178  C   TYR A  20      -3.718 -22.410  28.851  0.00  0.00           C  ",
+                "ATOM    179  O   TYR A  20      -4.629 -22.780  28.105  0.00  0.00           O  ",
+                "ATOM    180  CB  TYR A  20      -3.681 -19.898  28.795  0.00  0.00           C  ",
+                "ATOM    197  N   ALA A  21      -5.676 -24.647  32.284  0.60  0.00           N  ",
+                "ATOM    198  CA  ALA A  21      -6.012 -24.814  33.696  0.60  0.00           C  ",
+                "ATOM    199  C   ALA A  21      -4.990 -25.677  34.426  0.60  0.00           C  ",
+                "ATOM    200  O   ALA A  21      -4.494 -26.675  33.897  0.60  0.00           O  ",
+                "ATOM    201  CB  ALA A  21      -7.405 -25.428  33.847  0.60  0.00           C  ",
+                "ATOM    197  N   GLY A  22      -5.676 -24.647  32.284  0.60  0.00           N  ",
+                "ATOM    198  CA  GLY A  22      -6.012 -24.814  33.696  0.60  0.00           C  ",
+                "ATOM    199  C   GLY A  22      -4.990 -25.677  34.426  0.60  0.00           C  ",
+                "ATOM    200  O   GLY A  22      -4.494 -26.675  33.897  0.60  0.00           O  ",
+                "ATOM    201  CB  GLY A  22      -7.405 -25.428  33.847  0.60  0.00           C  ",
+                ]
+            )
+
 
     def test_file_not_found(self):
         """$ pdb_selaltloc not_existing.pdb"""
