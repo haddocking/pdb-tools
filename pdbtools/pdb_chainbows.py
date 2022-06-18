@@ -53,7 +53,7 @@ def check_input(args):
 
     if not len(args):
         # Reading from pipe with default option
-        if sys.stdin.closed or sys.stdin.isatty():
+        if sys.stdin.isatty():
             sys.stderr.write(__doc__)
             sys.exit(1)
 
