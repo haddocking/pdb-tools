@@ -206,7 +206,7 @@ class TestTool(unittest.TestCase):
     def test_helptext(self):
         """$ pdb_tocif"""
 
-        sys.argv = ['']
+        # sys.argv = ['']
 
         # Execute the script
         self.exec_module()
