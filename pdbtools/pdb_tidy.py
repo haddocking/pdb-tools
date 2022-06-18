@@ -59,7 +59,7 @@ def check_input(args):
 
     if not len(args):
         # Reading from pipe with default option
-        if sys.stdin.isatty():
+        if sys.stdin.closed or sys.stdin.isatty():
             sys.stderr.write(__doc__)
             sys.exit(1)
 
@@ -67,7 +67,7 @@ def check_input(args):
         # One of two options: option & Pipe OR file & default option
         if args[0] == '-strict':
             option = True
-            if sys.stdin.isatty():  # ensure the PDB data is streamed in
+            if sys.stdin.closed or sys.stdin.isatty():  # ensure the PDB data is streamed in
                 emsg = 'ERROR!! No data to process!\n'
                 sys.stderr.write(emsg)
                 sys.stderr.write(__doc__)
