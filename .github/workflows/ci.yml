@@ -46,21 +46,21 @@ jobs:
         bump2version --dry-run --verbose --allow-dirty minor
         bump2version --dry-run --verbose --allow-dirty major
 
-    - name: Test
+    - name: Test Linux/MacOS
       run: |
         python -m pip install .
-
         if [ "$RUNNER_OS" == "Linux" ]; then
           script -q -e -c "coverage run setup.py test"
-        elif [ "$RUNNER_OS" == "Windows" ]; then
-          Invoke-Expression "coverage run setup.py test"
         elif [ "$RUNNER_OS" == "macOS" ]; then
           unbuffer coverage run setup.py test
-        else
-          echo "$RUNNER_OS not supported"
-          exit 1
         fi
-      shell: bash
+
+    - name: Test Windows
+      run: |
+        python -m pip install .
+        if [ "$RUNNER_OS" == "Windows" ]; then
+          Invoke-Expression 'coverage run setup.py test'
+        fi
 
     # from https://about.codecov.io/blog/
     # python-code-coverage-using-github-actions-and-codecov/
