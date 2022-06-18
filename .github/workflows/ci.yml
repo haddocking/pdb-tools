@@ -85,5 +85,5 @@ jobs:
     - name: Test Windows
       run: |
         python -m pip install .
-        Invoke-Expression 'coverage run setup.py test'
+        Invoke-Expression 'python setup.py test'
 
