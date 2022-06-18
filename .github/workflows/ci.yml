@@ -7,11 +7,36 @@ on:
     branches: [master]
 
 jobs:
-  build_and_test:
+  lint:
     runs-on: ${{ matrix.platform }}
     strategy:
       matrix:
-        platform: [ubuntu-latest, macos-latest]
+        platform: [ubuntu-latest]
+        python-version: [3.9]
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip setuptools wheel
+      shell: bash
+
+    - name: Linter
+      run: |
+        python -m pip install flake8
+        flake8 .
+
+  build_and_test_linux:
+    runs-on: ${{ matrix.platform }}
+    strategy:
+      matrix:
+        platform: [ubuntu-latest]
         python-version: [3.6, 3.7, 3.8, 3.9]
 
     steps:
@@ -25,10 +50,6 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip setuptools wheel bump2version twine
-        python -m pip install coverage
-        if [ "$RUNNER_OS" == "macOS" ]; then
-          brew install expect
-        fi
       shell: bash
 
     - name: Linter
@@ -46,22 +67,36 @@ jobs:
         bump2version --dry-run --verbose --allow-dirty minor
         bump2version --dry-run --verbose --allow-dirty major
 
+    - name: Test
+      run: |
+        python -m pip install .
+        script -q -e -c "python setup.py test"
+
+  test_macos:
+    runs-on: ${{ matrix.platform }}
+    strategy:
+      matrix:
+        platform: [macos-latest]
+        python-version: [3.6, 3.7, 3.8, 3.9]
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip setuptools wheel
+        brew install expect
+      shell: bash
+
     - name: Test Linux/MacOS
       run: |
         python -m pip install .
-        if [ "$RUNNER_OS" == "Linux" ]; then
-          script -q -e -c "coverage run setup.py test"
-        elif [ "$RUNNER_OS" == "macOS" ]; then
-          unbuffer coverage run setup.py test
-        fi
-
-    # from https://about.codecov.io/blog/
-    # python-code-coverage-using-github-actions-and-codecov/
-    - name: Upload Coverage to Codecov
-      uses: codecov/codecov-action@v2
-      with:
-        fail_ci_if_error: true
-        verbose: true
+        unbuffer python setup.py test
 
    # test_windows:
    #   runs-on: ${{ matrix.platform }}
@@ -87,3 +122,35 @@ jobs:
    #       python -m pip install .
    #       Invoke-Expression 'python setup.py test'
 
+  coverage:
+    runs-on: ${{ matrix.platform }}
+    strategy:
+      matrix:
+        platform: [ubuntu-latest]
+        python-version: [3.9]
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip setuptools wheel
+        python -m pip install coverage
+
+    - name: Get Coverage
+      run: |
+        python -m pip install .
+        script -q -e -c "python setup.py test"
+
+    # from https://about.codecov.io/blog/
+    # python-code-coverage-using-github-actions-and-codecov/
+    - name: Upload Coverage to Codecov
+      uses: codecov/codecov-action@v2
+      with:
+        fail_ci_if_error: true
+        verbose: true
