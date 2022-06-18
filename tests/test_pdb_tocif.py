@@ -43,6 +43,7 @@ class TestTool(unittest.TestCase):
         """
 
         with OutputCapture() as output:
+            print(sys.stdin, sys.stdin.closed)
             try:
                 self.module.main()
             except SystemExit as e:
