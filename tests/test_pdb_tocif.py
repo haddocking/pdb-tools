@@ -24,7 +24,7 @@ import sys
 import unittest
 
 from config import data_dir
-from utils import OutputCapture
+from utils import ArgumentMocker, OutputCapture
 
 
 class TestTool(unittest.TestCase):
@@ -41,9 +41,7 @@ class TestTool(unittest.TestCase):
         """
         Execs module.
         """
-
         with OutputCapture() as output:
-            print(sys.stdin, sys.stdin.closed)
             try:
                 self.module.main()
             except SystemExit as e:
@@ -138,75 +136,73 @@ class TestTool(unittest.TestCase):
         """$ pdb_tocif data/dummy.pdb"""
 
         fpath = os.path.join(data_dir, 'dummy.pdb')
-        sys.argv = ['', fpath]
+        ivals = ['', fpath]
+        with ArgumentMocker(ivals):
+            # Execute the script
+            self.exec_module()
 
-        # Execute the script
-        self.exec_module()
+            # Validate results
+            self.assertEqual(self.retcode, 0)
+            self.assertEqual(len(self.stdout), 212)
+            self.assertEqual(len(self.stderr), 0)
 
-        # Validate results
-        self.assertEqual(self.retcode, 0)
-        self.assertEqual(len(self.stdout), 212)
-        self.assertEqual(len(self.stderr), 0)
-
-        # Check no of records
-        n_ATOM = len([l for l in self.stdout if l.startswith('ATOM')])
-        n_HETATM = len([l for l in self.stdout if l.startswith('HETATM')])
-        n_coord = n_ATOM + n_HETATM
-        self.assertEqual(n_ATOM, 176)
-        self.assertEqual(n_HETATM, 9)
-        self.assertEqual(n_coord, 185)
+            # Check no of records
+            n_ATOM = len([l for l in self.stdout if l.startswith('ATOM')])
+            n_HETATM = len([l for l in self.stdout if l.startswith('HETATM')])
+            n_coord = n_ATOM + n_HETATM
+            self.assertEqual(n_ATOM, 176)
+            self.assertEqual(n_HETATM, 9)
+            self.assertEqual(n_coord, 185)
 
     def test_multi_model(self):
         """$ pdb_tocif data/ensemble_OK.pdb"""
 
         fpath = os.path.join(data_dir, 'ensemble_OK.pdb')
-        sys.argv = ['', fpath]
+        ivals = ['', fpath]
+        with ArgumentMocker(ivals):
+            # Execute the script
+            self.exec_module()
 
-        # Execute the script
-        self.exec_module()
+            # Validate results
+            self.assertEqual(self.retcode, 0)
+            self.assertEqual(len(self.stdout), 31)
+            self.assertEqual(len(self.stderr), 0)
 
-        # Validate results
-        self.assertEqual(self.retcode, 0)
-        self.assertEqual(len(self.stdout), 31)
-        self.assertEqual(len(self.stderr), 0)
+            # Check no of records
+            n_ATOM = len([l for l in self.stdout if l.startswith('ATOM')])
+            n_HETATM = len([l for l in self.stdout if l.startswith('HETATM')])
+            n_coord = n_ATOM + n_HETATM
+            self.assertEqual(n_ATOM, 4)
+            self.assertEqual(n_HETATM, 0)
+            self.assertEqual(n_coord, 4)
 
-        # Check no of records
-        n_ATOM = len([l for l in self.stdout if l.startswith('ATOM')])
-        n_HETATM = len([l for l in self.stdout if l.startswith('HETATM')])
-        n_coord = n_ATOM + n_HETATM
-        self.assertEqual(n_ATOM, 4)
-        self.assertEqual(n_HETATM, 0)
-        self.assertEqual(n_coord, 4)
+            # Check model numbers
+            records = (('ATOM', 'HETATM'))
+            models = [l.split()[-1] for l in self.stdout if l.startswith(records)]
+            self.assertEqual(models, ['1', '1', '2', '2'])
 
-        # Check model numbers
-        records = (('ATOM', 'HETATM'))
-        models = [l.split()[-1] for l in self.stdout if l.startswith(records)]
-        self.assertEqual(models, ['1', '1', '2', '2'])
-
-        # Check number of fields
-        atom_lines = [l for l in self.stdout if l.startswith(records)]
-        n_fields = list(set(map(lambda x: len(x.split()), atom_lines)))
-        self.assertEqual(n_fields, [21])
+            # Check number of fields
+            atom_lines = [l for l in self.stdout if l.startswith(records)]
+            n_fields = list(set(map(lambda x: len(x.split()), atom_lines)))
+            self.assertEqual(n_fields, [21])
 
     def test_file_not_found(self):
         """$ pdb_tocif not_existing.pdb"""
 
         # Error (file not found)
         afile = os.path.join(data_dir, 'not_existing.pdb')
-        sys.argv = ['', afile]
+        ivals = ['', afile]
+        with ArgumentMocker(ivals):
+            # Execute the script
+            self.exec_module()
 
-        # Execute the script
-        self.exec_module()
-
-        self.assertEqual(self.retcode, 1)
-        self.assertEqual(len(self.stdout), 0)
-        self.assertEqual(self.stderr[0][:22],
-                         "ERROR!! File not found")
+            self.assertEqual(self.retcode, 1)
+            self.assertEqual(len(self.stdout), 0)
+            self.assertEqual(self.stderr[0][:22],
+                             "ERROR!! File not found")
 
     def test_helptext(self):
         """$ pdb_tocif"""
-
-        # sys.argv = ['']
 
         # Execute the script
         self.exec_module()
@@ -218,15 +214,15 @@ class TestTool(unittest.TestCase):
     def test_invalid_option(self):
         """$ pdb_tocif -A data/dummy.pdb"""
 
-        sys.argv = ['', '-A', os.path.join(data_dir, 'dummy.pdb')]
+        ivals = ['', '-A', os.path.join(data_dir, 'dummy.pdb')]
+        with ArgumentMocker(ivals):
+            # Execute the script
+            self.exec_module()
 
-        # Execute the script
-        self.exec_module()
-
-        self.assertEqual(self.retcode, 1)
-        self.assertEqual(len(self.stdout), 0)
-        self.assertEqual(self.stderr[0][:36],
-                         "ERROR!! Script takes 1 argument, not")
+            self.assertEqual(self.retcode, 1)
+            self.assertEqual(len(self.stdout), 0)
+            self.assertEqual(self.stderr[0][:36],
+                             "ERROR!! Script takes 1 argument, not")
 
 
 if __name__ == '__main__':

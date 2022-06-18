@@ -54,3 +54,22 @@ class OutputCapture(object):
         del self._stringerr    # free up some memory
         sys.stdout = self._stdout
         sys.stderr = self._stderr
+
+
+class ArgumentMocker(object):
+    """Context manager to mock passing arguments via sys.argv."""
+
+    def __init__(self, vals):
+        self.default = [""]
+
+        assert isinstance(vals, list), "Input must be a list"
+        self.mock_values = vals
+
+    def __enter__(self):
+        self.default = sys.argv
+        sys.argv = self.mock_values
+
+    def __exit__(self, *args):
+        default = getattr(self, "default", [""])
+        sys.argv = self.default
+
