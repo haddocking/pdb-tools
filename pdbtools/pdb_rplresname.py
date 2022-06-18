@@ -52,7 +52,7 @@ def check_input(args):
         # option & Pipe
         if args[0].startswith('-'):
             option = args[0][1:]
-            if sys.stdin.closed or sys.stdin.isatty():  # ensure the PDB data is streamed in
+            if os.isatty(sys.stdin.fileno()):  # ensure the PDB data is streamed in
                 emsg = 'ERROR!! No data to process!\n'
                 sys.stderr.write(emsg)
                 sys.stderr.write(__doc__)
