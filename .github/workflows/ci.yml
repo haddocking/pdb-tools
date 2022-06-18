@@ -25,6 +25,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip setuptools wheel bump2version twine
+        python -m pip install coverage
 
     - name: Linter
       run: |
@@ -43,12 +44,14 @@ jobs:
 
     - name: Test
       run: |
+        python -m pip install .
+
         if [ "$RUNNER_OS" == "Linux" ]; then
-          script -q -e -c "python setup.py test"
+          script -q -e -c "coverage run setup.py test"
         elif [ "$RUNNER_OS" == "Windows" ]; then
-          Invoke-Expression "python setup.py test"
+          Invoke-Expression "coverage run setup.py test"
         elif [ "$RUNNER_OS" == "macOS" ]; then
-          unbuffer python setup.py test
+          unbuffer coverage run setup.py test
         else
           echo "$RUNNER_OS not supported"
           exit 1
@@ -57,13 +60,6 @@ jobs:
 
     # from https://about.codecov.io/blog/
     # python-code-coverage-using-github-actions-and-codecov/
-    - name: Generate Report
-      run: |
-        python -m pip install coverage
-        python -m pip install .
-        cd tests/
-        coverage run -m unittest
-
     - name: Upload Coverage to Codecov
       uses: codecov/codecov-action@v2
       with:
