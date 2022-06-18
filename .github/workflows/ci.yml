@@ -60,6 +60,7 @@ jobs:
     - name: Generate Report
       run: |
         python -m pip install coverage
+        python -m pip install .
         cd tests/
         coverage run -m unittest
 
