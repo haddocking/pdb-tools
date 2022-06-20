@@ -42,6 +42,10 @@ effort to maintain and compile. RIP.
 import os
 import sys
 
+if sys.version[0] == '2':
+    from collections import OrderedDict as dict
+
+
 __author__ = "Joao Rodrigues"
 __email__ = "j.p.g.l.m.rodrigues@gmail.com"
 
@@ -141,8 +145,8 @@ def select_altloc(fhandle, selloc=None, byocc=False):
     if selloc is None and not byocc:
         raise ValueError('Provide either `selloc` or `byocc`.')
 
-    altloc_lines = {}  # dict to capture the lines from a altloc group
-    res_per_loc = {}  # dict to capture the residues per altloc group
+    altloc_lines = dict()  # dict to capture the lines from a altloc group
+    res_per_loc = dict()  # dict to capture the residues per altloc group
 
     prev_altloc = ''
     prev_resname = ''
@@ -184,8 +188,8 @@ def select_altloc(fhandle, selloc=None, byocc=False):
                 for __line in flush_func(selloc=selloc, altloc_lines=altloc_lines):
                     yield __line
 
-                altloc_lines = {}
-                res_per_loc = {}
+                altloc_lines = dict()
+                res_per_loc = dict()
 
             # saves the line per altloc identifier
             current_loc = altloc_lines.setdefault(altloc, [])
@@ -210,8 +214,8 @@ def select_altloc(fhandle, selloc=None, byocc=False):
                 for __line in flush_func(selloc=selloc, altloc_lines=altloc_lines):
                     yield __line
 
-                altloc_lines = {}
-                res_per_loc = {}
+                altloc_lines = dict()
+                res_per_loc = dict()
 
             prev_altloc = ''
             prev_resname = ''
@@ -238,7 +242,7 @@ def select_altloc(fhandle, selloc=None, byocc=False):
             yield __line
 
         altloc_lines = []
-        res_per_loc = {}
+        res_per_loc = dict()
 
 
 def is_another_altloc_group(
@@ -385,7 +389,7 @@ def _get_sort_atoms(altloc_lines):
         all_lines.extend(lines)
 
     # organize by atoms
-    atoms = {}
+    atoms = dict()
     # key in the dictionary are unique identifiers of the same residue
     for line in all_lines:
         res_number = int(line[22:26])
