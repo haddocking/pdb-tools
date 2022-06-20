@@ -43,8 +43,7 @@ import os
 import sys
 
 if sys.version[0] == '2':
-    from collections import OrderedDict
-    dict = OrderedDict
+    from collections import OrderedDict as dict
 
 
 __author__ = "Joao Rodrigues"
