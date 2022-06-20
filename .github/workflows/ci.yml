@@ -150,6 +150,16 @@ jobs:
     # from https://about.codecov.io/blog/
     # python-code-coverage-using-github-actions-and-codecov/
     - name: Upload Coverage to Codecov
+      continue-on-error: true
+      id: codecov_upload
+      uses: codecov/codecov-action@v2
+      with:
+        fail_ci_if_error: true
+        verbose: true
+
+    # Retry in case connection is flaky
+    - name: Upload Coverage to Codecov (Retry)
+      if: steps.codecov_upload.outcome == 'failure'
       uses: codecov/codecov-action@v2
       with:
         fail_ci_if_error: true
