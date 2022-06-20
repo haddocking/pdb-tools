@@ -5,4 +5,9 @@ coverage:
         target: auto
         threshold: 2%
         if_ci_failed: error
-        only_pulls: true
+    patch:
+      default:
+        # basic
+        target: auto
+        threshold: 2%
+        if_ci_failed: error
