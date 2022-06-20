@@ -127,7 +127,7 @@ jobs:
     strategy:
       matrix:
         platform: [ubuntu-latest]
-        python-version: [3.9]
+        python-version: [2.7, 3.9]
 
     steps:
     - uses: actions/checkout@v2
