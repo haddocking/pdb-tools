@@ -125,6 +125,7 @@ def run(fhandle, strict=False):
         The modified (or not) PDB line.
     """
     not_strict = not strict
+    fhandle = iter(fhandle)
 
     def make_TER(prev_line):
         """Creates a TER statement based on the last ATOM/HETATM line.
@@ -148,6 +149,7 @@ def run(fhandle, strict=False):
     prev_line = None
     num_models = 1
     in_model = False
+    #serial = 0
     for line in fhandle:
 
         line = line.strip()  # We will pad/add \n later to make uniform

@@ -89,6 +89,43 @@ class TestTool(unittest.TestCase):
         # Check if we added END statements correctly
         self.assertTrue(self.stdout[-1].startswith('END'))
 
+    def test_default_in_lib(self):
+        """
+        Test command-line versus lib.
+
+        $ pdb_tidy data/dummy.pdb
+
+        >>> original_lines = open('dummy.pdb').readlines()
+        >>> lines = list(pdb_tidy.run(original_lines))
+
+        `lines` and the result from the command-line must be the same.
+        """
+
+        fpath = os.path.join(data_dir, 'dummy.pdb')
+        sys.argv = ['', fpath]
+
+        # Execute the script
+        self.exec_module()
+
+        fin = open(os.path.join(data_dir, 'dummy.pdb'))
+        original_lines = fin.readlines()
+        fin.close()
+        lines = list(self.module.run(original_lines))
+
+        self.assertEqual(len(lines), 205)
+        # Check if we added TER statements correctly
+        n_ter = len([r for r in lines if r.startswith('TER')])
+        self.assertEqual(n_ter, 5)
+
+        # Check no CONECT in output
+        c_conect = sum(1 for i in lines if i.startswith('CONECT'))
+        self.assertEqual(c_conect, 0)
+
+        # Check if we added END statements correctly
+        self.assertTrue(lines[-1].startswith('END'))
+
+        self.assertTrue(lines, self.stdout)
+
     def test_tidy_removes_master(self):
         """Test pdb_tidy removes MASTER lines as well."""
         sys.argv = ['']
