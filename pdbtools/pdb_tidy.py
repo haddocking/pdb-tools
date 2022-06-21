@@ -149,7 +149,6 @@ def run(fhandle, strict=False):
     prev_line = None
     num_models = 1
     in_model = False
-    #serial = 0
     for line in fhandle:
 
         line = line.strip()  # We will pad/add \n later to make uniform
