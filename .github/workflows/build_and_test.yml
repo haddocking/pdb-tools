@@ -37,12 +37,13 @@ jobs:
           flake8 .
 
   build_and_test:
+    name: Build & Test
     runs-on: ${{ matrix.platform }}
+    needs: [linter]
     strategy:
       matrix:
         platform: [ubuntu-latest, macos-latest, windows-latest]
-        # python-version: [2.7, 3.6, 3.7, 3.8, 3.9, "3.10"]
-        python-version: ["3.10"]
+        python-version: [2.7, 3.6, 3.7, 3.8, 3.9, "3.10"]
 
     steps:
       - uses: actions/checkout@v2
@@ -94,6 +95,7 @@ jobs:
           name: coverage-data
           path: .coverage.*
           if-no-files-found: ignore
+          retention-days: 2
 
   # Combine and analyze coverage
   # https://hynek.me/articles/ditch-codecov-python/
