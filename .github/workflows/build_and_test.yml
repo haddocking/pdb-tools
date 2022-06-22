@@ -75,13 +75,13 @@ jobs:
         run: |
             script -q -e -c "coverage run -p setup.py test"
         shell: bash
-        if: runner.os == "Linux"
+        if: matrix.os == 'ubuntu-latest'
 
       - name: Test on MacOS / Windows
         run: |
             coverage run -p setup.py test
         shell: bash
-        if: runner.os != "Linux"
+        if: matrix.os != 'ubuntu-latest'
         env:
           SKIP_TTY_TESTS: true
 
