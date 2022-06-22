@@ -1,3 +1,4 @@
+---
 name: Yaml Lint
 on: [push, pull_request]  # yamllint disable-line rule:truthy
 jobs:
@@ -9,4 +10,3 @@ jobs:
         uses: ibiqlik/action-yamllint@v3
         with:
           file_or_dir: .github/workflows/*.yml
-
