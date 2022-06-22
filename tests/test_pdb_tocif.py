@@ -202,7 +202,7 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.stderr[0][:22],
                          "ERROR!! File not found")
 
-    @unittest.skipIf(sys.platform.startswith('win'), 'skip on Windows - requires TTY')
+    @unittest.skipIf(os.getenv('GITHUB_ACTIONS'), 'skip on GHA windows - no TTY')
     def test_helptext(self):
         """$ pdb_tocif"""
 
