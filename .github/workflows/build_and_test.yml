@@ -162,7 +162,7 @@ jobs:
     - name: Test
       run: |
         python -m pip install .
-        Invoke-Expression -Command 'coverage run setup.py test'
+        Invoke-Command -ComputerName localhost -ScriptBlock { coverage run setup.py test }
 
   # Combine and analyze coverage
   # https://hynek.me/articles/ditch-codecov-python/
