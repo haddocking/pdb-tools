@@ -74,9 +74,11 @@ jobs:
       - name: Test
         run: |
           if [ "$RUNNER_OS" == "Linux" ]; then
+            echo $SKIP_TTY_TESTS
             script -q -e -c "coverage run -p setup.py test"
           else
             echo "SKIP_TTY_TESTS=true" >> $GITHUB_ENV
+            echo $SKIP_TTY_TESTS
             coverage run -p setup.py test
           fi
         shell: bash
