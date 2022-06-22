@@ -155,6 +155,7 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.stderr[0][:22],
                          "ERROR!! File not found")  # proper error message
 
+    @unittest.skipIf(sys.platform.startswith('win'), 'requires Windows')
     def test_file_missing(self):
         """$ pdb_fixinsert -A89"""
 
@@ -167,7 +168,7 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.stderr[0],
                          "ERROR!! No data to process!")
 
-    # @unittest.skipUnless(sys.platform.startswith('win'), 'requires Windows')
+    # @unittest.skipIf(sys.platform.startswith('win'), 'requires Windows')
     # def test_helptext(self):
     #     """$ pdb_fixinsert"""
 
