@@ -81,6 +81,7 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.stderr[0][:22],
                          "ERROR!! File not found")  # proper error message
 
+    @unittest.skipUnless(sys.platform.startswith('win'), 'requires Windows')
     def test_helptext(self):
         """$ pdb_keepcoord"""
 

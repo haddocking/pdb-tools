@@ -120,6 +120,7 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.stderr[1],
                          self.module.__doc__.split("\n")[1])
 
+    @unittest.skipUnless(sys.platform.startswith('win'), 'requires Windows')
     def test_helptext(self):
         """$ pdb_uniqname"""
 

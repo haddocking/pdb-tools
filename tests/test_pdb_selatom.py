@@ -106,6 +106,7 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.stderr[0],
                          "ERROR!! No data to process!")
 
+    @unittest.skipUnless(sys.platform.startswith('win'), 'requires Windows')
     def test_helptext(self):
         """$ pdb_selatom"""
 
