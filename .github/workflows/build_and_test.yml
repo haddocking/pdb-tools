@@ -1,12 +1,16 @@
 name: build_and_test
 
 on:
-  push:
   pull_request:
+    branches:
+      - master
+  push:
+    branches:
+      - master
 
 jobs:
   # Only lint in one platform to save compute time
-  lint:
+  linter:
     runs-on: ${{ matrix.platform }}
     strategy:
       matrix:
@@ -125,20 +129,20 @@ jobs:
         path: .coverage.*
         if-no-files-found: ignore
 
-   build_and_test_windows:
-     runs-on: ${{ matrix.platform }}
-     strategy:
-       matrix:
-         platform: [windows-latest]
-         python-version: [2.7, 3.6, 3.7, 3.8, 3.9, 3.10]
+  build_and_test_windows:
+    runs-on: ${{ matrix.platform }}
+    strategy:
+      matrix:
+        platform: [windows-latest]
+        python-version: [2.7, 3.6, 3.7, 3.8, 3.9, 3.10]
 
-     steps:
-     - uses: actions/checkout@v2
+    steps:
+    - uses: actions/checkout@v2
 
-     - name: Set up Python ${{ matrix.python-version }}
-       uses: actions/setup-python@v2
-       with:
-         python-version: ${{ matrix.python-version }}
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
 
     - name: Install dependencies
       run: |
@@ -155,11 +159,12 @@ jobs:
         bump2version --dry-run --verbose --allow-dirty minor
         bump2version --dry-run --verbose --allow-dirty major
 
-     - name: Test Windows
-       run: |
-         python -m pip install .
-         Invoke-Expression -Command 'coverage run setup.py test'
+    - name: Test
+      run: |
+        python -m pip install .
+        Invoke-Expression -Command 'coverage run setup.py test'
 
+  # Combine and analyze coverage
   # https://hynek.me/articles/ditch-codecov-python/
   coverage:
      name: Combine & Check coverage.
