@@ -108,6 +108,7 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.stderr[0][:22],
                          "ERROR!! File not found")  # proper error message
 
+    @unittest.skipIf(os.getenv('SKIP_TTY_TESTS'), 'skip on GHA - no TTY')
     def test_file_missing(self):
         """$ pdb_uniqname"""
 
@@ -120,6 +121,7 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.stderr[1],
                          self.module.__doc__.split("\n")[1])
 
+    @unittest.skipIf(os.getenv('SKIP_TTY_TESTS'), 'skip on GHA - no TTY')
     def test_helptext(self):
         """$ pdb_uniqname"""
 

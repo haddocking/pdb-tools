@@ -1,7 +1,7 @@
 # Contributing to pdb-tools
 
 First off, thank you for taking the time to contribute! The tone of the following
-'guidelines' might seem a bit harsh (a lot of *do nots*) but it will make 
+'guidelines' might seem a bit harsh (a lot of *do nots*) but it will make
 everyone's life easier. Make sure you read through this at least once before
 issuing a pull request or opening an issue.
 
@@ -97,9 +97,9 @@ git checkout -b pdb_newtool
 python setup.py test
 
 # When you have committed all your changes, run flake8 to make sure there are
-# no style issues.
-pip install flake8  # Optional obviously
-flake8 --ignore E501,E731 --statistics bin/
+# no style issues. You can find our flake8 settings in `setup.cfg`.
+python -m pip install flake8
+flake8 .
 
 # Update the documentation, if you added new tools (or changed docstrings).
 cd docs/
@@ -136,7 +136,7 @@ for good examples of how to handle multiple options.
 * Avoid reading the entire file in memory unless you have to. This makes it nice
 for people processing very large files.
 * Following the previous item, make use of generators (`yield`) to output the
-results of your tool. 
+results of your tool.
 
 ## Merging Pull Requests
 If you are tasked with merging a pull request yourself, you should know that there
