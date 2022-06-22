@@ -120,7 +120,7 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.stderr[0][:22],
                          "ERROR!! File not found")  # proper error message
 
-    @unittest.skipIf(sys.platform.startswith('win'), 'requires Windows')
+    @unittest.skipIf(sys.platform.startswith('win'), 'skip on Windows - requires TTY')
     def test_helptext(self):
         """$ pdb_chainxseg"""
 
