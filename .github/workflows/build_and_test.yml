@@ -71,28 +71,19 @@ jobs:
         run: |
           python -m pip install .
 
-      - name: Set TTY test variable on MacOS/Win
+      - name: Test on Linux
         run: |
-          if [ "$RUNNER_OS" == "Windows" ]; then
-            echo "SKIP_TTY_TESTS=true" >> $env:GITHUB_ENV
-          else
-            echo "SKIP_TTY_TESTS=true" >> $GITHUB_ENV
-          fi
-        shell: bash
-        if: runner.os != 'Linux'
-
-      - name: Debug Env
-        run: |
-          env
-
-      - name: Test
-        run: |
-          if [ "$RUNNER_OS" == "Linux" ]; then
             script -q -e -c "coverage run -p setup.py test"
-          else
-            coverage run -p setup.py test
-          fi
         shell: bash
+        if: runner.os == "Linux"
+
+      - name: Test on MacOS / Windows
+        run: |
+            coverage run -p setup.py test
+        shell: bash
+        if: runner.os != "Linux"
+        env:
+          SKIP_TTY_TESTS: true
 
       # Store coverage data for later
       # https://hynek.me/articles/ditch-codecov-python/
