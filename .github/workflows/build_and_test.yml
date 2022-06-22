@@ -71,14 +71,16 @@ jobs:
         run: |
           python -m pip install .
 
+      - name: Set TTY test variable on MacOS/Win
+        run: |
+            echo "SKIP_TTY_TESTS=true" >> $GITHUB_ENV
+        if: runner.os != 'Linux'
+
       - name: Test
         run: |
           if [ "$RUNNER_OS" == "Linux" ]; then
-            echo $SKIP_TTY_TESTS
             script -q -e -c "coverage run -p setup.py test"
           else
-            echo "SKIP_TTY_TESTS=true" >> $GITHUB_ENV
-            echo $SKIP_TTY_TESTS
             coverage run -p setup.py test
           fi
         shell: bash
