@@ -25,8 +25,7 @@ jobs:
         run: |
           git config user.name "JoaoRodrigues"
           git config user.email 'joaorodrigues@users.noreply.github.com'
-          # yamllint disable-line rule:line-length
-          git remote set-url origin \https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY
+          git remote set-url origin \https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY  # yamllint disable-line rule:line-length
           git checkout "${GITHUB_REF:11}"
 
       - name: Create skip flag
