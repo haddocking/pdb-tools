@@ -73,7 +73,12 @@ jobs:
 
       - name: Set TTY test variable on MacOS/Win
         run: |
+          if [ "$RUNNER_OS" == "Windows" ]; then
+            echo "SKIP_TTY_TESTS=true" >> $env:GITHUB_ENV
+          else
             echo "SKIP_TTY_TESTS=true" >> $GITHUB_ENV
+          fi
+        shell: bash
         if: runner.os != 'Linux'
 
       - name: Debug Env
