@@ -162,7 +162,7 @@ jobs:
     - name: Test
       run: |
         python -m pip install .
-        script -q -e -c "coverage run setup.py test"
+        coverage run setup.py test
       shell: bash
 
   # Combine and analyze coverage
