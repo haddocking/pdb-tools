@@ -125,6 +125,7 @@ def run(fhandle, strict=False):
         The modified (or not) PDB line.
     """
     not_strict = not strict
+    fhandle = iter(fhandle)
 
     def make_TER(prev_line):
         """Creates a TER statement based on the last ATOM/HETATM line.
