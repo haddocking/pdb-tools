@@ -76,6 +76,10 @@ jobs:
             echo "SKIP_TTY_TESTS=true" >> $GITHUB_ENV
         if: runner.os != 'Linux'
 
+      - name: Debug Env
+        run: |
+          env
+
       - name: Test
         run: |
           if [ "$RUNNER_OS" == "Linux" ]; then
