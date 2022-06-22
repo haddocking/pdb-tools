@@ -1,10 +1,8 @@
-name: ci
+name: build_and_test
 
 on:
   push:
-    branches: [master]
   pull_request:
-    branches: [master]
 
 jobs:
   lint:
