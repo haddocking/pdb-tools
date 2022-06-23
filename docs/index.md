@@ -628,6 +628,21 @@ Example:
 </div>
 <div style="margin-bottom: 1em;">
 <details>
+<summary><b>pdb_selmodel</b><p>Extracts one or more models from a PDB file.</p></summary>
+<span style="font-family: monospace; white-space: pre;">
+If the PDB file has no MODEL records, returns the entire file.
+
+Usage:
+    python pdb_selmodel.py -&lt;model id&gt; &lt;pdb file&gt;
+
+Example:
+    python pdb_selmodel.py -1 1GGR.pdb  # selects model 1
+    python pdb_selmodel.py -1,3 1GGR.pdb  # selects models 1 and 3
+</span>
+</details>
+</div>
+<div style="margin-bottom: 1em;">
+<details>
 <summary><b>pdb_selres</b><p>Selects residues by their index, piecewise or in a range.</p></summary>
 <span style="font-family: monospace; white-space: pre;">
 The range option has three components: start, end, and step. Start and end
