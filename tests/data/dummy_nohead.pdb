@@ -1,0 +1,41 @@
+TITLE     A RANDOM PDB                                                          
+COMPND    MOL_ID: 1;                                                            
+SOURCE    MOL_ID: 1;                                                            
+KEYWDS    PDB-TOOLS, TEST-PDB                                                   
+REMARK    THIS STRUCTURE CONTAINS 4 CHAINS                                      
+REMARK    ALL ATOM SERIAL NUMBERS ARE 1 FOR ATOM
+REMARK    CHAIN A HAS SEGID Z
+REMARK    DOUBLE OCCUPANCIES ON THE FIRST RESIDUE OF CHAIN A
+REMARK    CHAIN B HAS NON-CONTINUOUS RESIDUES (SHOULD HAVE A TER STATEMENT)
+REMARK    CHAIN C DOES NOT HAVE ELEMENTS FOR LAST RESIDUE
+REMARK    CHAIN C CONTAINS RESIDUES OUT OF ORDER
+REMARK    CHAIN D IS NUCLEIC ACID AND LACKS A TER STATEMENT
+ATOM      3  CA  ARG B   4      37.080  43.455  -3.421  1.00  0.00           C  
+ATOM      3  CA  GLU B   6      33.861  45.127  -2.233  1.00  0.00           C  
+ATOM      3  CA  ALA B   7      35.081  45.036   1.305  1.00  0.00           C  
+TER       3      ALA B   7
+ATOM      3  CA BASN A   1      20.000  30.000   0.005  0.60  0.00           C  
+ATOM      3  CA AASN A   1      21.411  39.311   0.054  0.40  0.00           C  
+ATOM      3  CA  ARG A   2      24.384  37.823  -1.757  1.00  0.00           C  
+ATOM      3  CA  GLU A   3      23.064  34.219  -1.780  1.00  0.00           C  
+TER       3      GLU A   3                                                      
+ATOM      3  CA  ARG C   5      37.080  43.455  -3.421  1.00  0.00           C
+ATOM      3  CA  GLU C   2      33.861  45.127  -2.233  1.00  0.00           C
+ATOM      3  CA  MET C  -1      42.850 -16.494  70.506  1.00 52.98              
+TER       3      MET C  -1                                                      
+ATOM      3  P    DT D   2      36.556  19.296  31.761  1.00247.39      Z    
+ATOM      3  OP1  DT D   2      37.512  20.431  31.873  1.00246.92      Z
+ATOM      3  OP2  DT D   2      36.121  18.841  30.413  1.00249.27      Z
+ATOM      3  C4'  DT D   2      36.894  16.884  34.720  1.00230.04      Z
+HETATM    4 CA    CA A 301      44.698  -0.753  65.490  1.00 57.81              
+HETATM    5  O   HOH A 302      61.179  -8.803  36.085  1.00 51.61              
+HETATM    6  O   HOH A 303      64.052  21.644  20.397  1.00 65.18              
+HETATM    7  O   HOH B 301      11.052 -12.419  29.700  1.00 73.70              
+HETATM    8  O   HOH C 301      -8.172 -22.003  57.197  1.00 70.53              
+HETATM    9  O   HOH C 302      36.020 -23.583  73.186  1.00 24.82              
+HETATM   10  O   HOH C 303      41.203 -28.852  57.698  1.00 53.16              
+HETATM   11  O   HOH C 304      -4.491  -9.687  56.752  1.00 55.08              
+HETATM   12  O   HOH C 305      24.561   0.532  70.565  1.00 44.77              
+CONECT   10   11                                                                
+
+
