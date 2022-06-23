@@ -18,6 +18,8 @@
 """
 Extracts one or more models from a PDB file.
 
+If the PDB file has no MODEL records, returns the entire file.
+
 Usage:
     python pdb_selmodel.py -<model id> <pdb file>
 
