@@ -67,6 +67,22 @@ class TestTool(unittest.TestCase):
         self.assertEqual(len(self.stdout), 2)
         self.assertEqual(len(self.stderr), 0)  # no errors
 
+        self.assertEqual(self.stdout, ['>1DUM|ABCD', 'REANREREMXXXXXXXXXX'])
+
+    def test_headerless(self):
+        """$ pdb_tofasta data/dummy_nohead.pdb"""
+
+        fpath = os.path.join(data_dir, 'dummy_nohead.pdb')
+        sys.argv = ['', fpath]
+
+        # Execute the script
+        self.exec_module()
+
+        # Validate results
+        self.assertEqual(self.retcode, 0)  # ensure the program exited OK.
+        self.assertEqual(len(self.stdout), 2)
+        self.assertEqual(len(self.stderr), 0)  # no errors
+
         self.assertEqual(self.stdout, ['>PDB|ABCD', 'REANREREMXXXXXXXXXX'])
 
     def test_multi(self):
@@ -83,13 +99,13 @@ class TestTool(unittest.TestCase):
         self.assertEqual(len(self.stdout), 14)
         self.assertEqual(len(self.stderr), 0)  # no errors
 
-        self.assertEqual(self.stdout, ['>PDB|B', 'REA',
-                                       '>PDB|A', 'NRE',
-                                       '>PDB|C', 'REM',
-                                       '>PDB|D', 'X',
-                                       '>PDB|A', 'XXX',
-                                       '>PDB|B', 'X',
-                                       '>PDB|C', 'XXXXX'])
+        self.assertEqual(self.stdout, ['>1DUM|B', 'REA',
+                                       '>1DUM|A', 'NRE',
+                                       '>1DUM|C', 'REM',
+                                       '>1DUM|D', 'X',
+                                       '>1DUM|A', 'XXX',
+                                       '>1DUM|B', 'X',
+                                       '>1DUM|C', 'XXXXX'])
 
     def test_file_not_found(self):
         """$ pdb_tofasta not_existing.pdb"""

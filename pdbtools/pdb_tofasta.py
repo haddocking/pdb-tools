@@ -144,11 +144,18 @@ def run(fhandle, multi):
     three_to_one = dict(res_codes)
     records = ('ATOM', 'HETATM')
 
+    struct_id = 'PDB'
+
     sequence = []  # list of chain sequences
     seen = set()
     prev_chain = None
     for line in fhandle:
-        if line.startswith(records):
+        if line.startswith('HEADER'):
+            pdb_id = line[62:66].strip()
+            if pdb_id:
+                struct_id = pdb_id
+
+        elif line.startswith(records):
 
             chain_id = line[21]
             if chain_id != prev_chain:
@@ -171,12 +178,12 @@ def run(fhandle, multi):
         labels = sorted(set([c[0] for c in sequence]))
         sequence = [[r for c in sequence for r in c[1:]]]
 
-        yield '>PDB|' + ''.join(labels) + '\n'
+        yield '>' + struct_id + '|' + ''.join(labels) + '\n'
 
     for chain in sequence:
         if multi is not None:
             label = chain[0]
-            yield '>PDB|' + label + '\n'
+            yield '>' + struct_id + '|' + label + '\n'
             chain = chain[1:]
 
         seq = ''.join(chain)
