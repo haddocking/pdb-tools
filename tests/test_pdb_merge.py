@@ -65,7 +65,7 @@ class TestTool(unittest.TestCase):
 
         # Validate results
         self.assertEqual(self.retcode, 0)  # ensure the program exited OK.
-        self.assertEqual(len(self.stdout), 408)  # no lines deleted
+        self.assertEqual(len(self.stdout), 409)  # no lines deleted
         self.assertEqual(len(self.stderr), 0)  # no errors
 
     def test_file_not_found(self):

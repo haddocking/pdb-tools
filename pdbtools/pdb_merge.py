@@ -85,6 +85,7 @@ def run(flist):
         for line in fhandle:
             yield line
         fhandle.close()
+    yield 'END\n'
 
 
 concatenate_files = run
