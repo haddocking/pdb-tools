@@ -307,15 +307,30 @@ def flush_resloc_occ(altloc_lines, **kw):
 
     # detects which altloc identifier has the highest occupancy
     for key, lines2flush in altloc_lines.items():
+        if key == ' ':
+            continue
         # we check only the first line because all atoms in one identifier
         # should have the same occupancy value
         occ = float(lines2flush[0][54:60])
+
         if occ > highest:
             altloc = key
             highest = occ
 
-    for line2flush in altloc_lines[altloc]:
-        yield line2flush[:16] + ' ' + line2flush[17:]
+    if ' ' in altloc_lines.keys():
+        # here we concatenate atoms with no altloc with the
+        # atoms with the highest altloc
+        output_lines = {' ': altloc_lines[' '] + altloc_lines[altloc]}
+        sorted_atoms = _get_sort_atoms(output_lines)
+        for atom, linet in sorted_atoms:
+            lines = linet[1]
+            for line in lines:
+                yield line[:16] + ' ' + line[17:]
+    else:
+        # only alternate locations. Just yield all those lines
+        output_lines = altloc_lines[altloc]
+        for line2flush in altloc_lines[altloc]:
+            yield line2flush[:16] + ' ' + line2flush[17:]
 
 
 def flush_resloc_id_same_residue(selloc, altloc_lines):
