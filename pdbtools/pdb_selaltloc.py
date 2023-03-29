@@ -41,6 +41,7 @@ effort to maintain and compile. RIP.
 """
 import os
 import sys
+from pprint import pprint
 
 if sys.version[0] == '2':
     from collections import OrderedDict as dict
@@ -441,11 +442,101 @@ def run(fhandle, option=None):
         See `pdb_selaltloc.select_by_occupancy` and
         `pdb_selaltloc.select_by_altloc` for more details.
     """
-    if option is None:
-        return select_by_occupancy(fhandle)
+    records = ('ATOM', 'HETATM', 'ANISOU')
+    register = dict()
+    chain = None
+    nline = 0
+    for line in fhandle:
+        nline += 1
 
-    else:
-        return select_by_altloc(fhandle, option)
+        if line.startswith(records):
+
+            resnum = line[22:26].strip()
+            atomname = line[12:16]
+            altloc = line[16]
+            chain = line[21:22]
+
+            if chain != prev_chain:
+                for _line in _flush(register, option):
+                    yield _line
+                # Python 2.7 compatibility. Do not use .clear() method
+                del register
+                register = dict()
+
+            resnum_d = register.setdefault(resnum, {})
+            atomname_d = resnum_d.setdefault(atomname, {})
+            altloc_d = atomname_d.setdefault(altloc, [])
+
+            altloc_d.append((nline, line))
+
+        elif line.startswith('MODEL'):
+            #flush
+            for _line in _flush(register, option):
+                yield _line
+            del register
+            register = dict()
+            yield line
+
+        else:  # the end of some section
+            for _line in _flush(register, option):
+                yield _line
+            del register
+            register = dict()
+            yield line
+
+        prev_chain = chain
+
+    for _line in _flush(register, option):
+        yield _line
+
+
+
+
+def _flush(register, option):
+    lines_to_yield = []
+    select_by_occupancy = option is None
+
+    atom_lines = ('ATOM', 'HETATM')
+    anisou_lines = ('ANISOU',)
+
+    for resnum, atomnames in register.items():
+
+        for atomname, altlocs in atomnames.items():
+
+            if select_by_occupancy:
+                # DONE
+
+                all_lines = []
+                for altloc, lines in altlocs.items():
+                    all_lines.extend(lines)
+
+                new = {}
+                for line_number, line in all_lines:
+                    if line.startswith(atom_lines):
+                        occupancy_number = line[54:60]
+                        list_ = new.setdefault(occupancy_number, [])
+                        list_.append((line_number, line))
+                    elif line.startswith(anisou_lines):
+                        list_.append((line_number, line))
+
+                keys_ = sorted(new.keys(), key=lambda x: float(x.strip()), reverse=True)
+                lines_to_yield.extend(new[keys_[0]])
+
+                del all_lines
+                del new
+
+            # selected by otion:
+            else:
+                if option in altlocs:
+                    lines_to_yield.extend(altlocs[option])
+
+                else:
+                    for altloc, lines in altlocs.items():
+                        lines_to_yield.extend(lines)
+
+    lines_to_yield.sort(key=lambda x: x[0])
+    for line_number, line in lines_to_yield:
+        yield line
 
 
 def main():
