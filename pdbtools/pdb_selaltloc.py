@@ -490,8 +490,6 @@ def run(fhandle, option=None):
         yield _line
 
 
-
-
 def _flush(register, option):
     lines_to_yield = []
     select_by_occupancy = option is None
@@ -520,7 +518,7 @@ def _flush(register, option):
                         list_.append((line_number, line))
 
                 keys_ = sorted(new.keys(), key=lambda x: float(x.strip()), reverse=True)
-                lines_to_yield.extend(new[keys_[0]])
+                lines_to_yield.extend(_remove_altloc(new[keys_[0]]))
 
                 del all_lines
                 del new
@@ -528,7 +526,7 @@ def _flush(register, option):
             # selected by otion:
             else:
                 if option in altlocs:
-                    lines_to_yield.extend(altlocs[option])
+                    lines_to_yield.extend(_remove_altloc(altlocs[option]))
 
                 else:
                     for altloc, lines in altlocs.items():
@@ -537,6 +535,11 @@ def _flush(register, option):
     lines_to_yield.sort(key=lambda x: x[0])
     for line_number, line in lines_to_yield:
         yield line
+
+
+def _remove_altloc(lines):
+    for line_num, line in lines:
+        yield (line_num, line[:16] + ' ' + line[17:])
 
 
 def main():
