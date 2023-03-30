@@ -836,6 +836,51 @@ class TestTool(unittest.TestCase):
                 ]
             )
 
+    def test_mixed_occ_and_inserts(self):
+        """
+        Test mixed maximum occurence and insertion codes.
+
+        Test maximum occurence.
+        """
+        infile = os.path.join(data_dir, 'altloc_3B9F.pdb')
+        result_file = os.path.join(data_dir, 'altloc_3B9F_nooption.pdb')
+        sys.argv = ['', infile]
+        self.exec_module()
+        self.assertEqual(self.retcode, 0)
+        with open(result_file, "r") as fin:
+            expected_lines = [l.strip(os.linesep) for l in fin.readlines()]
+        self.assertEqual(self.stdout, expected_lines)
+
+    def test_mixed_occ_and_inserts_A(self):
+        """
+        Test mixed maximum occurence and insertion codes.
+
+        Test option A.
+        """
+        infile = os.path.join(data_dir, 'altloc_3B9F.pdb')
+        result_file = os.path.join(data_dir, 'altloc_3B9F_A.pdb')
+        sys.argv = ['', '-A', infile]
+        self.exec_module()
+        self.assertEqual(self.retcode, 0)
+        with open(result_file, "r") as fin:
+            expected_lines = [l.strip(os.linesep) for l in fin.readlines()]
+        self.assertEqual(self.stdout, expected_lines)
+
+    def test_mixed_occ_and_inserts_B(self):
+        """
+        Test mixed maximum occurence and insertion codes.
+
+        Test option B.
+        """
+        infile = os.path.join(data_dir, 'altloc_3B9F.pdb')
+        result_file = os.path.join(data_dir, 'altloc_3B9F_B.pdb')
+        sys.argv = ['', '-B', infile]
+        self.exec_module()
+        self.assertEqual(self.retcode, 0)
+        with open(result_file, "r") as fin:
+            expected_lines = [l.strip(os.linesep) for l in fin.readlines()]
+        self.assertEqual(self.stdout, expected_lines)
+
     def test_file_not_found(self):
         """$ pdb_selaltloc not_existing.pdb"""
 
