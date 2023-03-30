@@ -920,6 +920,48 @@ class TestTool(unittest.TestCase):
         self.assertTrue('PRO' in result)
         self.assertEqual(len(self.stderr), 0)
 
+    def test_with_chains(self):
+        """
+        Test lines are flushed when new chain found.
+        """
+        infile = os.path.join(data_dir, 'dummy_altloc_chains.pdb')
+        result_file = os.path.join(data_dir, 'dummy_altloc_chains_maxocc.pdb')
+        sys.argv = ['', infile]
+        self.exec_module()
+        self.assertEqual(self.retcode, 0)
+        self.assertEqual(len(self.stderr), 0)
+        with open(result_file, "r") as fin:
+            expected_lines = [l.strip(os.linesep) for l in fin.readlines()]
+        self.assertEqual(self.stdout, expected_lines)
+
+    def test_with_chains_A(self):
+        """
+        Test lines are flushed when new chain found.
+        """
+        infile = os.path.join(data_dir, 'dummy_altloc_chains.pdb')
+        result_file = os.path.join(data_dir, 'dummy_altloc_chains_A.pdb')
+        sys.argv = ['', '-A', infile]
+        self.exec_module()
+        self.assertEqual(self.retcode, 0)
+        self.assertEqual(len(self.stderr), 0)
+        with open(result_file, "r") as fin:
+            expected_lines = [l.strip(os.linesep) for l in fin.readlines()]
+        self.assertEqual(self.stdout, expected_lines)
+
+    def test_with_chains_C(self):
+        """
+        Test lines are flushed when new chain found.
+        """
+        infile = os.path.join(data_dir, 'dummy_altloc_chains.pdb')
+        result_file = os.path.join(data_dir, 'dummy_altloc_chains_C.pdb')
+        sys.argv = ['', '-C', infile]
+        self.exec_module()
+        self.assertEqual(self.retcode, 0)
+        self.assertEqual(len(self.stderr), 0)
+        with open(result_file, "r") as fin:
+            expected_lines = [l.strip(os.linesep) for l in fin.readlines()]
+        self.assertEqual(self.stdout, expected_lines)
+
     def test_file_not_found(self):
         """$ pdb_selaltloc not_existing.pdb"""
 
@@ -945,8 +987,6 @@ class TestTool(unittest.TestCase):
         self.assertEqual(len(self.stdout), 0)  # no output
         self.assertEqual(self.stderr[0],
                          "ERROR!! No data to process!")
-
-
 
     @unittest.skipIf(os.getenv('SKIP_TTY_TESTS'), 'skip on GHA - no TTY')
     def test_helptext(self):

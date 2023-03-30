@@ -198,8 +198,8 @@ def run(fhandle, option=None):
                 # compatibility with Python 2.7
                 for _line in _flush(register, option, others):
                     yield _line
-                # Python 2.7 compatibility. Do not use .clear() method
 
+                # Python 2.7 compatibility. Do not use .clear() method
                 # restart help variables
                 del register, others
                 register, others = dict(), []
