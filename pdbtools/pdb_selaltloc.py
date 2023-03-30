@@ -443,8 +443,10 @@ def run(fhandle, option=None):
         `pdb_selaltloc.select_by_altloc` for more details.
     """
     records = ('ATOM', 'HETATM', 'ANISOU')
+    # TODO: add terminators to ensure better line control?
     register = dict()
     chain = None
+    prev_chain = None
     nline = 0
     for line in fhandle:
         nline += 1
@@ -517,8 +519,21 @@ def _flush(register, option):
                     elif line.startswith(anisou_lines):
                         list_.append((line_number, line))
 
+                # sort keys by occupancy
                 keys_ = sorted(new.keys(), key=lambda x: float(x.strip()), reverse=True)
-                lines_to_yield.extend(_remove_altloc(new[keys_[0]]))
+
+                # address "take first if occ is the same"
+                # see: https://github.com/haddocking/pdb-tools/issues/153#issuecomment-1488627668
+                these_atom_lines = new[keys_[0]]
+                if len(keys_) == 1 and len(these_atom_lines) > 1:
+                    # when occ are the same
+                    lines_to_yield.extend(_remove_altloc(these_atom_lines[0:1]))
+                    if these_atom_lines[1][1].startswith(('ANISOU',)):
+                        lines_to_yield.extend(_remove_altloc(these_atom_lines[1:2]))
+
+                else:
+                    # when occ are different
+                    lines_to_yield.extend(_remove_altloc(these_atom_lines))
 
                 del all_lines
                 del new
