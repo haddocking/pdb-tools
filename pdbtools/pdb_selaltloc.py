@@ -47,7 +47,6 @@ effort to maintain and compile. RIP.
 """
 import os
 import sys
-from pprint import pprint
 
 if sys.version[0] == '2':
     from collections import OrderedDict as dict
@@ -55,7 +54,6 @@ if sys.version[0] == '2':
 
 __author__ = "Joao Rodrigues"
 __email__ = "j.p.g.l.m.rodrigues@gmail.com"
-
 
 
 def check_input(args):
