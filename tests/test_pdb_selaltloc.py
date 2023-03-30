@@ -881,6 +881,45 @@ class TestTool(unittest.TestCase):
             expected_lines = [l.strip(os.linesep) for l in fin.readlines()]
         self.assertEqual(self.stdout, expected_lines)
 
+    def test_with_models(self):
+        """
+        Test lines are flushed when new model found.
+        """
+        infile = os.path.join(data_dir, 'dummy_altloc_model.pdb')
+        sys.argv = ['', infile]
+        self.exec_module()
+        self.assertEqual(self.retcode, 0)
+        self.assertEqual(len(self.stdout), 39)
+        self.assertEqual(len(self.stderr), 0)
+
+    def test_with_models_A(self):
+        """
+        Test lines are flushed when new model found.
+        """
+        infile = os.path.join(data_dir, 'dummy_altloc_model.pdb')
+        sys.argv = ['', '-A', infile]
+        self.exec_module()
+        self.assertEqual(self.retcode, 0)
+        self.assertEqual(len(self.stdout), 39)
+        self.assertEqual(len(self.stderr), 0)
+        result = set(''.join(self.stdout).split())
+        self.assertTrue('SER' in result)
+        self.assertFalse('PRO' in result)
+
+    def test_with_models_B(self):
+        """
+        Test lines are flushed when new model found.
+        """
+        infile = os.path.join(data_dir, 'dummy_altloc_model.pdb')
+        sys.argv = ['', '-B', infile]
+        self.exec_module()
+        self.assertEqual(self.retcode, 0)
+        self.assertEqual(len(self.stdout), 39)
+        result = set(''.join(self.stdout).split())
+        self.assertFalse('SER' in result)
+        self.assertTrue('PRO' in result)
+        self.assertEqual(len(self.stderr), 0)
+
     def test_file_not_found(self):
         """$ pdb_selaltloc not_existing.pdb"""
 
