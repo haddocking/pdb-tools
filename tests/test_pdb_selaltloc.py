@@ -64,7 +64,7 @@ class TestTool(unittest.TestCase):
 
         # Validate results
         self.assertEqual(self.retcode, 0)  # ensure the program exited OK.
-        self.assertEqual(len(self.stdout), 36)
+        self.assertEqual(len(self.stdout), 39)
         self.assertEqual(len(self.stderr), 0)  # no errors
 
         # Make sure sequence is correct
@@ -129,7 +129,7 @@ class TestTool(unittest.TestCase):
 
         # Validate results
         self.assertEqual(self.retcode, 0)  # ensure the program exited OK.
-        self.assertEqual(len(self.stdout), 36)
+        self.assertEqual(len(self.stdout), 39)
         self.assertEqual(len(self.stderr), 0)  # no errors
 
         # Make sure sequence is correct
@@ -193,7 +193,7 @@ class TestTool(unittest.TestCase):
 
         # Validate results
         self.assertEqual(self.retcode, 0)  # ensure the program exited OK.
-        self.assertEqual(len(self.stdout), 46)
+        self.assertEqual(len(self.stdout), 49)
         self.assertEqual(len(self.stderr), 0)  # no errors
 
         # Make sure sequence is correct
@@ -241,7 +241,7 @@ class TestTool(unittest.TestCase):
 
         # Validate results
         self.assertEqual(self.retcode, 0)  # ensure the program exited OK.
-        self.assertEqual(len(self.stdout), 52)
+        self.assertEqual(len(self.stdout), 55)
         self.assertEqual(len(self.stderr), 0)  # no errors
 
         # Make sure sequence is correct
