@@ -185,7 +185,7 @@ def run(fhandle, option=None):
 
             # here resnum + insertion code are taken to identify
             # different residues
-            resnum = line[22:27].strip()
+            resnum = line[22:27]
             atomname = line[12:16]
             altloc = line[16]
             chain = line[21:22]
