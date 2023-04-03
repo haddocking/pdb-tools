@@ -66,6 +66,22 @@ def check_input(args):
     return fl
 
 
+def make_TER(prev_line):
+    """Creates a TER statement based on the last ATOM/HETATM line.
+    """
+    # TER     606      LEU A  75
+    fmt_TER = "TER   {:>5d}      {:3s} {:1s}{:>4s}{:1s}" + " " * 53 + os.linesep
+
+    # Add last TER statement
+    serial = int(prev_line[6:11]) + 1
+    rname = prev_line[17:20]
+    chain = prev_line[21]
+    resid = prev_line[22:26]
+    icode = prev_line[26]
+
+    return fmt_TER.format(serial, rname, chain, resid, icode)
+
+
 def run(flist):
     """
     Iterate over a list of files and yields each line sequentially.
@@ -80,12 +96,35 @@ def run(flist):
     str (line-by-line)
         Lines from the concatenated PDB files.
     """
-
+    TER = ('TER',)
+    records = ('ATOM', 'HETATM', 'ANISOU')
+    prev_chain = None
+    chain = None
+    prev_line = ''
     for fhandle in flist:
+
         for line in fhandle:
+
+            if line.startswith(records):
+                prev_record_line = line
+                chain = line[21]
+
+            if \
+                    prev_chain is not None \
+                    and prev_line.startswith(records) \
+                    and chain != prev_chain \
+                    and not prev_line.startswith(TER):
+                print(prev_line)
+                yield make_TER(prev_line)
+
             yield line
+
+            prev_line = line
+            prev_chain = chain
+
         fhandle.close()
-    yield 'END\n'
+
+    yield 'END' + os.linesep
 
 
 concatenate_files = run
