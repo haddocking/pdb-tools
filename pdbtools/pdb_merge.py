@@ -56,8 +56,8 @@ def check_input(args):
                 sys.stderr.write(__doc__)
                 sys.exit(1)
 
-            fh = open(fn, 'r')
-            fl.append(fh)
+            #fh #= open(fn, 'r')
+            fl.append(fn)
 
     else:  # Whatever ...
         sys.stderr.write(__doc__)
@@ -82,6 +82,14 @@ def make_TER(prev_line):
     return fmt_TER.format(serial, rname, chain, resid, icode)
 
 
+def _get_lines_from_input(pinput, i=0):
+    """Decide wheter input is file or lines."""
+    if isinstance(pinput, str):
+        return os.path.basename(pinput), open(pinput, 'r')
+    else:
+        return 'PDB FILE #{}'.format(i), pinput
+
+
 def run(flist):
     """
     Iterate over a list of files and yields each line sequentially.
@@ -98,23 +106,33 @@ def run(flist):
     """
     TER = ('TER',)
     records = ('ATOM', 'HETATM', 'ANISOU')
+    atom_anisou = ('ATOM', 'ANISOU')
+    hetatm = ('HETATOM',)
     prev_chain = None
     chain = None
     prev_line = ''
-    for fhandle in flist:
 
-        for line in fhandle:
+    pdb_extension = ('.pdb',)
 
-            if line.startswith(records):
-                prev_record_line = line
-                chain = line[21]
+    conect_lines = []
+
+    for fidx, possible_file in enumerate(flist, start=1):
+
+        name, lines = _get_lines_from_input(possible_file)
+
+        for line in lines:
 
             if \
+                    line.startswith(hetatm) \
+                    and prev_line.startswith(atom_anisou):
+
+                yield make_TER(prev_line)
+
+            elif \
                     prev_chain is not None \
-                    and prev_line.startswith(records) \
                     and chain != prev_chain \
                     and not prev_line.startswith(TER):
-                print(prev_line)
+
                 yield make_TER(prev_line)
 
             yield line
@@ -122,7 +140,10 @@ def run(flist):
             prev_line = line
             prev_chain = chain
 
-        fhandle.close()
+        try:
+            lines.close()
+        except AttributeError:
+            pass
 
     yield 'END' + os.linesep
 

@@ -54,7 +54,7 @@ class TestTool(unittest.TestCase):
         return
 
     def test_default(self):
-        """$ pdb_merge data/dummy.pdb"""
+        """$ pdb_merge data/dummy.pdb data/dummy.pdb"""
 
         # Simulate input
         sys.argv = ['', os.path.join(data_dir, 'dummy.pdb'),
@@ -67,6 +67,31 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.retcode, 0)  # ensure the program exited OK.
         self.assertEqual(len(self.stdout), 409)  # no lines deleted
         self.assertEqual(len(self.stderr), 0)  # no errors
+
+    def test_merge_three_chains(self):
+        """$ pdb_merge data/dummy_merge_A.pdb data/dummy_merge_B.pdb data/dummy_merge_C.pdb"""
+        # Simulate input
+        sys.argv = [
+            '',
+            os.path.join(data_dir, 'dummy_merge_A.pdb'),
+            os.path.join(data_dir, 'dummy_merge_B.pdb'),
+            os.path.join(data_dir, 'dummy_merge_C.pdb'),
+            ]
+
+        result_file = os.path.join(data_dir, 'dummy_merged.pdb')
+
+        # Execute the script
+        self.exec_module()
+
+        # Validate results
+        self.assertEqual(self.retcode, 0)  # ensure the program exited OK.
+        self.assertEqual(len(self.stderr), 0)  # no errors
+
+        with open(result_file, 'r') as fin:
+            expected_lines = [l.strip(os.linesep) for l in fin.readlines()]
+
+        self.assertEqual(self.stdout, expected_lines)
+
 
     def test_file_not_found(self):
         """$ pdb_merge not_existing.pdb"""

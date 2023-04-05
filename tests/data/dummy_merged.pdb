@@ -2,8 +2,6 @@ REMARK    HEADER FOR dummy_merge_A.pdb
 HEADER    CHAIN A FOR pdb_merge                                                 
 REMARK    HEADER FOR dummy_merge_B.pdb
 HEADER    CHAIN B FOR pdb_merge                                                 
-REMARK    HEADER FOR dummy_merge_C.pdb
-HEADER    CHAIN C FOR pdb_merge                                                 
 ATOM      1  N   ASN A   1      22.066  40.557   0.420  1.00  0.00           N  
 ATOM      2  CA BASN A   1      20.000  30.000   0.005  0.60  0.00           C  
 ATOM      3  CA AASN A   1      21.411  39.311   0.054  0.40  0.00           C  
