@@ -84,43 +84,57 @@ def make_TER(prev_line):
 
 def _get_lines_from_input(pinput, i=0):
     """Decide wheter input is file or lines."""
-    if isinstance(pinput, str):
-        return os.path.basename(pinput), open(pinput, 'r')
-    else:
-        return 'PDB FILE #{}'.format(i), pinput
+    try:
+        return open(pinput, 'r')
+    except (FileNotFoundError, TypeError):
+        return pinput
 
 
-def run(flist):
+def run(input_list):
     """
-    Iterate over a list of files and yields each line sequentially.
+    Merges PDB files into a single file.
+
+    The merged PDB file will represent a single MODEL.
+
+    Non-coordinate lines will be ignored.
+
+    CONECT lines are yield at the end.
+
+    Atom numbers are restarted from 1.
 
     Parameters
     ----------
-    flist : list of file-like objects
-        Must handle `.close()` attribute.
+    input_list : iterator of iterators
+        `input_list` can be:
+            * a list of file paths
+            * a list of file handlers
+            * a list of lists of lines, the latter representing the
+                content of the different input PDB files
 
     Yields
     ------
     str (line-by-line)
         Lines from the concatenated PDB files.
     """
-    TER = ('TER',)
-    records = ('ATOM', 'HETATM', 'ANISOU')
+    records = ('ATOM', 'HETATM', 'ANISOU', 'CONECT')
     atom_anisou = ('ATOM', 'ANISOU')
-    hetatm = ('HETATOM',)
+    hetatm = ('HETATM',)
+    conect = ('CONECT',)
     prev_chain = None
     chain = None
     prev_line = ''
-
-    pdb_extension = ('.pdb',)
-
     conect_lines = []
 
-    for fidx, possible_file in enumerate(flist, start=1):
+    for input_item in input_list:
 
-        name, lines = _get_lines_from_input(possible_file)
+        lines = _get_lines_from_input(input_item)
 
         for line in lines:
+
+            if not line.startswith(records):
+                continue
+
+            chain = line[21]
 
             if \
                     line.startswith(hetatm) \
@@ -131,9 +145,16 @@ def run(flist):
             elif \
                     prev_chain is not None \
                     and chain != prev_chain \
-                    and not prev_line.startswith(TER):
+                    and prev_line.startswith(atom_anisou):
 
                 yield make_TER(prev_line)
+
+            elif not line.strip(os.linesep).strip():
+                continue
+
+            elif line.startswith(conect):
+                conect_lines.append(line)
+                continue
 
             yield line
 
@@ -144,6 +165,9 @@ def run(flist):
             lines.close()
         except AttributeError:
             pass
+
+    for line in conect_lines:
+        yield line
 
     yield 'END' + os.linesep
 
