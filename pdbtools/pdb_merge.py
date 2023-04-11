@@ -82,6 +82,8 @@ def check_input(args):
 
 # TER     606      LEU A  75
 _fmt_TER = "TER   {:>5d}      {:3s} {:1s}{:>4s}{:1s}" + " " * 53 + os.linesep
+
+
 def make_TER(prev_line, fmt_TER=_fmt_TER):
     """Creates a TER statement based on the last ATOM/HETATM line."""
     # Add last TER statement
@@ -156,7 +158,7 @@ def run(input_list):
         slice(16, 21),
         slice(21, 26),
         slice(26, 31),
-        )
+    )
     atom_number = 1
 
     for input_item in input_list:
