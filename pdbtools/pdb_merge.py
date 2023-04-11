@@ -73,7 +73,7 @@ def check_input(args):
     elif len(args) >= 1:
         for fn in args:
             if not os.path.isfile(fn):
-                emsg = 'ERROR!! File not found or not readable: \'{}\'\n'
+                emsg = 'ERROR!! File not found or not readable: \'{}\''
                 sys.stderr.write(emsg.format(fn))
                 sys.stderr.write(__doc__)
                 sys.exit(1)

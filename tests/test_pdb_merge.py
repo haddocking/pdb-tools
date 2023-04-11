@@ -111,10 +111,10 @@ class TestTool(unittest.TestCase):
         result_file = os.path.join(data_dir, 'dummy_merged.pdb')
 
         from pdbtools.pdb_merge import run
-        result = list(run(input_data))
+        result = [line.strip(os.linesep) for line in run(input_data)]
 
         with open(result_file, 'r') as fin:
-            expected_lines = list(fin.readlines())
+            expected_lines = [l.strip(os.linesep) for l in fin.readlines()]
 
         self.assertEqual(result, expected_lines)
 
