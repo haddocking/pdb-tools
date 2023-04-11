@@ -18,8 +18,18 @@
 """
 Merges several PDB files into one.
 
-The contents are not sorted and no lines are deleted (e.g. END, TER
-statements) so we recommend piping the results through `pdb_tidy.py`.
+Use `pdb_mkensemble` if you with to make an ensemble of multiple
+conformation states of the same protein.
+
+Follows the criteria:
+
+    * The merged PDB file will represent a single MODEL.
+    * Non-coordinate lines in input PDBs will be ignored.
+    * Atom numbers are restarted from 1.
+    * CONECT lines are yield at the end. CONECT numbers are updated to
+        the new atom numbers.
+    * Missing TER and END statements are placed accordingly. Original
+        TER and END statements are maintained.
 
 Usage:
     python pdb_merge.py <pdb file> <pdb file>
@@ -48,7 +58,12 @@ def check_input(args):
     # Defaults
     fl = []  # file list
 
-    if len(args) >= 1:
+    if len(args) == 1:
+        sys.stderr.write('ERROR!! Please provide more than one input file.')
+        sys.stderr.write(__doc__)
+        sys.exit(1)
+
+    elif len(args) >= 1:
         for fn in args:
             if not os.path.isfile(fn):
                 emsg = 'ERROR!! File not found or not readable: \'{}\'\n'
@@ -56,7 +71,6 @@ def check_input(args):
                 sys.stderr.write(__doc__)
                 sys.exit(1)
 
-            #fh #= open(fn, 'r')
             fl.append(fn)
 
     else:  # Whatever ...
@@ -66,12 +80,10 @@ def check_input(args):
     return fl
 
 
-def make_TER(prev_line):
-    """Creates a TER statement based on the last ATOM/HETATM line.
-    """
-    # TER     606      LEU A  75
-    fmt_TER = "TER   {:>5d}      {:3s} {:1s}{:>4s}{:1s}" + " " * 53 + os.linesep
-
+# TER     606      LEU A  75
+_fmt_TER = "TER   {:>5d}      {:3s} {:1s}{:>4s}{:1s}" + " " * 53 + os.linesep
+def make_TER(prev_line, fmt_TER=_fmt_TER):
+    """Creates a TER statement based on the last ATOM/HETATM line."""
     # Add last TER statement
     serial = int(prev_line[6:11]) + 1
     rname = prev_line[17:20]
@@ -90,17 +102,27 @@ def _get_lines_from_input(pinput, i=0):
         return pinput
 
 
+def _update_atom_number(line, number, anisou=('ANISOU',)):
+    if line.startswith(anisou):
+        number -= 1
+    return line[:6] + str(number).rjust(5) + line[11:]
+
+
 def run(input_list):
     """
     Merges PDB files into a single file.
 
-    The merged PDB file will represent a single MODEL.
+    Follows the criteria:
 
-    Non-coordinate lines will be ignored.
+        * The merged PDB file will represent a single MODEL.
+        * Non-coordinate lines will be ignored.
+        * Atom numbers are restarted from 1.
+        * CONECT lines are yield at the end. CONECT numbers are updated
+          to the new atom numbers.
+        * TER and END statements are placed accordingly.
 
-    CONECT lines are yield at the end.
-
-    Atom numbers are restarted from 1.
+    Use `pdb_mkensemble` if you with to make an ensemble of multiple
+    conformation states of the same protein.
 
     Parameters
     ----------
@@ -114,10 +136,11 @@ def run(input_list):
     Yields
     ------
     str (line-by-line)
-        Lines from the concatenated PDB files.
+        Lines from the merged PDB files.
     """
-    records = ('ATOM', 'HETATM', 'ANISOU', 'CONECT')
+    records = ('ATOM', 'HETATM', 'ANISOU', 'CONECT', 'MODEL', 'ENDMDL')
     atom_anisou = ('ATOM', 'ANISOU')
+    atom_hetatm = ('ATOM', 'HETATM')
     hetatm = ('HETATM',)
     conect = ('CONECT',)
     prev_chain = None
@@ -125,9 +148,24 @@ def run(input_list):
     prev_line = ''
     conect_lines = []
 
+    # CONECT logic taken from pdb_preatom
+    fmt_CONECT = "CONECT{:>5s}{:>5s}{:>5s}{:>5s}{:>5s}" + " " * 49 + os.linesep
+    char_ranges = (
+        slice(6, 11),
+        slice(11, 16),
+        slice(16, 21),
+        slice(21, 26),
+        slice(26, 31),
+        )
+    atom_number = 1
+
     for input_item in input_list:
 
         lines = _get_lines_from_input(input_item)
+
+        # store for CONECT statements
+        # restart at each PDB. Read docs above
+        serial_equiv = {'': ''}
 
         for line in lines:
 
@@ -136,27 +174,42 @@ def run(input_list):
 
             chain = line[21]
 
+            if line.startswith(atom_hetatm):
+                serial_equiv[line[6:11].strip()] = atom_number
+
             if \
                     line.startswith(hetatm) \
                     and prev_line.startswith(atom_anisou):
 
-                yield make_TER(prev_line)
+                yield _update_atom_number(make_TER(prev_line), atom_number)
+                atom_number += 1
 
             elif \
                     prev_chain is not None \
                     and chain != prev_chain \
                     and prev_line.startswith(atom_anisou):
 
-                yield make_TER(prev_line)
+                yield _update_atom_number(make_TER(prev_line), atom_number)
+                atom_number += 1
+
+            elif line.startswith(conect):
+
+                # 6:11, 11:16, 16:21, 21:26, 26:31
+                serials = (line[cr].strip() for cr in char_ranges)
+
+                # If not found, return default
+                new_serials = (str(serial_equiv.get(s, s)) for s in serials)
+                conect_line = fmt_CONECT.format(*new_serials)
+
+                conect_lines.append(conect_line)
+
+                continue
 
             elif not line.strip(os.linesep).strip():
                 continue
 
-            elif line.startswith(conect):
-                conect_lines.append(line)
-                continue
-
-            yield line
+            yield _update_atom_number(line, atom_number)
+            atom_number += 1
 
             prev_line = line
             prev_chain = chain

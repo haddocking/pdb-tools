@@ -65,7 +65,7 @@ class TestTool(unittest.TestCase):
 
         # Validate results
         self.assertEqual(self.retcode, 0)  # ensure the program exited OK.
-        self.assertEqual(len(self.stdout), 409)  # no lines deleted
+        self.assertEqual(len(self.stdout), 383)  # deleted non-record
         self.assertEqual(len(self.stderr), 0)  # no errors
 
     def test_merge_three_chains(self):
@@ -92,13 +92,40 @@ class TestTool(unittest.TestCase):
 
         self.assertEqual(self.stdout, expected_lines)
 
+    def test_merge_three_chains_library(self):
+        """
+        Use pdb_merge as library.
+
+
+        """
+        # Simulate input
+        fA = os.path.join(data_dir, 'dummy_merge_A.pdb')
+        fB = os.path.join(data_dir, 'dummy_merge_B.pdb')
+        fC = os.path.join(data_dir, 'dummy_merge_C.pdb')
+
+        with open(fB, 'r') as fin:
+            fB_lines = list(fin.readlines())
+
+        input_data = [fA, fB_lines, fC]
+
+        result_file = os.path.join(data_dir, 'dummy_merged.pdb')
+
+        from pdbtools.pdb_merge import run
+        result = list(run(input_data))
+
+        with open(result_file, 'r') as fin:
+            expected_lines = list(fin.readlines())
+
+        self.assertEqual(result, expected_lines)
+
 
     def test_file_not_found(self):
         """$ pdb_merge not_existing.pdb"""
 
         # Error (file not found)
-        afile = os.path.join(data_dir, 'not_existing.pdb')
-        sys.argv = ['', afile]
+        afile = os.path.join(data_dir, 'dummy.pdb')
+        bfile = os.path.join(data_dir, 'not_existing.pdb')
+        sys.argv = ['', afile, bfile]
 
         # Execute the script
         self.exec_module()
@@ -107,6 +134,22 @@ class TestTool(unittest.TestCase):
         self.assertEqual(len(self.stdout), 0)  # nothing written to stdout
         self.assertEqual(self.stderr[0][:22],
                          "ERROR!! File not found")  # proper error message
+
+    def test_error_single_file(self):
+        """$ pdb_merge dummy.pdb"""
+
+        # Error (file not found)
+        afile = os.path.join(data_dir, 'dummy.pdb')
+        sys.argv = ['', afile]
+
+        # Execute the script
+        self.exec_module()
+
+        self.assertEqual(self.retcode, 1)  # exit code is 1 (error)
+        self.assertEqual(len(self.stdout), 0)  # nothing written to stdout
+        self.assertEqual(self.stderr[0][:48],
+                        'ERROR!! Please provide more than one input file.'
+                        )
 
     @unittest.skipIf(os.getenv('SKIP_TTY_TESTS'), 'skip on GHA - no TTY')
     def test_helptext(self):
