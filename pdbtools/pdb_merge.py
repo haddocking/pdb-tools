@@ -51,6 +51,13 @@ __author__ = "Joao M.C. Teixeira"
 __email__ = "joaomcteixeira@gmail.com"
 
 
+# Python 2.7 compatibility
+try:
+    FileNotFoundError
+except NameError:
+    FileNotFoundError = IOError
+
+
 def check_input(args):
     """Checks whether to read from stdin/file and validates user input/options.
     """
