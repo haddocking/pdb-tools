@@ -214,9 +214,9 @@ def run(fhandle, strict=False):
             if atom_section:
                 atom_section = False
                 yield make_TER(prev_line)
-                if in_model:
-                    yield "{:<80}\n".format("ENDMDL")
-                    in_model = False
+            if in_model:
+                yield "{:<80}\n".format("ENDMDL")
+                in_model = False
 
             if line.startswith('MODEL'):
                 line = "MODEL " + "    " + str(num_models).rjust(4)
@@ -240,9 +240,9 @@ def run(fhandle, strict=False):
             # Add last TER statement
             atom_section = False
             yield make_TER(prev_line)
-            if in_model:
-                yield "{:<80}\n".format("ENDMDL")
-                in_model = False
+        if in_model:
+            yield "{:<80}\n".format("ENDMDL")
+            in_model = False
 
     # Add END statement
     yield "{:<80}\n".format("END")

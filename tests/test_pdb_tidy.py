@@ -260,6 +260,33 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.stdout[-1].strip(), "END")
         self.assertEqual(len(self.stdout[-1]), 80)
 
+    def test_corrects_model_ENDMDL_with_HETATM(self):
+        """Correct MODEL lines."""
+        fpath = os.path.join(data_dir, 'hetatm_ensemble.pdb')
+        sys.argv = ['', fpath]
+        self.exec_module()
+        self.assertEqual(self.retcode, 0)
+        self.assertEqual(len(self.stdout), 45)
+        self.assertEqual(len(self.stderr), 0)
+
+        # MODEL lines
+        self.assertEqual(len(self.stdout[0]), 80)
+        self.assertEqual(len(self.stdout[0].strip()), 14)
+        self.assertEqual(len(self.stdout[22]), 80)
+        self.assertEqual(len(self.stdout[22].strip()), 14)
+        self.assertEqual(self.stdout[0].strip(), "MODEL        1")
+        self.assertEqual(self.stdout[22].strip(), "MODEL        2")
+
+        # ENDMDL LINES
+        self.assertEqual(len(self.stdout[21]), 80)
+        self.assertEqual(len(self.stdout[43]), 80)
+        self.assertEqual(self.stdout[21].strip(), "ENDMDL")
+        self.assertEqual(self.stdout[43].strip(), "ENDMDL")
+
+        # END LINES
+        self.assertEqual(self.stdout[-1].strip(), "END")
+        self.assertEqual(len(self.stdout[-1]), 80)
+
 
     def test_file_not_found(self):
         """$ pdb_tidy not_existing.pdb"""
