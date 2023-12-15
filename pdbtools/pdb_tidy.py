@@ -33,7 +33,7 @@ Usage:
 
 Example:
     python pdb_tidy.py 1CTF.pdb
-    python pdb_tidy.py -strict 1CTF.pdb  # does not add TER on chain breaks
+    python pdb_tidy.py -strict 1CTF.pdb  # also adds TER on chain breaks
 
 This program is part of the `pdb-tools` suite of utilities and should not be
 distributed isolatedly. The `pdb-tools` were created to quickly manipulate PDB
@@ -117,14 +117,13 @@ def run(fhandle, strict=False):
     fhandle : a line-by-line iterator of the original PDB file.
 
     strict : bool
-        If True, does not add TER statements at intra-chain breaks.
+        If True, adds TER statements at intra-chain breaks.
 
     Yields
     ------
     str (line-by-line)
         The modified (or not) PDB line.
     """
-    not_strict = not strict
     fhandle = iter(fhandle)
 
     def make_TER(prev_line):
@@ -185,7 +184,7 @@ def run(fhandle, strict=False):
         if line.startswith('ATOM'):
 
             is_gap = (int(line[22:26]) - int(prev_line[22:26])) > 1
-            if atom_section and (line[21] != prev_line[21] or (not_strict and is_gap)):
+            if atom_section and (line[21] != prev_line[21] or (strict and is_gap)):
                 serial_offset += 1  # account for TER statement
                 yield make_TER(prev_line)
 
