@@ -1,0 +1,44 @@
+REMARK ORIGINAL DATA FROM PDB ID 3U7T
+ATOM      1  N  ASER A  22     -14.282  -3.023 -15.571  0.53  4.57           N  
+ANISOU    1  N  ASER A  22      594    482    661      7    -42     32       N  
+ATOM      2  CA ASER A  22     -13.829  -3.816 -14.436  0.53  5.30           C  
+ANISOU    2  CA ASER A  22      695    586    731      6    -19    117       C  
+ATOM      3  C  ASER A  22     -12.365  -3.540 -14.113  0.53  4.77           C  
+ANISOU    3  C  ASER A  22      582    560    669     34     31     98       C  
+ATOM      4  O  ASER A  22     -11.531  -3.326 -15.003  0.53  5.44           O  
+ANISOU    4  O  ASER A  22      602    786    679     59     46    138       O  
+ATOM      5  N  BPRO A  22     -14.305  -3.040 -15.563  0.47  5.18           N  
+ANISOU    5  N  BPRO A  22      713    566    690    -20    -45      8       N  
+ATOM      6  CA BPRO A  22     -13.801  -3.851 -14.452  0.47  5.29           C  
+ANISOU    6  CA BPRO A  22      701    599    711    -19    -20     59       C  
+ATOM      7  C  BPRO A  22     -12.344  -3.583 -14.119  0.47  4.84           C  
+ANISOU    7  C  BPRO A  22      590    585    664     23     27     64       C  
+ATOM      8  O  BPRO A  22     -11.499  -3.414 -15.007  0.47  5.37           O  
+ANISOU    8  O  BPRO A  22      603    762    675     65     45    100       O  
+ATOM      9  N   GLU B  22     -12.046  -3.614 -12.827  0.30  4.76           N  
+ANISOU    9  N   GLU B  22      558    607    642     79     39     69       N  
+ATOM     10  CA  GLU B  22     -10.679  -3.437 -12.387  0.30  4.89           C  
+ANISOU   10  CA  GLU B  22      576    620    663     31     42     45       C  
+ATOM     11  C   GLU B  22      -9.718  -4.412 -13.075  0.30  4.66           C  
+ANISOU   11  C   GLU B  22      509    598    663      8     21     49       C  
+ATOM     12  O   GLU B  22      -8.593  -4.031 -13.405  0.30  5.42           O  
+ANISOU   12  O   GLU B  22      569    765    725    -40     72    -21       O  
+ATOM     17  N   ILE B  23      -9.702  -5.727 -16.084  0.01  4.36           N  
+ANISOU   17  N   ILE B  23      520    465    672     33    -18      2       N  
+ATOM     18  CA  ILE B  23      -9.340  -5.286 -17.428  0.01  4.45           C  
+ANISOU   18  CA  ILE B  23      533    529    630     -6    -50     -5       C  
+ATOM     19  C   ILE B  23      -8.471  -4.014 -17.377  0.01  4.39           C  
+ANISOU   19  C   ILE B  23      478    580    609     -1    -12    -14       C  
+ATOM     20  O   ILE B  23      -7.519  -3.868 -18.141  0.01  5.13           O  
+ANISOU   20  O   ILE B  23      566    725    660    -65     86    -77       O  
+ATOM     21  N  ALEU B  23      -9.706  -5.722 -16.071  0.99  4.68           N  
+ANISOU   21  N  ALEU B  23      553    548    676     10    -26     -1       N  
+ATOM     22  CA ALEU B  23      -9.351  -5.281 -17.410  0.99  4.87           C  
+ANISOU   22  CA ALEU B  23      554    645    651    -35    -48    -28       C  
+ATOM     23  C  ALEU B  23      -8.459  -4.039 -17.346  0.99  4.69           C  
+ANISOU   23  C  ALEU B  23      518    645    621    -13    -18    -33       C  
+ATOM     24  O  ALEU B  23      -7.460  -3.953 -18.055  0.99  5.25           O  
+ANISOU   24  O  ALEU B  23      583    759    652    -28     45    -75       O  
+ATOM     26  CA  GLU B  24     -10.679  -3.437 -12.387  0.55  4.89           C  
+ANISOU   26  CA  GLU B  24      576    620    663     31     42     45       C  
+END
