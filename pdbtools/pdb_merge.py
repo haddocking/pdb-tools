@@ -18,8 +18,18 @@
 """
 Merges several PDB files into one.
 
-The contents are not sorted and no lines are deleted (e.g. END, TER
-statements) so we recommend piping the results through `pdb_tidy.py`.
+Use `pdb_mkensemble` if you with to make an ensemble of multiple
+conformation states of the same protein.
+
+Follows the criteria:
+
+    * The merged PDB file will represent a single MODEL.
+    * Non-coordinate lines in input PDBs will be ignored.
+    * Atom numbers are restarted from 1.
+    * CONECT lines are yield at the end. CONECT numbers are updated to
+        the new atom numbers.
+    * Missing TER and END statements are placed accordingly. Original
+        TER and END statements are maintained.
 
 Usage:
     python pdb_merge.py <pdb file> <pdb file>
@@ -41,6 +51,13 @@ __author__ = "Joao M.C. Teixeira"
 __email__ = "joaomcteixeira@gmail.com"
 
 
+# Python 2.7 compatibility
+try:
+    FileNotFoundError
+except NameError:
+    FileNotFoundError = IOError
+
+
 def check_input(args):
     """Checks whether to read from stdin/file and validates user input/options.
     """
@@ -48,16 +65,20 @@ def check_input(args):
     # Defaults
     fl = []  # file list
 
-    if len(args) >= 1:
+    if len(args) == 1:
+        sys.stderr.write('ERROR!! Please provide more than one input file.')
+        sys.stderr.write(__doc__)
+        sys.exit(1)
+
+    elif len(args) >= 1:
         for fn in args:
             if not os.path.isfile(fn):
-                emsg = 'ERROR!! File not found or not readable: \'{}\'\n'
+                emsg = 'ERROR!! File not found or not readable: \'{}\''
                 sys.stderr.write(emsg.format(fn))
                 sys.stderr.write(__doc__)
                 sys.exit(1)
 
-            fh = open(fn, 'r')
-            fl.append(fh)
+            fl.append(fn)
 
     else:  # Whatever ...
         sys.stderr.write(__doc__)
@@ -66,25 +87,151 @@ def check_input(args):
     return fl
 
 
-def run(flist):
+# TER     606      LEU A  75
+_fmt_TER = "TER   {:>5d}      {:3s} {:1s}{:>4s}{:1s}" + " " * 53 + os.linesep
+
+
+def make_TER(prev_line, fmt_TER=_fmt_TER):
+    """Creates a TER statement based on the last ATOM/HETATM line."""
+    # Add last TER statement
+    serial = int(prev_line[6:11]) + 1
+    rname = prev_line[17:20]
+    chain = prev_line[21]
+    resid = prev_line[22:26]
+    icode = prev_line[26]
+
+    return fmt_TER.format(serial, rname, chain, resid, icode)
+
+
+def _get_lines_from_input(pinput, i=0):
+    """Decide wheter input is file or lines."""
+    try:
+        return open(pinput, 'r')
+    except (FileNotFoundError, TypeError):
+        return pinput
+
+
+def _update_atom_number(line, number, anisou=('ANISOU',)):
+    if line.startswith(anisou):
+        number -= 1
+    return line[:6] + str(number).rjust(5) + line[11:]
+
+
+def run(input_list):
     """
-    Iterate over a list of files and yields each line sequentially.
+    Merges PDB files into a single file.
+
+    Follows the criteria:
+
+        * The merged PDB file will represent a single MODEL.
+        * Non-coordinate lines will be ignored.
+        * Atom numbers are restarted from 1.
+        * CONECT lines are yield at the end. CONECT numbers are updated
+          to the new atom numbers.
+        * TER and END statements are placed accordingly.
+
+    Use `pdb_mkensemble` if you with to make an ensemble of multiple
+    conformation states of the same protein.
 
     Parameters
     ----------
-    flist : list of file-like objects
-        Must handle `.close()` attribute.
+    input_list : iterator of iterators
+        `input_list` can be:
+            * a list of file paths
+            * a list of file handlers
+            * a list of lists of lines, the latter representing the
+                content of the different input PDB files
 
     Yields
     ------
     str (line-by-line)
-        Lines from the concatenated PDB files.
+        Lines from the merged PDB files.
     """
+    records = ('ATOM', 'HETATM', 'ANISOU', 'CONECT', 'MODEL', 'ENDMDL')
+    atom_anisou = ('ATOM', 'ANISOU')
+    atom_hetatm = ('ATOM', 'HETATM')
+    hetatm = ('HETATM',)
+    conect = ('CONECT',)
+    prev_chain = None
+    chain = None
+    prev_line = ''
+    conect_lines = []
 
-    for fhandle in flist:
-        for line in fhandle:
-            yield line
-        fhandle.close()
+    # CONECT logic taken from pdb_preatom
+    fmt_CONECT = "CONECT{:>5s}{:>5s}{:>5s}{:>5s}{:>5s}" + " " * 49 + os.linesep
+    char_ranges = (
+        slice(6, 11),
+        slice(11, 16),
+        slice(16, 21),
+        slice(21, 26),
+        slice(26, 31),
+    )
+    atom_number = 1
+
+    for input_item in input_list:
+
+        lines = _get_lines_from_input(input_item)
+
+        # store for CONECT statements
+        # restart at each PDB. Read docs above
+        serial_equiv = {'': ''}
+
+        for line in lines:
+
+            if not line.startswith(records):
+                continue
+
+            chain = line[21]
+
+            if line.startswith(atom_hetatm):
+                serial_equiv[line[6:11].strip()] = atom_number
+
+            if \
+                    line.startswith(hetatm) \
+                    and prev_line.startswith(atom_anisou):
+
+                yield _update_atom_number(make_TER(prev_line), atom_number)
+                atom_number += 1
+
+            elif \
+                    prev_chain is not None \
+                    and chain != prev_chain \
+                    and prev_line.startswith(atom_anisou):
+
+                yield _update_atom_number(make_TER(prev_line), atom_number)
+                atom_number += 1
+
+            elif line.startswith(conect):
+
+                # 6:11, 11:16, 16:21, 21:26, 26:31
+                serials = (line[cr].strip() for cr in char_ranges)
+
+                # If not found, return default
+                new_serials = (str(serial_equiv.get(s, s)) for s in serials)
+                conect_line = fmt_CONECT.format(*new_serials)
+
+                conect_lines.append(conect_line)
+
+                continue
+
+            elif not line.strip(os.linesep).strip():
+                continue
+
+            yield _update_atom_number(line, atom_number)
+            atom_number += 1
+
+            prev_line = line
+            prev_chain = chain
+
+        try:
+            lines.close()
+        except AttributeError:
+            pass
+
+    for line in conect_lines:
+        yield line
+
+    yield 'END' + os.linesep
 
 
 concatenate_files = run
