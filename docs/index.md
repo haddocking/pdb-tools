@@ -587,6 +587,29 @@ Example:
 </div>
 <div style="margin-bottom: 1em;">
 <details>
+<summary><b>pdb_selb</b><p>Selects atoms according to their B-factor value.</p></summary>
+<span style="font-family: monospace; white-space: pre;">
+Valid Operations:
+    [g] - greater than
+    [l] - less than
+    [e] - equal to
+    [n] - not equal to
+
+Usage:
+    python pdb_selb.py -&lt;operators&gt; -treshold &lt;pdb file&gt;
+
+Example:
+    python pdb_selb.py -g -10 1CTF.pdb  # selects atoms with B-factor greater than 10
+    python pdb_selb.py -l -10 1CTF.pdb  # selects atoms with B-factor less than 10
+    python pdb_selb.py -ge -10 1CTF.pdb # selects atoms with B-factor greater or equal to 10
+    python pdb_selb.py -le -10 1CTF.pdb # selects atoms with B-factor less or equal to 10
+    python pdb_selb.py -e -10 1CTF.pdb  # selects atoms with B-factor equal to 10
+    python pdb_selb.py -n -10 1CTF.pdb # selects atoms with B-factor not equal to 10
+</span>
+</details>
+</div>
+<div style="margin-bottom: 1em;">
+<details>
 <summary><b>pdb_selchain</b><p>Extracts one or more chains from a PDB file.</p></summary>
 <span style="font-family: monospace; white-space: pre;">
 Usage:
