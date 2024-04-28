@@ -140,7 +140,8 @@ def pad_line(line):
 
 def run(fhandle, operator, operator_treshold):
     """
-    Set the temperature column in all ATOM/HETATM records to a given value.
+    Filter according to the bfactor value using the given operator and operator
+    treshold.
 
     This function is a generator.
 
@@ -148,8 +149,17 @@ def run(fhandle, operator, operator_treshold):
     ----------
     fhandle : a line-by-line iterator of the original PDB file.
 
-    bfactor : float
-        The desired bfactor.
+    operator : string
+        The desired operator that should be used to filter by bafctor. The
+        combination of multiple operator values such as "ge" can also be used.
+        Operator values:
+            "g": greater than operator
+            "l": less than operator
+            "e": equal to operator
+            "n": not equal to operator
+
+    operator_treshold : float
+        The treshold bfactor value that should be used to filter by bfactor.
 
     Yields
     ------
