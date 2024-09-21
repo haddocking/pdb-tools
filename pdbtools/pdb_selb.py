@@ -205,7 +205,7 @@ def run(fhandle, filtering_mode, operator, operator_treshold):
         if line.startswith(records):
             line = _pad_line(line)
 
-            res_id = int(line[23:26])
+            res_id = line[21:26]
 
             if prev_res_id == res_id or prev_res_id is None:
                 res_lines.append(line)
