@@ -102,7 +102,7 @@ def run(fhandle, outname=None):
     records = ('ATOM', 'HETATM', 'ANISOU', 'TER')
     for line in fhandle:
         if line.startswith('MODEL'):
-            model_no = line[6:].strip()
+            model_no = line[11:].strip()
             fh = open(basename + '_' + model_no + '.pdb', 'w')
             model_lines = []
 
