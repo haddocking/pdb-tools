@@ -71,6 +71,7 @@ jobs:
 
       - name: Test on Linux
         run: |
+          python -c "import sys; sys.stdin = open('/dev/null')"
           python -m unittest discover -s tests -p "test_*.py"
         shell: bash
       #   if: matrix.os == 'ubuntu-latest'
