@@ -71,7 +71,7 @@ jobs:
           if [ "${{ runner.os }}" = "Linux" ]; then
             script -q -e -c "coverage run -m unittest discover -s tests -p 'test_*.py'"
           else
-            coverage run -m unittest discover -s tests -p "test_*.py"
+            SKIP_TTY_TESTS=true coverage run -m unittest discover -s tests -p "test_*.py"
           fi
           coverage xml
         shell: bash
