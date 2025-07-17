@@ -72,13 +72,13 @@ jobs:
         run: |
           script -q -e -c "python -m unittest discover -s tests -p 'test_*.py'"
         shell: bash
-        if: ${{ matrix.os }} == 'ubuntu-latest'
+        if: ${{ runner.os }} = 'Linux'
 
       - name: Test on MacOS / Windows
         run: |
           python -m unittest discover -s tests -p 'test_*.py'
         shell: bash
-        if: ${{ matrix.os }} != 'ubuntu-latest'
+        if: ${{ runner.os }} != 'Linux'
         env:
           SKIP_TTY_TESTS: true
 
