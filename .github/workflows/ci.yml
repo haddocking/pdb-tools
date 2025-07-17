@@ -84,7 +84,7 @@ jobs:
   build:
     name: Build
     runs-on: ${{ matrix.platform }}
-    needs: [tests]
+    needs: [test]
     strategy:
       matrix:
         platform: [ubuntu-latest]
