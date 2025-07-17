@@ -73,15 +73,15 @@ jobs:
         run: |
           script -q -e -c "coverage run -p setup.py test"
         shell: bash
-        if: matrix.os == 'ubuntu-latest'
-
-      - name: Test on MacOS / Windows
-        run: |
-          coverage run -p setup.py test
-        shell: bash
-        if: matrix.os != 'ubuntu-latest'
-        env:
-          SKIP_TTY_TESTS: true
+      #   if: matrix.os == 'ubuntu-latest'
+      #
+      # - name: Test on MacOS / Windows
+      #   run: |
+      #     coverage run -p setup.py test
+      #   shell: bash
+      #   if: matrix.os != 'ubuntu-latest'
+      #   env:
+      #     SKIP_TTY_TESTS: true
 
       # Store coverage data for later
       # https://hynek.me/articles/ditch-codecov-python/
