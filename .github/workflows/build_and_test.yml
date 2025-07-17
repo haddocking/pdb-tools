@@ -72,6 +72,7 @@ jobs:
       - name: Test on Linux
         run: |
           python -m unittest discover -s tests -p "test_*.py"
+        shell: bash
       #   if: matrix.os == 'ubuntu-latest'
       # - name: Test on MacOS / Windows
       #   run: |
