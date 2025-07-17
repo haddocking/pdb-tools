@@ -37,7 +37,7 @@ jobs:
     # needs: [linter]
     strategy:
       matrix:
-        platform: [ubuntu-latest]
+        platform: [ubuntu-latest, macos-latest]
         python-version: ["3.9"]
 
     steps:
@@ -74,12 +74,12 @@ jobs:
           script -q -e -c "python -m unittest discover -s tests -p 'test_*.py'"
         shell: bash
 
-  test_win_macos:
+  test_win:
     name: Build & Test
     runs-on: ${{ matrix.platform }}
     strategy:
       matrix:
-        platform: [macos-latest, windows-latest]
+        platform: [windows-latest]
         python-version: ["3.9"]
 
     steps:
