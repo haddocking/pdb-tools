@@ -78,7 +78,7 @@ jobs:
       - name: install dependencies
         run: |
           python -m pip install --upgrade pip setuptools wheel
-          python -m pip install --upgrade bump2version twine
+          python -m pip install --upgrade twine
           python -m pip install --upgrade coverage
 
       - name: build
@@ -87,9 +87,6 @@ jobs:
           python setup.py sdist bdist_wheel
           twine check dist/*.whl
           twine check dist/*.tar.gz
-          bump2version --dry-run --verbose --allow-dirty patch
-          bump2version --dry-run --verbose --allow-dirty minor
-          bump2version --dry-run --verbose --allow-dirty major
 
       - name: install pdb-tools
         run: |
