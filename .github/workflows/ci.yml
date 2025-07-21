@@ -3,6 +3,7 @@ name: ci
 
 on:
   pull_request:
+    types: [opened, edited, synchronize]
     branches:
       - master
   push:
@@ -10,8 +11,35 @@ on:
       - master
 
 jobs:
+  bump:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Determine bump type from PR title
+        id: determine-bump
+        run: |
+          COMMIT_MSG=$(printf "%s" "${{ github.event.pull_request.title }}")
+          echo "PR title: $COMMIT_MSG"
+          if [[ "$COMMIT_MSG" =~ ^\[MAJOR\] ]]; then
+            echo "bump-type=major" >> $GITHUB_OUTPUT
+          elif [[ "$COMMIT_MSG" =~ ^\[MINOR\] ]]; then
+            echo "bump-type=minor" >> $GITHUB_OUTPUT
+          elif [[ "$COMMIT_MSG" =~ ^\[PATCH\] ]]; then
+            echo "bump-type=patch" >> $GITHUB_OUTPUT
+          elif [[ "$COMMIT_MSG" =~ ^\[SKIP\] ]]; then
+            echo "skip-bump=true" >> $GITHUB_OUTPUT
+            echo "::notice::Version bump skipped based on PR title"
+            exit 0
+          else
+            echo "::error::PR title must start with [MAJOR], [MINOR], [PATCH], or [SKIP]"
+            exit 1
+          fi
+
   linter:
     runs-on: ubuntu-latest
+    needs: [bump]
 
     steps:
       - uses: actions/checkout@v4
@@ -32,6 +60,7 @@ jobs:
 
   test:
     name: test
+    needs: [bump]
     runs-on: ${{ matrix.platform }}
     strategy:
       matrix:
@@ -49,7 +78,7 @@ jobs:
       - name: install dependencies
         run: |
           python -m pip install --upgrade pip setuptools wheel
-          python -m pip install --upgrade bump2version twine
+          python -m pip install --upgrade twine
           python -m pip install --upgrade coverage
 
       - name: build
@@ -58,9 +87,6 @@ jobs:
           python setup.py sdist bdist_wheel
           twine check dist/*.whl
           twine check dist/*.tar.gz
-          bump2version --dry-run --verbose --allow-dirty patch
-          bump2version --dry-run --verbose --allow-dirty minor
-          bump2version --dry-run --verbose --allow-dirty major
 
       - name: install pdb-tools
         run: |
