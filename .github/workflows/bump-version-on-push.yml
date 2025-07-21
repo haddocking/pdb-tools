@@ -14,6 +14,9 @@ jobs:
       contents: write
       pull-requests: write
 
+    outputs:
+      skip-bump: ${{ steps.determine-bump.outputs.skip-bump }}
+
     steps:
       - name: Determine bump type
         id: determine-bump
@@ -45,6 +48,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   publish:
+    if: needs.bump-version.outputs.skip-bump != 'true'
     name: builds and publishes to pypi
     needs: [bump-version]
     runs-on: ubuntu-latest
