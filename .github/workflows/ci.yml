@@ -19,7 +19,7 @@ jobs:
       - name: Determine bump type from PR title
         id: determine-bump
         run: |
-          COMMIT_MSG="${{ github.event.pull_request.title }}"
+          COMMIT_MSG=$(printf "%s" "${{ github.event.pull_request.title }}")
           echo "PR title: $COMMIT_MSG"
           if [[ "$COMMIT_MSG" =~ ^\[MAJOR\] ]]; then
             echo "bump-type=major" >> $GITHUB_OUTPUT
