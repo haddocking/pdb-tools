@@ -150,7 +150,7 @@ def select_altloc(fhandle, selloc=None, byocc=False):
 
     prev_altloc = ''
     prev_resname = ''
-    prev_resnum = ''
+    prev_resnum = -float('inf')
 
     # uses the same function names in the loop below. However, depending
     # on the input options, the functions used are different. One is
@@ -170,7 +170,7 @@ def select_altloc(fhandle, selloc=None, byocc=False):
             # captures the relevant parameters
             altloc = line[16]
             resname = line[17:20]
-            resnum = line[22:26].strip()
+            resnum = int(line[22:26].strip())
 
             if is_another_altloc_group(
                     altloc, prev_altloc, resnum, prev_resnum,
@@ -219,14 +219,14 @@ def select_altloc(fhandle, selloc=None, byocc=False):
 
             prev_altloc = ''
             prev_resname = ''
-            prev_resnum = ''
+            prev_resnum = -float('inf')
 
             yield line  # the terminator line
 
         else:
             prev_altloc = ''
             prev_resname = ''
-            prev_resnum = ''
+            prev_resnum = -float('inf')
             yield line
 
     # end of for loop
