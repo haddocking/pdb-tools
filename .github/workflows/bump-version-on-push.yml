@@ -9,63 +9,40 @@ on:
 jobs:
   bump-version:
     runs-on: ubuntu-latest
-    if: "!startsWith(github.event.head_commit.message, '[SKIP]')"
+
+    permissions:
+      contents: write
+      pull-requests: write
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Determine bump type
+        id: determine-bump
+        run: |
+          COMMIT_MSG="${{ github.event.head_commit.message }}"
+          echo "PR title: $COMMIT_MSG"
+          if [[ "$COMMIT_MSG" =~ ^\[MAJOR\] ]]; then
+            echo "bump-type=major" >> $GITHUB_OUTPUT
+          elif [[ "$COMMIT_MSG" =~ ^\[MINOR\] ]]; then
+            echo "bump-type=minor" >> $GITHUB_OUTPUT
+          elif [[ "$COMMIT_MSG" =~ ^\[PATCH\] ]]; then
+            echo "bump-type=patch" >> $GITHUB_OUTPUT
+          elif [[ "$COMMIT_MSG" =~ ^\[SKIP\] ]]; then
+            echo "skip-bump=true" >> $GITHUB_OUTPUT
+            echo "::notice::Version bump skipped based on PR title"
+            exit 0
+          else
+            echo "::error::PR title must start with [MAJOR], [MINOR], [PATCH], or [SKIP]"
+            exit 1
+          fi
 
       - name: Bump version
+        if: steps.determine-bump.outputs.skip-bump != 'true'
         id: bump
         uses: callowayproject/bump-my-version@master
-        env:
-          BUMPVERSION_TAG: "true"
         with:
-          args: ${{ inputs.bump-type }}
-          github-token: ${{ secrets.GH_TOKEN }}
+          args: ${{ steps.determine-bump.outputs.bump-type }} setup.py -v
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Default token for GitHub Actions
 
-      # - name: Set up Python
-      #   uses: actions/setup-python@v5
-      #   with:
-      #     python-version: "3.x"
-      #
-      # - name: Setup Git
-      #   run: |
-      #     git config user.name "JoaoRodrigues"
-      #     git config user.email 'joaorodrigues@users.noreply.github.com'
-      #     git remote set-url origin \https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY
-      #     git checkout "${GITHUB_REF:11}"
-      #
-      # - name: Create skip flag
-      #   run: |
-      #     echo "SKIPBUMP=FALSE" >> $GITHUB_ENV
-      #
-      # - name: Install dependencies
-      #   run: |
-      #     python -m pip install --upgrade pip
-      #     pip install bump2version setuptools wheel twine
-      #
-      # - name: Bump Minor Version
-      #   run: |
-      #     bump2version minor
-      #     echo "SKIPBUMP=TRUE" >> $GITHUB_ENV
-      #   if: "startsWith(github.event.head_commit.message, '[FEATURE]')"
-      #
-      # # Default action
-      # - name: Bump Patch Version
-      #   run: |
-      #     bump2version patch
-      #   if: env.SKIPBUMP == 'FALSE'
-      #
-      # # No major version change should go through automatically.
-      #
-      # - name: Commit version change to master
-      #   run: |
-      #     git push --follow-tags
-      #
-      # - name: Build and publish
-      #   env:
-      #     TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
-      #     TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
-      #   run: |
-      #     python setup.py sdist bdist_wheel
-      #     twine upload dist/*
+
+      ## TODO: Publish it on PyPI
