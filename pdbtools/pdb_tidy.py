@@ -44,6 +44,8 @@ effort to maintain and compile. RIP.
 
 import os
 import sys
+import re
+import textwrap
 
 __author__ = "Joao Rodrigues"
 __email__ = "j.p.g.l.m.rodrigues@gmail.com"
@@ -108,7 +110,7 @@ def check_input(args):
 
 def run(fhandle, strict=False):
     """
-    Add TER/END statements and pads all lines to 80 characters.
+    Add TER/END statements and truncates/pads all lines to 80 characters.
 
     This function is a generator.
 
@@ -161,8 +163,14 @@ def run(fhandle, strict=False):
         if line.startswith(ignored):  # to avoid matching END _and_ ENDMDL
             continue
 
-        # Check line length
-        line = "{:<80}\n".format(line)
+        # Check line length, wrapping and padding as necessary
+        # preserve the line prefix for wrapping
+        prefix = re.match(r"\S+\s*", line).group(0)
+        content = line[len(prefix):].lstrip()
+
+        line = "".join(
+            f"{prefix}{part:<{80 - len(prefix)}}\n"
+            for part in textwrap.wrap(content, width=80 - len(prefix)))
 
         yield line
 
