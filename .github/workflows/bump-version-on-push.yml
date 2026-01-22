@@ -44,7 +44,7 @@ jobs:
       - name: Bump version
         if: steps.determine-bump.outputs.skip-bump != 'true'
         id: bump
-        uses: callowayproject/bump-my-version@v1.2.6
+        uses: callowayproject/bump-my-version@v1
         with:
           args: ${{ steps.determine-bump.outputs.bump-type }} setup.py -v
         env:
