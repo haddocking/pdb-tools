@@ -61,7 +61,7 @@ jobs:
       - name: Bump version
         if: steps.determine-bump.outputs.skip-bump != 'true'
         run: |
-          bump --verbose ${{ steps.determine-bump.outputs.bump-type }}
+          bump-my-version bump --verbose ${{ steps.determine-bump.outputs.bump-type }}
 
       - name: Push changes
         uses: ad-m/github-push-action@master
