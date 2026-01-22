@@ -30,7 +30,7 @@ bin_py = [
 
 setup(
     name="pdb-tools",  # Required
-    version="2.5.1",  # Required
+    version="2.5.0",  # Required
     description="A swiss army knife for PDB files.",  # Optional
     long_description=long_description,  # Optional
     long_description_content_type="text/markdown",  # Optional (see note above)
@@ -49,6 +49,7 @@ setup(
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
         "Programming Language :: Python :: 3.13",
+        "Programming Language :: Python :: 3.14",
     ],
     keywords="bioinformatics protein structural-biology pdb",  # Optional
     # You can just specify package directories manually here if your project is

@@ -1,5 +1,5 @@
 ---
-name: Bump_and_Package
+name: bump and package
 
 on:
   push:
@@ -12,12 +12,14 @@ jobs:
 
     permissions:
       contents: write
-      pull-requests: write
 
     outputs:
       skip-bump: ${{ steps.determine-bump.outputs.skip-bump }}
 
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Determine bump type
         id: determine-bump
         run: |
@@ -34,14 +36,15 @@ jobs:
             echo "::notice::Version bump skipped based on PR title"
             exit 0
           else
-            echo "::error::PR title must start with [MAJOR], [MINOR], [PATCH], or [SKIP]"
-            exit 1
+            echo "skip-bump=true" >> $GITHUB_OUTPUT
+            echo "::notice::Skipping - commit message does not match [MAJOR], [MINOR], [PATCH], or [SKIP]"
+            exit 0
           fi
 
       - name: Bump version
         if: steps.determine-bump.outputs.skip-bump != 'true'
         id: bump
-        uses: callowayproject/bump-my-version@master
+        uses: callowayproject/bump-my-version@v1.2.6
         with:
           args: ${{ steps.determine-bump.outputs.bump-type }} setup.py -v
         env:
@@ -61,6 +64,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: master
 
       - uses: actions/setup-python@v5
         with:
@@ -70,11 +75,10 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           python -m pip install --upgrade build
-          python -m pip install setuptools wheel twine
 
       - name: build
         run: |
-          pyhton setup.py sdist bdist_wheel
+          python -m build
 
       - name: Publish package distributions to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
