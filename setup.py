@@ -49,6 +49,7 @@ setup(
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
         "Programming Language :: Python :: 3.13",
+        "Programming Language :: Python :: 3.14",
     ],
     keywords="bioinformatics protein structural-biology pdb",  # Optional
     # You can just specify package directories manually here if your project is

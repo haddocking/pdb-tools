@@ -138,6 +138,26 @@ class TestTool(unittest.TestCase):
         m_master = sum(1 for i in self.stdout if i.startswith('MASTER'))
         self.assertEqual(m_master, 0)
 
+    def test_tidy_rewraps_long_lines(self):
+        """Test pdb_tidy re-wraps long lines in the header maintaining padding"""
+        sys.argv = ['']
+        self.exec_module(
+            'TITLE     THIS IS A VERY LONG LINE WHICH SHOULD BE WRAPPED '
+            'CORRECTLY OVER MULTIPLE LINES WITH PADDING'
+        )
+
+        # Check no long lines in output
+        long_lines = [line for line in self.stdout if len(line) > 80]
+        self.assertEqual(len(long_lines), 0)
+
+        # Check correct wrapping and padding
+        self.assertEqual(self.stdout[0],
+                         'TITLE     THIS IS A VERY LONG LINE WHICH SHOULD BE '
+                         'WRAPPED CORRECTLY OVER       ')
+        self.assertEqual(self.stdout[1],
+                         'TITLE     MULTIPLE LINES WITH PADDING              '
+                         '                             ')
+
     def test_default_stdin(self):
         """$ cat data/dummy.pdb | pdb_tidy"""
 
