@@ -30,7 +30,7 @@ bin_py = [
 
 setup(
     name="pdb-tools",  # Required
-    version="2.5.1",  # Required
+    version="2.5.0",  # Required
     description="A swiss army knife for PDB files.",  # Optional
     long_description=long_description,  # Optional
     long_description_content_type="text/markdown",  # Optional (see note above)
