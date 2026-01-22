@@ -72,10 +72,10 @@ jobs:
           coverage xml
         shell: bash
 
-      - uses: codacy/codacy-coverage-reporter-action@v1
-        if: >-
-          ${{ github.event_name != 'pull_request' ||
-          github.event.pull_request.head.repo.full_name == github.repository }}
-        with:
-          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
-          coverage-reports: ./coverage.xml
+      # - uses: codacy/codacy-coverage-reporter-action@v1
+      #   if: >-
+      #     ${{ github.event_name != 'pull_request' ||
+      #     github.event.pull_request.head.repo.full_name == github.repository }}
+      #   with:
+      #     project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
+      #     coverage-reports: ./coverage.xml
