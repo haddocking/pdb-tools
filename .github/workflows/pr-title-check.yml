@@ -11,8 +11,9 @@ jobs:
 
     steps:
       - name: Check PR title format
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
         run: |
-          PR_TITLE="${{ github.event.pull_request.title }}"
           echo "PR title: $PR_TITLE"
           if [[ "$PR_TITLE" =~ ^\[(MAJOR|MINOR|PATCH|SKIP)\] ]]; then
             echo "✓ PR title has valid version tag"
