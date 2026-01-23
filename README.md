@@ -2,7 +2,7 @@
 
 [![PyPI version](https://badge.fury.io/py/pdb-tools.svg)](https://pypi.python.org/pypi/pdb-tools)
 [![PyPi Downloads](https://img.shields.io/pypi/dm/pdb-tools.svg)](https://pypi.python.org/pypi/pdb-tools)
-[![tests](https://github.com/haddocking/pdb-tools/workflows/ci/badge.svg?branch=master)](https://github.com/haddocking/pdb-tools/actions?workflow=ci)
+[![ci](https://github.com/haddocking/pdb-tools/actions/workflows/ci.yml/badge.svg)](https://github.com/haddocking/pdb-tools/actions/workflows/ci.yml)
 [![DOI](https://zenodo.org/badge/27217350.svg)](https://doi.org/10.12688/f1000research.17456.1)
 
 A swiss army knife for manipulating and editing PDB files.

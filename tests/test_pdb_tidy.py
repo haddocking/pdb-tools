@@ -138,6 +138,26 @@ class TestTool(unittest.TestCase):
         m_master = sum(1 for i in self.stdout if i.startswith('MASTER'))
         self.assertEqual(m_master, 0)
 
+    def test_tidy_rewraps_long_lines(self):
+        """Test pdb_tidy re-wraps long lines in the header maintaining padding"""
+        sys.argv = ['']
+        self.exec_module(
+            'TITLE     THIS IS A VERY LONG LINE WHICH SHOULD BE WRAPPED '
+            'CORRECTLY OVER MULTIPLE LINES WITH PADDING'
+        )
+
+        # Check no long lines in output
+        long_lines = [line for line in self.stdout if len(line) > 80]
+        self.assertEqual(len(long_lines), 0)
+
+        # Check correct wrapping and padding
+        self.assertEqual(self.stdout[0],
+                         'TITLE     THIS IS A VERY LONG LINE WHICH SHOULD BE '
+                         'WRAPPED CORRECTLY OVER       ')
+        self.assertEqual(self.stdout[1],
+                         'TITLE     MULTIPLE LINES WITH PADDING              '
+                         '                             ')
+
     def test_default_stdin(self):
         """$ cat data/dummy.pdb | pdb_tidy"""
 
@@ -255,6 +275,33 @@ class TestTool(unittest.TestCase):
         self.assertEqual(len(self.stdout[12]), 80)
         self.assertEqual(self.stdout[7].strip(), "ENDMDL")
         self.assertEqual(self.stdout[12].strip(), "ENDMDL")
+
+        # END LINES
+        self.assertEqual(self.stdout[-1].strip(), "END")
+        self.assertEqual(len(self.stdout[-1]), 80)
+
+    def test_corrects_model_ENDMDL_with_HETATM(self):
+        """Correct MODEL lines."""
+        fpath = os.path.join(data_dir, 'hetatm_ensemble.pdb')
+        sys.argv = ['', fpath]
+        self.exec_module()
+        self.assertEqual(self.retcode, 0)
+        self.assertEqual(len(self.stdout), 45)
+        self.assertEqual(len(self.stderr), 0)
+
+        # MODEL lines
+        self.assertEqual(len(self.stdout[0]), 80)
+        self.assertEqual(len(self.stdout[0].strip()), 14)
+        self.assertEqual(len(self.stdout[22]), 80)
+        self.assertEqual(len(self.stdout[22].strip()), 14)
+        self.assertEqual(self.stdout[0].strip(), "MODEL        1")
+        self.assertEqual(self.stdout[22].strip(), "MODEL        2")
+
+        # ENDMDL LINES
+        self.assertEqual(len(self.stdout[21]), 80)
+        self.assertEqual(len(self.stdout[43]), 80)
+        self.assertEqual(self.stdout[21].strip(), "ENDMDL")
+        self.assertEqual(self.stdout[43].strip(), "ENDMDL")
 
         # END LINES
         self.assertEqual(self.stdout[-1].strip(), "END")
