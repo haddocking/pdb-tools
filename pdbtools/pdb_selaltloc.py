@@ -26,12 +26,18 @@ user provides an option (e.g. -A), only atoms with conformers with an altloc A
 are processed by the script. If you select -A and an atom has conformers with
 altlocs B and C, both B and C will be kept in the output.
 
+Despite not an official format, many times alternative locations are identified
+by a blank character ' ' (space), and a character, for example ('A'). In these
+cases, to select the alternative location identified by a blank character,
+define blank in the command line, see below.
+
 Usage:
     python pdb_selaltloc.py [-<option>] <pdb file>
 
 Example:
     python pdb_selaltloc.py 1CTF.pdb  # picks locations with highest occupancy
     python pdb_selaltloc.py -A 1CTF.pdb  # picks alternate locations labelled 'A'
+    python pdb_selaltloc.py -' ' 1CTF.pdb  # picks alternate locations labelled blank ' '
 
 This program is part of the `pdb-tools` suite of utilities and should not be
 distributed isolatedly. The `pdb-tools` were created to quickly manipulate PDB
@@ -114,338 +120,206 @@ def check_input(args):
     return (fh, option)
 
 
-def select_by_occupancy(fhandle):
-    return select_altloc(fhandle, selloc=None, byocc=True)
-
-
-def select_by_altloc(fhandle, selloc):
-    return select_altloc(fhandle, selloc, byocc=False)
-
-
-def select_altloc(fhandle, selloc=None, byocc=False):
-    """
-    Pick one altloc when atoms have more than one.
-
-    If the specified altloc (selloc) is not present for this particular
-    atom, outputs all altlocs. For instance, if atom X has altlocs A and
-    B but the user picked C, we return A and B anyway. If atom Y has
-    altlocs A, B, and C, then we only return C.
-
-    This function is a generator.
-
-    Parameters
-    ----------
-    fhandle : an iterable giving the PDB file line-by-line.
-
-    Yields
-    ------
-    str (line-by-line)
-        The PDB file with altlocs according to selection.
-    """
-    if selloc is None and not byocc:
-        raise ValueError('Provide either `selloc` or `byocc`.')
-
-    altloc_lines = dict()  # dict to capture the lines from a altloc group
-    res_per_loc = dict()  # dict to capture the residues per altloc group
-
-    prev_altloc = ''
-    prev_resname = ''
-    prev_resnum = ''
-
-    # uses the same function names in the loop below. However, depending
-    # on the input options, the functions used are different. One is
-    # specific for byocc=True, and other specific for occ char selection
-    flush_func_multi_residues = flush_resloc_occ if byocc else flush_resloc
-
-    flush_func_single_residues = \
-        flush_resloc_occ_same_residue if byocc else flush_resloc_id_same_residue
-
-    # defines records and terminators
-    records = ('ATOM', 'HETATM', 'ANISOU')
-    terminators = ('TER', 'END', 'CONECT', 'END', 'ENDMDL')
-
-    for line in fhandle:
-
-        if line.startswith(records):
-            # captures the relevant parameters
-            altloc = line[16]
-            resname = line[17:20]
-            resnum = line[22:26].strip()
-
-            if is_another_altloc_group(
-                    altloc, prev_altloc, resnum, prev_resnum,
-                    resname, prev_resname, altloc_lines, res_per_loc):
-                # if we see the altloc group has changed, we should flush
-                # the lines observed for the previous altloc group
-
-                # uses "for loop" instead of "yield from" to maintain
-                # compatibility with older python version
-                if partial_altloc(altloc_lines):
-                    flush_func = flush_func_single_residues
-                else:
-                    flush_func = flush_func_multi_residues
-
-                for __line in flush_func(selloc=selloc, altloc_lines=altloc_lines):
-                    yield __line
-
-                altloc_lines = dict()
-                res_per_loc = dict()
-
-            # saves the line per altloc identifier
-            current_loc = altloc_lines.setdefault(altloc, [])
-            current_loc.append(line)
-
-            # registers which residues are seen for each identifier
-            rploc = res_per_loc.setdefault(altloc, set())
-            rploc.add((resname, resnum))
-
-            prev_altloc = altloc
-            prev_resnum = resnum
-            prev_resname = resname
-
-        elif line.startswith(terminators):
-            # before flushing the terminator line
-            # we should flush the previous altloc group
-            if altloc_lines:
-                if partial_altloc(altloc_lines):
-                    flush_func = flush_func_single_residues
-                else:
-                    flush_func = flush_func_multi_residues
-                for __line in flush_func(selloc=selloc, altloc_lines=altloc_lines):
-                    yield __line
-
-                altloc_lines = dict()
-                res_per_loc = dict()
-
-            prev_altloc = ''
-            prev_resname = ''
-            prev_resnum = ''
-
-            yield line  # the terminator line
-
-        else:
-            prev_altloc = ''
-            prev_resname = ''
-            prev_resnum = ''
-            yield line
-
-    # end of for loop
-    # flush altloc residues in case the last residue was an altloc
-    if altloc_lines:
-
-        if partial_altloc(altloc_lines):
-            flush_func = flush_func_single_residues
-        else:
-            flush_func = flush_func_multi_residues
-
-        for __line in flush_func(selloc=selloc, altloc_lines=altloc_lines):
-            yield __line
-
-        altloc_lines = []
-        res_per_loc = dict()
-
-
-def is_another_altloc_group(
-        altloc,
-        prev_altloc,
-        resnum,
-        prev_resnum,
-        resname,
-        prev_resname,
-        altloc_lines,
-        rploc
-):
-    """Detect if current line belongs to a new altloc group."""
-    a0 = prev_altloc
-    a1 = altloc
-    ra0 = prev_resname
-    ra1 = resname
-    ru0 = prev_resnum
-    ru1 = resnum
-    rl = altloc_lines
-    rv = list(rploc.values())
-
-    is_another = (
-        all((a0, ra0, ru0)) and (
-            (a0 != a1 and a1 == ' ' and ru1 > ru0)
-            or (a0 == ' ' and a1 != ' ' and ru1 > ru0)
-            or (a0 == ' ' and a1 == ' ' and (ru1 != ru0 or ra1 != ra0))
-            or (
-                a0 == a1
-                and a0 != ' '
-                and a1 in rl
-                and ru1 > ru0
-                and len(rl) > 1
-                and all(len(v) == len(rv[0]) for v in rv[1:])
-            )
-        )
-    )
-
-    return is_another
-
-
-def flush_resloc(selloc, altloc_lines):
-    """Flush the captured altloc lines."""
-    # only the selected altloc is yieled
-    if selloc in altloc_lines:
-        for line2flush in altloc_lines[selloc]:
-            yield line2flush[:16] + ' ' + line2flush[17:]
-
-    # the altloc group does not contain the selected altloc
-    # therefore, all members should be yielded
-    else:
-        for key, lines2flush in altloc_lines.items():
-            for line2flush in lines2flush:
-                yield line2flush
-
-
-def flush_resloc_occ(altloc_lines, **kw):
-    """Flush the captured altloc lines by highest occupancy."""
-    # only the selected altloc is yieled
-    highest = 0.00
-    altloc = ' '
-
-    # detects which altloc identifier has the highest occupancy
-    for key, lines2flush in altloc_lines.items():
-        # we check only the first line because all atoms in one identifier
-        # should have the same occupancy value
-        occ = float(lines2flush[0][54:60])
-        if occ > highest:
-            altloc = key
-            highest = occ
-
-    for line2flush in altloc_lines[altloc]:
-        yield line2flush[:16] + ' ' + line2flush[17:]
-
-
-def flush_resloc_id_same_residue(selloc, altloc_lines):
-    """Flush altloc if altloc are atoms in the same residue - by ID."""
-    # places all lines in a single list
-    sorted_atoms = _get_sort_atoms(altloc_lines)
-
-    for atom, linet in sorted_atoms:
-        to_yield = []
-        # remember linet is a tuple, where the first item is the atom number
-        lines = linet[1]
-
-        # here we don't need to care about anisou lines as in
-        # `flush_resloc_occ_same_residue` because ATOM/HETATM and ANISOU
-        # are already sorted by definition and lines are yieled from the
-        # altloc record
-        for line in lines:
-            if line[16] == selloc:
-                to_yield.append(line)
-
-        if to_yield:
-            for line in to_yield:
-                yield line[:16] + ' ' + line[17:]
-        else:
-            for line in lines:
-                yield line
-
-
-def flush_resloc_occ_same_residue(altloc_lines, **kw):
-    """Flush altloc if altloc are atoms in the same residue - by occ."""
-    sorted_atoms = _get_sort_atoms(altloc_lines)
-
-    for atom, linest in sorted_atoms:
-        lines = linest[1]
-
-        atom_lines = [ln for ln in lines if ln.startswith(("ATOM", "HETATM"))]
-        anisou_lines = [ln for ln in lines if ln.startswith(("ANISOU"))]
-
-        if anisou_lines:
-            new = []
-
-            if len(atom_lines) != len(anisou_lines):
-                emsg = (
-                    "There is an error with this PDB. "
-                    "We expect one ANISOU line per ATOM/HETATM lines. "
-                    "But the number of ATOM/HETATM and ANISOU lines differ."
-                )
-                raise ValueError(emsg)
-
-            for _a, _b in zip(atom_lines, anisou_lines):
-                new.append((_a, _b))
-
-            new.sort(key=lambda x: float(x[0][54:60]), reverse=True)
-
-            # ATOM/HETATM
-            yield new[0][0][:16] + ' ' + new[0][0][17:]
-            # ANISOU
-            yield new[0][1][:16] + ' ' + new[0][1][17:]
-
-        else:
-            atom_lines.sort(key=lambda x: float(x[54:60]), reverse=True)
-            yield atom_lines[0][:16] + ' ' + atom_lines[0][17:]
-
-
-def _get_sort_atoms(altloc_lines):
-    # this function is used by both:
-    # flush_resloc_occ_same_residue
-    # flush_resloc_id_same_residue
-    all_lines = []
-    for altloc, lines in altloc_lines.items():
-        all_lines.extend(lines)
-
-    # organize by atoms
-    atoms = dict()
-    # key in the dictionary are unique identifiers of the same residue
-    for line in all_lines:
-        res_number = int(line[22:26])
-        res_name = line[17:20].strip()
-        atom_name = line[12:16]
-        atom_number = int(line[6:11])
-        chain_id = line[21]
-        key = (res_number, res_name, atom_name, chain_id)
-        # the atom number is saved so that the original order can be kept
-        alist = atoms.setdefault(key, (atom_number, []))
-        alist[1].append(line)
-
-    # entries at this point are not sorted. Sorts entries by residue
-    # number followed by atom number
-    sorted_atoms = sorted(list(atoms.items()), key=lambda x: (x[0][0], x[1][0]))
-    return sorted_atoms
-
-
-def all_same_residue(altloc_lines):
-    """Assert all lines are from same residue."""
-    residues = set()
-    for key, val in altloc_lines.items():
-        for line in val:
-            resname = line[17:20]
-            resnum = line[22:26].strip()
-            residues.add((resname, resnum))
-
-    return len(residues) == 1
-
-
-def partial_altloc(altloc_lines):
-    """Detect if the altloc positions are atoms in a single residue."""
-    return ' ' in altloc_lines and all_same_residue(altloc_lines)
-
-
 def run(fhandle, option=None):
     """
     Selects altloc labels for the entire PDB file.
 
     Parameters
     ----------
-    fhandle : an iterable giving PDB file line-by-line.
+    fhandle : an iterable giving the PDB file line-by-line.
+
+    option : str or `None`.
+        The alternative location identifier to select. By default
+        (`None`) selects the alternative location with highest
+        occupancy. In this case, if the different alternative locations
+        have the same occupancy, selects the one that comes first.
+        Selecting by highest occupancy removes all altloc labels for all
+        atoms. Provide an option (e.g. 'A') to select only atoms with
+        altloc label `A`. If you select `A` and an atom has conformers
+        with altlocs `B` and `C`, both B and C will be kept in the
+        output. Despite not an official format, many times alternative
+        locations are identified by a blank character ' ' (space), and a
+        [A-Z] character.  In these cases, to select the alternative
+        location identified by a blank character give `option=' '`.
 
     Returns
     -------
     generator
-        If option is None, return `select_by_occupancy` generator.
-        If option is given, return `select_by_altloc` generator.
-        See `pdb_selaltloc.select_by_occupancy` and
-        `pdb_selaltloc.select_by_altloc` for more details.
-    """
-    if option is None:
-        return select_by_occupancy(fhandle)
+        A generator object. To exhaust the generator, that is, to
+        process the PDB file (or PDB lines), convert it to a list.
 
-    else:
-        return select_by_altloc(fhandle, option)
+        >>> from pdbtools.pdb_selaltloc import run
+        >>> with('input.pdb', 'r') as fin:
+        >>>     processed_lines = list(run(fin))
+
+        For more example see:
+
+        >>> import pdbtools
+        >>> help(pdbtools)
+    """
+    records = ('ATOM', 'HETATM', 'ANISOU')
+    terminators = ('TER', 'END', 'CONECT', 'END', 'ENDMDL', 'MODEL')
+
+    # register atom information
+    register = dict()
+
+    # register comment lines
+    others = []
+
+    # register current chain
+    chain = None
+    prev_chain = None
+
+    # keep record of the line number. This will be used to sort lines
+    # after selecting the desired alternative location
+    nline = 0
+
+    # the loop will collect information on the different atoms
+    # throughout the PDB file until a new chain or any terminal line is
+    # found. At that point, the collected information is flushed because
+    # all altlocs for that block have been defined.
+    for line in fhandle:
+        nline += 1
+
+        if line.startswith(records):
+
+            # here resnum + insertion code are taken to identify
+            # different residues
+            resnum = line[22:27]
+            atomname = line[12:16]
+            altloc = line[16]
+            chain = line[21:22]
+
+            # flush lines because we enter a new chain
+            if chain != prev_chain:
+                # the "yield from" statement is avoided to keep
+                # compatibility with Python 2.7
+                for _line in _flush(register, option, others):
+                    yield _line
+
+                # Python 2.7 compatibility. Do not use .clear() method
+                # restart help variables
+                del register, others
+                register, others = dict(), []
+
+            # organizes information hierarchically
+            resnum_d = register.setdefault(resnum, {})
+            atomname_d = resnum_d.setdefault(atomname, {})
+            altloc_d = atomname_d.setdefault(altloc, [])
+
+            # adds info to dictionary
+            altloc_d.append((nline, line))
+
+        # flush information because we reached the end of a block
+        elif line.startswith(terminators):
+            for _line in _flush(register, option, others):
+                yield _line
+
+            del register, others
+            register, others = dict(), []
+
+            yield line  # yield the current line after flush
+
+        else:
+            # append comments to flush list
+            # The reason to add comments to a list instead of yielding
+            # them directly is to cover the possibility of having
+            # comments in the middle of the PDB file. Obviously is this
+            # extremely unlikely. But just in case...
+            others.append((nline, line))
+
+        prev_chain = chain
+
+    # at the end of the PDB, flush the remaining lines
+    for _line in _flush(register, option, others):
+        yield _line
+
+
+def _flush(register, option, others):
+    """
+    Processes the collected atoms according to the selaltloc option.
+    """
+    lines_to_yield = []
+    select_by_occupancy = option is None
+
+    atom_lines = ('ATOM', 'HETATM')
+
+    # anisou lines are treated specially
+    anisou_lines = ('ANISOU',)
+
+    for resnum, atomnames in register.items():
+
+        for atomname, altlocs in atomnames.items():
+
+            if select_by_occupancy:
+
+                # gathers all alternative locations for the atom
+                all_lines = []
+                for altloc, lines in altlocs.items():
+                    all_lines.extend(lines)
+
+                # identifies the highest occupancy combining dictionary
+                # and sorting
+                new = {}
+                for line_number, line in all_lines:
+                    if line.startswith(atom_lines):
+                        occupancy_number = line[54:60]
+                        list_ = new.setdefault(occupancy_number, [])
+                        list_.append((line_number, line))
+
+                    # assumes ANISOU succeed the respective ATOM line
+                    elif line.startswith(anisou_lines):
+                        list_.append((line_number, line))
+
+                # sort keys by occupancy
+                keys_ = sorted(new.keys(), key=lambda x: float(x.strip()), reverse=True)
+
+                these_atom_lines = new[keys_[0]]
+                if len(keys_) == 1 and len(these_atom_lines) > 1:
+                    # address "take first if occ is the same"
+                    # see: https://github.com/haddocking/pdb-tools/issues/153#issuecomment-1488627668
+                    lines_to_yield.extend(_remove_altloc(these_atom_lines[0:1]))
+
+                    # if there's ANISOU, add it
+                    if these_atom_lines[1][1].startswith(anisou_lines):
+                        lines_to_yield.extend(_remove_altloc(these_atom_lines[1:2]))
+
+                # this should run when there are more than one key or
+                # the key has only one atom line. Keys are the occ
+                # value.
+                else:
+                    # when occs are different, select the highest one
+                    lines_to_yield.extend(_remove_altloc(these_atom_lines))
+
+                del all_lines, new
+
+            # selected by option:
+            else:
+                if option in altlocs:
+                    # selects the option, that's it
+                    lines_to_yield.extend(_remove_altloc(altlocs[option]))
+
+                else:
+                    # if the option does not exist, add all altlocs
+                    for altloc, lines in altlocs.items():
+                        lines_to_yield.extend(lines)
+
+    # add comments
+    lines_to_yield.extend(others)
+
+    # lines are sorted to the line number so that the output is sorted
+    # the same way as in the input PDB
+    lines_to_yield.sort(key=lambda x: x[0])
+
+    # the line number is ignored, only the line is yield
+    for line_number, line in lines_to_yield:
+        yield line
+
+
+def _remove_altloc(lines):
+    # the altloc ID is removed in processed altloc lines
+    for line_num, line in lines:
+        yield (line_num, line[:16] + ' ' + line[17:])
 
 
 def main():

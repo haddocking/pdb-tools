@@ -7,6 +7,9 @@ ATOM    310  C  ASER A  22     -12.365  -3.540 -14.113  0.53  4.77           C
 ANISOU  310  C  ASER A  22      582    560    669     34     31     98       C  
 ATOM    311  O  ASER A  22     -11.531  -3.326 -15.003  0.53  5.44           O  
 ANISOU  311  O  ASER A  22      602    786    679     59     46    138       O  
+REMARK  This is a crazy remark in the middle of the file
+REMARK  which must appear in the same place after pdb_selaltloc,
+REMARK  that is, after the SER and before the PRO
 ATOM    318  N  BPRO A  22     -14.305  -3.040 -15.563  0.47  5.18           N  
 ANISOU  318  N  BPRO A  22      713    566    690    -20    -45      8       N  
 ATOM    319  CA BPRO A  22     -13.801  -3.851 -14.452  0.47  5.29           C  
