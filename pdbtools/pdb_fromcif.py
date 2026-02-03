@@ -176,9 +176,8 @@ def run(fhandle):
             occ = float(fields[labels.get('_atom_site.occupancy')])
             bfactor = float(fields[labels.get('_atom_site.B_iso_or_equiv')])
 
-            charge = fields[labels.get('_atom_site.pdbx_formal_charge')]
             try:
-                charge = charge
+                charge = fields[labels.get('_atom_site.pdbx_formal_charge')]
             except ValueError:
                 charge = '  '
 
