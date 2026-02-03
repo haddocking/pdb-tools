@@ -178,7 +178,7 @@ def run(fhandle):
 
             try:
                 charge = fields[labels.get('_atom_site.pdbx_formal_charge')]
-            except ValueError:
+            except TypeError:
                 charge = '  '
 
             segid = chainid
