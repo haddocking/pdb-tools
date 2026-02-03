@@ -6,6 +6,16 @@ on:
     branches:
       - master
   workflow_dispatch:
+    inputs:
+      bump-type:
+        description: 'Version bump type (for manual triggers)'
+        required: false
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+
 
 jobs:
   bump-version:
@@ -41,6 +51,13 @@ jobs:
       - name: Determine bump type
         id: determine-bump
         run: |
+          # Check for manual input first (workflow_dispatch)
+          if [[ -n "${{ inputs.bump-type }}" ]]; then
+            echo "bump-type=${{ inputs.bump-type }}" >> $GITHUB_OUTPUT
+            echo "::notice::Manual bump triggered with type: ${{ inputs.bump-type }}"
+            exit 0
+          fi
+
           COMMIT_MSG="${{ github.event.head_commit.message }}"
           echo "PR title: $COMMIT_MSG"
           if [[ "$COMMIT_MSG" =~ ^\[MAJOR\] ]]; then
