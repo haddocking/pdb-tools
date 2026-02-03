@@ -34,8 +34,8 @@ class TestTool(unittest.TestCase):
 
     def setUp(self):
         # Dynamically import the module
-        name = 'pdbtools.pdb_fromcif'
-        self.module = __import__(name, fromlist=[''])
+        name = "pdbtools.pdb_fromcif"
+        self.module = __import__(name, fromlist=[""])
 
     def exec_module(self):
         """
@@ -56,8 +56,8 @@ class TestTool(unittest.TestCase):
     def test_conversion(self):
         """$ pdb_fromcif data/ensemble_OK.pdb"""
 
-        fpath = os.path.join(data_dir, 'ensemble_OK.cif')
-        sys.argv = ['', fpath]
+        fpath = os.path.join(data_dir, "ensemble_OK.cif")
+        sys.argv = ["", fpath]
 
         # Execute the script
         self.exec_module()
@@ -68,8 +68,17 @@ class TestTool(unittest.TestCase):
         self.assertEqual(len(self.stderr), 0)
 
         # Check order of records
-        expected = ['MODEL ', 'ATOM  ', 'ATOM  ', 'ENDMDL',
-                    'MODEL ', 'ATOM  ', 'ATOM  ', 'ENDMDL', 'END   ']
+        expected = [
+            "MODEL ",
+            "ATOM  ",
+            "ATOM  ",
+            "ENDMDL",
+            "MODEL ",
+            "ATOM  ",
+            "ATOM  ",
+            "ENDMDL",
+            "END   ",
+        ]
         records = [l[:6] for l in self.stdout]
         self.assertEqual(records, expected)
 
@@ -77,22 +86,21 @@ class TestTool(unittest.TestCase):
         """$ pdb_fromcif not_existing.pdb"""
 
         # Error (file not found)
-        afile = os.path.join(data_dir, 'not_existing.pdb')
-        sys.argv = ['', afile]
+        afile = os.path.join(data_dir, "not_existing.pdb")
+        sys.argv = ["", afile]
 
         # Execute the script
         self.exec_module()
 
         self.assertEqual(self.retcode, 1)
         self.assertEqual(len(self.stdout), 0)
-        self.assertEqual(self.stderr[0][:22],
-                         "ERROR!! File not found")
+        self.assertEqual(self.stderr[0][:22], "ERROR!! File not found")
 
-    @unittest.skipIf(os.getenv('SKIP_TTY_TESTS'), 'skip on GHA - no TTY')
+    @unittest.skipIf(os.getenv("SKIP_TTY_TESTS"), "skip on GHA - no TTY")
     def test_helptext(self):
         """$ pdb_fromcif"""
 
-        sys.argv = ['']
+        sys.argv = [""]
 
         # Execute the script
         self.exec_module()
@@ -104,21 +112,33 @@ class TestTool(unittest.TestCase):
     def test_invalid_option(self):
         """$ pdb_fromcif -A data/dummy.pdb"""
 
-        sys.argv = ['', '-A', os.path.join(data_dir, 'dummy.pdb')]
+        sys.argv = ["", "-A", os.path.join(data_dir, "dummy.pdb")]
 
         # Execute the script
         self.exec_module()
 
         self.assertEqual(self.retcode, 1)
         self.assertEqual(len(self.stdout), 0)
-        self.assertEqual(self.stderr[0][:36],
-                         "ERROR!! Script takes 1 argument, not")
+        self.assertEqual(self.stderr[0][:36], "ERROR!! Script takes 1 argument, not")
+
+    def test_missing_charge(self):
+        """$ pdb_fromcif data/af3_output.cif"""
+        fpath = os.path.join(data_dir, "af3_output.cif")
+        sys.argv = ["", fpath]
+
+        # Execute the script
+        self.exec_module()
+
+        # Validate results
+        self.assertEqual(self.retcode, 0)
+        self.assertEqual(len(self.stdout), 3928)
+        self.assertEqual(len(self.stderr), 0)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     from config import test_dir
 
-    mpath = os.path.abspath(os.path.join(test_dir, '..'))
+    mpath = os.path.abspath(os.path.join(test_dir, ".."))
     sys.path.insert(0, mpath)  # so we load dev files before  any installation
 
     unittest.main()
