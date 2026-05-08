@@ -369,7 +369,7 @@ class TestTool(unittest.TestCase):
         self.exec_module()
 
         self.assertEqual(len(self.stdout), 29)
-        self.assertIn("A0NN2", self.stdout[27])
+        self.assertIn("A0NN2", self.stdout[26])
 
 if __name__ == '__main__':
     from config import test_dir
