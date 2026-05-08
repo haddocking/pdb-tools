@@ -349,6 +349,27 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.stderr[0][:36],
                          "ERROR! First argument is not a valid")
 
+    def test_noh36_option(self):
+        """$ pdb_tidy data/dummy-h36.pdb"""
+
+        sys.argv = ['', os.path.join(data_dir, 'dummy-h36.pdb')]
+
+        # Execute the script
+        self.exec_module()
+
+        self.assertEqual(self.stderr[0][:49],
+                         "ERROR!! Structure contains more than 99.999 atoms")
+
+    def test_h36_option(self):
+        """$ pdb_tidy -h36 data/dummy-h36.pdb"""
+
+        sys.argv = ['', '-h36', os.path.join(data_dir, 'dummy-h36.pdb')]
+
+        # Execute the script
+        self.exec_module()
+
+        self.assertEqual(len(self.stdout), 29)
+        assert "A0NN2" in self.stdout
 
 if __name__ == '__main__':
     from config import test_dir

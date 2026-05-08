@@ -234,6 +234,40 @@ class TestTool(unittest.TestCase):
                          "ERROR! First argument is not an option: '11'")
 
 
+    def test_noh36_option(self):
+        """$ pdb_reatom data/dummy-h36.pdb"""
+
+        sys.argv = ['', os.path.join(data_dir, 'dummy-h36.pdb')]
+
+        # Execute the script
+        self.exec_module()
+
+        self.assertEqual(self.stderr[0][:49],
+                         "ERROR!! Structure contains more than 99.999 atoms")
+
+    def test_h36_option(self):
+        """$ pdb_reatom -h36 data/dummy-h36.pdb"""
+
+        sys.argv = ['', '-h36', os.path.join(data_dir, 'dummy-h36.pdb')]
+
+        # Execute the script
+        self.exec_module()
+
+        self.assertEqual(len(self.stdout), 29)
+        assert "27  O   ALA C6913" in self.stdout
+
+    def test_h36_100000_option(self):
+        """$ pdb_reatom -100000 -h36 data/dummy-h36.pdb"""
+
+        sys.argv = ['', '-100000', '-h36', os.path.join(data_dir, 'dummy-h36.pdb')]
+
+        # Execute the script
+        self.exec_module()
+
+        self.assertEqual(len(self.stdout), 29)
+        assert "A000Q" in self.stdout
+
+
 if __name__ == '__main__':
     from config import test_dir
 
