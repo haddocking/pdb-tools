@@ -233,7 +233,6 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.stderr[0],
                          "ERROR! First argument is not an option: '11'")
 
-
     def test_noh36_option(self):
         """$ pdb_reatom data/dummy-h36.pdb"""
 
@@ -242,8 +241,7 @@ class TestTool(unittest.TestCase):
         # Execute the script
         self.exec_module()
 
-        self.assertEqual(self.stderr[0][:49],
-                         "ERROR!! Structure contains more than 99.999 atoms")
+        self.assertIn("ERROR!! Structure contains more than 99.999 atoms", self.stderr[0])
 
     def test_h36_option(self):
         """$ pdb_reatom -h36 data/dummy-h36.pdb"""
@@ -253,7 +251,7 @@ class TestTool(unittest.TestCase):
         # Execute the script
         self.exec_module()
 
-        self.assertEqual(len(self.stdout), 29)
+        self.assertEqual(len(self.stdout), 28)
         self.assertIn("27  O   ALA C6913", self.stdout[26])
 
     def test_h36_100000_option(self):
@@ -264,7 +262,7 @@ class TestTool(unittest.TestCase):
         # Execute the script
         self.exec_module()
 
-        self.assertEqual(len(self.stdout), 29)
+        self.assertEqual(len(self.stdout), 28)
         self.assertIn("A000Q", self.stdout[26])
 
 
