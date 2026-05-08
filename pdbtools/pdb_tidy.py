@@ -140,15 +140,13 @@ def check_input(args):
                 sys.stderr.write(emsg)
                 sys.stderr.write(__doc__)
                 sys.exit(1)
-
-        if args[0] == '-h36':
+        elif args[0] == '-h36':
             h36option = True
             if sys.stdin.isatty():  # ensure the PDB data is streamed in
                 emsg = 'ERROR!! No data to process!\n'
                 sys.stderr.write(emsg)
                 sys.stderr.write(__doc__)
                 sys.exit(1)
-
         else:
             if not os.path.isfile(args[0]):
                 emsg = 'ERROR!! File not found or not readable: \'{}\'\n'
@@ -159,55 +157,60 @@ def check_input(args):
             fh = open(args[0], 'r')
 
     elif len(args) == 2:
-        # Two options: option & File
-        if not (args[0] == '-strict' or args[0] == '-h36'):
+        # Two options: option & File or two options & Pipe
+        if not args[0].startswith('-'):
             emsg = 'ERROR! First argument is not a valid option: \'{}\'\n'
             sys.stderr.write(emsg.format(args[0]))
             sys.stderr.write(__doc__)
             sys.exit(1)
 
-        if not os.path.isfile(args[1]):
-            emsg = 'ERROR!! File not found or not readable: \'{}\'\n'
-            sys.stderr.write(emsg.format(args[1]))
-            sys.stderr.write(__doc__)
-            sys.exit(1)
+        if args[0].startswith('-') and not args[1].startswith('-'):
+            if args[0] == '-strict':
+                option = True
+            elif args[0] == '-h36':
+                h36option = True
+            if not os.path.isfile(args[1]):
+                emsg = 'ERROR!! File not found or not readable: \'{}\'\n'
+                sys.stderr.write(emsg.format(args[1]))
+                sys.stderr.write(__doc__)
+                sys.exit(1)
+            fh = open(args[1], 'r')
 
-        if args[0] == '-strict':
-            option = True
-
-        if args[0] == '-h36':
-            h36option = True
-
-        fh = open(args[1], 'r')
+        elif args[0].startswith('-') and args[1].startswith('-'):
+            if args[0] == args[1]:
+                emsg = 'ERROR! The two arguments are the same: \'{}\'\n'
+                sys.stderr.write(emsg.format(args[0]))
+                sys.stderr.write(__doc__)
+                sys.exit(1)
+            else:
+                if (args[0] or args[1]) == '-strict':
+                    option = True
+                if (args[0] or args[1]) == '-h36':
+                    h36option = True
+                if sys.stdin.isatty():  # ensure the PDB data is streamed in
+                    emsg = 'ERROR!! No data to process!\n'
+                    sys.stderr.write(emsg)
+                    sys.stderr.write(__doc__)
+                    sys.exit(1)
 
     elif len(args) == 3:
-        # Two options: option & File
-        if not (args[0] == '-strict' or args[0] == '-h36'):
-            emsg = 'ERROR! First argument is not a valid option: \'{}\'\n'
+        # One option: two options & File
+        if not args[0].startswith('-') and args[1].startwith('-'):
+            emsg = 'ERROR! First two argument are not a valid option: \'{}\'\n'
             sys.stderr.write(emsg.format(args[0]))
             sys.stderr.write(__doc__)
             sys.exit(1)
-
-        if not (args[1] == '-strict' or args[1] == '-h36'):
-            emsg = 'ERROR! First argument is not a valid option: \'{}\'\n'
-            sys.stderr.write(emsg.format(args[1]))
-            sys.stderr.write(__doc__)
-            sys.exit(1)
-
-        if not os.path.isfile(args[2]):
-            emsg = 'ERROR!! File not found or not readable: \'{}\'\n'
-            sys.stderr.write(emsg.format(args[2]))
-            sys.stderr.write(__doc__)
-            sys.exit(1)
-
-
-        if args[0] | arg[1] == '-strict':
-            option = True
-
-        if args[0] | arg[1] == '-h36':
-            h36option = True
-
-        fh = open(args[1], 'r')
+        else:
+            if (args[0] or args[1]) == '-strict':
+               option = True
+            if (args[0] or args[1]) == '-h36':
+               h36option = True
+            if not os.path.isfile(args[2]):
+                emsg = 'ERROR!! File not found or not readable: \'{}\'\n'
+                sys.stderr.write(emsg.format(args[1]))
+                sys.stderr.write(__doc__)
+                sys.exit(1)
+            fh = open(args[2], 'r')
 
     else:  # Whatever ...
         sys.stderr.write(__doc__)
