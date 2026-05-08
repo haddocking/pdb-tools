@@ -254,7 +254,7 @@ class TestTool(unittest.TestCase):
         self.exec_module()
 
         self.assertEqual(len(self.stdout), 29)
-        assert "27  O   ALA C6913" in self.stdout
+        self.assertIn("27  O   ALA C6913", self.stdout[27])
 
     def test_h36_100000_option(self):
         """$ pdb_reatom -100000 -h36 data/dummy-h36.pdb"""
@@ -265,7 +265,7 @@ class TestTool(unittest.TestCase):
         self.exec_module()
 
         self.assertEqual(len(self.stdout), 29)
-        assert "A000Q" in self.stdout
+        self.assertIn("A000Q", self.stdout[27])
 
 
 if __name__ == '__main__':
