@@ -54,7 +54,7 @@ class TestTool(unittest.TestCase):
         return
 
     def test_conversion(self):
-        """$ pdb_fromcif data/ensemble_OK.pdb"""
+        """$ pdb_fromcif data/ensemble_OK.cif"""
 
         fpath = os.path.join(data_dir, "ensemble_OK.cif")
         sys.argv = ["", fpath]
@@ -110,16 +110,29 @@ class TestTool(unittest.TestCase):
         self.assertEqual(self.stderr, self.module.__doc__.split("\n")[:-1])
 
     def test_invalid_option(self):
-        """$ pdb_fromcif -A data/dummy.pdb"""
+        """$ pdb_fromcif -A data/dummy.cif"""
 
-        sys.argv = ["", "-A", os.path.join(data_dir, "dummy.pdb")]
+        sys.argv = ["", "-A", os.path.join(data_dir, "dummy.cif")]
 
         # Execute the script
         self.exec_module()
 
         self.assertEqual(self.retcode, 1)
         self.assertEqual(len(self.stdout), 0)
-        self.assertEqual(self.stderr[0][:36], "ERROR!! Script takes 1 argument, not")
+        self.assertEqual(self.stderr[0][:43], "ERROR! First argument is not a valid option")
+
+    def test_valid_option(self):
+        """$ pdb_fromcif -h36 data/dummy-h36.cif"""
+
+        sys.argv = ["", "-h36", os.path.join(data_dir, "dummy-h36.cif")]
+
+        # Execute the script
+        self.exec_module()
+
+        # Validate results
+        self.assertEqual(self.retcode, 0)
+        self.assertEqual(len(self.stdout), 28)
+        self.assertEqual(len(self.stderr), 0)
 
     def test_missing_charge(self):
         """$ pdb_fromcif data/af3_output.cif"""

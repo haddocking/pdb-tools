@@ -169,6 +169,12 @@ def check_input(args):
                 option = True
             elif args[0] == '-h36':
                 h36option = True
+            else:
+                emsg = 'ERROR! First argument is not a valid option: \'{}\'\n'
+                sys.stderr.write(emsg.format(args[0]))
+                sys.stderr.write(__doc__)
+                sys.exit(1)
+
             if not os.path.isfile(args[1]):
                 emsg = 'ERROR!! File not found or not readable: \'{}\'\n'
                 sys.stderr.write(emsg.format(args[1]))
@@ -201,9 +207,11 @@ def check_input(args):
             sys.stderr.write(__doc__)
             sys.exit(1)
         else:
-            if (args[0] or args[1]) == '-strict':
+            if args[0] == '-strict' and args[1] == '-h36':
                option = True
-            if (args[0] or args[1]) == '-h36':
+               h36option = True
+            elif args[0] == '-h36' and args[1] == '-strict':
+               option = True
                h36option = True
             if not os.path.isfile(args[2]):
                 emsg = 'ERROR!! File not found or not readable: \'{}\'\n'
