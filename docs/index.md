@@ -365,6 +365,9 @@ chains, residues, or atoms. Will convert only the coordinate section.
 Usage:
     python pdb_fromcif.py &lt;pdb file&gt;
 
+    Options:
+        -h36: allows for hybrid36 output format for encoding &gt;99999 atoms in the PDB file
+
 Example:
     python pdb_fromcif.py 1CTF.pdb
 </span>
@@ -475,6 +478,9 @@ Example:
 <span style="font-family: monospace; white-space: pre;">
 Usage:
     python pdb_reatom.py -&lt;number&gt; &lt;pdb file&gt;
+
+    Options:
+        -h36: allows for hybrid36 output format for encoding &gt;99999 atoms in the PDB file
 
 Example:
     python pdb_reatom.py -10 1CTF.pdb  # renumbers from 10
@@ -788,11 +794,15 @@ This includes:
 Will remove all original TER/END statements from the file.
 
 Usage:
-    python pdb_tidy.py [-strict] &lt;pdb file&gt;
+    python pdb_tidy.py [-strict] [-h36] &lt;pdb file&gt;
+
+Options:
+    -h36: allows for hybrid36 output format for encoding &gt;99999 atoms in the PDB file
 
 Example:
     python pdb_tidy.py 1CTF.pdb
     python pdb_tidy.py -strict 1CTF.pdb  # does not add TER on chain breaks
+    python pdb_tidy.py -h36 1CTF.pdb  # allows for a number of atom &gt;99999 by using hybrid_36 format
 </span>
 </details>
 </div>
