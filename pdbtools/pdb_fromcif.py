@@ -50,10 +50,12 @@ digits_lower = digits_upper.lower()
 digits_upper_values = dict([pair for pair in zip(digits_upper, range(36))])
 digits_lower_values = dict([pair for pair in zip(digits_lower, range(36))])
 
+
 def encode_pure(digits, value):
     "encodes value using the given digits"
     assert value >= 0
-    if (value == 0): return digits[0]
+    if (value == 0):
+        return digits[0]
     n = len(digits)
     result = []
     while (value != 0):
@@ -63,48 +65,23 @@ def encode_pure(digits, value):
     result.reverse()
     return "".join(result)
 
-def decode_pure(digits_values, s):
-    "decodes the string s using the digit, value associations for each character"
-    result = 0
-    n = len(digits_values)
-    for c in s:
-        result *= n
-        result += digits_values[c]
-    return result
 
 def hy36encode(width, value):
     "encodes value as base-10/upper-case base-36/lower-case base-36 hybrid"
     i = value
-    if (i >= 1-10**(width-1)):
+    if (i >= 1 - 10**(width - 1)):
         if (i < 10**width):
             return ("%%%dd" % width) % i
         i -= 10**width
-        if (i < 26*36**(width-1)):
-            i += 10*36**(width-1)
+        if (i < 26 * 36**(width - 1)):
+            i += 10 * 36**(width - 1)
             return encode_pure(digits_upper, i)
-        i -= 26*36**(width-1)
-        if (i < 26*36**(width-1)):
-            i += 10*36**(width-1)
+        i -= 26 * 36**(width - 1)
+        if (i < 26 * 36**(width - 1)):
+            i += 10 * 36**(width - 1)
             return encode_pure(digits_lower, i)
     raise ValueError("value out of range.")
 
-def hy36decode(width, s):
-    "decodes base-10/upper-case base-36/lower-case base-36 hybrid"
-    if (len(s) == width):
-        f = s[0]
-        if (f == "-" or f == " " or f.isdigit()):
-            try: return int(s)
-            except ValueError: pass
-            if (s == " "*width): return 0
-        elif (f in digits_upper_values):
-            try: return decode_pure(
-                digits_values=digits_upper_values, s=s) - 10*36**(width-1) + 10**width
-            except KeyError: pass
-        elif (f in digits_lower_values):
-            try: return decode_pure(
-                digits_values=digits_lower_values, s=s) + 16*36**(width-1) + 10**width
-            except KeyError: pass
-    raise ValueError("invalid number literal.")
 
 def check_input(args):
     """Checks whether to read from stdin/file and validates user input/options.
@@ -238,7 +215,7 @@ def run(fhandle, h36=False):
                     sys.stderr.write(__doc__)
                     sys.exit(1)
                 elif h36 and serial > 99999:
-                     wserial = hy36encode(5, serial)
+                    wserial = hy36encode(5, serial)
 
             fid = labels.get('_atom_site.auth_atom_id')
             if fid is None:

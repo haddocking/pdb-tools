@@ -60,10 +60,12 @@ digits_lower = digits_upper.lower()
 digits_upper_values = dict([pair for pair in zip(digits_upper, range(36))])
 digits_lower_values = dict([pair for pair in zip(digits_lower, range(36))])
 
+
 def encode_pure(digits, value):
     "encodes value using the given digits"
     assert value >= 0
-    if (value == 0): return digits[0]
+    if (value == 0):
+        return digits[0]
     n = len(digits)
     result = []
     while (value != 0):
@@ -72,6 +74,24 @@ def encode_pure(digits, value):
         value = rest
     result.reverse()
     return "".join(result)
+
+
+def hy36encode(width, value):
+    "encodes value as base-10/upper-case base-36/lower-case base-36 hybrid"
+    i = value
+    if (i >= 1 - 10**(width - 1)):
+        if (i < 10**width):
+            return ("%%%dd" % width) % i
+        i -= 10**width
+        if (i < 26 * 36**(width - 1)):
+            i += 10 * 36**(width - 1)
+            return encode_pure(digits_upper, i)
+        i -= 26 * 36**(width - 1)
+        if (i < 26 * 36**(width - 1)):
+            i += 10 * 36**(width - 1)
+            return encode_pure(digits_lower, i)
+    raise ValueError("value out of range.")
+
 
 def decode_pure(digits_values, s):
     "decodes the string s using the digit, value associations for each character"
@@ -82,39 +102,32 @@ def decode_pure(digits_values, s):
         result += digits_values[c]
     return result
 
-def hy36encode(width, value):
-    "encodes value as base-10/upper-case base-36/lower-case base-36 hybrid"
-    i = value
-    if (i >= 1-10**(width-1)):
-        if (i < 10**width):
-            return ("%%%dd" % width) % i
-        i -= 10**width
-        if (i < 26*36**(width-1)):
-            i += 10*36**(width-1)
-            return encode_pure(digits_upper, i)
-        i -= 26*36**(width-1)
-        if (i < 26*36**(width-1)):
-            i += 10*36**(width-1)
-            return encode_pure(digits_lower, i)
-    raise ValueError("value out of range.")
 
 def hy36decode(width, s):
     "decodes base-10/upper-case base-36/lower-case base-36 hybrid"
     if (len(s) == width):
         f = s[0]
         if (f == "-" or f == " " or f.isdigit()):
-            try: return int(s)
-            except ValueError: pass
-            if (s == " "*width): return 0
+            try:
+                return int(s)
+            except ValueError:
+                pass
+            if (s == " " * width):
+                return 0
         elif (f in digits_upper_values):
-            try: return decode_pure(
-                digits_values=digits_upper_values, s=s) - 10*36**(width-1) + 10**width
-            except KeyError: pass
+            try:
+                return decode_pure(
+                    digits_values=digits_upper_values, s=s) - 10 * 36**(width - 1) + 10**width
+            except KeyError:
+                pass
         elif (f in digits_lower_values):
-            try: return decode_pure(
-                digits_values=digits_lower_values, s=s) + 16*36**(width-1) + 10**width
-            except KeyError: pass
+            try:
+                return decode_pure(
+                    digits_values=digits_lower_values, s=s) + 16 * 36**(width - 1) + 10**width
+            except KeyError:
+                pass
     raise ValueError("invalid number literal.")
+
 
 def check_input(args):
     """Checks whether to read from stdin/file and validates user input/options.
@@ -208,11 +221,11 @@ def check_input(args):
             sys.exit(1)
         else:
             if args[0] == '-strict' and args[1] == '-h36':
-               option = True
-               h36option = True
+                option = True
+                h36option = True
             elif args[0] == '-h36' and args[1] == '-strict':
-               option = True
-               h36option = True
+                option = True
+                h36option = True
             if not os.path.isfile(args[2]):
                 emsg = 'ERROR!! File not found or not readable: \'{}\'\n'
                 sys.stderr.write(emsg.format(args[1]))
@@ -259,7 +272,7 @@ def run(fhandle, strict=False, h36=False):
         # Add last TER statement
         try:
             nserial = int(prev_line[6:11])
-        except:
+        except ValueError:
             nserial = hy36decode(5, prev_line[6:11])
 
         serial = nserial + 1
@@ -327,7 +340,7 @@ def run(fhandle, strict=False, h36=False):
 
             try:
                 nserial = int(line[6:11])
-            except:
+            except ValueError:
                 nserial = hy36decode(5, line[6:11])
 
             if not_h36 and nserial > 99999:
@@ -352,7 +365,7 @@ def run(fhandle, strict=False, h36=False):
 
             try:
                 nserial = int(line[6:11])
-            except:
+            except ValueError:
                 nserial = hy36decode(5, line[6:11])
 
             serial = nserial + serial_offset
@@ -367,7 +380,7 @@ def run(fhandle, strict=False, h36=False):
             # Avoids doing the offset again
             try:
                 nserial = int(prev_line[6:11])
-            except:
+            except ValueError:
                 nserial = prev_line[6:11]
             line = line[:6] + str(nserial) + line[11:]
 
