@@ -196,7 +196,7 @@
    
       Some of the tools in pdb-tools (pdb_reatom, pdb_tidy and pdb_fromci)
       are using code from the cctbx distribution (https://github.com/cctbx/cctbx_project).
-      The following license agreement applies it.
+      The following license agreement applies to it.
    
       cctbx Copyright (c) 2006 - 2026, The Regents of the University of
       California, through Lawrence Berkeley National Laboratory (subject to
