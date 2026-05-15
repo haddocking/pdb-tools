@@ -14,6 +14,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+#
+# === HYBRID 36 FUNCTIONS TAKEN FROM CCTBX ===
+# Copyright (c) 2006-2026, The Regents of the University of California,
+# through Lawrence Berkeley National Laboratory. All rights reserved.
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided the above copyright notice and
+# this paragraph are included. Full license text available at
+# [https://github.com/cctbx/cctbx_project/blob/releases/2023.1/LICENSE.txt].
+#
 
 """
 Rudimentarily converts a mmCIF file to the PDB format.
@@ -51,6 +60,7 @@ digits_upper_values = dict([pair for pair in zip(digits_upper, range(36))])
 digits_lower_values = dict([pair for pair in zip(digits_lower, range(36))])
 
 
+# Copied from CCTBX
 def encode_pure(digits, value):
     "encodes value using the given digits"
     assert value >= 0
@@ -66,6 +76,7 @@ def encode_pure(digits, value):
     return "".join(result)
 
 
+# Copied from CCTBX
 def hy36encode(width, value):
     "encodes value as base-10/upper-case base-36/lower-case base-36 hybrid"
     i = value
