@@ -215,9 +215,9 @@ def check_input(args):
                 sys.stderr.write(__doc__)
                 sys.exit(1)
             else:
-                if (args[0] or args[1]) == '-strict':
+                if '-strict' in args[:2]:
                     option = True
-                if (args[0] or args[1]) == '-h36':
+                if '-h36' in args[:2]:
                     h36option = True
                 if sys.stdin.isatty():  # ensure the PDB data is streamed in
                     emsg = 'ERROR!! No data to process!\n'
