@@ -382,8 +382,12 @@ def run(fhandle, strict=False, h36=False):
                 nserial = hy36decode(5, line[6:11])
 
             serial = nserial + serial_offset
-            if serial > 99999:
-                line = line[:6] + line[6:11] + line[11:]
+            if serial > 99999 and not h36:
+                emsg = 'Cannot represent atom serial number above 99999 without -h36\n'
+                sys.stderr.write(emsg)
+                sys.exit(1)
+            elif serial > 99999:
+                line = line[:6] + hy36encode(5, serial) + line[11:]
             else:
                 line = line[:6] + str(serial).rjust(5) + line[11:]
             prev_line = line
