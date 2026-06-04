@@ -117,14 +117,14 @@ def check_input(args):
                 sys.stderr.write(emsg)
                 sys.stderr.write(__doc__)
                 sys.exit(1)
+        else:
+            if not os.path.isfile(args[0]):
+                emsg = 'ERROR!! File not found or not readable: \'{}\'\n'
+                sys.stderr.write(emsg.format(args[0]))
+                sys.stderr.write(__doc__)
+                sys.exit(1)
 
-        if not os.path.isfile(args[0]):
-            emsg = 'ERROR!! File not found or not readable: \'{}\'\n'
-            sys.stderr.write(emsg.format(args[0]))
-            sys.stderr.write(__doc__)
-            sys.exit(1)
-
-        fh = open(args[0], 'r')
+            fh = open(args[0], 'r')
 
     elif len(args) == 2:
         # Ome options: option & File

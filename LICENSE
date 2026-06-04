@@ -194,7 +194,7 @@
 
    APPENDIX 2: Third party code from https://github.com/cctbx/cctbx_project
    
-      Some of the tools in pdb-tools (pdb_reatom, pdb_tidy and pdb_fromci)
+      Some of the tools in pdb-tools (pdb_reatom, pdb_tidy and pdb_fromcif)
       are using code from the cctbx distribution (https://github.com/cctbx/cctbx_project).
       The following license agreement applies to it.
    

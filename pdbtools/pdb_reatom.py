@@ -251,6 +251,7 @@ def run(fhandle, starting_value, h36=False):
 
     not_h36 = not h36
     serial = starting_value
+    wserial = starting_value  # safe default if ANISOU appears before first ATOM
     records = ('ATOM', 'HETATM')
     for line in fhandle:
         if line.startswith(records):
@@ -292,7 +293,10 @@ def run(fhandle, starting_value, h36=False):
             yield line
 
         elif line.startswith('TER'):
-            yield line[:6] + str(wserial).rjust(5) + line[11:]
+            if h36 and serial > 99999:
+                yield line[:6] + hy36encode(5, serial) + line[11:]
+            else:
+                yield line[:6] + str(serial).rjust(5) + line[11:]
             serial += 1
 
         else:

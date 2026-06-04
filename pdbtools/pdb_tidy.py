@@ -227,7 +227,7 @@ def check_input(args):
 
     elif len(args) == 3:
         # One option: two options & File
-        if not args[0].startswith('-') and args[1].startwith('-'):
+        if not args[0].startswith('-') and args[1].startswith('-'):
             emsg = 'ERROR! First two argument are not a valid option: \'{}\'\n'
             sys.stderr.write(emsg.format(args[0]))
             sys.stderr.write(__doc__)
@@ -239,6 +239,11 @@ def check_input(args):
             elif args[0] == '-h36' and args[1] == '-strict':
                 option = True
                 h36option = True
+            else:
+                emsg = 'ERROR! Arguments are not valid options: \'{}\' \'{}\'\n'
+                sys.stderr.write(emsg.format(args[0], args[1]))
+                sys.stderr.write(__doc__)
+                sys.exit(1)
             if not os.path.isfile(args[2]):
                 emsg = 'ERROR!! File not found or not readable: \'{}\'\n'
                 sys.stderr.write(emsg.format(args[1]))
@@ -364,7 +369,13 @@ def run(fhandle, strict=False, h36=False):
 
             serial = nserial + serial_offset
             if serial > 99999:
-                line = line[:6] + line[6:11] + line[11:]
+                if h36:
+                    line = line[:6] + hy36encode(5, serial) + line[11:]
+                else:
+                    emsg = 'ERROR!! Structure contains more than 99.999 atoms.\n'
+                    sys.stderr.write(emsg)
+                    sys.stderr.write(__doc__)
+                    sys.exit(1)
             else:
                 line = line[:6] + str(serial).rjust(5) + line[11:]
             prev_line = line
@@ -393,13 +404,8 @@ def run(fhandle, strict=False, h36=False):
             prev_line = line
 
         elif line.startswith('ANISOU'):
-            # Fix serial based on previous atom
-            # Avoids doing the offset again
-            try:
-                nserial = int(prev_line[6:11])
-            except ValueError:
-                nserial = prev_line[6:11]
-            line = line[:6] + str(nserial) + line[11:]
+            # Copy serial directly from the preceding ATOM/HETATM (already formatted)
+            line = line[:6] + prev_line[6:11] + line[11:]
 
         else:
             if atom_section:
