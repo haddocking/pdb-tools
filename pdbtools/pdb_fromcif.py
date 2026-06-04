@@ -171,7 +171,7 @@ def run(fhandle, h36=False):
     str (line-by-line)
         New PDB lines.
     """
-    _a = "{:6s}{:5d} {:<4s}{:1s}{:3s} {:1s}{:4d}{:1s}   {:8.3f}{:8.3f}{:8.3f}"
+    _a = "{:6s}{:>5s} {:<4s}{:1s}{:3s} {:1s}{:4d}{:1s}   {:8.3f}{:8.3f}{:8.3f}"
     _a += "{:6.2f}{:6.2f}      {:<4s}{:<2s}{:2s}\n"
 
     not_h36 = not h36
@@ -217,7 +217,7 @@ def run(fhandle, h36=False):
             serial += 1
 
             if serial < 100000:
-                wserial = serial
+                wserial = str(serial)
 
             else:
                 if not_h36 and serial > 99999:
