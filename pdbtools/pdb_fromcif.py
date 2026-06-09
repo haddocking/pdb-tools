@@ -14,6 +14,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+#
+# === HYBRID 36 FUNCTIONS TAKEN FROM CCTBX ===
+# Copyright (c) 2006-2026, The Regents of the University of California,
+# through Lawrence Berkeley National Laboratory. All rights reserved.
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided the above copyright notice and
+# this paragraph are included. Full license text available at
+# [https://github.com/cctbx/cctbx_project/blob/releases/2023.1/LICENSE.txt].
+#
 
 """
 Rudimentarily converts a mmCIF file to the PDB format.
@@ -23,6 +32,9 @@ chains, residues, or atoms. Will convert only the coordinate section.
 
 Usage:
     python pdb_fromcif.py <pdb file>
+
+    Options:
+        -h36: allows for hybrid36 output format for encoding >99999 atoms in the PDB file
 
 Example:
     python pdb_fromcif.py 1CTF.pdb
@@ -42,11 +54,52 @@ __author__ = "Joao Rodrigues"
 __email__ = "j.p.g.l.m.rodrigues@gmail.com"
 
 
+digits_upper = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+digits_lower = digits_upper.lower()
+digits_upper_values = dict([pair for pair in zip(digits_upper, range(36))])
+digits_lower_values = dict([pair for pair in zip(digits_lower, range(36))])
+
+
+# Copied from CCTBX
+def encode_pure(digits, value):
+    "encodes value using the given digits"
+    assert value >= 0
+    if (value == 0):
+        return digits[0]
+    n = len(digits)
+    result = []
+    while (value != 0):
+        rest = value // n
+        result.append(digits[value - rest * n])
+        value = rest
+    result.reverse()
+    return "".join(result)
+
+
+# Copied from CCTBX
+def hy36encode(width, value):
+    "encodes value as base-10/upper-case base-36/lower-case base-36 hybrid"
+    i = value
+    if (i >= 1 - 10**(width - 1)):
+        if (i < 10**width):
+            return ("%%%dd" % width) % i
+        i -= 10**width
+        if (i < 26 * 36**(width - 1)):
+            i += 10 * 36**(width - 1)
+            return encode_pure(digits_upper, i)
+        i -= 26 * 36**(width - 1)
+        if (i < 26 * 36**(width - 1)):
+            i += 10 * 36**(width - 1)
+            return encode_pure(digits_lower, i)
+    raise ValueError("value out of range.")
+
+
 def check_input(args):
     """Checks whether to read from stdin/file and validates user input/options.
     """
 
     # Defaults
+    h36option = False
     fh = sys.stdin  # file handle
 
     if not len(args):
@@ -56,24 +109,51 @@ def check_input(args):
             sys.exit(1)
 
     elif len(args) == 1:
-        if not os.path.isfile(args[0]):
-            emsg = 'ERROR!! File not found or not readable: \'{}\'\n'
+        # One of two options: option & Pipe OR file & default option
+        if args[0] == '-h36':
+            h36option = True
+            if sys.stdin.isatty():  # ensure the PDB data is streamed in
+                emsg = 'ERROR!! No data to process!\n'
+                sys.stderr.write(emsg)
+                sys.stderr.write(__doc__)
+                sys.exit(1)
+        else:
+            if not os.path.isfile(args[0]):
+                emsg = 'ERROR!! File not found or not readable: \'{}\'\n'
+                sys.stderr.write(emsg.format(args[0]))
+                sys.stderr.write(__doc__)
+                sys.exit(1)
+
+            fh = open(args[0], 'r')
+
+    elif len(args) == 2:
+        # Ome options: option & File
+        if not (args[0] == '-h36'):
+            emsg = 'ERROR! First argument is not a valid option: \'{}\'\n'
             sys.stderr.write(emsg.format(args[0]))
             sys.stderr.write(__doc__)
             sys.exit(1)
+        else:
+            h36option = True
 
-        fh = open(args[0], 'r')
+        if not os.path.isfile(args[1]):
+            emsg = 'ERROR!! File not found or not readable: \'{}\'\n'
+            sys.stderr.write(emsg.format(args[1]))
+            sys.stderr.write(__doc__)
+            sys.exit(1)
+
+        fh = open(args[1], 'r')
 
     else:  # Whatever ...
-        emsg = 'ERROR!! Script takes 1 argument, not \'{}\'\n'
+        emsg = 'ERROR!! Script takes 2 arguments, not \'{}\'\n'
         sys.stderr.write(emsg.format(len(args)))
         sys.stderr.write(__doc__)
         sys.exit(1)
 
-    return fh
+    return fh, h36option
 
 
-def run(fhandle):
+def run(fhandle, h36=False):
     """
     Convert a structure in mmCIF format to PDB format.
 
@@ -83,13 +163,18 @@ def run(fhandle):
     ----------
     fhandle : a line-by-line iterator of the original PDB file.
 
+    h36 : bool
+        If True, allows for hybrid_36 format enabling the encoding for >99999 atoms.
+
     Yields
     ------
     str (line-by-line)
         New PDB lines.
     """
-    _a = "{:6s}{:5d} {:<4s}{:1s}{:3s} {:1s}{:4d}{:1s}   {:8.3f}{:8.3f}{:8.3f}"
+    _a = "{:6s}{:>5s} {:<4s}{:1s}{:3s} {:1s}{:4d}{:1s}   {:8.3f}{:8.3f}{:8.3f}"
     _a += "{:6.2f}{:6.2f}      {:<4s}{:<2s}{:2s}\n"
+
+    not_h36 = not h36
 
     in_section, read_atom = False, False
 
@@ -130,6 +215,18 @@ def run(fhandle):
 
             # serial = int(fields[labels.get('_atom_site.id')])
             serial += 1
+
+            if serial < 100000:
+                wserial = str(serial)
+
+            else:
+                if not_h36 and serial > 99999:
+                    emsg = 'ERROR!! Structure contains more than 99.999 atoms.\n'
+                    sys.stderr.write(emsg)
+                    sys.stderr.write(__doc__)
+                    sys.exit(1)
+                elif h36 and serial > 99999:
+                    wserial = hy36encode(5, serial)
 
             fid = labels.get('_atom_site.auth_atom_id')
             if fid is None:
@@ -183,19 +280,14 @@ def run(fhandle):
 
             segid = chainid
 
-            atom_line = _a.format(record, serial, atname, altloc, resname,
+            atom_line = _a.format(record, wserial, atname, altloc, resname,
                                   chainid, resnum, icode, x, y, z, occ, bfactor,
                                   segid, element, charge)
 
             atom_num += 1
 
             # Check if structure is too large
-            if atom_num > 99999:
-                emsg = 'ERROR!! Number of atoms exceeds PDB format limit: \'{}\'\n'
-                sys.stderr.write(emsg.format(atom_num))
-                sys.stderr.write(__doc__)
-                sys.exit(1)
-            elif len(chainid) > 1:
+            if len(chainid) > 1:
                 emsg = 'ERROR!! Chain IDs is too large: \'{}\'\n'
                 sys.stderr.write(emsg.format(chainid))
                 sys.stderr.write(__doc__)
@@ -228,10 +320,10 @@ convert_to_pdb = run
 
 def main():
     # Check Input
-    pdbfh = check_input(sys.argv[1:])
+    pdbfh, h36 = check_input(sys.argv[1:])
 
     # Do the job
-    new_pdb = run(pdbfh)
+    new_pdb = run(pdbfh, h36)
 
     try:
         _buffer = []

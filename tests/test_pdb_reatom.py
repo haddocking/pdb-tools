@@ -166,10 +166,10 @@ class TestTool(unittest.TestCase):
 
         self.assertEqual(self.retcode, 1)
         self.assertEqual(len(self.stdout), 0)
-        self.assertEqual(len(self.stderr), 1)
+        self.assertEqual(len(self.stderr), 19)
 
-        self.assertEqual(self.stderr[0][:22],
-                         "Cannot set atom serial")  # proper error message
+        self.assertEqual(self.stderr[0][:31],
+                         "ERROR!! Structure contains more")  # proper error message
 
     def test_file_not_found(self):
         """$ pdb_reatom -10 not_existing.pdb"""
@@ -232,6 +232,28 @@ class TestTool(unittest.TestCase):
         self.assertEqual(len(self.stdout), 0)
         self.assertEqual(self.stderr[0],
                          "ERROR! First argument is not an option: '11'")
+
+    def test_h36_option(self):
+        """$ pdb_reatom -h36 data/dummy-h36.pdb"""
+
+        sys.argv = ['', '-h36', os.path.join(data_dir, 'dummy-h36.pdb')]
+
+        # Execute the script
+        self.exec_module()
+
+        self.assertEqual(len(self.stdout), 28)
+        self.assertIn("27  O   ALA C6913", self.stdout[26])
+
+    def test_h36_100000_option(self):
+        """$ pdb_reatom -100000 -h36 data/dummy-h36.pdb"""
+
+        sys.argv = ['', '-100000', '-h36', os.path.join(data_dir, 'dummy-h36.pdb')]
+
+        # Execute the script
+        self.exec_module()
+
+        self.assertEqual(len(self.stdout), 28)
+        self.assertIn("A000Q", self.stdout[26])
 
 
 if __name__ == '__main__':
