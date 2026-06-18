@@ -1,0 +1,113 @@
+PDBTLS   This file was edited to test pdb_selaltloc
+PDBTLS   Original PDB 3B9F
+PDBTLS
+HEADER    HYDROLASE/HYDROLASE INHIBITOR           05-NOV-07   3B9F              
+TITLE     1.6 A STRUCTURE OF THE PCI-THROMBIN-HEPARIN COMPLEX                   
+COMPND  21 ENGINEERED: YES                                                      
+SOURCE    MOL_ID: 1;                                                            
+KEYWDS   4 PROTEASE, ZYMOGEN, HYDROLASE-HYDROLASE INHIBITOR COMPLEX             
+EXPDTA    X-RAY DIFFRACTION                                                     
+AUTHOR    W.LI,T.E.ADAMS,J.A.HUNTINGTON                                         
+REVDAT   1   22-APR-08 3B9F    0                                                
+JRNL        AUTH   W.LI,T.E.ADAMS,J.NANGALIA,C.T.ESMON,J.A.HUNTINGTON           
+REMARK   2                                                                      
+REMARK 999 NATURAL VARIANT AT THIS POSITION                                     
+DBREF  3B9F I   17   387  UNP    P05154   IPSP_HUMAN      36    406             
+SEQADV 3B9F ALA H  195  UNP  P00734    SER   568 ENGINEERED MUTATION            
+SEQRES  31 I  395  LYS VAL ASN ARG PRO                                          
+MODRES 3B9F ASN H   60G ASN  GLYCOSYLATION SITE                                 
+HET    NAG  A   1      14                                                       
+HETNAM     NAG 2-ACETAMIDO-2-DEOXY-BETA-D-GLUCOPYRANOSE                         
+HETSYN     GOL GLYCERIN; PROPANE-1,2,3-TRIOL                                    
+FORMUL  14  HOH   *523(H2 O)                                                    
+HELIX    1   1 ASN L    1K GLY L    1F 1                                   6    
+HELIX   20  20 SER I  305  THR I  309  5                                   5    
+SHEET    1   A 7 SER H  20  ASP H  21  0                                        
+SHEET    2   G 2 GLY I 340  ARG I 342  1  O  THR I 341   N  TRP I 190           
+SSBOND   1 CYS L    1    CYS H  122                          1555   1555  2.03  
+LINK         O6  NAG A   1                 C1  FUC A   2     1555   1555  1.40  
+CISPEP   2 LYS H  185    PRO H  186          0         0.28                     
+CRYST1   44.055   48.825   97.850  78.72  81.52  77.69 P 1           1          
+ORIGX1      1.000000  0.000000  0.000000        0.00000                         
+ORIGX2      0.000000  1.000000  0.000000        0.00000                         
+ORIGX3      0.000000  0.000000  1.000000        0.00000                         
+SCALE1      0.022699 -0.004951 -0.002582        0.00000                         
+SCALE2      0.000000  0.020963 -0.003616        0.00000                         
+SCALE3      0.000000  0.000000  0.010485        0.00000                         
+ATOM     16  N   TYR L   1P    -35.899  36.071 -57.146  1.00 24.40           N  
+ATOM     17  CA  TYR L   1P    -35.533  35.711 -55.782  1.00 22.98           C  
+ATOM     18  C   TYR L   1P    -35.689  36.923 -54.879  1.00 22.73           C  
+ATOM     19  O   TYR L   1P    -35.212  38.013 -55.199  1.00 24.86           O  
+ATOM     28  N   GLN L   1O    -36.361  36.722 -53.750  0.20 22.43           N  
+ATOM     30  CA  GLN L   1O    -36.584  37.781 -52.773  0.23 21.92           C  
+ATOM     32  C   GLN L   1O    -35.689  37.523 -51.567  0.25 21.18           C  
+ATOM     34  O   GLN L   1O    -35.816  36.492 -50.908  0.23 20.76           O  
+ATOM     46  N   THR L   1N    -34.783  38.453 -51.279  1.00 20.45           N  
+ATOM     47  CA  THR L   1N    -33.885  38.283 -50.143  1.00 20.33           C  
+ATOM     48  C   THR L   1N    -34.665  38.284 -48.834  1.00 20.94           C  
+ATOM     49  O   THR L   1N    -35.715  38.926 -48.718  1.00 20.47           O  
+ATOM    101  N   THR L   1H    -25.711  41.829 -41.231  1.00 16.46           N  
+ATOM    102  CA  THR L   1H    -25.418  40.733 -40.321  1.00 14.66           C  
+ATOM    103  C   THR L   1H    -25.179  39.417 -41.051  1.00 15.08           C  
+ATOM    104  O   THR L   1H    -24.467  38.557 -40.552  1.00 14.35           O  
+ATOM    123  N   SER L   1E    -22.556  39.135 -47.649  0.10 14.32           N  
+ATOM    125  CA  SER L   1E    -23.019  39.209 -49.032  0.16 13.53           C  
+ATOM    127  C   SER L   1E    -23.259  37.839 -49.653  0.10 13.43           C  
+ATOM    129  O   SER L   1E    -22.829  36.818 -49.115  0.34 12.37           O  
+ATOM    161  N   CYS L   1     -27.779  33.791 -54.663  1.00 11.36           N  
+ATOM    162  CA  CYS L   1     -27.645  32.429 -54.138  1.00 11.72           C  
+ATOM    163  C   CYS L   1     -28.184  31.351 -55.065  1.00 12.46           C  
+ATOM    164  O   CYS L   1     -29.066  31.597 -55.887  1.00 11.13           O  
+ATOM    167  N   GLY L   2     -27.618  30.155 -54.931  1.00 11.94           N  
+ATOM    168  CA  GLY L   2     -28.093  29.010 -55.681  1.00 13.42           C  
+ATOM    169  C   GLY L   2     -27.920  28.936 -57.179  1.00 13.71           C  
+ATOM    170  O   GLY L   2     -28.452  28.010 -57.799  1.00 12.21           O  
+ATOM    171  N   LEU L   3     -27.207  29.893 -57.766  1.00 11.48           N  
+ATOM    172  CA  LEU L   3     -26.960  29.891 -59.207  1.00 12.60           C  
+ATOM    173  C   LEU L   3     -25.462  29.636 -59.346  1.00 13.82           C  
+ATOM    174  O   LEU L   3     -24.649  30.462 -58.944  1.00 14.29           O  
+TER     378      LEU L   3                                                      
+ATOM    498  N   MET H  32     -15.884  21.898 -46.134  0.03 13.63           N  
+ATOM    500  CA  MET H  32     -15.223  20.827 -45.399  0.10 13.62           C  
+ATOM    502  C   MET H  32     -14.910  21.331 -44.004  0.01 14.47           C  
+ATOM    504  O   MET H  32     -14.280  22.376 -43.844  0.10 14.26           O  
+ATOM    514  N   LEU H  33     -15.346  20.594 -42.992  1.00 15.12           N  
+ATOM    515  CA  LEU H  33     -15.057  20.994 -41.613  1.00 17.37           C  
+ATOM    516  C   LEU H  33     -13.966  20.110 -41.025  1.00 21.15           C  
+ATOM    517  O   LEU H  33     -14.053  18.878 -41.092  1.00 21.77           O  
+ATOM    544  N   LYS H  36      -8.375  20.177 -35.426  1.00 47.23           N  
+ATOM    545  CA  LYS H  36      -6.948  20.457 -35.546  1.00 49.79           C  
+ATOM    546  C   LYS H  36      -6.046  19.727 -34.564  1.00 51.19           C  
+ATOM    547  O   LYS H  36      -6.501  19.201 -33.546  1.00 51.77           O  
+ATOM    553  N   SER H  36A     -4.757  19.702 -34.898  0.40 52.14           N  
+ATOM    554  CA  SER H  36A     -3.731  19.057 -34.087  0.40 52.58           C  
+ATOM    555  C   SER H  36A     -4.254  17.826 -33.356  0.40 52.69           C  
+ATOM    556  O   SER H  36A     -4.508  17.868 -32.151  0.40 54.21           O  
+ATOM    553  N  BSER H  36A     -4.757  19.702 -34.898  0.60 52.14           N  
+ATOM    554  CA BSER H  36A     -3.731  19.057 -34.087  0.60 52.58           C  
+ATOM    555  C  BSER H  36A     -4.254  17.826 -33.356  0.60 52.69           C  
+ATOM    556  O  BSER H  36A     -4.508  17.868 -32.151  0.60 54.21           O  
+ATOM    583  N   LEU H  40     -10.561  15.413 -41.434  0.48 28.25           N  
+ATOM    585  CA  LEU H  40     -11.939  15.701 -41.811  0.03 25.33           C  
+ATOM    587  C   LEU H  40     -12.927  15.248 -40.743  0.13 23.56           C  
+ATOM    589  O   LEU H  40     -12.964  14.075 -40.371  0.11 23.23           O  
+ATOM    599  N   LEU H  41     -13.727  16.191 -40.255  0.44 21.23           N  
+ATOM    601  CA  LEU H  41     -14.727  15.903 -39.235  0.04 18.81           C  
+ATOM    603  C   LEU H  41     -16.114  15.742 -39.829  0.60 17.12           C  
+ATOM    605  O   LEU H  41     -16.804  14.756 -39.572  0.25 16.40           O  
+ATOM    615  N   CYS H  42     -16.515  16.722 -40.632  1.00 15.17           N  
+ATOM    616  CA  CYS H  42     -17.854  16.716 -41.198  1.00 14.43           C  
+ATOM    617  C   CYS H  42     -17.965  17.557 -42.446  1.00 13.79           C  
+ATOM    618  O   CYS H  42     -17.003  18.181 -42.892  1.00 13.66           O  
+ATOM    621  N   GLY H  43     -19.183  17.574 -42.976  1.00 12.50           N  
+ATOM    622  CA  GLY H  43     -19.506  18.388 -44.128  1.00 13.66           C  
+ATOM    623  C   GLY H  43     -20.155  19.637 -43.546  1.00 12.41           C  
+ATOM    624  O   GLY H  43     -20.400  19.711 -42.333  1.00 11.38           O  
+ATOM    625  N   ALA H  44     -20.433  20.608 -44.408  1.00 12.66           N  
+ATOM    626  CA  ALA H  44     -21.043  21.876 -44.015  1.00 12.16           C  
+ATOM    627  C   ALA H  44     -21.446  22.558 -45.312  1.00 11.20           C  
+ATOM    628  O   ALA H  44     -21.152  22.052 -46.394  1.00 11.04           O  
+TER     630      TER H  44
+CONECT 5572 5571
+MASTER      413    0   12   20   38    0    0    6 5736    3  109   55
+END
