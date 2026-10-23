@@ -215,6 +215,41 @@ class TestTool(unittest.TestCase):
             )
         self.assertTrue(result)
 
+    def test_is_another_group_resnum_digits(self):
+        """
+        Test function to identify we entered another altloc group.
+
+        The residue number gains one digit, which must not break the
+        comparison (as strings, '100' < '99').
+
+        previous line: "BARG   99"
+        current  line: " GLU  100"
+
+        The result of `is_another_altloc_group` should be True.
+        """
+        for prev, curr in (('9', '10'), ('99', '100'), ('999', '1000')):
+            result = self.module.is_another_altloc_group(
+                ' ', 'B', curr, prev, 'GLU', 'ARG',
+                {'A': ['lines'], 'B': ['lines']},
+                {'A': {('ARG', prev)}, 'B': {('ARG', prev)}}
+                )
+            self.assertTrue(result)
+
+    def test_resnum_gt(self):
+        """Test residue numbers are compared numerically."""
+        self.assertTrue(self.module._resnum_gt('100', '99'))
+        self.assertTrue(self.module._resnum_gt('10', '9'))
+        self.assertTrue(self.module._resnum_gt('1000', '999'))
+        self.assertTrue(self.module._resnum_gt('1', '-1'))
+        self.assertTrue(self.module._resnum_gt('-1', '-10'))
+        self.assertFalse(self.module._resnum_gt('99', '100'))
+        self.assertFalse(self.module._resnum_gt('99', '99'))
+        # hybrid-36 residue numbers (> 9999)
+        self.assertTrue(self.module._resnum_gt('A000', '9999'))
+        self.assertTrue(self.module._resnum_gt('A010', 'A00Z'))
+        self.assertTrue(self.module._resnum_gt('a000', 'ZZZZ'))
+        self.assertFalse(self.module._resnum_gt('9999', 'A000'))
+
     def test_all_same_residue(self):
         """Test all same residue."""
         inp = {
@@ -870,6 +905,76 @@ class TestTool(unittest.TestCase):
                 ]
             )
 
+
+    def test_altloc_residue_before_more_digits_maxocc(self):
+        """
+        Test altloc-only residues followed by a residue number with more
+        digits (9 -> 10, 99 -> 100, 999 -> 1000) are kept.
+        """
+        sys.argv = ['', os.path.join(data_dir, 'dummy_altloc_resnum_digits.pdb')]
+        self.exec_module()
+        self.assertEqual(self.retcode, 0)
+        self.assertEqual(len(self.stderr), 0)
+        self.assertEqual(len(self.stdout), 37)
+        self.assertEqual(
+            [line[17:26] for line in self.stdout if line[12:16] == ' CA '],
+            [
+                "ALA A   8", "ARG A   9", "GLU A  10",
+                "ALA A  98", "ARG A  99", "GLU A 100",
+                "ALA A 998", "ARG A 999", "GLU A1000",
+                ]
+            )
+        self.assertEqual(
+            self.stdout[17],
+            "ATOM     23  CA  ARG A  99       4.000   1.000   0.000  0.70  0.00           C  "
+            )
+
+    def test_altloc_residue_before_more_digits_A(self):
+        """
+        Test altloc-only residues followed by a residue number with more
+        digits (9 -> 10, 99 -> 100, 999 -> 1000) are kept, selecting A.
+        """
+        sys.argv = ['', '-A', os.path.join(data_dir, 'dummy_altloc_resnum_digits.pdb')]
+        self.exec_module()
+        self.assertEqual(self.retcode, 0)
+        self.assertEqual(len(self.stderr), 0)
+        self.assertEqual(len(self.stdout), 37)
+        self.assertEqual(
+            self.stdout[17],
+            "ATOM     23  CA  ARG A  99       4.000   1.000   0.000  0.70  0.00           C  "
+            )
+        self.assertEqual(
+            self.stdout[20:24],
+            [
+                "ATOM     29  N   GLU A 100       5.000   0.000   0.000  1.00  0.00           N  ",
+                "ATOM     30  CA  GLU A 100       5.000   1.000   0.000  1.00  0.00           C  ",
+                "ATOM     31  C   GLU A 100       5.000   2.000   0.000  1.00  0.00           C  ",
+                "ATOM     32  O   GLU A 100       5.000   3.000   0.000  1.00  0.00           O  ",
+                ]
+            )
+
+    def test_altloc_residue_before_more_digits_B(self):
+        """
+        Test altloc-only residues followed by a residue number with more
+        digits (9 -> 10, 99 -> 100, 999 -> 1000) are kept, selecting B.
+        """
+        sys.argv = ['', '-B', os.path.join(data_dir, 'dummy_altloc_resnum_digits.pdb')]
+        self.exec_module()
+        self.assertEqual(self.retcode, 0)
+        self.assertEqual(len(self.stderr), 0)
+        self.assertEqual(len(self.stdout), 37)
+        self.assertEqual(
+            [line[17:26] for line in self.stdout if line[12:16] == ' CA '],
+            [
+                "ALA A   8", "ARG A   9", "GLU A  10",
+                "ALA A  98", "ARG A  99", "GLU A 100",
+                "ALA A 998", "ARG A 999", "GLU A1000",
+                ]
+            )
+        self.assertEqual(
+            self.stdout[17],
+            "ATOM     24  CA  ARG A  99       4.500   1.000   0.500  0.30  0.00           C  "
+            )
 
     def test_file_not_found(self):
         """$ pdb_selaltloc not_existing.pdb"""
