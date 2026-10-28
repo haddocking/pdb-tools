@@ -287,7 +287,12 @@ def run(fhandle, h36=False):
             atom_num += 1
 
             # Check if structure is too large
-            if len(chainid) > 1:
+            if len(resname) > 3:
+                emsg = 'ERROR!! Residue name is too large: \'{}\'\n'
+                sys.stderr.write(emsg.format(resname))
+                sys.stderr.write(__doc__)
+                sys.exit(1)
+            elif len(chainid) > 1:
                 emsg = 'ERROR!! Chain IDs is too large: \'{}\'\n'
                 sys.stderr.write(emsg.format(chainid))
                 sys.stderr.write(__doc__)

@@ -165,6 +165,29 @@ class TestTool(unittest.TestCase):
         # serial 100001 encodes as "A0001" in hybrid-36
         self.assertEqual(result[100000][6:11], "A0001")
 
+    def test_long_residue_name(self):
+        """5-character CCD codes must not shift the PDB columns (GH#187)."""
+
+        def _cif_lines():
+            yield "loop_\n"
+            for field in [
+                "group_PDB", "id", "type_symbol", "label_atom_id",
+                "label_alt_id", "label_comp_id", "label_asym_id",
+                "label_entity_id", "label_seq_id", "pdbx_PDB_ins_code",
+                "Cartn_x", "Cartn_y", "Cartn_z", "occupancy",
+                "B_iso_or_equiv", "pdbx_formal_charge", "auth_asym_id",
+                "pdbx_PDB_model_num",
+            ]:
+                yield "_atom_site.{}\n".format(field)
+            yield (
+                "HETATM 1 N N1 . A1AJ1 B . 202 ? "
+                "-9.975 4.642 -17.035 0.68 43.07 0 B 1\n"
+            )
+
+        with self.assertRaises(SystemExit) as err:
+            list(self.module.run(_cif_lines()))
+        self.assertEqual(err.exception.code, 1)
+
     def test_missing_charge(self):
         """$ pdb_fromcif data/af3_output.cif"""
         fpath = os.path.join(data_dir, "af3_output.cif")
