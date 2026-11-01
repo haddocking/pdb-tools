@@ -166,7 +166,7 @@ class TestTool(unittest.TestCase):
         self.assertEqual(result[100000][6:11], "A0001")
 
     def test_long_residue_name(self):
-        """5-character CCD codes must not shift the PDB columns (GH#187)."""
+        """Tests whether 5-character residue names throw an error during conversion."""
 
         def _cif_lines():
             yield "loop_\n"
