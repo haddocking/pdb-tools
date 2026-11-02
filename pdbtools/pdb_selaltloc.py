@@ -245,6 +245,27 @@ def select_altloc(fhandle, selloc=None, byocc=False):
         res_per_loc = dict()
 
 
+def _resnum_gt(ru1, ru0):
+    """Return True if residue number `ru1` comes after `ru0`.
+
+    Residue numbers are parsed as strings. Comparing them as strings is wrong
+    when the number of digits changes, e.g., '100' < '99' and '10' < '9', so
+    we compare them as integers whenever possible (this also handles negative
+    numbers).
+
+    If one of the numbers is not a decimal integer (e.g., hybrid-36 encoded
+    residue numbers such as 'A000'), we fall back to string comparison. This
+    is still correct for hybrid-36: all hybrid-36 numbers have the same width
+    (4 characters) and their digit order (0-9 < A-Z < a-z) matches the ASCII
+    order, and any hybrid-36 number (starting with a letter) sorts after any
+    decimal number (starting with a digit or '-').
+    """
+    try:
+        return int(ru1) > int(ru0)
+    except ValueError:
+        return ru1 > ru0
+
+
 def is_another_altloc_group(
         altloc,
         prev_altloc,
@@ -267,14 +288,14 @@ def is_another_altloc_group(
 
     is_another = (
         all((a0, ra0, ru0)) and (
-            (a0 != a1 and a1 == ' ' and ru1 > ru0)
-            or (a0 == ' ' and a1 != ' ' and ru1 > ru0)
+            (a0 != a1 and a1 == ' ' and _resnum_gt(ru1, ru0))
+            or (a0 == ' ' and a1 != ' ' and _resnum_gt(ru1, ru0))
             or (a0 == ' ' and a1 == ' ' and (ru1 != ru0 or ra1 != ra0))
             or (
                 a0 == a1
                 and a0 != ' '
                 and a1 in rl
-                and ru1 > ru0
+                and _resnum_gt(ru1, ru0)
                 and len(rl) > 1
                 and all(len(v) == len(rv[0]) for v in rv[1:])
             )
