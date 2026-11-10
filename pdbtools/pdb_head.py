@@ -43,7 +43,7 @@ def check_input(args):
     """
 
     # Defaults
-    option = None
+    option = 10  # like UNIX head, default to the first 10 lines
     fh = sys.stdin  # file handle
 
     if not len(args):

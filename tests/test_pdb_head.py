@@ -67,6 +67,20 @@ class TestTool(unittest.TestCase):
         self.assertEqual(len(self.stdout), 10)
         self.assertEqual(len(self.stderr), 0)
 
+    def test_default_option(self):
+        """$ pdb_head data/dummy.pdb (defaults to 10 lines, like UNIX head)"""
+
+        # Simulate input
+        sys.argv = ['', os.path.join(data_dir, 'dummy.pdb')]
+
+        # Execute the script
+        self.exec_module()
+
+        # Validate results
+        self.assertEqual(self.retcode, 0)
+        self.assertEqual(len(self.stdout), 10)
+        self.assertEqual(len(self.stderr), 0)
+
     def test_invalid_option(self):
         """$ pdb_head --10 data/dummy.pdb"""
 
