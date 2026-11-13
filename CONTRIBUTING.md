@@ -3,7 +3,9 @@
 First off, thank you for taking the time to contribute! The tone of the following
 'guidelines' might seem a bit harsh (a lot of *do nots*) but it will make
 everyone's life easier. Make sure you read through this at least once before
-issuing a pull request or opening an issue.
+issuing a pull request or opening an issue. If you are considering using AI
+in your contribution, or even if you are not, read out `AI_POLICY.md` file to
+avoid any issues when submitting or reviewing your contribution.
 
 ## What should I know before getting started?
 The crux of any tool of `pdb-tools` is simplicity. Simplicity both for the
